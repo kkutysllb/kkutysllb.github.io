@@ -111,12 +111,12 @@
 <meta property="og:site_name" content="一花一菩提，一云一世界">
 <meta property="og:description" content="Linux目录结构的特点Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="c:/Users/13609/AppData/Roaming/Typora/typora-user-images/1555314230044.png">
-<meta property="og:updated_time" content="2019-04-15T14:44:03.646Z">
+<meta property="og:image" content="https://i.loli.net/2019/04/15/5cb4a1d58e2a6.jpg">
+<meta property="og:updated_time" content="2019-04-15T15:23:13.671Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-03-30-Linux的文件系统">
 <meta name="twitter:description" content="Linux目录结构的特点Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。">
-<meta name="twitter:image" content="c:/Users/13609/AppData/Roaming/Typora/typora-user-images/1555314230044.png">
+<meta name="twitter:image" content="https://i.loli.net/2019/04/15/5cb4a1d58e2a6.jpg">
 
 
 
@@ -437,7 +437,7 @@
                 
               
 
-              <time title="创建时间：2019-04-15 15:41:27 / 修改时间：22:44:03" itemprop="dateCreated datePublished" datetime="2019-04-15T15:41:27+08:00">2019-04-15</time>
+              <time title="创建时间：2019-04-15 15:41:27 / 修改时间：23:23:13" itemprop="dateCreated datePublished" datetime="2019-04-15T15:41:27+08:00">2019-04-15</time>
             
 
             
@@ -529,11 +529,11 @@
       
 
       
-        <h2 id="Linux目录结构的特点"><a href="#Linux目录结构的特点" class="headerlink" title="Linux目录结构的特点"></a>Linux目录结构的特点</h2><p>Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。<br>而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不<br>同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。</p>
+        <h2 id="Linux目录结构的特点"><a href="#Linux目录结构的特点" class="headerlink" title="Linux目录结构的特点"></a>Linux目录结构的特点</h2><p>Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。</p>
 <a id="more"></a>
 <hr>
 <p>在Linux中，一切皆是文件。Linux是以文件的方式来管理系统中各个组件，所有的文件存储都以根（”/“）开始，整个文件系统结构就像一颗倒挂的”树“。Linux文件系统的目录结构如图所示：</p>
-<p><img src="C:\Users\13609\AppData\Roaming\Typora\typora-user-images\1555314230044.png" alt="1555314230044"></p>
+<p><img src="https://i.loli.net/2019/04/15/5cb4a1d58e2a6.jpg" alt></p>
 <p>在Linux中，一切从“根”开始，“/”是所有目录的起点（顶点），Linux根下面的目录是一个有层次的树状结构。我们熟悉的Windows系统，目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。</p>
 <p>在逻辑上，所有的目录（包括目录下的子目录）都在最高级别的目录“/”下，根（“/”）目录是所有目录的起始点（顶点），而实际上访问目录/、/etc、/boot、/var时，可能是在访问完全不同的分区和磁盘。</p>
 <p>Linux下面的设备（磁盘），如果不挂载是看不到入口的，就像没窗没门的房间，是不能被正常使用的。如果要访问设备，就必须为设备开一个入口，这个入口就是挂载点。挂载点实质就是一个目录，开入口的过程就是将挂载点和磁盘设备关联，即挂载。</p>
