@@ -103,19 +103,19 @@
 
 
 
-  <meta name="description" content="Linux的文件系统Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。">
+  <meta name="description" content="Linux目录结构的特点Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。">
 <meta name="keywords" content="基础概念">
 <meta property="og:type" content="article">
 <meta property="og:title" content="2019-03-30-Linux的文件系统">
 <meta property="og:url" content="https://kkutysllb.cn/2019/04/15/2019-03-30-Linux的文件系统/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
-<meta property="og:description" content="Linux的文件系统Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。">
+<meta property="og:description" content="Linux目录结构的特点Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="c:/Users/13609/AppData/Roaming/Typora/typora-user-images/1555314230044.png">
-<meta property="og:updated_time" content="2019-04-15T07:59:40.355Z">
+<meta property="og:updated_time" content="2019-04-15T14:44:03.646Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-03-30-Linux的文件系统">
-<meta name="twitter:description" content="Linux的文件系统Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。">
+<meta name="twitter:description" content="Linux目录结构的特点Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。">
 <meta name="twitter:image" content="c:/Users/13609/AppData/Roaming/Typora/typora-user-images/1555314230044.png">
 
 
@@ -437,7 +437,7 @@
                 
               
 
-              <time title="创建时间：2019-04-15 15:41:27 / 修改时间：15:59:40" itemprop="dateCreated datePublished" datetime="2019-04-15T15:41:27+08:00">2019-04-15</time>
+              <time title="创建时间：2019-04-15 15:41:27 / 修改时间：22:44:03" itemprop="dateCreated datePublished" datetime="2019-04-15T15:41:27+08:00">2019-04-15</time>
             
 
             
@@ -529,7 +529,7 @@
       
 
       
-        <h1 id="Linux的文件系统"><a href="#Linux的文件系统" class="headerlink" title="Linux的文件系统"></a>Linux的文件系统</h1><p>Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。<br>而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不<br>同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。</p>
+        <h2 id="Linux目录结构的特点"><a href="#Linux目录结构的特点" class="headerlink" title="Linux目录结构的特点"></a>Linux目录结构的特点</h2><p>Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。<br>而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不<br>同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。</p>
 <a id="more"></a>
 <hr>
 <p>在Linux中，一切皆是文件。Linux是以文件的方式来管理系统中各个组件，所有的文件存储都以根（”/“）开始，整个文件系统结构就像一颗倒挂的”树“。Linux文件系统的目录结构如图所示：</p>
@@ -935,7 +935,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux的文件系统"><span class="nav-number">1.</span> <span class="nav-text">Linux的文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux目录的层次标准FHS"><span class="nav-number">1.1.</span> <span class="nav-text">Linux目录的层次标准FHS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux系统的文件类型："><span class="nav-number">1.2.</span> <span class="nav-text">Linux系统的文件类型：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux系统重要的配置文件"><span class="nav-number">1.3.</span> <span class="nav-text">Linux系统重要的配置文件</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux目录结构的特点"><span class="nav-number">1.</span> <span class="nav-text">Linux目录结构的特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux目录的层次标准FHS"><span class="nav-number">2.</span> <span class="nav-text">Linux目录的层次标准FHS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux系统的文件类型："><span class="nav-number">3.</span> <span class="nav-text">Linux系统的文件类型：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux系统重要的配置文件"><span class="nav-number">4.</span> <span class="nav-text">Linux系统重要的配置文件</span></a></li></ol></div>
             
 
           </div>

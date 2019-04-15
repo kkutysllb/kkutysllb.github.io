@@ -103,20 +103,20 @@
 
 
 
-  <meta name="description" content="Linux系统的内存管理内存管理一向是所有操作系统书籍不惜笔墨重点讨论的内容，无论市面上或是网上都充斥着大量涉及内存管理的教材和资料。因此，我们这里所要写的Linux内存管理采取避重就轻的策略，从理论层面就不去班门弄斧，贻笑大方了。 遵循“理论来源于实践”的“教条”，我们先不必一下子就钻入内核里去看系统内存到底是如何管理，那样往往会让你陷入似懂非懂的窘境（我当年就犯了这个错误！）。所以最好的方式是">
+  <meta name="description" content="内存管理中的基本概念内存管理一向是所有操作系统书籍不惜笔墨重点讨论的内容，无论市面上或是网上都充斥着大量涉及内存管理的教材和资料。因此，我们这里所要写的Linux内存管理采取避重就轻的策略，从理论层面就不去班门弄斧，贻笑大方了。 遵循“理论来源于实践”的“教条”，我们先不必一下子就钻入内核里去看系统内存到底是如何管理，那样往往会让你陷入似懂非懂的窘境（我当年就犯了这个错误！）。所以最好的方式是先从">
 <meta name="keywords" content="基础概念">
 <meta property="og:type" content="article">
 <meta property="og:title" content="2019-03-18-Linux系统的内存管理">
 <meta property="og:url" content="https://kkutysllb.cn/2019/04/15/2019-03-18-Linux系统的内存管理/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
-<meta property="og:description" content="Linux系统的内存管理内存管理一向是所有操作系统书籍不惜笔墨重点讨论的内容，无论市面上或是网上都充斥着大量涉及内存管理的教材和资料。因此，我们这里所要写的Linux内存管理采取避重就轻的策略，从理论层面就不去班门弄斧，贻笑大方了。 遵循“理论来源于实践”的“教条”，我们先不必一下子就钻入内核里去看系统内存到底是如何管理，那样往往会让你陷入似懂非懂的窘境（我当年就犯了这个错误！）。所以最好的方式是">
+<meta property="og:description" content="内存管理中的基本概念内存管理一向是所有操作系统书籍不惜笔墨重点讨论的内容，无论市面上或是网上都充斥着大量涉及内存管理的教材和资料。因此，我们这里所要写的Linux内存管理采取避重就轻的策略，从理论层面就不去班门弄斧，贻笑大方了。 遵循“理论来源于实践”的“教条”，我们先不必一下子就钻入内核里去看系统内存到底是如何管理，那样往往会让你陷入似懂非懂的窘境（我当年就犯了这个错误！）。所以最好的方式是先从">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://i.loli.net/2019/04/15/5cb4323465760.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/04/15/5cb432bc7e467.jpg">
-<meta property="og:updated_time" content="2019-04-15T08:49:05.711Z">
+<meta property="og:updated_time" content="2019-04-15T14:43:13.709Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-03-18-Linux系统的内存管理">
-<meta name="twitter:description" content="Linux系统的内存管理内存管理一向是所有操作系统书籍不惜笔墨重点讨论的内容，无论市面上或是网上都充斥着大量涉及内存管理的教材和资料。因此，我们这里所要写的Linux内存管理采取避重就轻的策略，从理论层面就不去班门弄斧，贻笑大方了。 遵循“理论来源于实践”的“教条”，我们先不必一下子就钻入内核里去看系统内存到底是如何管理，那样往往会让你陷入似懂非懂的窘境（我当年就犯了这个错误！）。所以最好的方式是">
+<meta name="twitter:description" content="内存管理中的基本概念内存管理一向是所有操作系统书籍不惜笔墨重点讨论的内容，无论市面上或是网上都充斥着大量涉及内存管理的教材和资料。因此，我们这里所要写的Linux内存管理采取避重就轻的策略，从理论层面就不去班门弄斧，贻笑大方了。 遵循“理论来源于实践”的“教条”，我们先不必一下子就钻入内核里去看系统内存到底是如何管理，那样往往会让你陷入似懂非懂的窘境（我当年就犯了这个错误！）。所以最好的方式是先从">
 <meta name="twitter:image" content="https://i.loli.net/2019/04/15/5cb4323465760.jpg">
 
 
@@ -438,7 +438,7 @@
                 
               
 
-              <time title="创建时间：2019-04-15 15:21:59 / 修改时间：16:49:05" itemprop="dateCreated datePublished" datetime="2019-04-15T15:21:59+08:00">2019-04-15</time>
+              <time title="创建时间：2019-04-15 15:21:59 / 修改时间：22:43:13" itemprop="dateCreated datePublished" datetime="2019-04-15T15:21:59+08:00">2019-04-15</time>
             
 
             
@@ -530,7 +530,7 @@
       
 
       
-        <h1 id="Linux系统的内存管理"><a href="#Linux系统的内存管理" class="headerlink" title="Linux系统的内存管理"></a>Linux系统的内存管理</h1><p>内存管理一向是所有操作系统书籍不惜笔墨重点讨论的内容，无论市面上或是网上都充斥着大量涉及内存管理的教材和资料。因此，我们这里所要写的Linux内存管理采取避重就轻的策略，从理论层面就不去班门弄斧，贻笑大方了。</p>
+        <h2 id="内存管理中的基本概念"><a href="#内存管理中的基本概念" class="headerlink" title="内存管理中的基本概念"></a>内存管理中的基本概念</h2><p>内存管理一向是所有操作系统书籍不惜笔墨重点讨论的内容，无论市面上或是网上都充斥着大量涉及内存管理的教材和资料。因此，我们这里所要写的Linux内存管理采取避重就轻的策略，从理论层面就不去班门弄斧，贻笑大方了。</p>
 <p>遵循“理论来源于实践”的“教条”，我们先不必一下子就钻入内核里去看系统内存到底是如何管理，那样往往会让你陷入似懂非懂的窘境（我当年就犯了这个错误！）。所以最好的方式是先从外部（用户编程范畴）来观察进程如何使用内存，等到大家对内存的使用有了较直观的认识后，再深入到内核中去学习内存如何被管理等理论知识。<a id="more"></a></p>
 <hr>
 <p>每个程序在操作系统中都对应一个进程（例如：QQ，微信等），所有进程都必须占用一定数量的内存，它或是用来存放从磁盘载入的程序代码，或是存放取自用户输入的数据等等。不过进程对这些内存的管理方式因内存用途不一而不尽相同，有些内存是事先静态分配和统一回收的，而有些却是按需要动态分配和回收的。</p>
@@ -883,7 +883,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux系统的内存管理"><span class="nav-number">1.</span> <span class="nav-text">Linux系统的内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux系统逻辑地址-线性地址"><span class="nav-number">1.1.</span> <span class="nav-text">Linux系统逻辑地址=线性地址</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#内存管理中的基本概念"><span class="nav-number">1.</span> <span class="nav-text">内存管理中的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux系统逻辑地址-线性地址"><span class="nav-number">2.</span> <span class="nav-text">Linux系统逻辑地址=线性地址</span></a></li></ol></div>
             
 
           </div>
