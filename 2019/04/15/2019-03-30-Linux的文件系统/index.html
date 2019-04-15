@@ -103,24 +103,20 @@
 
 
 
-  <meta name="description" content="云计算的发展历程 云计算的历史也是蛮好玩的…  一开始就是在2003年之前，大家都在在提升CPU的计算能力，提升存储的空间，使得CPU性能越来越高、存储变得更大。">
+  <meta name="description" content="Linux的文件系统Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。">
 <meta name="keywords" content="基础概念">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2018-09-12-云计算的前世今生">
-<meta property="og:url" content="https://kkutysllb.cn/2018/09/12/2018-09-12-云计算的前世今生/index.html">
+<meta property="og:title" content="2019-03-30-Linux的文件系统">
+<meta property="og:url" content="https://kkutysllb.cn/2019/04/15/2019-03-30-Linux的文件系统/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
-<meta property="og:description" content="云计算的发展历程 云计算的历史也是蛮好玩的…  一开始就是在2003年之前，大家都在在提升CPU的计算能力，提升存储的空间，使得CPU性能越来越高、存储变得更大。">
+<meta property="og:description" content="Linux的文件系统Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://i.loli.net/2019/02/18/5c6a5fd1765ca.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/02/18/5c6a661e66cb1.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/02/18/5c6a674bb56ce.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/02/18/5c6a69805e25b.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/02/18/5c6a69dc3017e.jpg">
-<meta property="og:updated_time" content="2019-02-18T00:49:06.000Z">
+<meta property="og:image" content="c:/Users/13609/AppData/Roaming/Typora/typora-user-images/1555314230044.png">
+<meta property="og:updated_time" content="2019-04-15T07:59:40.355Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2018-09-12-云计算的前世今生">
-<meta name="twitter:description" content="云计算的发展历程 云计算的历史也是蛮好玩的…  一开始就是在2003年之前，大家都在在提升CPU的计算能力，提升存储的空间，使得CPU性能越来越高、存储变得更大。">
-<meta name="twitter:image" content="https://i.loli.net/2019/02/18/5c6a5fd1765ca.jpg">
+<meta name="twitter:title" content="2019-03-30-Linux的文件系统">
+<meta name="twitter:description" content="Linux的文件系统Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。">
+<meta name="twitter:image" content="c:/Users/13609/AppData/Roaming/Typora/typora-user-images/1555314230044.png">
 
 
 
@@ -129,7 +125,7 @@
 
 
 
-  <link rel="canonical" href="https://kkutysllb.cn/2018/09/12/2018-09-12-云计算的前世今生/">
+  <link rel="canonical" href="https://kkutysllb.cn/2019/04/15/2019-03-30-Linux的文件系统/">
 
 
 
@@ -139,7 +135,7 @@
   };
 </script>
 
-  <title>2018-09-12-云计算的前世今生 | 一花一菩提，一云一世界</title>
+  <title>2019-03-30-Linux的文件系统 | 一花一菩提，一云一世界</title>
   
 
 
@@ -398,7 +394,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2018/09/12/2018-09-12-云计算的前世今生/">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/04/15/2019-03-30-Linux的文件系统/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kkutysllb">
@@ -415,7 +411,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2018-09-12-云计算的前世今生
+          <h1 class="post-title" itemprop="name headline">2019-03-30-Linux的文件系统
 
               
             
@@ -441,24 +437,12 @@
                 
               
 
-              <time title="创建时间：2018-09-12 08:00:00" itemprop="dateCreated datePublished" datetime="2018-09-12T08:00:00+08:00">2018-09-12</time>
+              <time title="创建时间：2019-04-15 15:41:27 / 修改时间：15:59:40" itemprop="dateCreated datePublished" datetime="2019-04-15T15:41:27+08:00">2019-04-15</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-02-18 08:49:06" itemprop="dateModified" datetime="2019-02-18T08:49:06+08:00">2019-02-18</time>
               
             
           </span>
@@ -475,7 +459,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/云计算/" itemprop="url" rel="index"><span itemprop="name">云计算</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a></span>
 
                 
                 
@@ -511,7 +495,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">4.8k</span>
+                <span title="本文字数">3.6k</span>
               
 
               
@@ -525,7 +509,7 @@
                 
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
-                <span title="阅读时长">4 分钟</span>
+                <span title="阅读时长">3 分钟</span>
               
             </div>
           
@@ -545,156 +529,91 @@
       
 
       
-        <h2 id="云计算的发展历程"><a href="#云计算的发展历程" class="headerlink" title="云计算的发展历程"></a>云计算的发展历程</h2><blockquote>
-<p>云计算的历史也是蛮好玩的…</p>
-</blockquote>
-<p>一开始就是在2003年之前，大家都在在提升CPU的计算能力，提升存储的空间，使得CPU性能越来越高、存储变得更大。<a id="more"></a><br><img src="https://i.loli.net/2019/02/18/5c6a5fd1765ca.jpg" alt></p>
-<p>到了2003年以后呢，企业的数据中心里面发现资源已经很空闲，因为架构设计的原因，让这些服务器很多时间都处在平均不到5%的使用率，大部分99%都是空闲的。相当云投资一千块，其实只用了五块钱，实际上产生了很大的浪费。同时，机房空间、动力等基础设施资源被占用过多，导致数据中心内部无法放置更多机柜、机架和服务器，需要买地建设新的机房（按照国内的地价/房价，这基本是不可能的）。因此，在2003年VMware这个厂商提供了服务器虚拟化的技术，就是把一台服务器一台设备，切成很多虚拟的小块服务器，也就是俗称的“虚拟机”。而让业务应用在虚拟机上面去工作，这就叫服务器虚拟化。</p>
-<p>这个技术解决了数据中心里面机房空间和动力资源不够的问题，原来需要十台服务器的，现在在一台高级的服务器里面切了十份，分别给10个业务应用使用，即使这样也就才用了40%的CPU，电力节省了接近9/10，而且一个机房里面容量就可以做二十倍数的的提升。原来部署一百台物理的服务器，现在可以部署两千台虚拟服务器，大大的提升了资源的利用率。而虚拟化的另一个好处就是还大幅提升了客户业务的创新的积极性，因为以前他们服务器都摆不下，好多东西不能做，现在摆下了，所以他要做什么东西都可以试试。但是这个虚拟化技术只解决了资源的共享问题，还没解决运营效率问题。</p>
-<p>到了2006年的时候，亚马逊提出了公有云的服务，那时还不叫云计算，叫Amazon Web Service, 简称AWS（现在亚马逊的云计算项目还是沿用这个叫法）。亚马逊大家都知道，它原本是一个做超市的，超市的概念就是你需要你去拿，拿了就到门口结帐，结帐你就拿走。然后亚马逊它把这个计算资源也当成一种，把服务器也当成资源去卖，但是它卖的不是物理的，不是让你搬一台服务器走。而是建好一个数据中心，当你用的时候，你要多少台我们就给你多少台，你只要刷信用卡在网上做支付，你就可以使用这些逻辑上提供给你的资源，这也是虚拟化资源第一次被当成商品出售的案例。随后，Amazon在此基础上提出了云计算的概念，并开发出了公有云业务。亚马逊的这种公有云的这种服务对企业而言，想做的时候，只要付钱就可以做了。而且一般企业业务部门都很有钱，所以业务部门的愿意投钱去做这个事情。</p>
-<p>到了2010年的时候，出现了另外一种云计算架构，叫OpenStack。它是NASA就是美国太空总署那个NASA和RackSpace联合做的。RackSpace也是做公有云服务的运营商，就像我们的阿里云一样，它也是想学习亚马逊。但是它的人没有亚马逊的团队这么大，所以它把这个架构给开源出来，形成一个OpenStack开源社区，大家都在OpenStack上面去开发完善，然后让这个框架变得更好，目前OpenStack会聚了全球的研发力量，并吸引了几乎全球所有主流IT厂商的支持，帮它完善这个架构，形成了云计算领域一个全新的强大生态系统。OpenStack社区把这个架构公开出来以后，各个企业都看到了一个新的技术，可以运用到他们自己企业里面，所以很多企业都开始基于OpenStack做自己的私有云，让自己家的IT，变得效率更高，资源更有效。</p>
-<p>然后，到了2014年以后，很多企业经过这么多年的建设以后，基本都走在了公有云和私有云这两条路上，私有云就是在家里，自建自用，不对外。公有云就是公开对外出售虚拟资源（如服务器、负载均衡器、防火墙等）在亚马逊、阿里或者华为都有这类服务，只要花钱买就可以。很多企业，尤其是中小企业，无力承担基础设施建设费用，就是通过购买EC2（云计算服务中资源服务器）来部署它的业务。还有一些企业，将一部分业务部署在公有云上，另一部分私密性业务部署在私有云上，这样就合成了一个混合云的状态。</p>
-<h2 id="云计算技术的演进历程"><a href="#云计算技术的演进历程" class="headerlink" title="云计算技术的演进历程"></a>云计算技术的演进历程</h2><blockquote>
-<p>随着云计算技术走向成熟，在混合云时代，企业对于云计算的相关技术成熟度的问题已经不太关注了。企业新的追求是，让IT的人员怎么在一个团队的模式下面，对公有云和私有云的混合云资源进行统一的管理。这是一个管理的概念，也是混合云构建的核心。</p>
-</blockquote>
-<p>云计算（Cloud Computing）是分布式计算（Distributed Computing）、并行计算（Parallel Computing）和网格计算（Grid Computing）的发展或者说是这些计算机科学概念的商业实现。</p>
-<p><img src="https://i.loli.net/2019/02/18/5c6a661e66cb1.jpg" alt></p>
-<p><strong>并行计算（Paralled Computing）：</strong>同时使用多种计算资源解决计算问题的过程，主要目的是快速解决大型且复杂的问题。</p>
-<ul>
-<li>特点：把计算任务分派给系统内多个计算单元。</li>
-</ul>
-<p><strong>分布式计算（Distributed Computing）：</strong>把一个需要巨大计算能力才能解决的问题分成多个小部分，把这些小部分分配给多个计算进行处理，最后综合这些计算结果得到最终的结果。</p>
-<ul>
-<li>特点：分配计算任务到网络中多台独立的机器。</li>
-</ul>
-<p><strong>网格计算（Grid Computing）：</strong>利用互联网把地理上广泛分布的各种资源连成一个逻辑的整体，就像一台超级计算机。</p>
-<ul>
-<li>特点：分布式计算的一种，为用户提供一体化的信息和应用服务。</li>
-</ul>
-<h2 id="云计算的部署模式"><a href="#云计算的部署模式" class="headerlink" title="云计算的部署模式"></a>云计算的部署模式</h2><blockquote>
-<ul>
-<li>私有云（Private Cloud）： 企业利用自有或租用的基础设施资源自建的云。</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
-<li>社区云/行业云（Community cloud）：为特定社区或行业所构建的共享基础设施的云。</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
-<li>公有云（Public cloud）：出租给公众的大型的基础设施的云。</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
-<li>混合云（Hybrid cloud）：由两种或两种以上部署模式组成的云。</li>
-</ul>
-</blockquote>
-<p><img src="https://i.loli.net/2019/02/18/5c6a674bb56ce.jpg" alt></p>
-<p>从部署模式上看，云计算又分为私有云、社区云也就是行业云、公有云、和混合云，这几种形态，这里也给出了具体的定义。简单理解：</p>
-<ul>
-<li><p>私有云就是企业建在自家院子里的，只给自己用的云，有些公司特别是公有云厂商喜欢把“私有云”称作“专有云”，名字不同，但含义基本相同，虽然这些厂商不愿意承认。</p>
+        <h1 id="Linux的文件系统"><a href="#Linux的文件系统" class="headerlink" title="Linux的文件系统"></a>Linux的文件系统</h1><p>Windows系统目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。<br>而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不<br>同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。</p>
+<a id="more"></a>
+<hr>
+<p>在Linux中，一切皆是文件。Linux是以文件的方式来管理系统中各个组件，所有的文件存储都以根（”/“）开始，整个文件系统结构就像一颗倒挂的”树“。Linux文件系统的目录结构如图所示：</p>
+<p><img src="C:\Users\13609\AppData\Roaming\Typora\typora-user-images\1555314230044.png" alt="1555314230044"></p>
+<p>在Linux中，一切从“根”开始，“/”是所有目录的起点（顶点），Linux根下面的目录是一个有层次的树状结构。我们熟悉的Windows系统，目录和磁盘是强对应的关系，联系很紧密，例如c盘下的目录和文件不可能和D盘的目录有关联或交集。而Linux系统目录与之不同，Linux系统的目录和磁盘等设备是不直接关联的，每个目录都可以关联（官称：挂载）在不同的设备（例如磁盘）上，例如：看似有包含关系的几个目录/、/etc、/boot、/var很可能是在不同的分区或磁盘上。</p>
+<p>在逻辑上，所有的目录（包括目录下的子目录）都在最高级别的目录“/”下，根（“/”）目录是所有目录的起始点（顶点），而实际上访问目录/、/etc、/boot、/var时，可能是在访问完全不同的分区和磁盘。</p>
+<p>Linux下面的设备（磁盘），如果不挂载是看不到入口的，就像没窗没门的房间，是不能被正常使用的。如果要访问设备，就必须为设备开一个入口，这个入口就是挂载点。挂载点实质就是一个目录，开入口的过程就是将挂载点和磁盘设备关联，即挂载。</p>
+<p><strong>Linux的根目录特点</strong></p>
+<p><strong>1、根目录“/“是所有目录的顶点</strong>。</p>
+<p><strong>2、目录结构像一颗倒挂的“树”</strong>。</p>
+<p><strong>3、目录和分区没有关联，因此不同目录可以映射不同的分区。</strong></p>
+<p><strong>4、分区或设备要想访问，必须将其与目录挂载，此时挂载的目录相当于分区的入口。</strong></p>
+<p><strong>5、挂载目录的指令为mount</strong>。</p>
+<p><strong>6、系统开机自动挂载的配置文件为/etc/fstab</strong>。</p>
+<h2 id="Linux目录的层次标准FHS"><a href="#Linux目录的层次标准FHS" class="headerlink" title="Linux目录的层次标准FHS"></a>Linux目录的层次标准FHS</h2><p>FHS全称为Filesystem Hierarchy Standard，中文意思是目录层次标准，是Linux的目录规范标准。详细见<a href="http://www.pathname.com/fhs/。" target="_blank" rel="noopener">http://www.pathname.com/fhs/。</a><br>FHS定义了两层规范：<br>​    - 第一层是“/”目录下的各个目录应该放什么文件数据。<br>​    - 第二层是针对<strong>/usr</strong>（Unix software resource）和<strong>/var</strong>(Variable data)这两个目录的子目录在定义的。<br>​    参考资料：<br>​        <a href="http://www.pathname.com/fhs/" target="_blank" rel="noopener">http://www.pathname.com/fhs/</a><br>​        <a href="http://www.ibm.com/developerworks/linux/library/l-proc/index.html" target="_blank" rel="noopener">http://www.ibm.com/developerworks/linux/library/l-proc/index.html</a></p>
+<p>所有目录的命名和结构是有规范，在Linux的目录结构遵照FHS规范。常用目录和子目录的作用如下：</p>
+<p><strong>/bin ：</strong>存放普通用户或管理员使用所有二进制命令文件。</p>
+<p><strong>/sbin：</strong>存放管理员使用的所有二进制命令文件。</p>
+<p><strong>/boot :</strong> 存放Linux系统启动引导的安装文件存放目录。</p>
+<p><strong>/dev ：</strong> 存放特殊存储文件或设备文件存放的目录，比如：cpu、内存、硬盘、光驱、鼠标、键盘等。</p>
+<p>/<strong>etc ：</strong> 存放应用程序配置文件，比如：yum或rpm安装软件的配置文件存放路径，很多服务的启动程序存放的路径。</p>
+<p><strong>/home ：</strong>非关键性目录，是可选目录，是普通用户的家目录。一般每个用户的家目录，默认为此目录下与用户名同名的目录。</p>
+<p><strong>/lib：</strong>存放基本的共享库文件或Linux内核模块文件,为系统启动或根文件系统上的应用程序（/bin,/sbin等）提供共享库，以及为内核提供内核模块。</p>
+<p>​    <strong><em>libc.so.</em>：*</strong>动态链接的C库，在64位系统下，有可能位于/lib64目录下。</p>
+<p>​     <strong><em>ld</em>：*</strong>运行时链接器/加载器，在64位系统下，有可能位于/lib64目录下。</p>
+<p>​     <strong><em>modules：</em></strong>用于存储内核模块的目录，在64系统下，也位于/lib目录下。</p>
+<p><strong>/lib64：</strong>存放64位操作系统基本的共享库文件或Linux内核模块文件。</p>
+<p><strong>/media：</strong>便携式设备挂载点。比如：U盘，光盘，移动硬盘等。</p>
+<p><strong>/mnt：</strong>其他文件系统的临时挂载点。</p>
+<p><strong>/opt：</strong>附件应用程序的安装位置，比如第三方应用程序devstack。</p>
+<p><strong>/root ：</strong>管理员root用户的家目录，也是可选目录，并非必选。因为，管理员root在生产环境下一班不允许登录。</p>
+<p><strong>/srv：</strong>存放此系统专门提供给运行此系统应用程序上的数据。</p>
+<p><strong>/tmp：</strong>为那些会产生临时文件的程序用于存储临时文件的目录，可供所有用户执行写入操作，有有特殊权限。</p>
+<p><strong>/usr：</strong>是一个层级结构目录，存放全局共享只读数据。</p>
+<p>​     <strong><em>/usr/bin：</em></strong>普通用户命令。</p>
+<p>​    <strong><em>/usr/sbin：</em></strong>管理员命令，并非系统必须，用于扩展系统功能的命令。</p>
+<p>​     <strong><em>/usr/lib64：</em></strong>存放系统的扩展共享库文件。</p>
+<p>​     <strong><em>/usr/include：</em></strong>存放c程序的头文件位置。</p>
+<p>​    <strong><em>/usr/share：</em></strong>命令手册页和自带文档等架构特有的文件存放位置。</p>
+<p>​     <strong><em>/usr/local：</em></strong>又一个层级目录，让系统管理员安装本地应用程序或者第三方的应用程序。</p>
+<p>​     <strong><em>/usr/X11R6：</em></strong>存放X window的程序文件。</p>
+<p>​     <strong><em>/usr/src：</em></strong>程序源码文件的存位置。</p>
+<p><strong>/var：</strong>层级目录，存储常发生变化的数据的目录。</p>
+<p>​     <strong><em>/var/cache：</em></strong>应用程序缓存数据。</p>
+<p>​    <strong><em>/var/lib：</em></strong>应用程序的状态信息。</p>
+<p>​    <strong><em>/var/local：</em></strong>为/usr/local提供经常变化的数据。</p>
+<p>​    <strong><em>/var/lock：</em></strong>锁文件存放位置。</p>
+<p>​    <strong><em>/var/log：</em></strong>应用程序的日志文件。</p>
+<p>​    <strong><em>/var/opt：</em></strong>为/opt目录下应用程序提供变化的数据。</p>
+<p>​    <strong><em>/var/run：</em></strong>为运行中的进程提供相关数据。</p>
+<p>​    <strong><em>/var/spool：</em></strong>为应用程序提供的管道数据。</p>
+<p>​    <strong><em>/var/tmp：</em></strong>系统重启后依然需要留存的数据。</p>
+<p><strong>/proc：</strong>存放内核和进程的基于内存的虚拟文件系统。说白了，就是为内核和进程存储运行的相关数据，多为内核参数。例如：net.ipv4.ip_forward，虚拟化为net/ipv4/ip_forward，存储于/proc/sys/下，因此其完整路径为/proc/sys/net/ipv4/ip_foward</p>
+<p><strong>/sys：</strong>挂载sysfs虚拟文件系统的挂载点，比proc更为理想的访问内核数据的途径，也是一个基于内存的虚拟文件系统。为管理LInux设备提供一种统一文件系统。在Linux内核2.6版本开始才出现此目录，以前并没有。</p>
+<h2 id="Linux系统的文件类型："><a href="#Linux系统的文件类型：" class="headerlink" title="Linux系统的文件类型："></a>Linux系统的文件类型：</h2><ul>
+<li><p>-：表示普通文件，在其他命令中用f表示普通文件</p>
 </li>
-<li><p>社区云既行业云，应用范围要比私有云广泛，更像是由家庭和家族的关系，往往应用在某个特定的区域或特定行业，主要给特殊血缘关系的行业或社区家族成员使用。</p>
+<li><p>d：表示目录文件，完成路径映射，与windows功能不同。</p>
 </li>
-<li><p>公有云的使用范围则更加宽泛，基本上只要给钱谁都可以用，因此公有云的规模往往也更大。</p>
+<li><p>b：表示块设备文件，完成块设备映射的文件，支持以block为单位随机访问设备</p>
 </li>
-</ul>
-<p>但公有云的用户鱼龙混杂，像火车站一样，而且目标明显，不仅使用的好人多，惦记着甚至使用的坏人也不少，所以经常成为黑客及非法集团的攻击或信息偷窃目标。但瑕不掩瑜，人们不能因为火车上有小偷，就不坐火车了。但贵重的东西，比如大额现金最好就别随身带了，放家里由家人看着最保险，也就是在使用公有云的同时还使用私有云。而且希望公有云与私有云能很好的协同。这就是混合云了。</p>
-<h2 id="云计算当前的商业模式"><a href="#云计算当前的商业模式" class="headerlink" title="云计算当前的商业模式"></a>云计算当前的商业模式</h2><blockquote>
-<ul>
-<li>云基础设施即服务（IaaS）— 出租处理能力、存储空间、网络容量等基本计算资源。</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
-<li>云平台即服务（PaaS）— 为客户开发的应用程序提供可部署的云环境。</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
-<li>云软件即服务（SaaS）— 在网络上提供可直接使的应用程序。</li>
-</ul>
-</blockquote>
-<p>现在不止这几种，还有存储即服务，桌面即服务，数据中心即服务等等。</p>
-<p>在服务模式上，云计算分为三种，包括：IaaS 基础设施即服务、PaaS 开发平台即服务、SaaS 软件即服务这三种模式。</p>
-<ul>
-<li><p><strong>IaaS</strong>，就是以前买IBM、HP、DELL、华为服务器存储跑企业业务（比如：生产管理业务、财务、市场客户管理、邮箱等），现在企业把业务放到Amazon的网站或华为企业云服务（公有云）网站就全搞定了。简单讲就是由“买”变“租”。大型企业的IT部门也可以以IaaS服务的形式，对内部业务部门提供服务，然后进行内部结算。</p>
+<li><p>c：表示字符设备文件，完成字符设备映射的文件，支持以字符为单位线性访问设备</p>
+<p>​    <strong><em>major number：</em></strong>主设备号，用于表示设备类型，进而确定要加载的驱动程序</p>
+<p>​    <strong><em>minor number：</em></strong>次设备号，用于表示同一种类型设备下不同的设备，进而确定要驱动的嗯对象</p>
 </li>
-<li><p><strong>PaaS</strong>，就是以前企业需要业务软件的时候，软件开发商在自己公司开发完在卖给企业客户，还要派人去安装软件。现在开发、安装都在企业客户那里全做了。当然给的钱也不再是软件费而是人头费了。</p>
+<li><p>l：表示符号链接文件，类似windows上快捷方式，也成为软链接文件。</p>
 </li>
-<li><p><strong>SaaS</strong>，就是以前写汇报胶片用微软PPT软件，现在登录<a href="www.prezi.com">www.prezi.com</a>，在那个网站上就可以写胶片了，很酷。</p>
+<li><p>p：表示管道文件</p>
+</li>
+<li><p>s：表示套接字文件，用于两个进程之间进行通信时套接的数据。</p>
 </li>
 </ul>
-<h2 id="云计算的8个通用特点"><a href="#云计算的8个通用特点" class="headerlink" title="云计算的8个通用特点"></a>云计算的8个通用特点</h2><blockquote>
-<ul>
-<li>大规模（Massive scale）</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
-<li>同质化（Homogeneity）</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
-<li>虚拟化（Virtualization）</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
-<li>弹性计算（Resilient computing）</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
-<li>低成本软件（Low cost software）</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
-<li>地理分布（Geographic distribution）</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
-<li>服务定位（Service orientation）</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
-<li>先进安全技术（Advanced security technologies）</li>
-</ul>
-</blockquote>
-<p>这是美国国家标准与技术研究院给云计算列出的8个通用特点：</p>
-<p><strong>大规模（Massive scale）</strong>，因为云计算服务把IT的资源供应集中化了，自然规模很大。也正因为如此，量变导致质变，使得云计算与传统IT有了众多的区别。</p>
-<p><strong>同质化（Homogeneity）</strong>，也可以理解成标准化，这点倒是和用电很类似，大家要保持相同电压、插座接口，这样人们的电器和各种设备才能被广泛使用。</p>
-<p><strong>虚拟化（Virtualization）</strong>，有两层含义，一个是计算单元的精细化，一块蛋糕太大，一个人吃不了，那最好切成小块，大家分着吃，也就是让每个计算单元更小，这样可以充分利用IT资源；另外一层含义是软硬件的分离，虚拟化之前软件和指定硬件是绑在一起的，虚拟化之后软件在所有硬件上可以自由的迁移，这跟人们由买房变成租房是一样的，既然北上广深的房价太高，很多人便租房住了，拎个箱子想住哪就住哪。</p>
-<p><strong>弹性计算（Resilient computing）</strong>，在前面已经说过，指的是IT资源供给可弹性伸缩。</p>
-<p><strong>低成本软件（Low cost software）</strong>，是从竞争与市场需求发展的角度说的。云计算降低了人们使用IT的门槛，不仅仅在个人技术能力上，而且在资金能力上，很多小微的初创企业，本身就没啥钱，希望能够用最少的钱使用最多的IT服务，要想打开这部分市场，自然需要低成本的软件，通过薄利多销的形式赚到更多的钱。</p>
-<p><strong>地理分布（Geographic distribution）</strong>：前文我们提到了泛在接入，也就是能够在任意时间任意地点提供IT服务。从使用者的角度看，就是地理分散的，由于各地网络带宽的优劣差异，那么IT提供者，也就是云计算数据中心的部署，自然也是呈现出地理分布式特征的。大的公有云厂商都有几十个甚至数百个数据中心或服务节点，面向全球提供云计算服务。</p>
-<p><strong>服务定位（Service orientation）</strong>：因为云计算是一种服务模式，它的整个体系的设计也就是面向服务的。</p>
-<p><strong>先进安全技术（Advanced security technologies）</strong>，林子大了，什么鸟都有，公有云大了，什么用户也都有，包括好的坏的，自然先进的安全技术保障是一个云计算必须的条件了。</p>
-<p>到此为止，对云计算的总结就是：4部署-3服务-5特性-8个通用点，简称<strong>4358</strong>。<br><img src="https://i.loli.net/2019/02/18/5c6a69805e25b.jpg" alt></p>
-<h2 id="云计算的流派"><a href="#云计算的流派" class="headerlink" title="云计算的流派"></a>云计算的流派</h2><blockquote>
-<p>从实现方式来看，云计算有两个典型的流派：<strong>大分小模式</strong>和<strong>小聚大模式</strong>。（现在这个概念已经很少有人提了，因为从资源的使用看，两种流派的本质是相同的）</p>
-</blockquote>
-<p><img src="https://i.loli.net/2019/02/18/5c6a69dc3017e.jpg" alt></p>
-<p><strong>大分小模式</strong>：也称为Amazon流派，不同的应用在使用资源时，通过时分复用算法来调用。</p>
-<blockquote>
-<p>关键技术点包括：计算、存储和网络虚拟化以及虚拟机监控、调度和迁移。</p>
-</blockquote>
-<blockquote>
-<p>典型代表：Amazon，alibaba，华为的EC2等。</p>
-</blockquote>
-<p><strong>小聚大模式</strong>：也称为Google流派，资源在多个应用间贡献，通过将应用划分多个子任务，结合调度算法来实现某个子引用在资源上的独占。</p>
-<blockquote>
-<p>关键技术点包括任务分解、调度、分布式通信总线和全局一致性。</p>
-</blockquote>
-<blockquote>
-<p>典型代表：Google，我国的天河2号等</p>
-</blockquote>
+<h2 id="Linux系统重要的配置文件"><a href="#Linux系统重要的配置文件" class="headerlink" title="Linux系统重要的配置文件"></a>Linux系统重要的配置文件</h2><p><strong><em>/etc/sysconfig/network-scripts/ifcfg-eth  :</em></strong>  网卡配置文件</p>
+<p><strong><em>/etc/resolv.conf :</em></strong> DNS配置文件</p>
+<p><strong><em>/etc/hosts  :</em></strong> 主机名与IP的映射关系配置文件</p>
+<p><strong><em>/etc/sysconfig/network  :</em></strong> 配置主机名的目录</p>
+<p><strong><em>/etc/fstab :</em></strong> 实现开机要挂载的文件系统的一个文件</p>
+<p><strong><em>/etc/rc.local :</em></strong> 实现开机启动的配置或软件</p>
+<p><strong><em>/etc/inittab :</em></strong> 实现开机后系统运行的级别，加载相关的启动文件</p>
+<p><strong><em>/etc/issue :</em></strong> 用户登录时的系统提示</p>
+<p><strong><em>/etc/motd :</em></strong> 用户登录后的系统提示</p>
+<p><strong><em>/etc/redhat-release：</em></strong>系统发行版本信息</p>
+<p><strong><em>/usr/local :</em></strong> 通过源码编译的文件</p>
+<p><strong><em>/var/log/message：</em></strong>系统日志文件</p>
 
       
     </div>
@@ -768,7 +687,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="https://kkutysllb.cn/2018/09/12/2018-09-12-云计算的前世今生/" title="2018-09-12-云计算的前世今生">https://kkutysllb.cn/2018/09/12/2018-09-12-云计算的前世今生/</a>
+    <a href="https://kkutysllb.cn/2019/04/15/2019-03-30-Linux的文件系统/" title="2019-03-30-Linux的文件系统">https://kkutysllb.cn/2019/04/15/2019-03-30-Linux的文件系统/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -794,8 +713,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/03/2018-09-03-什么是云计算/" rel="next" title="2018-09-03-什么是云计算?">
-                <i class="fa fa-chevron-left"></i> 2018-09-03-什么是云计算?
+              <a href="/2019/04/15/2019-03-18-Linux系统的内存管理/" rel="next" title="2019-03-18-Linux系统的内存管理">
+                <i class="fa fa-chevron-left"></i> 2019-03-18-Linux系统的内存管理
               </a>
             
           </div>
@@ -804,8 +723,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/09/25/2018-09-25-云计算带来哪些变化？/" rel="prev" title="2018-09-25-云计算带来哪些变化">
-                2018-09-25-云计算带来哪些变化 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/04/15/2019-04-05-CentOS操作系统6-x版本与7-x版本的区别/" rel="prev" title="2019-04-05-CentOS操作系统6.x版本与7.x版本的区别">
+                2019-04-05-CentOS操作系统6.x版本与7.x版本的区别 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -1016,7 +935,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#云计算的发展历程"><span class="nav-number">1.</span> <span class="nav-text">云计算的发展历程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#云计算技术的演进历程"><span class="nav-number">2.</span> <span class="nav-text">云计算技术的演进历程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#云计算的部署模式"><span class="nav-number">3.</span> <span class="nav-text">云计算的部署模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#云计算当前的商业模式"><span class="nav-number">4.</span> <span class="nav-text">云计算当前的商业模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#云计算的8个通用特点"><span class="nav-number">5.</span> <span class="nav-text">云计算的8个通用特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#云计算的流派"><span class="nav-number">6.</span> <span class="nav-text">云计算的流派</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux的文件系统"><span class="nav-number">1.</span> <span class="nav-text">Linux的文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux目录的层次标准FHS"><span class="nav-number">1.1.</span> <span class="nav-text">Linux目录的层次标准FHS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux系统的文件类型："><span class="nav-number">1.2.</span> <span class="nav-text">Linux系统的文件类型：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux系统重要的配置文件"><span class="nav-number">1.3.</span> <span class="nav-text">Linux系统重要的配置文件</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -1212,7 +1131,7 @@
   
     <script>
   window.livereOptions = {
-    refer: '2018/09/12/2018-09-12-云计算的前世今生/'
+    refer: '2019/04/15/2019-03-30-Linux的文件系统/'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];
