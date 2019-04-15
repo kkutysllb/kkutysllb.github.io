@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://kkutysllb.cn/"/>
-  <updated>2019-02-18T00:49:06.000Z</updated>
+  <updated>2019-04-15T07:10:43.129Z</updated>
   <id>https://kkutysllb.cn/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>2019-03-02-Linux系统基础介绍</title>
+    <link href="https://kkutysllb.cn/2019/04/15/2019-03-02-Linux%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E4%BB%8B%E7%BB%8D/"/>
+    <id>https://kkutysllb.cn/2019/04/15/2019-03-02-Linux系统基础介绍/</id>
+    <published>2019-04-15T06:53:05.000Z</published>
+    <updated>2019-04-15T07:10:43.129Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Linux系统基础介绍"><a href="#Linux系统基础介绍" class="headerlink" title="Linux系统基础介绍"></a><strong><em>Linux系统基础介绍</em></strong></h1><p>本文作为Linux操作系统开篇文章，主要介绍一些操作系统的基础概念和原理，然后简要介绍Linux的发展历史，以及市面上常见的Linux系统版本。&lt;! –more–&gt;</p><h2 id="操作系统基本概念和原理"><a href="#操作系统基本概念和原理" class="headerlink" title="操作系统基本概念和原理"></a><strong>操作系统基本概念和原理</strong></h2><p>操作系统可以说是目前所有现代人都了解的一个名词，大家平时的日常工作和生活都离不开操作系统。目前，世界上主要流行的操作系统有三类：Linux、Windows和Mac OS。其中，后两个操作系统是大家熟悉的，大家的日常工作和生活大部分都会跟这两种操作系统打交道，对于Linux操作系统可能普通只是处在听说过的阶段，很少有人去详细了解和使用。</p><p>那么如果有人问你什么是操作系统？虽然大家平时都在用，但是估计很多人都会一脸懵逼。其实，操作系统就是处在计算机硬件和人之间的一个重要的中间部件，它存在意义有2个：一是通过在其上部署应用软件，满足人们操作计算机硬件的需求。二是将上层应用软件与底层硬件进行解耦，满足人们随时随地、随心所欲的操作计算机硬件的要求。</p><p>作系统的官方定义是：英文名Operating System，简称OS。是计算机系统中必不可少的基础系统软件，它是应用程序运行以及用户操作必备的基础环境支撑，是计算机系统的核心。**从官方定义不难看出，操作系统（后统称为OS）首先是一个软件，是一个支撑软件，支撑应用软件和人们的操作。所以，它是一种特殊软件，主要由内核+库两部分实现（如下图所示）。</p><p><img src="https://i.loli.net/2019/04/15/5cb42b8be3291.jpg" alt></p><p>内核存在的目的就是将底层的硬件进行软件化封装，方便上层调用来操作硬件。而库的作用就是将内核的软件封装再构造成一个个标准函数，供上层应用去调用从而避免应用直接操作内核的风险。其次，它还是计算机系统的核心。我们现在讲的计算机系统都是冯诺依曼架构（如下图所示），由控制器、运算器、存储设备和输入输出设备四部分构成，OS就是这些部件协调运作赖以支撑的基础，所以它也是计算机系统的核心。</p><p><img src="https://i.loli.net/2019/04/15/5cb42bc5252e1.jpg" alt></p><p>综上，用一句话概括操作系统的概念就是：<strong>操作系统就是位于用户与计算机系统硬件之间用于传递信息系统程序软件。</strong></p><h2 id="什么是Linux"><a href="#什么是Linux" class="headerlink" title="什么是Linux"></a><strong>什么是Linux</strong></h2><p><img src="https://i.loli.net/2019/04/15/5cb42c1824c56.jpg" alt></p><p><strong><em>Linux系统组成如上图</em></strong></p><ul><li><strong>内核：</strong>是系统的心脏，是运行程序和管理像磁盘和打印机等硬件设备的核心程序。</li><li><strong>Shell：</strong>是系统的用户界面，提供了用户和内核进行交互操作的一种接口。它接收用户输入的命令并把它送入内核去执行，是一个命令解释器。但它不仅是命令解释器，而且还是高级编程语言，shell编程。</li><li><strong>文件系统</strong>：文件系统是文件存放在磁盘等存储设备上的组织方法，Linux支持多种文件系统，如ext3,ext2,NFS,SMB,iso9660等。</li><li><strong>应用程序：</strong>标准的Linux操作系统都会有一套应用程序例如X-Window,Open Office等。</li></ul><p>和windows一样，Linux也是一种操作系统。与windows的商业不同的是，Linux是一套完全开源的操作系统，其实现代码全部呈现给使用者。就像你亲自下厨做饭一样，所有的原材料和工序你都清楚，因此做出饭菜自然比外卖要安全可靠。所以，国内一些企业自研操作系统均是由Linux源码封装改造而来，其宣称”自主可控“，也无可厚非。</p><p>Linux在设计之初，是基于Intel x86 PC架构的，是一套多任务、多用户并支持多线程和多CPU的操作系统。其设计的本意就是打破商业软件版权的限制（因为当初unix系统被AT&amp;T回收版权，禁止向学生群体开放源码，从而引起版权纠纷），全世界都能使用的类unix系统兼容产品。从其1991年诞生到现在约30年的时间，Linux操作系统主要用于服务器领域、嵌入式开发，其在个人PC桌面领域应用较少，这也是其不被大众熟悉的原因。（目前，在个人PC桌面领域做的较好由国外的ubuntu、fedora，国内的深度deepin，中兴的新起点等操作系统）。其实，现在windows在个人桌面操作系统的优势除了软件生态以外，也不再剩下什么。如果Linux的软件生态得到广大发展，那么可以预期个人桌面系统将发生颠覆性的变化。这也是微软为什么在即将发布的windows 10的1903版本推出同时兼容读写Linux系统文件的原因，微软现在已经很着急啦：）。</p><p>全球超算99.9%都是使用Linux，全球和国内排名前1000的互联网公司90%的服务器也使用的是Linux，就是因为Linux系统优越性使其在服务器领域一举奠定了霸主地位，无论是windows还是mac os都无法与其竞争。Linux的优越性主要都继承自unix系统，主要由以下几点：</p><ul><li><p>具备开放源代码的程序软件，可自由修改。</p></li><li><p>Unix系统兼容，具备几乎所有Unix系统的优点。</p></li><li>可自由传播，无任何商业化版权制约。</li><li>适合Intel x86CPU系列架构的计算机。</li></ul><p>严格来说，Linux这个词本身只表示Linux内核，但是人们已经习惯用Linux来形容整个基于Linux内核的操作系统，并且是一种使用GNU通用公共许可证（GUN general public，GPL）工程的，包括各种工具和数据库的操作系统。</p><p>Linux内核除系统调用外，由五个主要的子系统组成：进程调度、内存管理、虚拟文件系统、网络和进程间通信(IPC)。</p><p>各个子系统的主要功能为： </p><p><strong>1、进程调度：</strong>它控制着进程对CPU的访问，当需要选择一个进程开始运行时，由调度程序选择最应该运行的进程；</p><p><strong>2、内存管理：</strong>它允许多个进程安全地共享主内存区域，支持虚拟内存；从逻辑上可以分为硬件无关的部分和硬件相关的部分；</p><p><strong>3、虚拟文件系统(VFS)：</strong>它隐藏了各种不同硬件的具体细节，为所有设备提供统一的接口，支持多达数十种不同的文件系统，分为逻辑文件系统和设备驱动程序；</p><p><strong>4、网络：</strong>它提供了对各种网络标准协议的存取和各种网络硬件的支持，分为网络协议和网络驱动程序两部分；</p><p><strong>5、进程间通信：</strong>支持进程间各种通信机制，包括共享内存、消息队列和管道等。</p><p>GNU的全称为GNU’s not Unix，意思是“GNU不是Unix”，GNU计划，又称革奴计划，是由Richard Stallman在1984年公开发起的，是FSF（自由软件基金会）的主要项目，这个项目成立的本意就是建立一套完全自由的可移植的类unix操作系统。在Linux内核发布的时候，GUN项目已经完成了除系统内核之外的各种必备软件的开发。在Linus Torvalds和其他开发人员的努力下，GNU项目的部分组件又运行到了Linux内核之上，例如：GNU项目里的Emacs、gcc、bash、gawk等，至今都是Linux系统中很重要的基础软件。因此，如今我们说的Linux操作系统实际上是GNU/Linux操作系统。</p><p>而GPL是一个最著名的开源许可协议，其核心是<strong>保证任何人有共享和修改自由软件的自由，任何人有权取得、修改和重新发布自由软件的源代码权利，但都必须同时给出具体更改的源代码。</strong>正是因为该协议的存在，才使得开源软件有如今如火如荼的发展局面。</p><h2 id="Linux系统启动顺序和基本概念"><a href="#Linux系统启动顺序和基本概念" class="headerlink" title="Linux系统启动顺序和基本概念"></a><strong>Linux系统启动顺序和基本概念</strong></h2><p>开机自检（BIOS)—&gt;MBR引导（512字节，其中前446字节是Grub菜单，后64字节是分区表）—&gt;GRUB菜单（选择启动系统）—-&gt;加载内核Kernel—&gt;运行INIT进程。其中，INIT进程在Linux系统的用PID编号为1来表示，意思为所有进程的“大佬”。</p><p><strong>BIOS：</strong>基本输入输出系统（basic input output system，BIOS），是一组固话到计算机主板ROM上的程序，保存着计算计算最重要的基本输入输出程序、系统设置信息、开机自检程序和系统自启动程序，为计算机提供最底层的、最直接的硬件设置和控制。</p><p><strong>MBR：</strong>一种硬盘分区格式。目前，硬盘分区格式主要有两种，分别是MBR和GTP。MBR，即主引导记录扇区（master boot record），位于整块硬盘的0磁道0煮面1扇区，用于操作系统对硬盘读写时，判断分区的合法性以及分区引导信息的定位。总共512字节，前446字节用于主引导记录，后64字节用于存储硬盘分区表（DPT），每个分区表大小16字节，共4个分区表，所以采用MBR分区格式的硬盘最多只能分出4个分区（主分区+扩展分区），最后两个字节”55，AA“是分区的结束标志。MBR分区表的格式如下：</p><p><img src="https://i.loli.net/2019/04/15/5cb42d40966b7.jpg" alt></p><p><strong>GPT：</strong>全局唯一分区格式，正在逐渐取代MBR成为新标准。它和统一的可扩展固件接口（unified extensible firnware interface，UEFI）相辅相成。UEFI用于取代BIOS，而GPT用于取代MBR。在GPT硬盘中，分区表中的位置信息存储在GPT头中，第一个扇区同样有一个与MBR类似的标记，叫做受保护的主引导记录（protected main boot record，PMBR）。其作用是当使用不支持GPT的分区工具时，整个硬盘将显示为一个受保护的分区，防止数据被破坏，其中存储的内容与MBR一样，之后才是GPT头部信息。与MBR相比，支持2TB以上的磁盘，如果使用fdisk分区，最大只能建立2TB大小的分区，创建大于2TB的分区时，需使用parted工具，同时必须使用64位操作系统。以下是GPT分区表的数据格式：</p><p><img src="https://i.loli.net/2019/04/15/5cb42d6337913.jpg" alt></p><p><strong>GRUB：</strong>多操作系统启动程序（GRand unified bootloader）。支持多操作系统引导，当系统中装载多操作系统时，在系统启动时便于用户选择。GRUB还可用于选择操作系统分区上的不同内核，也可用于向这些内核传递启动参数。Linux常见的引导程序包括：LILO、GRUB、GRUB2。CentOS 6.x系统和Ubuntu系统默认采用GRUB引导程序，所以当我们有需要编译GRUB菜单时，执行如下命令：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grub-mkconfig -o /boot/grub/grub.cfg</span><br></pre></td></tr></table></figure><p>CentOS 7.x系统默认采用GRUB2引导程序，所以当我们有需要编译GRUB菜单时，执行如下命令：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grub2-mkconfig -o /boot/grub2/grub.cfg</span><br></pre></td></tr></table></figure><p>GRUB加载引导程序的流程如下：</p><p><img src="https://i.loli.net/2019/04/15/5cb42e226d582.jpg" alt></p><p>GRUB2是基于GRUB开发的更加安全强大的多系统引导程序，同时采用模块化设计，使得GRUB2核心更加尽量，使用更加灵活，也不需要像GRUB那样分为stage1、stage1.5和stage2三个阶段。</p><p><strong>init：</strong>就是系统的不同运行级别对应加载的启动文件。在Linux跟目录下的/etc/目录下，有与系统运行级别对应的rc开头的目录，里面存在对应系统运行级别的脚本文件。Linux内核加载完成后，通过加载这些启动文件完成系统的初始化。</p><p><img src="https://i.loli.net/2019/04/15/5cb42e68b6ed6.jpg" alt></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;Linux系统基础介绍&quot;&gt;&lt;a href=&quot;#Linux系统基础介绍&quot; class=&quot;headerlink&quot; title=&quot;Linux系统基础介绍&quot;&gt;&lt;/a&gt;&lt;strong&gt;&lt;em&gt;Linux系统基础介绍&lt;/em&gt;&lt;/strong&gt;&lt;/h1&gt;&lt;p&gt;本文作为Linu
+      
+    
+    </summary>
+    
+      <category term="Linux" scheme="https://kkutysllb.cn/categories/Linux/"/>
+    
+    
+      <category term="基础概念" scheme="https://kkutysllb.cn/tags/%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/"/>
+    
+  </entry>
   
   <entry>
     <title>2018-10-10-云计算的技术架构</title>
