@@ -112,7 +112,7 @@
 <meta property="og:description" content="CentOS操作系统6.x版本与7.x版本的区别Centos7与6之间最大的差别就是初始化技术的不同，7采用的初始化技术是Systemd,并行的运行方式，除了这一点之外，服务启动、开机启动文件、网络命令方面等等也存在不同。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://i.loli.net/2019/04/15/5cb43e1e5f150.jpg">
-<meta property="og:updated_time" content="2019-04-15T08:31:23.654Z">
+<meta property="og:updated_time" content="2019-04-15T08:41:43.881Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-04-05-CentOS操作系统6.x版本与7.x版本的区别">
 <meta name="twitter:description" content="CentOS操作系统6.x版本与7.x版本的区别Centos7与6之间最大的差别就是初始化技术的不同，7采用的初始化技术是Systemd,并行的运行方式，除了这一点之外，服务启动、开机启动文件、网络命令方面等等也存在不同。">
@@ -437,7 +437,7 @@
                 
               
 
-              <time title="创建时间：2019-04-15 16:01:49 / 修改时间：16:31:23" itemprop="dateCreated datePublished" datetime="2019-04-15T16:01:49+08:00">2019-04-15</time>
+              <time title="创建时间：2019-04-15 16:01:49 / 修改时间：16:41:43" itemprop="dateCreated datePublished" datetime="2019-04-15T16:01:49+08:00">2019-04-15</time>
             
 
             
@@ -495,7 +495,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">6.8k</span>
+                <span title="本文字数">6.9k</span>
               
 
               
@@ -550,205 +550,38 @@
 <h2 id="2-在yum源上的优化"><a href="#2-在yum源上的优化" class="headerlink" title="2.在yum源上的优化"></a><strong><em>2.在yum源上的优化</em></strong></h2><p>在centos6的时候，默认是从官方源下载rpm包的，由于是国外的yum源很慢不能用，CentOS7在这里做了优化，当我们使用yum安装软件的时候，默认不会再从官方下载，而是自动寻找离自己地理位置最近的yum源开始下载。</p>
 <h3 id="3-网络命令"><a href="#3-网络命令" class="headerlink" title="3.网络命令"></a><strong><em>3.网络命令</em></strong></h3><p>如果在安装系统的时候选择minimal，会比之前6的时候以更小的包来安装，比如：vim、ifconfig、route、setup、netstat等等都不会安装。因此，使用CentOS7通过最小化安装后，还需挂在ISO完成上述常用工具的安装。如果采用脚本自动化安装，可以将上述的工具的安装命令写入到安装到脚本中。</p>
 <p><strong><em>4.字符集修改</em></strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>/etc/locale.conf  #字符集配置文件</p>
-<p> localectl set-locale LANG=zh_CN.UTF-8  # 命令行一步到位 </p>
-<p> [root@CentOS7 ~]# localectl set-locale LANG=zh_CN.UTF-8 </p>
-<p>[root@CentOS7 ~]# localectl status   </p>
-<p>System Locale: LANG=zh_CN.UTF-8   </p>
-<p>VC Keymap: us   X11 Layout: us</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/etc/locale.conf  #字符集配置文件</span><br><span class="line"></span><br><span class="line"> localectl set-locale LANG=zh_CN.UTF-8  # 命令行一步到位 </span><br><span class="line"></span><br><span class="line"> [root@CentOS7 ~]# localectl set-locale LANG=zh_CN.UTF-8 </span><br><span class="line"></span><br><span class="line">[root@CentOS7 ~]# localectl status   </span><br><span class="line"></span><br><span class="line">System Locale: LANG=zh_CN.UTF-8   </span><br><span class="line"></span><br><span class="line">VC Keymap: us   X11 Layout: us</span><br></pre></td></tr></table></figure>
 <h2 id="5-开机启动管理"><a href="#5-开机启动管理" class="headerlink" title="5.开机启动管理"></a><strong><em>5.开机启动管理</em></strong></h2><p>/etc/rc.local 这个文件还是存在，不过如果我们还想继续使用这种方式需要给它加执行权限chmod +x /etc/rc.d/rc.local</p>
 <p><strong><em>system一统天下 snapshot(支持快照)</em></strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>systemctl status cron.service #查看定时任务状态<br>systemctl stop cron.service#关闭定时任务<br>systemctl status cron.service#查看操作情况<br>systemctl list-unit-files|grep enable  #查看当前正在运行的服务<br>systemctl disable postfix.service #关闭邮件服务<br>systemctl list-unit-files|grep postfix #查看邮件服务是否开启<br>systemctl stop firewalld.service #关闭防火墙<br>systemctl is-enable #开启的服务 systemctl disable#关闭的服务</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="6-运行级别runlevel"><a href="#6-运行级别runlevel" class="headerlink" title="6.运行级别runlevel"></a><strong><em>6.运行级别runlevel</em></strong></h2><p><strong><em>/etc/inittab 是无效的，由system target 替代。</em></strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>#永久生效下次登录生效 </p>
-<p>systemctl get-default graphical.target  # 切换到5 </p>
-<p>systemctl get-default multi-user.target # 切换到3 </p>
-<p>##临时生效的话  </p>
-<p>init3 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong><em>七种种运行级别如下</em></strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p> [root@centos7 ~]# ls -lh /usr/lib/systemd/system/runlevel*.target lrwxrwxrwx. 1 root root 15 Apr 20 22:31 /usr/lib/systemd/system/runlevel0.target -&gt; poweroff.target lrwxrwxrwx. 1 root root 13 Apr 20 22:31 /usr/lib/systemd/system/runlevel1.target -&gt; rescue.target lrwxrwxrwx. 1 root root 17 Apr 20 22:31 /usr/lib/systemd/system/runlevel2.target -&gt; multi-user.target lrwxrwxrwx. 1 root root 17 Apr 20 22:31 /usr/lib/systemd/system/runlevel3.target -&gt; multi-user.target lrwxrwxrwx. 1 root root 17 Apr 20 22:31 /usr/lib/systemd/system/runlevel4.target -&gt; multi-user.target lrwxrwxrwx. 1 root root 16 Apr 20 22:31 /usr/lib/systemd/system/runlevel5.target -&gt; graphical.target lrwxrwxrwx. 1 root root 13 Apr 20 22:31 /usr/lib/systemd/system/runlevel6.target</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">systemctl status cron.service #查看定时任务状态</span><br><span class="line">systemctl stop cron.service#关闭定时任务</span><br><span class="line">systemctl status cron.service#查看操作情况</span><br><span class="line">systemctl list-unit-files|grep enable  #查看当前正在运行的服务</span><br><span class="line">systemctl disable postfix.service #关闭邮件服务</span><br><span class="line">systemctl list-unit-files|grep postfix #查看邮件服务是否开启</span><br><span class="line">systemctl stop firewalld.service #关闭防火墙</span><br><span class="line">systemctl is-enable #开启的服务 systemctl disable#关闭的服务</span><br></pre></td></tr></table></figure>
+<h2 id="6-运行级别runlevel"><a href="#6-运行级别runlevel" class="headerlink" title="6.运行级别runlevel"></a><strong><em>6.运行级别runlevel</em></strong></h2><p><strong><em>/etc/inittab 是无效的，由system target 替代。</em></strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#永久生效下次登录生效 </span><br><span class="line"></span><br><span class="line">systemctl get-default graphical.target  # 切换到5 </span><br><span class="line"></span><br><span class="line">systemctl get-default multi-user.target # 切换到3 </span><br><span class="line"></span><br><span class="line">##临时生效的话  </span><br><span class="line"></span><br><span class="line">init3</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>七种种运行级别如下</em></strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 ~]# ls -lh /usr/lib/systemd/system/runlevel*.target lrwxrwxrwx. 1 root root 15 Apr 20 22:31 /usr/lib/systemd/system/runlevel0.target -&gt; poweroff.target lrwxrwxrwx. 1 root root 13 Apr 20 22:31 /usr/lib/systemd/system/runlevel1.target -&gt; rescue.target lrwxrwxrwx. 1 root root 17 Apr 20 22:31 /usr/lib/systemd/system/runlevel2.target -&gt; multi-user.target lrwxrwxrwx. 1 root root 17 Apr 20 22:31 /usr/lib/systemd/system/runlevel3.target -&gt; multi-user.target lrwxrwxrwx. 1 root root 17 Apr 20 22:31 /usr/lib/systemd/system/runlevel4.target -&gt; multi-user.target lrwxrwxrwx. 1 root root 16 Apr 20 22:31 /usr/lib/systemd/system/runlevel5.target -&gt; graphical.target lrwxrwxrwx. 1 root root 13 Apr 20 22:31 /usr/lib/systemd/system/runlevel6.target</span><br></pre></td></tr></table></figure></p>
 <h2 id="7-网卡名称"><a href="#7-网卡名称" class="headerlink" title="7.网卡名称"></a><strong><em>7.网卡名称</em></strong></h2><p>CentOS7的网卡名称太长，这不符合我们的使用习惯，增加了管理难度，最简单粗暴的方法是在安装系统的时候就把网卡名改了。当然，安装好的系统也是可以修改的。下面分别介绍两种方法。</p>
 <h3 id="方法一：-推荐）"><a href="#方法一：-推荐）" class="headerlink" title="方法一：(推荐）"></a><strong>方法一：(推荐）</strong></h3><p>在进入安装界面的时候把光标移动到Install CentOS7,按下tab键，在后面输入“net ifnames=0 biosdevname=0”回车即可。</p>
 <p><img src="https://i.loli.net/2019/04/15/5cb43e1e5f150.jpg" alt></p>
-<h3 id="方法二："><a href="#方法二：" class="headerlink" title="方法二："></a><strong>方法二：</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>#进入网卡配置文件目录</p>
-<p>[root@centos7 ~]# cd /etc/sysconfig/network-scripts/</p>
-<p>#重命名网卡</p>
-<p>[root@centos7 network-scripts]# mv ifcfg-eno16777736 ifcfg-eth0</p>
-<p>#修改配置文件NAME、DEVICE</p>
-<p>[root@centos7 network-scripts]# vim ifcfg-eth0TYPE=Ethernet<br>BOOTPROTO=static<br>TYPE=Ethernet<br>BOOTPROTO=static<br>DEFROUTE=yes<br>TYPE=Ethernet<br>BOOTPROTO=static<br>DEFROUTE=yes<br>PEERDNS=yes<br>PEERROUTES=yes<br>IPV4_FAILURE_FATAL=no<br>NAME=eth0UUID=552c01f7-fd9d-4f19-913e-379a2bf5a467<br>DEVICE=eth0<br>ONBOOT=yes<br>IPADDR=10.0.0.111<br>“ifcfg-eth0” 14L, 239C written</p>
-<p>#修改grub</p>
-<p>sed -i.bak ‘s#crashkernel=auto rhgb quiet#crashkernel=auto rhgb net.ifnames=0 biosdevname=0 quiet#g’ /etc/sysconfig/grub<br>[root@centos7 network-scripts]# vim /etc/sysconfig/grub GRUB_TIMEOUT=5<br>GRUB_DISTRIBUTOR=”$(sed ‘s, release .*$,,g’ /etc/system-release)”<br>GRUB_DEFAULT=saved<br>GRUB_DISABLE_SUBMENU=true<br>GRUB_TERMINAL_OUTPUT=”console”<br>GRUB_CMDLINE_LINUX=”crashkernel=auto rhgb net.ifnames=0 biosdevname=0 quiet”<br>“/etc/sysconfig/grub” 7L, 263C written</p>
-<p>#生成启动菜单</p>
-<p>[root@centos7 network-scripts]# grub2-mkconfig -o /boot/grub2/grub.cfg<br>Generating grub configuration file …<br>Found linux image: /boot/vmlinuz-3.10.0-327.el7.x86_64<br>Found initrd image: /boot/initramfs-3.10.0-327.el7.x86_64.img<br>Found linux image: /boot/vmlinuz-0-rescue-7ed5d4eebe4c43e3aadbda68cd0ef311<br>Found initrd image: /boot/initramfs-0-rescue-7ed5d4eebe4c43e3aadbda68cd0ef311.imgdone</p>
-<p>#重启系统生效<br>[root@centos7 network-scripts]# reboot</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="8-桌面系统"><a href="#8-桌面系统" class="headerlink" title="8.桌面系统"></a><strong><em>8.桌面系统</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>GNOME 2.x</p>
-<p>[CentOS7] </p>
-<p>GNOME 3.x（GNOME Shell） </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="9-文件系统"><a href="#9-文件系统" class="headerlink" title="9.文件系统"></a><strong><em>9.文件系统</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>ext4 </p>
-<p>[CentOS7] </p>
-<p>xfs </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="10-内核版本"><a href="#10-内核版本" class="headerlink" title="10.内核版本"></a><strong><em>10.内核版本</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>2.6.x-x </p>
-<p>[CentOS7] </p>
-<p>3.10.x-x </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="11-启动加载器"><a href="#11-启动加载器" class="headerlink" title="11.启动加载器"></a><strong><em>11.启动加载器</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>GRUB Legacy (+efibootmgr)</p>
-<p>[CentOS7] </p>
-<p>GRUB2 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="12-防火墙"><a href="#12-防火墙" class="headerlink" title="12.防火墙"></a><strong><em>12.防火墙</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>iptables</p>
-<p>[CentOS7] </p>
-<p>firewalld </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="13-默认数据库"><a href="#13-默认数据库" class="headerlink" title="13.默认数据库"></a><strong><em>13.默认数据库</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>MySQL </p>
-<p>[CentOS7] </p>
-<p>MariaDB </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="14-文件结构"><a href="#14-文件结构" class="headerlink" title="14.文件结构"></a><strong><em>14.文件结构</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>/bin, /sbin, /lib, and /lib64在/下 </p>
-<p>[CentOS7] </p>
-<p>/bin, /sbin, /lib, and /lib64移到/usr下 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="15-主机名"><a href="#15-主机名" class="headerlink" title="15.主机名"></a><strong><em>15.主机名</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS7] </p>
-<p>/etc/hostname </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="16-时间同步"><a href="#16-时间同步" class="headerlink" title="16.时间同步"></a><strong><em>16.时间同步</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ ntp </p>
-<p>$ ntpq -p </p>
-<p>[CentOS7] </p>
-<p>$ chrony </p>
-<p>$ chronyc sources </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="17-修改时间"><a href="#17-修改时间" class="headerlink" title="17.修改时间"></a><strong><em>17.修改时间</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ vim /etc/sysconfig/clock    ZONE=”Asia/Shanghai”    UTC=fales </p>
-<p>$ sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime </p>
-<p>[CentOS7] </p>
-<p>$ timedatectl set-timezone Asia/Shanghai </p>
-<p>$ timedatectl status </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="18-修改地区"><a href="#18-修改地区" class="headerlink" title="18.修改地区"></a><strong><em>18.修改地区</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ vim /etc/sysconfig/i18n    LANG=”zh_CN.utf8” </p>
-<p>$ /etc/sysconfig/i18n $ locale </p>
-<p>[CentOS7] </p>
-<p>$ localectl set-locale LANG=zh_CN.utf8 </p>
-<p>$ localectl status </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="19-服务相关"><a href="#19-服务相关" class="headerlink" title="19.服务相关"></a><strong><em>19.服务相关</em></strong></h2><h3 id="1）启动停止"><a href="#1）启动停止" class="headerlink" title="1）启动停止"></a><strong>1）启动停止</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ service service_name start </p>
-<p>$ service service_name stop </p>
-<p>$ service sshd restart/status/reload </p>
-<p>[CentOS7] </p>
-<p>$ systemctl start service_name </p>
-<p>$ systemctl stop service_name </p>
-<p>$ systemctl restart/status/reload sshd </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="2-自启动"><a href="#2-自启动" class="headerlink" title="2) 自启动"></a><strong>2) 自启动</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ chkconfig service_name on/off </p>
-<p>[CentOS7] </p>
-<p>$ systemctl enable service_name </p>
-<p>$ systemctl disable service_name </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="3-服务一览"><a href="#3-服务一览" class="headerlink" title="3) 服务一览"></a><strong>3) 服务一览</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ chkconfig –list </p>
-<p>[CentOS7] </p>
-<p>$ systemctl list-unit-files </p>
-<p>$ systemctl –type service </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="4-强制停止"><a href="#4-强制停止" class="headerlink" title="4) 强制停止"></a><strong>4) 强制停止</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ kill -9 <pid> </pid></p>
-<p>[CentOS7] </p>
-<p>$ systemctl kill –signal=9 sshd </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="20-网络"><a href="#20-网络" class="headerlink" title="20.网络"></a><strong><em>20.网络</em></strong></h2><h3 id="1）网络信息"><a href="#1）网络信息" class="headerlink" title="1）网络信息"></a><strong>1）网络信息</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ netstat </p>
-<p>$ netstat -I </p>
-<p>$ netstat -n </p>
-<p>[CentOS7] </p>
-<p>$ ip n </p>
-<p>$ ip -s l </p>
-<p>$ ss </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="2）IP地址MAC地址"><a href="#2）IP地址MAC地址" class="headerlink" title="2）IP地址MAC地址"></a><strong>2）IP地址MAC地址</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ ifconfig -a </p>
-<p>[CentOS7] </p>
-<p>$ ip address show </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="3）路由"><a href="#3）路由" class="headerlink" title="3）路由"></a><strong>3）路由</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ route -n </p>
-<p>$ route -A inet6 -n </p>
-<p>[CentOS7] </p>
-<p>$ ip route show </p>
-<p>$ ip -6 route show </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="21-重启关闭"><a href="#21-重启关闭" class="headerlink" title="21.重启关闭"></a><strong><em>21.重启关闭</em></strong></h2><h3 id="1）关闭"><a href="#1）关闭" class="headerlink" title="1）关闭"></a><strong><em>1）关闭</em></strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ shutdown -h now  </p>
-<p>[CentOS7] </p>
-<p>$ poweroff </p>
-<p>$ systemctl poweroff </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="2）重启"><a href="#2）重启" class="headerlink" title="2）重启"></a><strong><em>2）重启</em></strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ reboot </p>
-<p>$ shutdown -r now </p>
-<p>[CentOS7] </p>
-<p>$ reboot </p>
-<p>$ systemctl reboot </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="3）单用户模式"><a href="#3）单用户模式" class="headerlink" title="3）单用户模式"></a><strong><em>3）单用户模式</em></strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ init S </p>
-<p>[CentOS7] </p>
-<p>$ systemctl rescue </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="4）启动模式"><a href="#4）启动模式" class="headerlink" title="4）启动模式"></a><strong><em>4）启动模式</em></strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>[CentOS6] </p>
-<p>$ vim /etc/inittab   id:3:initdefault: </p>
-<p>$ startx </p>
-<p>[CentOS7] </p>
-<p>$ systemctl isolate multi-user.target </p>
-<p>$systemctl isolate graphical.target </p>
-<p>#默认 </p>
-<p>$ systemctl set-default graphical.target </p>
-<p>$ systemctl set-default multi-user.target </p>
-<p>#当前 </p>
-<p>$ systemctl get-default </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="方法二："><a href="#方法二：" class="headerlink" title="方法二："></a><strong>方法二：</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#进入网卡配置文件目录</span><br><span class="line"></span><br><span class="line">[root@centos7 ~]# cd /etc/sysconfig/network-scripts/</span><br><span class="line"></span><br><span class="line">#重命名网卡</span><br><span class="line"></span><br><span class="line">[root@centos7 network-scripts]# mv ifcfg-eno16777736 ifcfg-eth0</span><br><span class="line"></span><br><span class="line">#修改配置文件NAME、DEVICE</span><br><span class="line"></span><br><span class="line">[root@centos7 network-scripts]# vim ifcfg-eth0TYPE=Ethernet</span><br><span class="line">BOOTPROTO=static</span><br><span class="line">TYPE=Ethernet</span><br><span class="line">BOOTPROTO=static</span><br><span class="line">DEFROUTE=yes</span><br><span class="line">TYPE=Ethernet</span><br><span class="line">BOOTPROTO=static</span><br><span class="line">DEFROUTE=yes</span><br><span class="line">PEERDNS=yes</span><br><span class="line">PEERROUTES=yes</span><br><span class="line">IPV4_FAILURE_FATAL=no</span><br><span class="line">NAME=eth0UUID=552c01f7-fd9d-4f19-913e-379a2bf5a467</span><br><span class="line">DEVICE=eth0</span><br><span class="line">ONBOOT=yes</span><br><span class="line">IPADDR=10.0.0.111</span><br><span class="line">&quot;ifcfg-eth0&quot; 14L, 239C written</span><br><span class="line"></span><br><span class="line">#修改grub</span><br><span class="line"></span><br><span class="line">sed -i.bak &apos;s#crashkernel=auto rhgb quiet#crashkernel=auto rhgb net.ifnames=0 biosdevname=0 quiet#g&apos; /etc/sysconfig/grub</span><br><span class="line">[root@centos7 network-scripts]# vim /etc/sysconfig/grub GRUB_TIMEOUT=5</span><br><span class="line">GRUB_DISTRIBUTOR=&quot;$(sed &apos;s, release .*$,,g&apos; /etc/system-release)&quot;</span><br><span class="line">GRUB_DEFAULT=saved</span><br><span class="line">GRUB_DISABLE_SUBMENU=true</span><br><span class="line">GRUB_TERMINAL_OUTPUT=&quot;console&quot;</span><br><span class="line">GRUB_CMDLINE_LINUX=&quot;crashkernel=auto rhgb net.ifnames=0 biosdevname=0 quiet&quot;</span><br><span class="line">&quot;/etc/sysconfig/grub&quot; 7L, 263C written</span><br><span class="line"></span><br><span class="line">#生成启动菜单</span><br><span class="line"></span><br><span class="line">[root@centos7 network-scripts]# grub2-mkconfig -o /boot/grub2/grub.cfg </span><br><span class="line">Generating grub configuration file ...</span><br><span class="line">Found linux image: /boot/vmlinuz-3.10.0-327.el7.x86_64</span><br><span class="line">Found initrd image: /boot/initramfs-3.10.0-327.el7.x86_64.img</span><br><span class="line">Found linux image: /boot/vmlinuz-0-rescue-7ed5d4eebe4c43e3aadbda68cd0ef311</span><br><span class="line">Found initrd image: /boot/initramfs-0-rescue-7ed5d4eebe4c43e3aadbda68cd0ef311.imgdone</span><br><span class="line">#重启系统生效</span><br><span class="line">[root@centos7 network-scripts]# reboot</span><br></pre></td></tr></table></figure>
+<h2 id="8-桌面系统"><a href="#8-桌面系统" class="headerlink" title="8.桌面系统"></a><strong><em>8.桌面系统</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">GNOME 2.x</span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">GNOME 3.x（GNOME Shell）</span><br></pre></td></tr></table></figure>
+<h2 id="9-文件系统"><a href="#9-文件系统" class="headerlink" title="9.文件系统"></a><strong><em>9.文件系统</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">ext4 </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">xfs</span><br></pre></td></tr></table></figure>
+<h2 id="10-内核版本"><a href="#10-内核版本" class="headerlink" title="10.内核版本"></a><strong><em>10.内核版本</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">2.6.x-x </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">3.10.x-x</span><br></pre></td></tr></table></figure>
+<h2 id="11-启动加载器"><a href="#11-启动加载器" class="headerlink" title="11.启动加载器"></a><strong><em>11.启动加载器</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">GRUB Legacy (+efibootmgr)</span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">GRUB2</span><br></pre></td></tr></table></figure>
+<h2 id="12-防火墙"><a href="#12-防火墙" class="headerlink" title="12.防火墙"></a><strong><em>12.防火墙</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">iptables</span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">firewalld</span><br></pre></td></tr></table></figure>
+<h2 id="13-默认数据库"><a href="#13-默认数据库" class="headerlink" title="13.默认数据库"></a><strong><em>13.默认数据库</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">MySQL </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">MariaDB</span><br></pre></td></tr></table></figure>
+<h2 id="14-文件结构"><a href="#14-文件结构" class="headerlink" title="14.文件结构"></a><strong><em>14.文件结构</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">/bin, /sbin, /lib, and /lib64在/下 </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">/bin, /sbin, /lib, and /lib64移到/usr下</span><br></pre></td></tr></table></figure>
+<h2 id="15-主机名"><a href="#15-主机名" class="headerlink" title="15.主机名"></a><strong><em>15.主机名</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">/etc/hostname</span><br></pre></td></tr></table></figure>
+<h2 id="16-时间同步"><a href="#16-时间同步" class="headerlink" title="16.时间同步"></a><strong><em>16.时间同步</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ ntp </span><br><span class="line"></span><br><span class="line">$ ntpq -p </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ chrony </span><br><span class="line"></span><br><span class="line">$ chronyc sources</span><br></pre></td></tr></table></figure>
+<h2 id="17-修改时间"><a href="#17-修改时间" class="headerlink" title="17.修改时间"></a><strong><em>17.修改时间</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ vim /etc/sysconfig/clock    ZONE=&quot;Asia/Shanghai&quot;    UTC=fales </span><br><span class="line"></span><br><span class="line">$ sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ timedatectl set-timezone Asia/Shanghai </span><br><span class="line"></span><br><span class="line">$ timedatectl status</span><br></pre></td></tr></table></figure>
+<h2 id="18-修改地区"><a href="#18-修改地区" class="headerlink" title="18.修改地区"></a><strong><em>18.修改地区</em></strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ vim /etc/sysconfig/i18n    LANG=&quot;zh_CN.utf8&quot; </span><br><span class="line"></span><br><span class="line">$ /etc/sysconfig/i18n $ locale </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ localectl set-locale LANG=zh_CN.utf8 </span><br><span class="line"></span><br><span class="line">$ localectl status</span><br></pre></td></tr></table></figure>
+<h2 id="19-服务相关"><a href="#19-服务相关" class="headerlink" title="19.服务相关"></a><strong><em>19.服务相关</em></strong></h2><h3 id="1）启动停止"><a href="#1）启动停止" class="headerlink" title="1）启动停止"></a><strong>1）启动停止</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ service service_name start </span><br><span class="line"></span><br><span class="line">$ service service_name stop </span><br><span class="line"></span><br><span class="line">$ service sshd restart/status/reload </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ systemctl start service_name </span><br><span class="line"></span><br><span class="line">$ systemctl stop service_name </span><br><span class="line"></span><br><span class="line">$ systemctl restart/status/reload sshd</span><br></pre></td></tr></table></figure>
+<h3 id="2-自启动"><a href="#2-自启动" class="headerlink" title="2) 自启动"></a><strong>2) 自启动</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ chkconfig service_name on/off </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ systemctl enable service_name </span><br><span class="line"></span><br><span class="line">$ systemctl disable service_name</span><br></pre></td></tr></table></figure>
+<h3 id="3-服务一览"><a href="#3-服务一览" class="headerlink" title="3) 服务一览"></a><strong>3) 服务一览</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ chkconfig --list </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ systemctl list-unit-files </span><br><span class="line"></span><br><span class="line">$ systemctl --type service</span><br></pre></td></tr></table></figure>
+<h3 id="4-强制停止"><a href="#4-强制停止" class="headerlink" title="4) 强制停止"></a><strong>4) 强制停止</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ kill -9 &lt;PID&gt; </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ systemctl kill --signal=9 sshd</span><br></pre></td></tr></table></figure>
+<h2 id="20-网络"><a href="#20-网络" class="headerlink" title="20.网络"></a><strong><em>20.网络</em></strong></h2><h3 id="1）网络信息"><a href="#1）网络信息" class="headerlink" title="1）网络信息"></a><strong>1）网络信息</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ netstat </span><br><span class="line"></span><br><span class="line">$ netstat -I </span><br><span class="line"></span><br><span class="line">$ netstat -n </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ ip n </span><br><span class="line"></span><br><span class="line">$ ip -s l </span><br><span class="line"></span><br><span class="line">$ ss</span><br></pre></td></tr></table></figure>
+<h3 id="2）IP地址MAC地址"><a href="#2）IP地址MAC地址" class="headerlink" title="2）IP地址MAC地址"></a><strong>2）IP地址MAC地址</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ ifconfig -a </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ ip address show</span><br></pre></td></tr></table></figure>
+<h3 id="3）路由"><a href="#3）路由" class="headerlink" title="3）路由"></a><strong>3）路由</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ route -n </span><br><span class="line"></span><br><span class="line">$ route -A inet6 -n </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ ip route show </span><br><span class="line"></span><br><span class="line">$ ip -6 route show</span><br></pre></td></tr></table></figure>
+<h2 id="21-重启关闭"><a href="#21-重启关闭" class="headerlink" title="21.重启关闭"></a><strong><em>21.重启关闭</em></strong></h2><h3 id="1）关闭"><a href="#1）关闭" class="headerlink" title="1）关闭"></a><strong><em>1）关闭</em></strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ shutdown -h now  </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ poweroff </span><br><span class="line"></span><br><span class="line">$ systemctl poweroff</span><br></pre></td></tr></table></figure>
+<h3 id="2）重启"><a href="#2）重启" class="headerlink" title="2）重启"></a><strong><em>2）重启</em></strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ reboot </span><br><span class="line"></span><br><span class="line">$ shutdown -r now </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ reboot </span><br><span class="line"></span><br><span class="line">$ systemctl reboot</span><br></pre></td></tr></table></figure>
+<h3 id="3）单用户模式"><a href="#3）单用户模式" class="headerlink" title="3）单用户模式"></a><strong><em>3）单用户模式</em></strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ init S </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ systemctl rescue</span><br></pre></td></tr></table></figure>
+<h3 id="4）启动模式"><a href="#4）启动模式" class="headerlink" title="4）启动模式"></a><strong><em>4）启动模式</em></strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[CentOS6] </span><br><span class="line"></span><br><span class="line">$ vim /etc/inittab   id:3:initdefault: </span><br><span class="line"></span><br><span class="line">$ startx </span><br><span class="line"></span><br><span class="line">[CentOS7] </span><br><span class="line"></span><br><span class="line">$ systemctl isolate multi-user.target </span><br><span class="line"></span><br><span class="line">$systemctl isolate graphical.target </span><br><span class="line"></span><br><span class="line">#默认 </span><br><span class="line"></span><br><span class="line">$ systemctl set-default graphical.target </span><br><span class="line"></span><br><span class="line">$ systemctl set-default multi-user.target </span><br><span class="line"></span><br><span class="line">#当前 </span><br><span class="line"></span><br><span class="line">$ systemctl get-default</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -1105,7 +938,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">33k</span>
+    <span title="站点总字数">34k</span>
   
 
   
@@ -1114,7 +947,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">30 分钟</span>
+    <span title="站点阅读时长">31 分钟</span>
   
 </div>
 
