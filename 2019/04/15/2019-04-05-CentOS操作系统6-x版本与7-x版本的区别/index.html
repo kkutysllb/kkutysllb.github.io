@@ -111,12 +111,13 @@
 <meta property="og:site_name" content="一花一菩提，一云一世界">
 <meta property="og:description" content="CentOS操作系统6.x版本与7.x版本的区别Centos7与6之间最大的差别就是初始化技术的不同，7采用的初始化技术是Systemd,并行的运行方式，除了这一点之外，服务启动、开机启动文件、网络命令方面等等也存在不同。">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/04/15/5cb444f1555c0.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/04/15/5cb43e1e5f150.jpg">
-<meta property="og:updated_time" content="2019-04-15T08:41:43.881Z">
+<meta property="og:updated_time" content="2019-04-15T08:47:21.086Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-04-05-CentOS操作系统6.x版本与7.x版本的区别">
 <meta name="twitter:description" content="CentOS操作系统6.x版本与7.x版本的区别Centos7与6之间最大的差别就是初始化技术的不同，7采用的初始化技术是Systemd,并行的运行方式，除了这一点之外，服务启动、开机启动文件、网络命令方面等等也存在不同。">
-<meta name="twitter:image" content="https://i.loli.net/2019/04/15/5cb43e1e5f150.jpg">
+<meta name="twitter:image" content="https://i.loli.net/2019/04/15/5cb444f1555c0.jpg">
 
 
 
@@ -437,7 +438,7 @@
                 
               
 
-              <time title="创建时间：2019-04-15 16:01:49 / 修改时间：16:41:43" itemprop="dateCreated datePublished" datetime="2019-04-15T16:01:49+08:00">2019-04-15</time>
+              <time title="创建时间：2019-04-15 16:01:49 / 修改时间：16:47:21" itemprop="dateCreated datePublished" datetime="2019-04-15T16:01:49+08:00">2019-04-15</time>
             
 
             
@@ -495,7 +496,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">6.9k</span>
+                <span title="本文字数">6.2k</span>
               
 
               
@@ -555,7 +556,8 @@
 <p><strong><em>system一统天下 snapshot(支持快照)</em></strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">systemctl status cron.service #查看定时任务状态</span><br><span class="line">systemctl stop cron.service#关闭定时任务</span><br><span class="line">systemctl status cron.service#查看操作情况</span><br><span class="line">systemctl list-unit-files|grep enable  #查看当前正在运行的服务</span><br><span class="line">systemctl disable postfix.service #关闭邮件服务</span><br><span class="line">systemctl list-unit-files|grep postfix #查看邮件服务是否开启</span><br><span class="line">systemctl stop firewalld.service #关闭防火墙</span><br><span class="line">systemctl is-enable #开启的服务 systemctl disable#关闭的服务</span><br></pre></td></tr></table></figure>
 <h2 id="6-运行级别runlevel"><a href="#6-运行级别runlevel" class="headerlink" title="6.运行级别runlevel"></a><strong><em>6.运行级别runlevel</em></strong></h2><p><strong><em>/etc/inittab 是无效的，由system target 替代。</em></strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#永久生效下次登录生效 </span><br><span class="line"></span><br><span class="line">systemctl get-default graphical.target  # 切换到5 </span><br><span class="line"></span><br><span class="line">systemctl get-default multi-user.target # 切换到3 </span><br><span class="line"></span><br><span class="line">##临时生效的话  </span><br><span class="line"></span><br><span class="line">init3</span><br></pre></td></tr></table></figure></p>
-<p><strong><em>七种种运行级别如下</em></strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 ~]# ls -lh /usr/lib/systemd/system/runlevel*.target lrwxrwxrwx. 1 root root 15 Apr 20 22:31 /usr/lib/systemd/system/runlevel0.target -&gt; poweroff.target lrwxrwxrwx. 1 root root 13 Apr 20 22:31 /usr/lib/systemd/system/runlevel1.target -&gt; rescue.target lrwxrwxrwx. 1 root root 17 Apr 20 22:31 /usr/lib/systemd/system/runlevel2.target -&gt; multi-user.target lrwxrwxrwx. 1 root root 17 Apr 20 22:31 /usr/lib/systemd/system/runlevel3.target -&gt; multi-user.target lrwxrwxrwx. 1 root root 17 Apr 20 22:31 /usr/lib/systemd/system/runlevel4.target -&gt; multi-user.target lrwxrwxrwx. 1 root root 16 Apr 20 22:31 /usr/lib/systemd/system/runlevel5.target -&gt; graphical.target lrwxrwxrwx. 1 root root 13 Apr 20 22:31 /usr/lib/systemd/system/runlevel6.target</span><br></pre></td></tr></table></figure></p>
+<p><strong><em>七种种运行级别如下</em></strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 ~]# ls -lh /usr/lib/systemd/system/runlevel*.target</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://i.loli.net/2019/04/15/5cb444f1555c0.jpg" alt></p>
 <h2 id="7-网卡名称"><a href="#7-网卡名称" class="headerlink" title="7.网卡名称"></a><strong><em>7.网卡名称</em></strong></h2><p>CentOS7的网卡名称太长，这不符合我们的使用习惯，增加了管理难度，最简单粗暴的方法是在安装系统的时候就把网卡名改了。当然，安装好的系统也是可以修改的。下面分别介绍两种方法。</p>
 <h3 id="方法一：-推荐）"><a href="#方法一：-推荐）" class="headerlink" title="方法一：(推荐）"></a><strong>方法一：(推荐）</strong></h3><p>在进入安装界面的时候把光标移动到Install CentOS7,按下tab键，在后面输入“net ifnames=0 biosdevname=0”回车即可。</p>
 <p><img src="https://i.loli.net/2019/04/15/5cb43e1e5f150.jpg" alt></p>
@@ -938,7 +940,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">34k</span>
+    <span title="站点总字数">33k</span>
   
 
   
@@ -947,7 +949,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">31 分钟</span>
+    <span title="站点阅读时长">30 分钟</span>
   
 </div>
 

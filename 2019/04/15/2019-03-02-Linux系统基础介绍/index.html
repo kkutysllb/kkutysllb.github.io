@@ -118,7 +118,7 @@
 <meta property="og:image" content="https://i.loli.net/2019/04/15/5cb42d6337913.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/04/15/5cb42e226d582.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/04/15/5cb42e68b6ed6.jpg">
-<meta property="og:updated_time" content="2019-04-15T07:19:46.820Z">
+<meta property="og:updated_time" content="2019-04-15T08:48:20.884Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-03-02-Linux系统基础介绍">
 <meta name="twitter:description" content="Linux系统基础介绍本文作为Linux操作系统开篇文章，主要介绍一些操作系统的基础概念和原理，然后简要介绍Linux的发展历史，以及市面上常见的Linux系统版本。">
@@ -443,7 +443,7 @@
                 
               
 
-              <time title="创建时间：2019-04-15 14:53:05 / 修改时间：15:19:46" itemprop="dateCreated datePublished" datetime="2019-04-15T14:53:05+08:00">2019-04-15</time>
+              <time title="创建时间：2019-04-15 14:53:05 / 修改时间：16:48:20" itemprop="dateCreated datePublished" datetime="2019-04-15T14:53:05+08:00">2019-04-15</time>
             
 
             
@@ -501,7 +501,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">4.4k</span>
+                <span title="本文字数">4.3k</span>
               
 
               
@@ -579,14 +579,8 @@
 <p><img src="https://i.loli.net/2019/04/15/5cb42d40966b7.jpg" alt></p>
 <p><strong>GPT：</strong>全局唯一分区格式，正在逐渐取代MBR成为新标准。它和统一的可扩展固件接口（unified extensible firnware interface，UEFI）相辅相成。UEFI用于取代BIOS，而GPT用于取代MBR。在GPT硬盘中，分区表中的位置信息存储在GPT头中，第一个扇区同样有一个与MBR类似的标记，叫做受保护的主引导记录（protected main boot record，PMBR）。其作用是当使用不支持GPT的分区工具时，整个硬盘将显示为一个受保护的分区，防止数据被破坏，其中存储的内容与MBR一样，之后才是GPT头部信息。与MBR相比，支持2TB以上的磁盘，如果使用fdisk分区，最大只能建立2TB大小的分区，创建大于2TB的分区时，需使用parted工具，同时必须使用64位操作系统。以下是GPT分区表的数据格式：</p>
 <p><img src="https://i.loli.net/2019/04/15/5cb42d6337913.jpg" alt></p>
-<p><strong>GRUB：</strong>多操作系统启动程序（GRand unified bootloader）。支持多操作系统引导，当系统中装载多操作系统时，在系统启动时便于用户选择。GRUB还可用于选择操作系统分区上的不同内核，也可用于向这些内核传递启动参数。Linux常见的引导程序包括：LILO、GRUB、GRUB2。CentOS 6.x系统和Ubuntu系统默认采用GRUB引导程序，所以当我们有需要编译GRUB菜单时，执行如下命令：</p>
-<p>···</p>
-<p>grub-mkconfig -o /boot/grub/grub.cfg</p>
-<p>···</p>
-<p>CentOS 7.x系统默认采用GRUB2引导程序，所以当我们有需要编译GRUB菜单时，执行如下命令：</p>
-<p>···</p>
-<p>grub2-mkconfig -o /boot/grub2/grub.cfg</p>
-<p>···</p>
+<p><strong>GRUB：</strong>多操作系统启动程序（GRand unified bootloader）。支持多操作系统引导，当系统中装载多操作系统时，在系统启动时便于用户选择。GRUB还可用于选择操作系统分区上的不同内核，也可用于向这些内核传递启动参数。Linux常见的引导程序包括：LILO、GRUB、GRUB2。CentOS 6.x系统和Ubuntu系统默认采用GRUB引导程序，所以当我们有需要编译GRUB菜单时，执行如下命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grub-mkconfig -o /boot/grub/grub.cfg</span><br></pre></td></tr></table></figure></p>
+<p>CentOS 7.x系统默认采用GRUB2引导程序，所以当我们有需要编译GRUB菜单时，执行如下命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grub2-mkconfig -o /boot/grub2/grub.cfg</span><br></pre></td></tr></table></figure></p>
 <p>GRUB加载引导程序的流程如下：</p>
 <p><img src="https://i.loli.net/2019/04/15/5cb42e226d582.jpg" alt></p>
 <p>GRUB2是基于GRUB开发的更加安全强大的多系统引导程序，同时采用模块化设计，使得GRUB2核心更加尽量，使用更加灵活，也不需要像GRUB那样分为stage1、stage1.5和stage2三个阶段。</p>
@@ -952,7 +946,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">34k</span>
+    <span title="站点总字数">33k</span>
   
 
   
@@ -961,7 +955,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">31 分钟</span>
+    <span title="站点阅读时长">30 分钟</span>
   
 </div>
 
