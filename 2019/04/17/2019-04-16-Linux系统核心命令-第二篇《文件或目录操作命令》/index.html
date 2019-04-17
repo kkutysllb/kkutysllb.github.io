@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="pwd：显示当前所在的位置pwd命令是“print working directory”中每个单词的首字母缩写，其功能是显示当前工作目录的绝对路径。在实际工作中，我们在命令行操作命令时，经常会在各个目录路径之间进行切换，此时可使用pwd命令快速查看当前我们所在的目录路径。">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019-04-16-Linux系统核心命令-第二篇《文件或目录操作命令》">
+<meta property="og:url" content="https://kkutysllb.cn/2019/04/17/2019-04-16-Linux系统核心命令-第二篇《文件或目录操作命令》/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="pwd：显示当前所在的位置pwd命令是“print working directory”中每个单词的首字母缩写，其功能是显示当前工作目录的绝对路径。在实际工作中，我们在命令行操作命令时，经常会在各个目录路径之间进行切换，此时可使用pwd命令快速查看当前我们所在的目录路径。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6cabd04ceb.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6cbae4e9ca.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6cd0452e69.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6cd1a1c579.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6cd393b172.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6ccd2849f1.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6cd94a3427.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6cddce0489.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6ce0c59a2f.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6ce331f148.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6ce707e8ae.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6ce9626bfe.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6cece68e54.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6cf7d01b3c.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6cf9f42455.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6cfc512808.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6cfeebf4ef.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d01cf3f93.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d04405fd3.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d086a4306.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d0b10992f.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d169c177e.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d1c8bbdd2.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d2005568f.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d22e5623b.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d252844fa.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d27fbe29e.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d3aba1b7d.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d3e3f3e7e.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d405d31ad.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d429da11e.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d44f22fef.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d481054b1.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d4a0b9ac4.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d4ca543f8.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d4fa74423.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d51e2a4da.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d5407398c.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d573298fe.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d591ec7a9.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d5bc68557.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d61ccab40.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d62f8d270.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d657e2a0e.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d6884f12d.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d6a82a331.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d6c7cb6f8.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d74a4236a.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d710c3d7e.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d77c553cb.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d7a27b7a8.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d7de930c3.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d89b645bc.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d8e0bcccc.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d93c96532.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6d98047834.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6da0872dc3.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6da317d93f.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6da5b16fb6.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6da84c5ad7.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6daa6bb917.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dad6d8377.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6db0422b74.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6db252ed95.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6db915f171.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dbbb5fe3b.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dbd61ce62.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dbf7c5092.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dc17e5898.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dc2f35a8d.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dc522ca59.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dc7d078a4.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dc8d04a52.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dcc2db2df.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dd1a3bc85.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dd63b2644.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6de6e04fc8.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6de9f28d60.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dec2a8b4c.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6dedbd7064.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6df093502b.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6df3f5933a.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/17/5cb6df79f104e.jpg">
+<meta property="og:updated_time" content="2019-04-17T08:13:48.592Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019-04-16-Linux系统核心命令-第二篇《文件或目录操作命令》">
+<meta name="twitter:description" content="pwd：显示当前所在的位置pwd命令是“print working directory”中每个单词的首字母缩写，其功能是显示当前工作目录的绝对路径。在实际工作中，我们在命令行操作命令时，经常会在各个目录路径之间进行切换，此时可使用pwd命令快速查看当前我们所在的目录路径。">
+<meta name="twitter:image" content="https://i.loli.net/2019/04/17/5cb6cabd04ceb.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2019/04/17/2019-04-16-Linux系统核心命令-第二篇《文件或目录操作命令》/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2019-04-16-Linux系统核心命令-第二篇《文件或目录操作命令》 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/04/17/2019-04-16-Linux系统核心命令-第二篇《文件或目录操作命令》/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019-04-16-Linux系统核心命令-第二篇《文件或目录操作命令》
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-17 14:37:44 / 修改时间：16:13:48" itemprop="dateCreated datePublished" datetime="2019-04-17T14:37:44+08:00">2019-04-17</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/核心命令/" itemprop="url" rel="index"><span itemprop="name">核心命令</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">14k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">13 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="pwd：显示当前所在的位置"><a href="#pwd：显示当前所在的位置" class="headerlink" title="pwd：显示当前所在的位置"></a>pwd：显示当前所在的位置</h2><p>pwd命令是“print working directory”中每个单词的首字母缩写，其功能是显示当前工作目录的绝对路径。在实际工作中，我们在命令行操作命令时，经常会在各个目录路径之间进行切换，此时可使用pwd命令快速查看当前我们所在的目录路径。<a id="more"></a></p>
+<p><strong>语法格式：pwd [option]</strong></p>
+<p>通常情况下，执行pwd命令不需要带任何参数。</p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6cabd04ceb.jpg" alt></p>
+<p><strong>【使用举例】</strong><br><strong>1）不带任何选项执行pwd命令。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# pwd #显示当前目录为root用户的家目录</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6cbae4e9ca.jpg" alt></p>
+<p><strong>2）对比使用-L和-P参数</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# ls -l /etc/rc0.d  # 显示/etc/目录下rc0.d的目录信息</span><br></pre></td></tr></table></figure>
+<p>显示结果为/etc/rc0.d目录为/etc/rc.d/rc0.d目录的软链接</p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6cd0452e69.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# cd /etc/rc0.d/ # 进入/etc/rc0.d目录</span><br></pre></td></tr></table></figure>
+<p>在该目录下分别执行pwd -L和pwd -P，对比执行结果。</p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6cd1a1c579.jpg" alt></p>
+<p>当前系统命令提示符的显示格式是系统默认的格式，受环境变量PS1限制，查看环境变量PS1的方法为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# echo $PS1</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6cd393b172.jpg" alt></p>
+<p>如果要修改系统提示符的显示格式，可以根据下表自行调整<strong>/etc/profile</strong>文件中PS1环境变量的设置，修改完成保存退出，通过<strong>source /etc/profile</strong>加载新设置的环境变量使配置生效。</p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6ccd2849f1.jpg" alt></p>
+<h2 id="cd：切换目录"><a href="#cd：切换目录" class="headerlink" title="cd：切换目录"></a>cd：切换目录</h2><p>cd命令是“change directory”中每个单词的首字母缩写，其功能是从当前工作目录切换到指定的工作目录。</p>
+<p><strong>语法格式：cd [option] [dir]</strong></p>
+<p>cd命令后面的选项和目录等参数都可以省略。默认情况下，单独执行cd命令，可切换到当前登录用户的家目录（由系统环境变量HOME定义）。cd是bash shell的内置命令，查看该命令对应的系统帮助需要使用help cd。在使用cd命令时，如果使用键盘上“Tab”键的自动补齐功能，可以提高输入速度和准确度。<strong>这个“Tab”键的自动补齐功能同样也适用于其他命令。</strong></p>
+<p>要了解路径的概念，比如，相对路径是不从“/”（斜线）开始的路径，而是从当前目录或指定的目录开始，如：data/、mnt/oldboy；绝对路径是从“/”（斜线）根开始的路径，如：/root/mydata/、/mnt/VMware。</p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6cd94a3427.jpg" alt></p>
+<p><strong>需熟练掌握带*选项的用法：</strong>当需要切换到当前用户上一次所在的目录时，请使用“cd -”（注意空格）；当需要切换到当前用户的家目录时，请使用“cd～”（注意空格）；当需要切换到当前目录的上一级目录所在的路径时，请使用“cd ..”（注意空格）。</p>
+<p><strong>【使用举例】</strong></p>
+<p><strong>1）进入系统/etc目录</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# cd /etc/</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6cddce0489.jpg" alt></p>
+<p><strong>2）切换到/usr/local目录下</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 etc]# cd /usr/local/</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6ce0c59a2f.jpg" alt></p>
+<p><strong>3）切换到当前目录的上一级目录</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 local]# cd ..  # ..表示当前目录的父目录，.表示当前目录</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6ce331f148.jpg" alt></p>
+<p><strong>4）进入当前目录的父目录的父目录</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 local]# cd ../..  # 当前目录为/usr/local，其父目录就是/usr，其爷爷目录就是根目录/</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6ce707e8ae.jpg" alt></p>
+<p><strong><em>只要目录有足够多的层次，可以一直这样继续下去“cd../../../..”，直到退到“/”为止。</em></strong></p>
+<p><strong>5）返回当前用户上一次所在的目录</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 /]# cd - # -就是表示返回到进入当前目录前的那个目录</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6ce9626bfe.jpg" alt></p>
+<p><strong>6）进入当前用户的家目录</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 local]# cd ~</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6cece68e54.jpg" alt></p>
+<h2 id="tree：以树形结构显示目录下的内容"><a href="#tree：以树形结构显示目录下的内容" class="headerlink" title="tree：以树形结构显示目录下的内容"></a>tree：以树形结构显示目录下的内容</h2><p>tree命令的中文意思为“树”，功能是以树形结构列出指定目录下的所有内容，包括所有文件、子目录及子目录里的目录和文件。</p>
+<p><strong>语法格式：tree [option] [directory]</strong></p>
+<p>tree命令后若不接选项和目录就会默认显示当前所在路径目录的目录结构。tree命令可能需要单独安装，首先检查系统是否安装了tree命令，如果采用的是最小化安装Linux系统的方式，那么tree命令有可能没有安装，此时可用yum命令安装tree命令。</p>
+<p>1、检查系统是否安装tree命令，如果没有输出，就表示没有安装，此时通过第二步命令进行安装。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# rpm -aq tree</span><br></pre></td></tr></table></figure>
+<p>2、安装tree命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# yum install -y tree</span><br></pre></td></tr></table></figure>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6cf7d01b3c.jpg" alt></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）不带任何参数执行tree命令</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# tree</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6cf9f42455.jpg" alt></p>
+<p><strong>2）以树形结构显示目录下的所有内容（-a的功能）</strong></p>
+<p><strong><em>在Linux系统中，以“.”点号开头的文件为隐藏文件，默认不显示。</em></strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 bin]# tree -a  # 在/usr/bin目录下执行</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6cfc512808.jpg" alt></p>
+<p><strong>3）只列出根目录下第一层目录的结构（-L功能）</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 /]# tree -L 1  # -L参数后接数字，表示查看目录的层数，不带-L选项默认显示所有层</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6cfeebf4ef.jpg" alt></p>
+<p><strong>4）只显示所有的目录（但不显示文件）</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# tree -d</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d01cf3f93.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# tree -dL 1 # -d参数只显示目录，-L参数显示层数，组合起来就是只显示当前目录下第一层目录。</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d04405fd3.jpg" alt></p>
+<p><strong>5） -f选项和-i选项的使用</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# tree -L 1 -f /boot  # 只显示/boot目录下第一层的所有文件的全路径</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d086a4306.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# tree -L 1 -fi /boot  # 加上-i选项，显示结果不带树枝，便于复制粘贴</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d0b10992f.jpg" alt></p>
+<p><strong>6）使用tree命令区分目录和文件的方法（常用）</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# tree -L 1 -F /boot # 使用-F参数会在目录后面添加“/”，方便区分目录。</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d169c177e.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]# tree -L 1 -F /etc/ | grep /$  # 结合管道符|和grep，可以方便将目录过滤出来</span><br><span class="line">#/$是Linux的通配符，表示以/结尾的字符</span><br><span class="line">#管道符的作用在于指令拼接，上面指令的意思就是将tree指令的执行结果交给grep指令处理。</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d1c8bbdd2.jpg" alt></p>
+<p><strong>小练习：通过tree指令将/usr/local/下的第一级文件全部过滤出来，结果只能包含文件，不能包含目录（答案贴在本文的讨论区）</strong></p>
+<h2 id="mkdir：创建目录"><a href="#mkdir：创建目录" class="headerlink" title="mkdir：创建目录"></a>mkdir：创建目录</h2><p>mkdir命令是“make directories”中每个单词的粗体字母组合而成，其功能是创建目录，默认情况下，如果要创建的目录已存在，则会提示此文件已存在；而不会继续创建目录。</p>
+<p><strong>语法格式：mkdir [option] [directory]</strong></p>
+<p>mkdir命令可以同时创建多个目录，格式为mkdir dir1 dir2…，也可以使用{}来完成指定序列的批量目录创建。<strong>使用mkdir创建多级目录时，建议直接使用-p参数，可以避免出现“No such file or directory”这样没有文件或目录的报错了，且不会影响已存在的目录。</strong></p>
+<p><strong>重要选项参数：</strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d2005568f.jpg" alt></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）不使用任何命令参数创建目录用法示例</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 kkutysllb]# mkdir mytest</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d22e5623b.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 kkutysllb]# mkdir mytest # 当再次创建时，会提示目标目录已存在</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d252844fa.jpg" alt></p>
+<p><strong>2）使用-p参数递归创建目</strong></p>
+<p>当我们创建多级目录时，如果第一级目录（data）不存在，那么创建结果会报错，导致无法创建成功，操作如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 kkutysllb]# mkdir data/stu01</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d27fbe29e.jpg" alt></p>
+<p>此时，可以指定-p参数递归创建多级目录：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 kkutysllb]# mkdir -p data/stu01</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d3aba1b7d.jpg" alt></p>
+<p><strong>3）加-v参数显示创建目录的过程</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 在data目录下同时创建2个子目录stu02和stu03，并且同时在两个子目录下再分别创建四个子目录test01-test04 </span><br><span class="line">[root@C7-Server01 kkutysllb]# mkdir -pv data/stu&#123;02,03&#125;/test&#123;01..04&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d3e3f3e7e.jpg" alt></p>
+<p><strong>其实这个-v没有什么实际用途，它只是用来显示创建目录的过程。</strong></p>
+<p>大括号（{}）的特殊用法，见如下图示：</p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d405d31ad.jpg" alt></p>
+<p><strong>4）创建目录时可使用-m参数设置目录的默认权限</strong></p>
+<p>如果创建目录是不设置目录的权限，所创建目录的默认权限是755，如下所示：（目录的权限问题在讲解ls指令会讲到）</p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d429da11e.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 kkutysllb]# mkdir -m 333 dir01</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d44f22fef.jpg" alt></p>
+<p>这个指令在创建特殊安全要求的目录时会用到，平时一般不用。因为，目录的权限还决定了目录中子目录及其文件的权限，所以在创建目录时要综合考虑。</p>
+<h2 id="touch：创建空文件或改变文件的时间戳属性"><a href="#touch：创建空文件或改变文件的时间戳属性" class="headerlink" title="touch：创建空文件或改变文件的时间戳属性"></a>touch：创建空文件或改变文件的时间戳属性</h2><p>touch命令有两个功能：一是创建新的空文件；二是改变已有文件的时间戳属性。</p>
+<p><strong>语法格式：touch [option] [file]</strong></p>
+<p>注意区分touch和mkdir命令的功能，mkdir命令是创建空目录，而touch是创建空文件。在Linux中，一切皆文件。虽然touch命令不能创建目录，但是可以修改目录的时间戳。</p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d481054b1.jpg" alt></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）创建文件示例（文件事先不存在的情况）</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 kkutysllb]# touch image001</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d4a0b9ac4.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#可以使用&#123;&#125;同时创建多个文件</span><br><span class="line">[root@C7-Server01 kkutysllb]# touch image&#123;002..009&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d4ca543f8.jpg" alt></p>
+<p><strong>2）更改文件的时间戳属性</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#查看文件时间戳属性，可以使用stat指令</span><br><span class="line">[root@C7-Server01 kkutysllb]# stat image001</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d4fa74423.jpg" alt></p>
+<p><strong><em>文件的时间戳属性分为访问时间、修改时间、状态改变时间。</em></strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 kkutysllb]# touch -a image001 # -a选项更改文件的访问时间为当前时间</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d51e2a4da.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 kkutysllb]# touch -m image001 # -m选项更改文件的修改时间为当前时间</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d5407398c.jpg" alt></p>
+<p><strong>无论是-a选项修改文件的访问时间，还是-m选项修改文件的修改时间，文件的状态改变时间ctime也同步进行改变。</strong></p>
+<p><strong>3）指定时间属性创建/修改文件</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 将文件image001的访问时间和修改时间统一修改为2020年10月21日 </span><br><span class="line">[root@C7-Server01 kkutysllb]# touch -d 20201021 image001</span><br></pre></td></tr></table></figure>
+<p><strong><em>这个功能经常用于黑客入侵后的操作。</em></strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d573298fe.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#使用image002文件的时间戳为模板改为image001文件的时间戳</span><br><span class="line">[root@C7-Server01 kkutysllb]# touch -r image002 image001</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d591ec7a9.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#还可以利用-t选项将image001的时间修改为202012312234.55的格式</span><br><span class="line">[root@C7-Server01 kkutysllb]# touch -t 202012312234.55 image001</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d5bc68557.jpg" alt></p>
+<p><strong>知识扩展：</strong></p>
+<p>这里扩展一点有关时间戳属性的知识。GNU/Linux的文件有3种类型的时间戳：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Access：2015-07-30 17:48:20.502156890 +0800 #&lt;==最后访问文件的时间。 </span><br><span class="line"></span><br><span class="line">Modify：2015-07-30 17:48:45.006106223 +0800 #&lt;==最后修改文件的时间。 </span><br><span class="line"></span><br><span class="line">Change：2015-07-30 17:48:45.006106223 +0800 #&lt;==最后改变文件状态的时间。</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="ls：显示目录下的内容及相关属性信息"><a href="#ls：显示目录下的内容及相关属性信息" class="headerlink" title="ls：显示目录下的内容及相关属性信息"></a>ls：显示目录下的内容及相关属性信息</h2><p>ls命令可以理解为英文单词list的缩写，其功能是列出目录的内容及其内容属性信息（list directorycontents）。该命令有点类似于DOS系统下的dir命令，有趣的是，Linux下其实也有dir命令，但我们更习惯于使用ls。</p>
+<p><strong>语法格式：ls [option] [file]</strong></p>
+<p>ls命令后面的选项和目录文件可以省略，表示查看当前路径的文件信息。</p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d61ccab40.jpg" alt></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d62f8d270.jpg" alt></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）直接执行ls命令，不带任何参数</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 列出/home/kkutysllb目录下的文件信息 </span><br><span class="line">[root@C7-Server01 kkutysllb]# ls</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d657e2a0e.jpg" alt></p>
+<p><strong>2）使用-a参数显示所有文件，特别是隐藏文件</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 加了-a参数，就会把以“.”（点号）开头的内容显示出来了。这里显示的第一个点号，表示当前目录，即/home/kkutysllb/目录本身，而两个点号则表示当前目录的上级目录，此处就代表/home/目录了 </span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -a</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d6884f12d.jpg" alt></p>
+<p><strong>3）使用-l参数显示详细信息</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 kkutysllb]# ls -l</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d6a82a331.jpg" alt></p>
+<p><strong>4）显示完整时间属性的参数 –time-style=long-iso</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 kkutysllb]# ls -l --time-style=long-iso</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d6c7cb6f8.jpg" alt></p>
+<p><strong>小练习：关于–time-style=long-iso的其它参数大家自行练习，将答案贴在本文的讨论区。</strong></p>
+<p><strong>5）执行ls命令，带显示内容的访问时间属性的参数</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 首先通过stat指令查看image001文件的访问时间信息 </span><br><span class="line">[root@C7-Server01 kkutysllb]# stat image001</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d74a4236a.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 通过选项--time=atime显示文件的访问时间</span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -l --time-style=long-iso --time=atime image001</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d710c3d7e.jpg" alt></p>
+<p>同理，通过选项–time=mtime可以查看文件的修改时间，选项–time=ctime可以查看文件状态的改变时间，大家可以自行练习。（国际惯例，答案贴在本文的讨论区）</p>
+<p><strong>6）执行ls命令，带-F参数（这一点与tree命令的-F很类似）</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#加了-F,我们可以清晰地看到所有目录的结尾都被加上了斜线/</span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -lF</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d77c553cb.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 过滤出当前目录下所有子目录</span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -lF | grep /$</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d7a27b7a8.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 过滤出当前目录下所有普通文件</span><br><span class="line"># grep命令的-v选项是反向过滤的意思</span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -lF | grep -v /$</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d7de930c3.jpg" alt></p>
+<p><strong>7）使用-d参数只显示目录本身的信息</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 有时候我们想查看目录本身的信息，但是若使用“ls目录”命令，就会显示目录里面的内容，比如： </span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -l data/</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d89b645bc.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 通过-d选项可以查看目录的详细信息</span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -ld data/</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d8e0bcccc.jpg" alt></p>
+<p><strong>8）使用-R参数递归查看目录</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># tree指令没有递归方式查看多级目录下详细信息的选项，但是ls指令就有，通过-R选项实现 </span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -lR data/</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d93c96532.jpg" alt></p>
+<p><strong><em>小练习：通过ls命令迅速查找/boot目录下最近更新过的文件（不知文件名的情况下）</em></strong></p>
+<p><strong><em>提示：</em></strong> </p>
+<p><strong><em>1、利用-t选项对目录下文件按照修改时间排序。</em></strong></p>
+<p><strong><em>2、利用-r选项对时间排序后的文件进行倒序排序。</em></strong></p>
+<p><strong>9）ls命令列出文件的属性解读</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 利用-h和-i选项可以列出某个目录下所有文件和子目录的详细信息</span><br><span class="line"># -h选项是将文件的大小通过人类可读的方式显示出来，不加-h选项系统默认是字节单位</span><br><span class="line"># -i选项是文件的inode值，在linux系统中一个文件分为inode和block两部分，无论哪一部分占用满，都会显示磁盘空间不足的提示。</span><br><span class="line"># 因此，有时你会发现磁盘还有很大空间，但是提示磁盘占用满，这就是因为inode占用满的缘故。</span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -lhi /boot</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6d98047834.jpg" alt></p>
+<blockquote>
+<p>第一列：inode索引节点编号。<br>第二列：文件类型及权限（第一个字符为类型，后9个字符为文件权限符号）。<br>第三列：硬链接个数（详细请参看ln命令的讲解）。<br>第四列：文件或目录所属的用户（属主）。<br>第五列：文件或目录所属的组。<br>第六列：文件或目录的大小。<br>第七、八、九列：文件或目录的修改时间。<br>第十列：实际的文件名或目录名。</p>
+</blockquote>
+<p><img src="https://i.loli.net/2019/04/17/5cb6da0872dc3.jpg" alt></p>
+<h2 id="cp：复制文件或目录"><a href="#cp：复制文件或目录" class="headerlink" title="cp：复制文件或目录"></a>cp：复制文件或目录</h2><p>cp命令可以理解为英文单词copy的缩写，其功能为复制文件或目录。</p>
+<p><strong>语法格式：cp [option] [source] [dest]</strong></p>
+<p><strong>重要参数选项</strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6da317d93f.jpg" alt></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）无参数和带参数-a的比较</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 查看当前目录下的文件信息 </span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -l</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6da5b16fb6.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 通过cp指令复制image001文件为image010文件</span><br><span class="line">[root@C7-Server01 kkutysllb]# cp image001 image010</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6da84c5ad7.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 使用-a选项复制image001文件为image011</span><br><span class="line">[root@C7-Server01 kkutysllb]# cp -a image001 image011</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6daa6bb917.jpg" alt></p>
+<p><strong>2）-i参数的例子</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 使用-i选项覆盖已存在文件时，会有提示确认 </span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# cp -i image001 image011</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dad6d8377.jpg" alt></p>
+<p><strong>请大家思考下：为什么不使用-i选项覆盖已存在文件时，也会有提示确认？（提示：利用Google搜索下Linux系统的别名功能）</strong></p>
+<p><strong>3）使用-r参数复制目录</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 如果要复制一个目录，可以用-r参数递归复制**</span><br><span class="line"></span><br><span class="line"># 在linux系统中，没有单独复制目录的命令 </span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# cp -r data/ data_tmp/</span><br></pre></td></tr></table></figure>
+<p>通过diff指令或vimdiff指令对比复制后的两个文件（diff和vimdiff指令后面会讲）</p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6db0422b74.jpg" alt></p>
+<h2 id="mv：移动或重命名文件"><a href="#mv：移动或重命名文件" class="headerlink" title="mv：移动或重命名文件"></a>mv：移动或重命名文件</h2><p>mv命令可以理解为英文单词move的缩写，其功能是移动或重命名文件（move/rename files）。</p>
+<p><strong>语法格式：mv [option] [source] [dest]</strong></p>
+<p><strong>重要参数选项</strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6db252ed95.jpg" alt></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）给文件改名的例子</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"># 将image001文件修改为image_t001</span><br><span class="line"></span><br><span class="line"> [root@C7-Server01 kkutysllb]# ls -l </span><br><span class="line"></span><br><span class="line">total 0 </span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root  0 Apr 16 18:35 202012312234.55 </span><br><span class="line"></span><br><span class="line">drwxr-xr-x 5 root root 45 Apr 17 11:59 data </span><br><span class="line"></span><br><span class="line">drwxr-xr-x 5 root root 45 Apr 17 11:59 data_tmp </span><br><span class="line"></span><br><span class="line">d-wx-wx-wx 2 root root  6 Apr 16 15:09 dir01 </span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root  0 Dec 31  2020 image001 </span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root  0 Apr 16 17:56 image002 </span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root  0 Apr 16 17:56 image003 </span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root  0 Apr 16 17:56 image004 </span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root  0 Apr 16 17:56 image005 </span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root  0 Apr 16 17:56 image006 </span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root  0 Apr 16 17:56 image007 </span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root  0 Apr 16 17:56 image008 </span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root  0 Apr 16 17:56 image009 </span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root  0 Apr 17 11:46 image010 </span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root  0 Dec 31  2020 image011 </span><br><span class="line"></span><br><span class="line">drwxr-xr-x 2 root root  6 Apr 16 14:30 mytest </span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# mv image001 image_t001 </span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -l</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6db915f171.jpg" alt></p>
+<p><strong>2）移动文件的例子</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 将image_t001文件移动到dir01目录下 </span><br><span class="line"></span><br><span class="line"># 源目录下已不存在刚移动过的文件 </span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# mv image_t001 dir01/</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dbbb5fe3b.jpg" alt></p>
+<p>在dir01目录下存在刚移动进来的文件image_t001</p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dbd61ce62.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 移动多个文件</span><br><span class="line"></span><br><span class="line"># 第一种方式，源文件在前，目标目录在后</span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# mv image002 image003 image004 dir01/</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dbf7c5092.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 第二种方式，使用-t选项，目标目录在前，源文件在后</span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# mv -t dir01/ image005 image006</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dc17e5898.jpg" alt></p>
+<p><strong>3）关于mv命令的使用小结</strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dc2f35a8d.jpg" alt></p>
+<h2 id="rm：删除文件或目录"><a href="#rm：删除文件或目录" class="headerlink" title="rm：删除文件或目录"></a>rm：删除文件或目录</h2><p>rm命令可以理解为英文单词remove的缩写，其功能是删除一个或多个文件或目录（remove files or directories）。这是Linux系统里最危险的命令之一，请慎重使用。</p>
+<p><strong>语法格式：rm [option] [file]</strong></p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dc522ca59.jpg" alt></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）不带参数删除例子实践</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#删除/home/kkutysllb/image011这个文件 </span><br><span class="line"></span><br><span class="line">#不带参数时，删除前默认要求确认，原因与cp命令一致 </span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# rm image011 </span><br><span class="line"></span><br><span class="line">rm: remove regular empty file ‘image011’? y  # 回复y删除，回复n不删除</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dc7d078a4.jpg" alt></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dc8d04a52.jpg" alt></p>
+<p><strong>2）强制删除例子实践</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 使用-f选项强制删除image007文件 </span><br><span class="line"></span><br><span class="line"># 直接删除，不提示确认 </span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# rm -f image007 </span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]#</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dcc2db2df.jpg" alt></p>
+<p><strong>3） 使用-r选项递归删除目录</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"># 使用-r选项可以递归删除目录，原理是先删除目录中文件和子目录，然后再删除目录本身 </span><br><span class="line"></span><br><span class="line"># 不带-f参数时，每删除一个文件都需要确认 </span><br><span class="line"></span><br><span class="line"># linux还有个删除目录的命令rmdir，但是只能删除空目录 </span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# rm -r dir01/ </span><br><span class="line"></span><br><span class="line">rm: descend into directory ‘dir01/’? y </span><br><span class="line"></span><br><span class="line">rm: remove regular empty file ‘dir01/image_t001’? y </span><br><span class="line"></span><br><span class="line">rm: remove regular empty file ‘dir01/image002’? y</span><br><span class="line"></span><br><span class="line">rm: remove regular empty file ‘dir01/image003’? y </span><br><span class="line"></span><br><span class="line">rm: remove regular empty file ‘dir01/image004’? y        </span><br><span class="line"></span><br><span class="line">rm: remove regular empty file ‘dir01/image005’? y </span><br><span class="line"></span><br><span class="line">rm: remove regular empty file ‘dir01/image006’? y </span><br><span class="line"></span><br><span class="line">rm: remove directory ‘dir01/’? y</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dd1a3bc85.jpg" alt></p>
+<p><strong>4）关于删除的实践经验</strong></p>
+<p>常在河边走，哪有不湿鞋！但是如果能遵守下面的要领就可以少湿鞋甚至不湿鞋！</p>
+<p>1）用mv替代rm，不要急着删除，而是先移动到回收站/tmp。</p>
+<p>2）删除前务必备份，最好是异机备份，若出现问题随时可以还原。</p>
+<p>3）如果非要删除，那么请用find完成要删除文件查找，然后通过管道符接rm指令进行精准删除，最大限度避免误删除，包括通过系统定时任务等清理文件方法。比如下面的指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find ．-type f -name &quot;*.txt&quot; -mtime +7|xargs rm –f</span><br></pre></td></tr></table></figure>
+<p>上面指令的意思是查找当前目录下7天以前的所有以.txt结尾的文件（注意，linux没有文件扩展名的概念，在linux中一切皆是文件），然后将结果通过管道符“|”传递给xargs rm -f指令组合进行删除（xargs是一个标准输入指令，其后面接rm指令就是模拟用户在终端侧直接输入rm指令的用法）</p>
+<h2 id="ln：硬链接与软链接"><a href="#ln：硬链接与软链接" class="headerlink" title="ln：硬链接与软链接"></a>ln：硬链接与软链接</h2><p>ln命令可以理解为英文单词link的缩写，其功能是创建文件间的链接（make links between files），链接类型包括硬链接（hard link）和软链接（符号链接，symbolic link）。</p>
+<blockquote>
+<p>硬链接（Hard Link）：创建语法为“ln源文件目标文件”，硬链接生成的是普通文件（-字符）。</p>
+<p>软链接或符号链接（Symbolic Link or Soft Link）：创建语法为“ln-s源文件目标文件（目标文件不能事先存在）”，软链接生成的是符号链接文件（l类型）。</p>
+</blockquote>
+<p>硬链接是指通过索引节点（Inode）来进行链接。在Linux（ext2、ext3、ext4）文件系统中，所有文件都有一个独有的inode编号。在Linux文件系统中，多个文件名指向同一个索引节点（inode）是正常且允许的。这种情况下的文件就称为硬链接。硬链接文件相当于文件的另外一个入口。它的作用之一就是允许一个文件拥有多个有效路径名（多个入口），这样用户就可以建立硬链接到重要文件，以防止误删源数据，只有删除了源文件以及源文件所有对应的硬链接文件，文件实体才会被删除。</p>
+<p>软链接或符号链接（Symbolic Link or Soft Link）有点像Windows里的快捷方式。软链接类似于一个文本文件，里面存放的是源文件的路径，指向源文件实体。即使删除了源文件，软链接文件也还是依然存在，但是无法访问指向的源文件路径内容了。软链接和源文件是不同类型的文件，也是不同的文件，inode号也不相同。</p>
+<p><strong>语法格式：ln [option] [source] [target]</strong></p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dd63b2644.jpg" alt></p>
+<p><strong>【使用示例】</strong><br><strong>1）创建一个硬链接文件</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 kkutysllb]# ln /etc/hosts hard_link</span><br><span class="line"></span><br><span class="line"># 通过ls -i查看源文件和硬链接文件的inode值</span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -li /etc/hosts hard_link </span><br><span class="line">33583813 -rw-r--r--. 2 root root 158 Jun  7  2013 /etc/hosts</span><br><span class="line">33583813 -rw-r--r--. 2 root root 158 Jun  7  2013 hard_link</span><br><span class="line"></span><br><span class="line"># 可以看见硬链接文件与原文件inode值一样</span><br><span class="line"></span><br><span class="line"># 删除源文件/etc/hosts</span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# rm -f /etc/hosts</span><br><span class="line">[root@C7-Server01 kkutysllb]# cat /etc/hosts</span><br><span class="line">cat: /etc/hosts: No such file or directory  # 提示文件不存在</span><br><span class="line"></span><br><span class="line"># 可以通过刚才的硬链接文件进行误删除文件的找回，即在做一个硬链接</span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# ln hard_link /etc/hosts</span><br><span class="line">[root@C7-Server01 kkutysllb]# cat /etc/hosts</span><br><span class="line">127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</span><br><span class="line">::1         localhost localhost.localdomain localhost6 localhost6.localdomain6</span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -li hard_link /etc/hosts</span><br><span class="line">33583813 -rw-r--r--. 2 root root 158 Jun  7  2013 /etc/hosts</span><br><span class="line">33583813 -rw-r--r--. 2 root root 158 Jun  7  2013 hard_link</span><br><span class="line">#找回后的文件inode值与删除前一致，就好像误删除从没发生过。</span><br></pre></td></tr></table></figure>
+<p><strong>2）创建一个软连接文件</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#使用-s选项创建一个软连接文件</span><br><span class="line">[root@C7-Server01 kkutysllb]# ln -s /etc/hosts soft_link</span><br><span class="line"></span><br><span class="line"># 通过ls -li指令可以看出软连接文件和源文件的inode值不一致，说明这是两个不同的文件</span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# ls -li /etc/hosts soft_link </span><br><span class="line">33583813 -rw-r--r--. 2 root root 158 Jun  7  2013 /etc/hosts</span><br><span class="line">1231043 lrwxrwxrwx  1 root root  10 Apr 17 14:04 soft_link -&gt; /etc/hosts</span><br><span class="line">#查看软连接文件的内容就是查看原文件的内容</span><br><span class="line">[root@C7-Server01 kkutysllb]# cat soft_link </span><br><span class="line">127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</span><br><span class="line">::1         localhost localhost.localdomain localhost6 localhost6.localdomain6</span><br><span class="line">#通过readlink命令可以查看软链接中的存放的具体信息（非原文件内容）</span><br><span class="line">[root@C7-Server01 kkutysllb]# readlink soft_link </span><br><span class="line">/etc/hosts</span><br><span class="line">#可以看出软链接中存放的就是源文件的绝对路径</span><br></pre></td></tr></table></figure>
+<p><strong><em>软链接和源文件的关系图示：</em></strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6de6e04fc8.jpg" alt></p>
+<p><strong>*注意一点：<em>**</em></strong>目录不可以创建硬链接，但是可以创建软链接。因为，前面讲过Linux系统的磁盘需要挂载到一个目录才可以使用，但是多个磁盘可能对应分区格式和文件系统不一样，因此如果两个目录之间如果是硬链接关系，但是对应的磁盘分区格式又不一致就会出现问题。***</p>
+<h2 id="find：查找目录下的文件"><a href="#find：查找目录下的文件" class="headerlink" title="find：查找目录下的文件"></a>find：查找目录下的文件</h2><p>find命令用于查找目录下的文件，同时也可以调用其他命令执行相应的操作。</p>
+<p><strong>语法格式：find [-H] [-L] [-P] [-D debugopts] [-Olevel] [pathname] [expression]</strong></p>
+<p>注意子模块的先后顺序。</p>
+<p>find命令用法的使用说明：</p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6de9f28d60.jpg" alt></p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dec2a8b4c.jpg" alt></p>
+<p><img src="https://i.loli.net/2019/04/17/5cb6dedbd7064.jpg" alt></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）查找指定时间内修改过的文件</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 查找当前目录下2天内访问过的文件 </span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# find . -atime -2</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6df093502b.jpg" alt></p>
+<p><strong>2）用-name指定关键字查找</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#查找/var/log下5天以前修改过的以.log结尾的所有文件 </span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# find /var/log -mtime +5 -name &quot;*.log&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6df3f5933a.jpg" alt></p>
+<p><strong>3）利用“！”反向查找</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#查找当前目录下非目录文件 </span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# find . ! -type d</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/17/5cb6df79f104e.jpg" alt></p>
+<p><strong>小练习：</strong></p>
+<p><strong>1、按照文件大小来查找文件</strong></p>
+<p><strong>2、按照文件或目录的权限来查找文件</strong></p>
+<p><strong>3、查找文件时希望忽略一个或多个目录的方法</strong></p>
+<p><strong>4、按照文件的更新时间来差找文件</strong></p>
+<p><strong>5、按照文件或目录的归属用户和用户组来查找文件</strong></p>
+<p>至此，Linux系统文件和目录的操作命令部分已经写完了。但是，这并不是所有命令（Linux系统核心命令使用频率较高的越有150条），而是和运维工作息息相关的最最最常用的几个命令，作为初学者必须首先掌握上述这些命令，再结合实际工作中的需要去掌握其它命令。其它命令章节也是遵循此原则来写，后续不再赘述。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2019/04/17/2019-04-16-Linux系统核心命令-第二篇《文件或目录操作命令》/" title="2019-04-16-Linux系统核心命令-第二篇《文件或目录操作命令》">https://kkutysllb.cn/2019/04/17/2019-04-16-Linux系统核心命令-第二篇《文件或目录操作命令》/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/15/2019-04-10-Linux系统核心命令-第一篇《关机、重启命令》/" rel="next" title="2019-04-10-Linux系统核心命令---第一篇《关机、重启命令》">
+                <i class="fa fa-chevron-left"></i> 2019-04-10-Linux系统核心命令---第一篇《关机、重启命令》
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#pwd：显示当前所在的位置"><span class="nav-number">1.</span> <span class="nav-text">pwd：显示当前所在的位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cd：切换目录"><span class="nav-number">2.</span> <span class="nav-text">cd：切换目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tree：以树形结构显示目录下的内容"><span class="nav-number">3.</span> <span class="nav-text">tree：以树形结构显示目录下的内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mkdir：创建目录"><span class="nav-number">4.</span> <span class="nav-text">mkdir：创建目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#touch：创建空文件或改变文件的时间戳属性"><span class="nav-number">5.</span> <span class="nav-text">touch：创建空文件或改变文件的时间戳属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ls：显示目录下的内容及相关属性信息"><span class="nav-number">6.</span> <span class="nav-text">ls：显示目录下的内容及相关属性信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cp：复制文件或目录"><span class="nav-number">7.</span> <span class="nav-text">cp：复制文件或目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mv：移动或重命名文件"><span class="nav-number">8.</span> <span class="nav-text">mv：移动或重命名文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rm：删除文件或目录"><span class="nav-number">9.</span> <span class="nav-text">rm：删除文件或目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ln：硬链接与软链接"><span class="nav-number">10.</span> <span class="nav-text">ln：硬链接与软链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#find：查找目录下的文件"><span class="nav-number">11.</span> <span class="nav-text">find：查找目录下的文件</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">49k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">44 分钟</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/04/17/2019-04-16-Linux系统核心命令-第二篇《文件或目录操作命令》/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>
