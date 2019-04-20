@@ -134,7 +134,7 @@
 <meta property="og:image" content="https://i.loli.net/2019/04/20/5cbb0e38b205b.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/04/20/5cbb0e5093673.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/04/20/5cbb0e68e47fd.jpg">
-<meta property="og:updated_time" content="2019-04-20T12:20:18.787Z">
+<meta property="og:updated_time" content="2019-04-20T12:24:34.736Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-04-20-Linux系统命令-第三篇《文件过滤及内容编辑处理》">
 <meta name="twitter:description" content="cat：合并文件或查看文件内容cat命令可以理解为英文单词concatenate的缩写，其功能是连接多个文件并且打印到屏幕输出，或者重定向到指定的文件中。此命令常用来显示单个文件内容，或者将几个文件内容连接起来一起显示，还可以从标准输入中读取内容并显示，生产环境中它常与重定向或追加符号配合使用。">
@@ -459,7 +459,7 @@
                 
               
 
-              <time title="创建时间：2019-04-20 19:00:36 / 修改时间：20:20:18" itemprop="dateCreated datePublished" datetime="2019-04-20T19:00:36+08:00">2019-04-20</time>
+              <time title="创建时间：2019-04-20 19:00:36 / 修改时间：20:24:34" itemprop="dateCreated datePublished" datetime="2019-04-20T19:00:36+08:00">2019-04-20</time>
             
 
             
@@ -531,7 +531,7 @@
                 
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
-                <span title="阅读时长">28 分钟</span>
+                <span title="阅读时长">27 分钟</span>
               
             </div>
           
@@ -707,8 +707,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 显示文件最长行的长度</span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# wc -L /etc/hosts</span><br><span class="line">78 /etc/hosts</span><br></pre></td></tr></table></figure>
 <p><strong>2）在shell脚本常用来判断某个软件包是否安装</strong></p>
 <p><img src="https://i.loli.net/2019/04/20/5cbb0cd6eb1a6.jpg"></p>
-<p><strong>diff：比较两个文件的不同</strong></p>
-<p>diff命令可以逐行比较纯文本文件的内容，并输出文件的差异。只能同时比较2个文件。</p>
+<h2 id="diff：比较两个文件的不同"><a href="#diff：比较两个文件的不同" class="headerlink" title="diff：比较两个文件的不同"></a>diff：比较两个文件的不同</h2><p>diff命令可以逐行比较纯文本文件的内容，并输出文件的差异。只能同时比较2个文件。</p>
 <p><strong>语法格式：diff [option] [file1] [file2]</strong></p>
 <p><strong>重要选项参数</strong></p>
 <p><img src="https://i.loli.net/2019/04/20/5cbb0ceb49eaf.jpg"></p>
@@ -723,7 +722,19 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># 使用-y选项就可以并排格式输出对比</span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# diff -y data003 data004</span><br><span class="line">10.0.2.1							10.0.2.1</span><br><span class="line">10.0.2.56						      &lt;</span><br><span class="line">10.0.2.3						      &lt;</span><br><span class="line">10.0.2.5						      &lt;</span><br><span class="line">10.0.2.14						      &lt;</span><br><span class="line">10.0.2.11							10.0.2.11</span><br><span class="line">10.0.2.2						      |	10.0.2.14</span><br><span class="line">10.0.2.2							10.0.2.2</span><br><span class="line">10.0.2.3							10.0.2.3</span><br><span class="line">10.0.2.11						      |	10.0.2.5</span><br><span class="line">10.0.2.1						      |	10.0.2.56</span><br><span class="line">10.0.2.1						      &lt;</span><br><span class="line">10.0.2.1						      &lt;</span><br></pre></td></tr></table></figure>
 <p><strong>3） 使用-c选项就可以上下文输出</strong></p>
 <ul>
-<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">  # -表示data004比data003少的行数</span><br><span class="line"></span><br><span class="line">  # +表示data004比data003多的行数</span><br><span class="line">  </span><br><span class="line"># !表示两者不一样的行数</span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]# diff -c data003 data004</span><br><span class="line">*** data003	2019-04-20 15:44:51.488782009 +0800</span><br><span class="line">--- data004	2019-04-20 17:21:03.569053069 +0800</span><br><span class="line">  </span><br><span class="line">  ------</span><br><span class="line"></span><br><span class="line">  *** 1,13 ****</span><br><span class="line">    10.0.2.1</span><br><span class="line"></span><br><span class="line">- 10.0.2.56</span><br><span class="line">  - 10.0.2.3</span><br><span class="line">  - 10.0.2.5</span><br><span class="line">  - 10.0.2.14</span><br><span class="line">    10.0.2.11</span><br><span class="line">    ! 10.0.2.2</span><br><span class="line">    10.0.2.2</span><br><span class="line">    10.0.2.3</span><br><span class="line">    ! 10.0.2.11</span><br><span class="line">    ! 10.0.2.1</span><br><span class="line">    ! 10.0.2.1</span><br><span class="line">    ! 10.0.2.1</span><br><span class="line">    --- 1,7 ----</span><br><span class="line">    10.0.2.1</span><br><span class="line">    10.0.2.11</span><br><span class="line">    ! 10.0.2.14</span><br><span class="line">    10.0.2.2</span><br><span class="line">    10.0.2.3</span><br><span class="line">    ! 10.0.2.5</span><br><span class="line">    ! 10.0.2.56</span><br></pre></td></tr></table></figure>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># -表示data004比data003少的行数</span><br><span class="line"></span><br><span class="line"># +表示data004比data003多的行数</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="表示两者不一样的行数"><a href="#表示两者不一样的行数" class="headerlink" title="!表示两者不一样的行数"></a>!表示两者不一样的行数</h1><p>[root@C7-Server01 kkutysllb]# diff -c data003 data004<br>*** data003    2019-04-20 15:44:51.488782009 +0800<br>— data004    2019-04-20 17:21:03.569053069 +0800</p>
+<hr>
+<p>  <strong>* 1,13 **</strong><br>    10.0.2.1</p>
+<ul>
+<li>10.0.2.56<ul>
+<li>10.0.2.3</li>
+<li>10.0.2.5</li>
+<li>10.0.2.14<br>10.0.2.11<br>! 10.0.2.2<br>10.0.2.2<br>10.0.2.3<br>! 10.0.2.11<br>! 10.0.2.1<br>! 10.0.2.1<br>! 10.0.2.1<br>— 1,7 —-<br>10.0.2.1<br>10.0.2.11<br>! 10.0.2.14<br>10.0.2.2<br>10.0.2.3<br>! 10.0.2.5<br>! 10.0.2.56<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"> </span><br></pre></td></tr></table></figure>
+</li>
+</ul>
 </li>
 </ul>
 <p><strong>小练习：除了diff指令可以比较两个文件外，vimdiff指令还可以可视化比较两个文件，大家自行研究。</strong></p>
@@ -1162,7 +1173,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#cat：合并文件或查看文件内容"><span class="nav-number">1.</span> <span class="nav-text">cat：合并文件或查看文件内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#more：分页显示文件内容"><span class="nav-number">2.</span> <span class="nav-text">more：分页显示文件内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#less：分页显示文件内容"><span class="nav-number">3.</span> <span class="nav-text">less：分页显示文件内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#head：显示文件内容头部"><span class="nav-number">4.</span> <span class="nav-text">head：显示文件内容头部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tail：显示文件内容尾部"><span class="nav-number">5.</span> <span class="nav-text">tail：显示文件内容尾部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cut：从文本中提取一段文字并输出"><span class="nav-number">6.</span> <span class="nav-text">cut：从文本中提取一段文字并输出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sort：文本排序"><span class="nav-number">7.</span> <span class="nav-text">sort：文本排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#uniq：去除重复行"><span class="nav-number">8.</span> <span class="nav-text">uniq：去除重复行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wc：统计文件的行数、单词数或字节数"><span class="nav-number">9.</span> <span class="nav-text">wc：统计文件的行数、单词数或字节数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tee：多重定向"><span class="nav-number">10.</span> <span class="nav-text">tee：多重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tr：替换或删除字符"><span class="nav-number">11.</span> <span class="nav-text">tr：替换或删除字符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vi-vim编辑器"><span class="nav-number">12.</span> <span class="nav-text">vi/vim编辑器</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#cat：合并文件或查看文件内容"><span class="nav-number">1.</span> <span class="nav-text">cat：合并文件或查看文件内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#more：分页显示文件内容"><span class="nav-number">2.</span> <span class="nav-text">more：分页显示文件内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#less：分页显示文件内容"><span class="nav-number">3.</span> <span class="nav-text">less：分页显示文件内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#head：显示文件内容头部"><span class="nav-number">4.</span> <span class="nav-text">head：显示文件内容头部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tail：显示文件内容尾部"><span class="nav-number">5.</span> <span class="nav-text">tail：显示文件内容尾部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cut：从文本中提取一段文字并输出"><span class="nav-number">6.</span> <span class="nav-text">cut：从文本中提取一段文字并输出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sort：文本排序"><span class="nav-number">7.</span> <span class="nav-text">sort：文本排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#uniq：去除重复行"><span class="nav-number">8.</span> <span class="nav-text">uniq：去除重复行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wc：统计文件的行数、单词数或字节数"><span class="nav-number">9.</span> <span class="nav-text">wc：统计文件的行数、单词数或字节数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#diff：比较两个文件的不同"><span class="nav-number">10.</span> <span class="nav-text">diff：比较两个文件的不同</span></a></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#表示两者不一样的行数"><span class="nav-number"></span> <span class="nav-text">!表示两者不一样的行数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tee：多重定向"><span class="nav-number">1.</span> <span class="nav-text">tee：多重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tr：替换或删除字符"><span class="nav-number">2.</span> <span class="nav-text">tr：替换或删除字符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vi-vim编辑器"><span class="nav-number">3.</span> <span class="nav-text">vi/vim编辑器</span></a></li></ol></li></div>
             
 
           </div>
