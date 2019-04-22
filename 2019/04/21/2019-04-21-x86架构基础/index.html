@@ -121,7 +121,7 @@
 <meta property="og:image" content="https://i.loli.net/2019/04/21/5cbc280a44322.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/04/21/5cbc282ce34ef.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/04/21/5cbc28480061c.jpg">
-<meta property="og:updated_time" content="2019-04-21T08:25:44.960Z">
+<meta property="og:updated_time" content="2019-04-22T18:03:58.553Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-04-21-x86架构基础">
 <meta name="twitter:description" content="标准服务器技术是网络功能虚拟化（NFV）实现的一个关键因素，了解一些x86架构的基础知识对大家后续了解电信云关键技术，尤其是掌握虚拟化技术原理和关键优化方案是必须具备的。本文主要从x86架构的CPU指令集增强，内存管理、中断和异常、IO架构等部分进行阐述，以及包含一些基础IT的基本概念的讲解。">
@@ -446,12 +446,24 @@
                 
               
 
-              <time title="创建时间：2019-04-21 16:10:21 / 修改时间：16:25:44" itemprop="dateCreated datePublished" datetime="2019-04-21T16:10:21+08:00">2019-04-21</time>
+              <time title="创建时间：2019-04-21 16:10:21" itemprop="dateCreated datePublished" datetime="2019-04-21T16:10:21+08:00">2019-04-21</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-23 02:03:58" itemprop="dateModified" datetime="2019-04-23T02:03:58+08:00">2019-04-23</time>
               
             
           </span>
@@ -558,7 +570,7 @@
 <h3 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h3><p>地址是访问地址空间的索引。根据访问地址空间的不同，索引可以分为<strong>物理地址</strong>和<strong>线性地址</strong>。但由于x86特殊的段机制，还存在一种额外的地址—<strong>逻辑地址</strong>。</p>
 <p><strong>（1）逻辑地址</strong></p>
 <p>逻辑地址是程序直接使用的地址（x86无法禁用段机制，逻辑地址一直存在）。逻辑地址由一个16位的段选择符和一个32位的偏移量（32位平台）构成。下面以具体程序为例进行解释。比如：我们写下面一段c语言代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int a = 100;   # 定义一个整型变量a</span><br><span class="line">int *p = &amp;a;   # 定义一个整型指针p，指向变量a在内存中的地址</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">100</span>;   # 定义一个整型变量a</span><br><span class="line"><span class="keyword">int</span> *p = &amp;a;   # 定义一个整型指针p，指向变量a在内存中的地址</span><br></pre></td></tr></table></figure>
 <p>上述语句中的指针变量p存储的就是变量a的逻辑地址。实际上，p中存储的仅是逻辑地址的<strong>偏移部分</strong>，而偏移对应的<strong>段选择符位于段寄存器中</strong>，并没有在程序中显示。</p>
 <p><strong>（2）线性地址</strong></p>
 <p>线性地址又称虚拟地址。线性地址是逻辑地址转换后的结果，用于索引线性地址空间。当CPU使用分页机制时，还需要将线性地址转换成物理地址才能访问物理平台内存或其他硬件设备；<strong>当分页机制未启用时，线性地址与物理地址相同</strong>。</p>
@@ -697,7 +709,7 @@
 <p>携程英文Coroutines，是一种比线程更加轻量级的存在。正如一个进程可以拥有多个线程一样，一个线程也可以拥有多个协程。最重要的是，协程不是被操作系统内核所管理，而完全是由程序所控制（也就是在用户态执行）。这样带来的好处就是性能得到了很大的提升，不会像线程切换那样消耗资源。</p>
 <p><img src="https://i.loli.net/2019/04/21/5cbc28480061c.jpg"></p>
 <p>在Python语言中有个生成器的概念，里面有个关键字yield，当程序执行到yield关键字时，会暂停在那一行，等到主线程调用send方法发送了数据，协程才会接到数据继续执行。但是，yield让程序暂停，和线程的阻塞是有本质区别的。通过yield关键字的暂停完全由程序控制，线程的阻塞状态是由操作系统内核来进行切换。大家可以在Python脚本中写入如下代码并执行体验下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">consume</span><span class="params">()</span>:</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">	<span class="comment"># consume等待接收数据</span></span><br><span class="line">	number = <span class="keyword">yield</span></span><br><span class="line">	print(<span class="string">"我要执行啦。。。。开始计数："</span>,number)</span><br><span class="line">consumer = consume()</span><br><span class="line">next(consumer)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> num <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">100</span>):</span><br><span class="line">	print(<span class="string">"开始执行："</span>,num)</span><br><span class="line">	consumer.send(num)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">consume</span><span class="params">()</span>:</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line"><span class="comment"># consume等待接收数据</span></span><br><span class="line">number = <span class="keyword">yield</span></span><br><span class="line">print(<span class="string">"我要执行啦。。。。开始计数："</span>,number)</span><br><span class="line">consumer = consume()</span><br><span class="line">next(consumer)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> num <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">100</span>):</span><br><span class="line">print(<span class="string">"开始执行："</span>,num)</span><br><span class="line">consumer.send(num)</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -807,6 +819,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019/04/23/2019-04-22-Linux系统命令-第四篇《系统信息显示命令》/" rel="prev" title>
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -882,7 +898,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-count">19</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1064,7 +1080,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">116k</span>
+    <span title="站点总字数">126k</span>
   
 
   
@@ -1073,7 +1089,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">1:45</span>
+    <span title="站点阅读时长">1:55</span>
   
 </div>
 
