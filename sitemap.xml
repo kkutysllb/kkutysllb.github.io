@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://kkutysllb.cn/2019/04/23/2019-04-22-Linux%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4-%E7%AC%AC%E5%9B%9B%E7%AF%87%E3%80%8A%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E6%98%BE%E7%A4%BA%E5%91%BD%E4%BB%A4%E3%80%8B/</loc>
+    
+    <lastmod>2019-04-22T18:17:07.037Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://kkutysllb.cn/2019/04/15/2019-03-18-Linux%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</loc>
     
     <lastmod>2019-04-22T18:14:14.538Z</lastmod>
@@ -40,13 +47,6 @@
     <loc>https://kkutysllb.cn/2019/04/20/2019-04-20-Linux%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4-%E7%AC%AC%E4%B8%89%E7%AF%87%E3%80%8A%E6%96%87%E4%BB%B6%E8%BF%87%E6%BB%A4%E5%8F%8A%E5%86%85%E5%AE%B9%E7%BC%96%E8%BE%91%E5%A4%84%E7%90%86%E3%80%8B/</loc>
     
     <lastmod>2019-04-22T18:03:04.293Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://kkutysllb.cn/2019/04/23/2019-04-22-Linux%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4-%E7%AC%AC%E5%9B%9B%E7%AF%87%E3%80%8A%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E6%98%BE%E7%A4%BA%E5%91%BD%E4%BB%A4%E3%80%8B/</loc>
-    
-    <lastmod>2019-04-22T17:57:30.150Z</lastmod>
     
   </url>
   
@@ -100,14 +100,14 @@
   </url>
   
   <url>
-    <loc>https://kkutysllb.cn/2018/09/12/2018-09-12-%E4%BA%91%E8%AE%A1%E7%AE%97%E7%9A%84%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F/</loc>
+    <loc>https://kkutysllb.cn/2018/08/31/2018-08-31-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BC%80%E5%A7%8B%E5%86%99%E5%8D%9A%E5%AE%A2%EF%BC%9F/</loc>
     
     <lastmod>2019-02-18T00:49:06.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://kkutysllb.cn/2018/10/10/2018-10-10-%E4%BA%91%E8%AE%A1%E7%AE%97%E7%9A%84%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84/</loc>
+    <loc>https://kkutysllb.cn/2018/09/12/2018-09-12-%E4%BA%91%E8%AE%A1%E7%AE%97%E7%9A%84%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F/</loc>
     
     <lastmod>2019-02-18T00:49:06.000Z</lastmod>
     
@@ -135,13 +135,6 @@
   </url>
   
   <url>
-    <loc>https://kkutysllb.cn/categories/index.html</loc>
-    
-    <lastmod>2019-02-18T00:49:06.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://kkutysllb.cn/about/index.html</loc>
     
     <lastmod>2019-02-18T00:49:06.000Z</lastmod>
@@ -149,14 +142,21 @@
   </url>
   
   <url>
-    <loc>https://kkutysllb.cn/tags/index.html</loc>
+    <loc>https://kkutysllb.cn/2018/10/10/2018-10-10-%E4%BA%91%E8%AE%A1%E7%AE%97%E7%9A%84%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84/</loc>
     
     <lastmod>2019-02-18T00:49:06.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://kkutysllb.cn/2018/08/31/2018-08-31-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BC%80%E5%A7%8B%E5%86%99%E5%8D%9A%E5%AE%A2%EF%BC%9F/</loc>
+    <loc>https://kkutysllb.cn/categories/index.html</loc>
+    
+    <lastmod>2019-02-18T00:49:06.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://kkutysllb.cn/tags/index.html</loc>
     
     <lastmod>2019-02-18T00:49:06.000Z</lastmod>
     
