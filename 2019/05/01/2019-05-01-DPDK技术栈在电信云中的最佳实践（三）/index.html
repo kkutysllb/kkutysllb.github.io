@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="DPDK技术基础（3）网络报文转发模式们来看看发展了十几年的DPDK，从Intel主导开发，到华为、思科、AWS等大厂商的加入，核心玩家都在该圈子里，拥有完善的社区，生态形成闭环。早期，主要是传统电信领域3层以下的应用，如华为、中国电信、中国移动都是其早期使用者，交换机、路由器、网关是主要应用场景。但是，随着上层业务的需求以及DPDK的完善，在更高的未来网络转发性能提升方面的应用也在逐步出现。">
+<meta name="keywords" content="电信云">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019-05-01-DPDK技术栈在电信云中的最佳实践（三）">
+<meta property="og:url" content="https://kkutysllb.cn/2019/05/01/2019-05-01-DPDK技术栈在电信云中的最佳实践（三）/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="DPDK技术基础（3）网络报文转发模式们来看看发展了十几年的DPDK，从Intel主导开发，到华为、思科、AWS等大厂商的加入，核心玩家都在该圈子里，拥有完善的社区，生态形成闭环。早期，主要是传统电信领域3层以下的应用，如华为、中国电信、中国移动都是其早期使用者，交换机、路由器、网关是主要应用场景。但是，随着上层业务的需求以及DPDK的完善，在更高的未来网络转发性能提升方面的应用也在逐步出现。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc915c968f4a.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc915e413a43.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc9160409b80.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc91621d52cb.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc9165a5c616.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc9166dc874d.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc91683cc5b7.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc91699eccdf.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc916c688d5f.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc916e0b3cbc.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc91700d43d4.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc91718c07ce.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc917511d370.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc91766e0634.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc917d7ecdd4.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc917f571530.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc918484ea5e.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc918c47c16b.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc91916474a0.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc91d176fb2c.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc91f747fceb.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc91f8887da0.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc91fa61ce3e.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc9206f09584.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc9208d47b71.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc920bf9fb36.jpg">
+<meta property="og:updated_time" content="2019-05-01T04:30:48.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019-05-01-DPDK技术栈在电信云中的最佳实践（三）">
+<meta name="twitter:description" content="DPDK技术基础（3）网络报文转发模式们来看看发展了十几年的DPDK，从Intel主导开发，到华为、思科、AWS等大厂商的加入，核心玩家都在该圈子里，拥有完善的社区，生态形成闭环。早期，主要是传统电信领域3层以下的应用，如华为、中国电信、中国移动都是其早期使用者，交换机、路由器、网关是主要应用场景。但是，随着上层业务的需求以及DPDK的完善，在更高的未来网络转发性能提升方面的应用也在逐步出现。">
+<meta name="twitter:image" content="https://i.loli.net/2019/05/01/5cc915c968f4a.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2019/05/01/2019-05-01-DPDK技术栈在电信云中的最佳实践（三）/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2019-05-01-DPDK技术栈在电信云中的最佳实践（三） | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/05/01/2019-05-01-DPDK技术栈在电信云中的最佳实践（三）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019-05-01-DPDK技术栈在电信云中的最佳实践（三）
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-01 11:37:51 / 修改时间：12:30:48" itemprop="dateCreated datePublished" datetime="2019-05-01T11:37:51+08:00">2019-05-01</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/关键技术/" itemprop="url" rel="index"><span itemprop="name">关键技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">21k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">19 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="DPDK技术基础（3）"><a href="#DPDK技术基础（3）" class="headerlink" title="DPDK技术基础（3）"></a>DPDK技术基础（3）</h2><h3 id="网络报文转发模式"><a href="#网络报文转发模式" class="headerlink" title="网络报文转发模式"></a>网络报文转发模式</h3><p>们来看看发展了十几年的DPDK，从Intel主导开发，到华为、思科、AWS等大厂商的加入，核心玩家都在该圈子里，拥有完善的社区，生态形成闭环。早期，主要是传统电信领域3层以下的应用，如华为、中国电信、中国移动都是其早期使用者，交换机、路由器、网关是主要应用场景。但是，随着上层业务的需求以及DPDK的完善，在更高的未来网络转发性能提升方面的应用也在逐步出现。<a id="more"></a></p>
+<p>在x86服务器中，基于网络包的处理架构如下：</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc915c968f4a.jpg"></p>
+<ul>
+<li>Packet input：报文输入。</li>
+<li>Pre-processing：对报文进行比较粗粒度的处理。</li>
+<li>Input classification：对报文进行较细粒度的分流。</li>
+<li>Ingress queuing：提供基于描述符的队列FIFO。</li>
+<li>Delivery/Scheduling：根据队列优先级和CPU状态进行调度。</li>
+<li>Accelerator：提供加解密和压缩/解压缩等硬件功能。</li>
+<li>Egress queueing：在出口上根据QOS等级进行调度。</li>
+<li>Post processing：后期报文处理释放缓存。</li>
+<li>Packet output：从硬件上发送出去。</li>
+</ul>
+<p>可以看到在浅色和阴影对应的模块都是和硬件相关的，因此要提升这部分性能的最佳选择就是去选择网卡上或网络设备芯片上具有网络功能硬件卸载特性的设备，而在深色软件部分可以通过提高算法的效率和结合CPU相关的并行指令来提升网络性能。</p>
+<p>传统的Network Processor（专用网络处理器）转发的模型可以分为<strong>run to completion（运行至终结，简称RTC）模型</strong>和<strong>pipeline（流水线）模型</strong>。</p>
+<p><strong>1）pipeline模型：</strong>pipeline模型借鉴于工业上的流水线模型，将一个功能（大于模块级的功能）分解成多个独立的阶段，不同阶段间通过队列传递产品。这样，对于一些CPU密集和I/O密集的应用，通过pipeline模型，可以把CPU密集的操作放在一个微处理引擎上执行，将I/O密集的操作放在另外一个微处理引擎上执行。通过过滤器可以为不同的操作分配不同的线程，通过连接两者的队列匹配两者的处理速度，从而达到最好的并发效率。</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc915e413a43.jpg"></p>
+<p>如上图所示，在NPA中最主要的就是TOP（Task Optimized Processor）单元，每个TOP单元都是对特定的事务进行过优化的特殊微处理单元，在处理特定的事务时会在性能上有较大的提升，一个报文从Input进入后会经历五个不同的TOP单元，每个TOP的输出又会是下个TOP的输入，这种硬件模型决定了在报文的不同处理中必须按照TOP的顺序来进行，不可能先进行报文修改再进行报文查找。如果需要这种顺序修改处理，必须从TOP修改这个单元将报文再回传到TOP解析上，但这样包的处理速度会大幅下降。</p>
+<p><strong>2）run to completion模型：</strong>主要将一个程序分为几个不同的逻辑功能，但是这几个逻辑功能会在一个CPU的核上运行，可以进行水平扩展使得在SMP的系统中多个核上执行一样的逻辑，从而提高单位时间内事务处理的量。但是，由于每个核上的处理能力其实都是一样的，并没有针对某个逻辑功能进行优化，因此在这个层面上与pipeline模型比较，run to completion模型是不高效的。</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc9160409b80.jpg"></p>
+<p>如上图所示，在AMCC 345x的模型中，对于报文的处理没有特殊的运算单元，只有两个NP核，两个NP核利用已烧录的微码进行报文的处理，如果把运行的微码看成处理报文的逻辑，两个NP核上总共可以跑48个任务，每个任务的逻辑都共享一份微码，则同一时刻可以处理48份网络报文。</p>
+<p><strong>基于通用IA平台的DPDK中是怎么利用专用网络处理器中的这两种模型来进行高速包处理？如下图所示：</strong></p>
+<p><img src="https://i.loli.net/2019/05/01/5cc91621d52cb.jpg"></p>
+<blockquote>
+<p>从RTC模型中（上图左边），我们可以清楚地看出，每个IA的物理核都负责处理整个报文的生命周期从RX到TX，这点非常类似前面所提到的AMCC的nP核的作用。</p>
+<p>从pipeline模型中（上图右边），我们可以看出，报文的处理被划分成不同的逻辑功能单元A、B、C，一个报文需分别经历A、B、C三个阶段，这三个阶段的功能单元可以不止一个并且可以分布在不同的物理核上，不同的功能单元可以分布在相同的核上（也可以分布在不同的核上）。因此，其对于模块的分类和调用比EZchip的硬件方案更加灵活。</p>
+</blockquote>
+<p><strong>DPDK RTC模型</strong></p>
+<p>普通的Linux网络驱动中的扩展方法如下：把不同的收发包队列对应的中断转发到指定核的local APIC（本地中断控制器）上，并且使得每个核响应一个中断，从而处理此中断对应的队列集合中的相关报文。</p>
+<p>而在DPDK的轮询模式中主要通过一些DPDK中eal中的参数-c、-l、-lcores来设置哪些核可以被DPDK使用，最后再把处理对应收发队列的线程绑定到对应的核上。每个报文的整个生命周期都只可能在其中一个线程中出现。</p>
+<p>和普通网络处理器的RTC模式相比，基于IA平台的通用CPU也有不少的计算资源，比如一个socket上面可以有独立运行的16运算单元（核），每个核上面可以有两个逻辑运算单元（thread）共享物理的运算单元。而多个socket可以通过QPI总线连接在一起，这样使得每一个运算单元都可以独立地处理一个报文，并且通用处理器上的编程更加简单高效，在快速开发网络功能的同时，利用硬件AES-NI、SHA-NI等特殊指令可以加速网络相关加解密和认证功能。RTC模型虽然有许多优势，但是针对单个报文的处理始终集中在一个逻辑单元上，无法利用其他运算单元，并且逻辑的耦合性太强，而流水线模型正好解决了以上的问题。下面我们来看DPDK的流水线模型，DPDK中称为Packet Framework。</p>
+<p><strong>DPDK pipeline模型</strong></p>
+<p>pipeline的主要思想就是不同的工作交给不同的模块，而每一个模块都是一个处理引擎，每个处理引擎都只单独处理特定的事务，每个处理引擎都有输入和输出，通过这些输入和输出将不同的处理引擎连接起来，完成复杂的网络功能。</p>
+<p>DPDK pipeline的多处理引擎实例和每个处理引擎中的组成框图可见如下两个实例的图片：zoom out（多核应用框架）和zoom in（单个流水线模块）。</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc9165a5c616.jpg"></p>
+<p><img src="https://i.loli.net/2019/05/01/5cc9166dc874d.jpg"></p>
+<p>Zoom out的实例中包含了五个DPDK pipeline处理模块，每个pipeline作为一个特定功能的包处理模块。一个报文从进入到发送，会有两个不同的路径，上面的路径有三个模块（解析、分类、发送），下面的路径有四个模块（解析、查表、修改、发送）。Zoom in的图示中代表在查表的pipeline中有两张查找表，报文根据不同的条件可以通过一级表或两级表的查询从不同的端口发送出去。</p>
+<p>DPDK的pipeline是由三大部分组成的，<strong>逻辑端口（port）、查找表（table）</strong>和<strong>处理逻辑（action）</strong>。DPDK的pipeline模型中把网络端口作为每个处理模块的输入，所有的报文输入都通过这个端口来进行报文的输入。查找表是每个处理模块中重要的处理逻辑核心，不同的查找表就提供了不同的处理方法。而转发逻辑指明了报文的流向和处理。</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc91683cc5b7.jpg"></p>
+<p>用户可以根据以上三大类构建数据自己的pipeline，然后把每个pipeline都绑定在指定的核上从而使得我们能快速搭建属于我们自己的packet framework。<strong>DPDK实现报文转发上述两种方案的优缺点比较如下：</strong></p>
+<p><img src="https://i.loli.net/2019/05/01/5cc91699eccdf.jpg"></p>
+<h3 id="PCIe与包处理I-O"><a href="#PCIe与包处理I-O" class="headerlink" title="PCIe与包处理I/O"></a>PCIe与包处理I/O</h3><p>PCI Express（Peripheral Component Interconnect Express）又称PCIe，它是一种高速串行通信互联标准。PCIe规范遵循开放系统互联参考模型（OSI），自上而下分为<strong>事务传输层、数据链路层、物理层</strong>，如下图所示：</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc916c688d5f.jpg"></p>
+<p>如果在PCIe的线路上抓取一个TLP（Transaction Layer Packet，事务传输层数据包），其格式是一种分组形式，层层嵌套，事务传输层也拥有头部、数据和校验部分。应用层的数据内容就承载在数据部分，而头部定义了一组事务类型。</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc916e0b3cbc.jpg"></p>
+<p>应用层数据作为有效载荷被承载在事务传输层之上，网卡从线路上接收的以太网包整个作为有效载荷在PCIe的事务传输层上进行内部传输。对于PCIe事务传输层操作而言，应用层数据内容是透明的。一般网卡采用DMA控制器通过PCIe Bus访问内存，除了对以太网数据内容的读写外，还有DMA描述符操作相关的读写。</p>
+<p>既然应用层数据只是作为有效载荷，那么PCIe协议的三层栈有多少额外开销呢？下图列出了每个部分的长度。物理层开始和结束各有1B的标记，整个数据链路层占用6B。TLP头部64位寻址占用16B（32位寻址占用12B），TLP中的ECRC为可选位。所以，对于一个完整的TLP包来说，除去有效载荷，额外还有24B的开销（TLP头部以16B计算）。</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc91700d43d4.jpg"></p>
+<p>PCIe逐代的理论峰值带宽都有显著提升，Gen1到Gen2单路传输率翻倍，Gen2到Gen3虽然传输率没有翻倍，但随着编码效率的提升，实际单路有效传输仍然有接近一倍的提升，Gen1和Gen2采用8b/10b编码，Gen3采用128b/130b编码，如下所示：</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc91718c07ce.jpg"></p>
+<p>以8b/10b编码为例，每10个比特传输8个比特（1个字节）的有效数据。以GEN2为例，传输1个字节数据需要500M*10b/s=500MB/s单向每路，对于8路同时传输8个字节数据就有4GB/s的理论带宽。</p>
+<p>要查看特定PCIe设备的链路能力和当前速率，可以用Linux工具lspci读取PCIe的配置寄存器（Configuration Space），以下是在虚拟机中读出的信息展示，与实际物理服务器并不一致</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc917511d370.jpg"></p>
+<p>除了TLP的协议开销以外，有时还会有实际实现的开销。比如有些网卡可能会要求每个TLP都要从Lane0开始，甚至要求从偶数的时钟周期开始。由于存在这样的实现因素影响，有效带宽还会进一步降低。同时，真实的网卡收发包由DMA驱动，除了写包内容之外，还有一系列的控制操作，这些操作也会进一步影响PCIe带宽的利用。</p>
+<p><strong>DMA（Direct Memory Access，直接存储器访问）</strong>是一种高速的数据传输方式，允许在外部设备和存储器之间直接读写数据。数据既不通过CPU，也不需要CPU干预。整个数据传输操作在DMA控制器的控制下进行。除了在数据传输开始和结束时做一点处理外，在传输过程中CPU可以进行其他的工作。</p>
+<p>网卡DMA控制器通过环形队列与CPU交互。环形队列由一组控制寄存器和一块物理上连续的缓存构成。主要的控制寄存器有Base、Size、Head和Tail。通过设置Base寄存器，可以将分配的一段物理连续的内存地址作为环形队列的起始地址，通告给DMA控制器。同样通过Size寄存器，可以通告该内存块的大小。Head寄存器往往对软件只读，它表示硬件当前访问的描述符单元。而Tail寄存器则由软件来填写更新，通知DMA控制器当前已准备好被硬件访问的描述符单元。</p>
+<p>为Intel 82599网卡的收发描述符环形队列为例，硬件控制所有Head和Tail之间的描述符。如下所示：</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc91766e0634.jpg"></p>
+<ol>
+<li>Head等于Tail时表示队列为空，Head等于Next（Tail）时表示队列已满。</li>
+<li>环形队列中每一条记录就是描述符。</li>
+<li>描述符的格式和大小根据不同网卡各不相同，Intel 82599网卡的一个描述符大小为16B，整个环形队列缓冲区的大小必须是网卡支持的最大Cache line（128B））的整数倍，所以描述符的总数是8的倍数。</li>
+<li>环形队列的起始地址也需要对齐到最大Cache line的大小。</li>
+</ol>
+<p><strong>无论网卡是工作在中断方式还是轮询方式下，判断包是否接收成功，或者包是否发送成功，都会需要检查描述符中的完成状态位（Descriptor Done，DD）。该状态位由DMA控制器在完成操作后进行回写。</strong></p>
+<p>对网络帧的封装及处理有两种方式：将网络帧元数据（metadata）和帧本身存放在固定大小的同一段缓存中；或将元数据和网络帧分开存放在两段缓存里。前者的好处是高效：对缓存的申请及释放均只需要一个指令，缺点是因为缓存长度固定而网络帧大小不一，大部分帧只能使用填0（padding）的方式填满整个缓存，较为耗费内存空间。后者的优点则是相对自由：帧数据的大小可以任意，同时对元数据和网络帧的缓存可以分开申请及释放；缺点是低效，因为无法保证数据存在于一个Cache Line中，可能造成Hit Miss。</p>
+<p>为保持包处理的效率，DPDK采用了前者。网络帧元数据的一部分内容由DPDK的网卡驱动写入，包括：VLAN标签、RSS哈希值、网络帧入口端口号以及巨型帧所占的Mbuf个数等。对于巨型帧，网络帧元数据仅出现在第一个帧的Mbuf结构中，其他的帧该信息为空。</p>
+<blockquote>
+<p>Mbuf主要用来封装网络帧缓存，也可用来封装通用控制信息缓存（缓存类型需使用CTRL_MBUF_FLAG来指定）。Mbuf结构报头经过精心设计，原先仅占1个Cache Line。随着Mbuf头部携带的信息越来越多，现在Mbuf头部已经调整成两个Cache Line，原则上将基础性、频繁访问的数据放在第一个Cache Line字节，而将功能性扩展的数据放在第二个Cache Line字节。Mbuf报头包含包处理所需的所有数据，对于单个Mbuf存放不下的巨型帧（Jumbo Frame），Mbuf还有指向下一个Mbuf结构的指针来形成帧链表结构。有兴趣的参见DPDK开发者手册。</p>
+</blockquote>
+<p>当一个网络帧被网卡接收时，DPDK的网卡驱动将其存储在一个高效的环形缓存区中，同时在Mbuf的环形缓存区中创建一个Mbuf对象。这两个行为都不涉及向系统申请内存，因为这些内存已经在内存池被创建时就申请好了。Mbuf对象被创建好后，网卡驱动根据分析出的帧信息将其初始化，并将其和实际帧对象逻辑相连。对网络帧的分析处理都集中于Mbuf，仅在必要的时候访问实际网络帧。这就是<strong>内存池的双环形缓存区结构</strong>。</p>
+<h3 id="IO包处理中轮询和中断的抉择"><a href="#IO包处理中轮询和中断的抉择" class="headerlink" title="IO包处理中轮询和中断的抉择"></a>IO包处理中轮询和中断的抉择</h3><p>DPDK采用了轮询或者轮询混杂中断的模式来进行收包和发包，而以前网卡驱动程序基本都是基于异步中断处理模式。</p>
+<p><strong>异步中断模式：</strong>当有包进入网卡收包队列后，网卡会产生硬件（MSIX/MSI/INTX）中断，进而触发CPU中断，进入中断服务程序，在中断服务程序来完成收包的处理。为了改善包处理性能，也可以在中断处理过程中加入轮询，来避免过多的中断响应次数。总之，基于异步中断信号模式的收包，是不断地在做中断处理，上下文切换，每次处理这种开销是固定的，累加带来的负荷显而易见。当有包需要发送出去的时候，基于异步中断信号的驱动程序会准备好要发送的包，配置好发送队列的各个描述符。在包被真正发送完成时，网卡同样会产生硬件中断信号，进而触发CPU中断，进入中断服务程序，来完成发包后的处理，例如释放缓存等。</p>
+<p><strong>轮询模式：</strong>是指收发包完全不使用中断处理的高吞吐率的方式。DPDK所有的收发包有关的中断在物理端口初始化的时候都会关闭，也就是说，CPU这边在任何时候都不会收到收包或者发包成功的中断信号，也不需要任何收发包有关的中断处理。DPDK的轮询驱动程序负责初始化每一个收包描述符，包括把包缓冲内存块的物理地址填充到收包描述符对应的位置，以及把相应的收包成功标志复位。然后驱动程序修改相应的队列管理寄存器来通知网卡硬件，网卡硬件会把收到的包填充到对应的收包描述符表示的缓冲内存块里，同时标记好收包成功标志。当一个收包描述符所代表的缓冲内存块大小不够存放一个完整的包时，这时候候就需要两个甚至多个收包描述符来处理一个包。</p>
+<p>1）每一个收包队列，DPDK都会有一个相应的线程负责轮询里面的收包描述符的收包成功的标志。一旦发现某一个收包描述符的收包成功标志被硬件置位了，就意味着有一个包已经进入到网卡，并且网卡已经存储到描述符对应的缓冲内存块里面，这时候驱动程序会解析相应的收包描述符，把收包缓冲内存块放到收包函数提供的数组里面，同时分配好一个新的缓冲内存块给这个描述符，以便下一次收包。</p>
+<p>2）每一个发包队列，DPDK都会有一个相应的线程负责设置需要发送出去的包，DPDK的驱动程序负责提取发包缓冲内存块的有效信息，例如包长、地址、校验和信息、VLAN配置信息等。DPDK的轮询驱动程序根据内存缓存块中的包的内容来负责初始化每一个发包描述符。其中最关键的有两个，一个就是标识完整的包结束的标志EOP（End Of Packet），另外一个就是请求报告发送状态RS（Report Status）。</p>
+<blockquote>
+<p>由于一个包可能存放在一个或者多个内存缓冲块里面，需要一个或者多个发包描述符来表示一个等待发送的包，EOP就是驱动程序用来通知网卡硬件一个完整的包结束的标志。每当驱动程序设置好相应的发包描述符，硬件就可以开始根据发包描述符的内容来发包，那么驱动程序可能会需要知道什么时候发包完成，然后回收占用的发包描述符和内存缓冲块。基于效率和性能上的考虑，驱动程序可能不需要每一个发包描述符都报告发送结果，RS就是用来由驱动程序来告诉网卡硬件什么时候需要报告发送结果的一个标志。不同的硬件会有不同的机制，有的网卡硬件要求每一个包都要报告发送结果，有的网卡硬件要求相隔几个包或者发包描述符再报告发送结果，而且可以由驱动程序来设置具体的位置。</p>
+</blockquote>
+<p>3）发包的轮询就是轮询发包结束的硬件标志位。DPDK驱动程序根据需要发送的包的信息和内容，设置好相应的发包描述符，包含设置对应的RS标志，然后会在发包线程里不断查询发包是否结束。只有设置了RS标志的发包描述符，网卡硬件才会在发包完成时以写回的形式告诉发包结束。当驱动程序发现写回标志，意味着包已经发送完成，就释放对应的发包描述符和对应的内存缓冲块，这时候就全部完成了包的发送过程。</p>
+<p><strong>混和中断轮询模式：</strong>由于实际网络中可能存在的潮汐效应，在某些时间段网络数据流量可能很低，甚至完全没有需要处理的包，这样完全轮询的方式会让处理器一直全速运行，明显浪费处理能力。因此在DPDK R2.1和R2.2陆续添加了<strong>收包中断与轮询的混合模式</strong>的支持，类似NAPI的思路，用户可以根据实际应用场景来选择完全轮询模式，或者混合中断轮询模式。而且，完全由用户来制定中断和轮询的切换策略，比如什么时候开始进入中断休眠等待收包，中断唤醒后轮询多长时间等等。所谓混合中断轮询模式，就是应用程序开始就是轮询收包，这时候收包中断是关闭的。但是当连续多次收到的包的个数为0，应用程序可以定义一个简单的策略来决定是否切换到中断以及什么时候让使能收包中断。轮询线程进入休眠之后，对应的核的运算能力就被释放出来，完全可以用于其他任何运算，或者干脆进入省电模式。当后续有任何包收到的时候，会产生一个收包中断，并且最终唤醒对应的应用程序收包线程。线程被唤醒后，就会关闭收包中断，再次轮询收包。应用程序完全可以根据不同的需要来定义不同的策略来让收包线程休眠或者唤醒收包线程。</p>
+<p>1）DPDK的混合中断轮询机制是基于UIO或VFIO来实现其收包中断通知与处理流程的。如果是基于VFIO的实现，该中断机制是可以支持队列级别的，即一个接收队列对应一个中断号，这是因为VFIO支持多MSI-X中断号。如果是基于UIO的实现，该中断机制就只支持一个中断号，所有的队列共享一个中断号。</p>
+<p>2）混合中断轮询模式相比完全轮询模式，会在包处理性能和时延方面有一定的牺牲，比如：当需要把DPDK工作线程从睡眠状态唤醒并运行，这样会引起中断触发后的第一个接收报文的时延增加。由于时延的增加，需要适当调整Mbuf队列的大小，以避免当大量报文同时到达时可能发生的丢包现象。</p>
+<p><strong>综上，在应用场景下如何更高效地利用处理器的计算能力，用户需要根据实际应用场景来做出最合适的选择。</strong></p>
+<h3 id="零拷贝技术"><a href="#零拷贝技术" class="headerlink" title="零拷贝技术"></a>零拷贝技术</h3><p>在每一次网络io过程，数据都要经过几个缓存，再发送出去。如下图：</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc917d7ecdd4.jpg"></p>
+<p>上图右侧为client，左侧为Server为例：</p>
+<ul>
+<li>当Server收到Client发送的index.html文件的请求时，负责处理请求的httpd子进程/线程总是会先发起系统调用，让内核将index.html从存储设备中载入。但是加载到的位置是内核空间的缓冲区kernel buffer，而不是直接给进程/线程的内存区。由于是内存设备和存储设备之间的数据传输，没有CPU的参与，所以这是一次DMA操作。</li>
+<li>当数据准备好后，内核唤醒httpd子进程/线程，让它使用read()函数把数据复制到它自己的缓冲区，也就是图中的app buffer。到了app buffer中的数据，已经独属于进程/线程，也就可以对它做读取、修改等等操作。由于这次是使用CPU来复制的，所以会消耗CPU资源。由于这个阶段从内核空间切换到用户空间，所以进行了上下文切换。</li>
+<li>当数据修改完成(也可能没做任何操作)后，Server需要发送响应消息给Client，也就是说要通过TCP连接传输出去。但TCP协议栈有自己的缓冲区，要通过它发送数据，必须将数据写到它的buffer中，对于发送者就是send buffer，对于接受者就是recv buffer。于是，通过write()函数将数据再次从app buffer复制到send buffer。这次也是CPU参与进行的复制，所以会消耗CPU。同样也会进行上下文切换。</li>
+<li>非本机数据最终还是会通过网卡传输出去的，所以再使用send()函数就可以将send buffer中的数据交给网卡并通过网卡传输出去。由于这次是内存和设备之间的数据传输，没有CPU的参与，所以这次也是一次DMA操作。</li>
+<li>当Client的网卡收到响应数据后，将它传输到TCP的recv buffer。这是一次DMA操作。</li>
+<li>数据源源不断地填充到recv buffer中，但是Client的应用程序却不一定会去读取，而是需要通知应用程序的进程使用recv()函数将数据从read buffer中取走。这次是CPU操作。</li>
+</ul>
+<p>在Server端，每次进程/线程需要一段数据时，总是先拷贝到kernel buffer，再拷贝到app buffer，再拷贝到socket buffer，最后再拷贝到网卡上。也就是说，总是会经过4段拷贝经历。通过分析上述4段拷贝，数据从存储设备到kernel buffer是必须的，从socket buffer到NIC也是必须的，但是从kernel buffer到app buffer却不一定。对于web服务来说，如果不修改http响应报文，数据完全可以不用经过用户空间。也就是不用再从kernel buffer拷贝到app buffer，这就是<strong>零复制</strong>的概念。</p>
+<p>零复制的概念是避免将数据在内核空间和用户空间进行拷贝。主要目的是减少不必要的拷贝，避免让CPU做大量上下文切换。</p>
+<p>mmap()函数将文件直接映射到用户程序的内存中，映射成功时返回指向目标区域的指针。这段内存空间可以用作进程间的共享内存空间，内核也可以直接操作这段空间。在映射文件之后，暂时不会拷贝任何数据到内存中，只有当访问这段内存时，发现没有数据，于是产生缺页访问，使用DMA操作将数据拷贝到这段空间中。可以直接将这段空间的数据拷贝到socket buffer中。所以也算是零复制技术。如图：</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc917f571530.jpg"></p>
+<p>mmap()的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> </span></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">mmap</span><span class="params">(<span class="keyword">void</span> *addr, <span class="keyword">size_t</span> length, <span class="keyword">int</span> prot, <span class="keyword">int</span> flags,</span></span></span><br><span class="line"><span class="function"><span class="params"><span class="keyword">int</span> fd, <span class="keyword">off_t</span> offset)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>另外，sendfile()函数也是一种零复制函数。sendfile()函数借助文件描述符来实现数据拷贝：直接将文件描述in_fd的数据拷贝给文件描述符out_fd，其中in_fd是数据提供方，out_fd是数据接收方。文件描述符的操作都是在内核进行的，不会经过用户空间，所以数据不用拷贝到app buffer，实现了零复制。如下图所示：</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc918484ea5e.jpg"></p>
+<p>sendfile()的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> </span></span><br><span class="line"><span class="keyword">ssize_t</span> sendfile(<span class="keyword">int</span> out_fd, <span class="keyword">int</span> in_fd, <span class="keyword">off_t</span> *offset, <span class="keyword">size_t</span> count);</span><br></pre></td></tr></table></figure>
+<p>还有一种常用的零拷贝技术就是<strong>COW（copy-on-write，写时复制）</strong>。当父进程fork生成子进程时，会复制它的所有内存页。这至少会导致两个问题：消耗大量内存；复制操作消耗时间。特别是fork后使用exec加载新程序时，由于会初始化内存空间，所以复制操作几乎是多余的。使用copy-on-write技术，使得在fork子进程时不复制内存页，而是共享内存页(也就是说，子进程也指向父进程的物理空间)，只有在该子进程需要修改某一块数据，才会将这一块数据拷贝到自己的app buffer中并进行修改，那么这一块数据就属于该子进程的私有数据，可随意访问、修改、复制。这在一定程度上实现了零复制，即使复制了一些数据块，也是在逐渐需要的过程进行复制的。</p>
+<h3 id="网卡多队列技术"><a href="#网卡多队列技术" class="headerlink" title="网卡多队列技术"></a>网卡多队列技术</h3><p>多队列与流分类是当今网卡通用的技术。利用多队列及流分类技术可以使得网卡更好地与多核处理器、多任务系统配合，从而达到更高效IO处理的目的。说起网卡多队列，顾名思义，也就是传统网卡的DMA队列有多个，网卡有基于多个DMA队列的分配机制。</p>
+<p>网卡多队列技术应该是与处理器的多核技术密不可分的。早期的多数计算机，处理器可能只有一个核，从网卡上收到的以太网报文都需要这个处理器处理。随着多核处理技术的发展，2007年在Intel的82575、82598网卡上引入多队列技术，可以将各个队列通过绑定到不同的核上来满足高速流量的需求。</p>
+<p><strong>Linux内核对多队列的支持：</strong>众所周知，Linux的网卡由结构体net_device表示，一个该结构体可对应多个可以调度的数据包发送队列，数据包的实体在内核中以结构体sk_buff（skb）表示。网卡驱动程序为每个接收队列设定相应的中断号，通过中断的均衡处理，或者设置中断的亲和性（SMP IRQ Affinity），从而实现队列绑定到不同的核。Linux提供了较为灵活的队列选择机制。<strong>dev_pick_tx</strong>用于选取发送队列，可以由driver定制其策略，也可以根据队列优先级选取，按照hash来做均衡。也就是利用XPS（Transmit Packet Steering，内核2.6.38后引入）机制，智能地选择多队列设备的队列来发送数据包。为此，需要对CPU核到硬件队列做一个表来记录映射关系，每一个映射记录着专门分配的队列到一个CPU核列表，这个映射的CPU核负责完成队列中的数据传输。这样做的目的一是减少设备队列上的锁竞争，二是增加传输时的缓存命中概率。下面的代码简单说明了在发送时队列的选取是考虑在其中的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">dev_queue_xmit</span><span class="params">(struct sk_buff *skb)</span> </span>&#123; </span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">net_device</span> *<span class="title">dev</span> = <span class="title">skb</span>-&gt;<span class="title">dev</span>;</span> </span><br><span class="line">	txq = dev_pick_tx(dev, skb); <span class="comment">// 选出一个队列</span></span><br><span class="line">	spin_lock_prefetch(&amp;txq-&gt;lock); </span><br><span class="line">	dev_put(dev); </span><br><span class="line">&#125;</span><br><span class="line"><span class="function">struct netdev_queue *<span class="title">netdev_pick_tx</span><span class="params">(struct net_device *dev, struct sk_buff *skb)</span> </span>&#123; </span><br><span class="line">	<span class="keyword">int</span> queue_index = <span class="number">0</span>; </span><br><span class="line">	<span class="keyword">if</span> (dev-&gt;real_num_tx_queues！= <span class="number">1</span>) &#123; </span><br><span class="line">		<span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">net_device_ops</span> *<span class="title">ops</span> = <span class="title">dev</span>-&gt;<span class="title">netdev_ops</span>;</span> </span><br><span class="line">		<span class="keyword">if</span> (ops-&gt;ndo_select_queue) queue_index = ops-&gt;ndo_select_queue(dev, skb); <span class="comment">// 按照driver提供的策略来选择一个队列的索引</span></span><br><span class="line">		<span class="keyword">else</span> queue_index = __netdev_pick_tx(dev, skb); </span><br><span class="line">		queue_index = dev_cap_txqueue(dev, queue_index); </span><br><span class="line">	&#125; </span><br><span class="line">	skb_set_queue_mapping(skb, queue_index); </span><br><span class="line">	<span class="keyword">return</span> netdev_get_tx_queue(dev, queue_index); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>除此之外，收发队列一般会被绑在同一个中断上，其目的也是为了增加cache命中率。</p>
+<p>除了硬件支持的多队列技术外，还有软件支持的流量均衡技术，主要用于单队列网卡，将其上流量均衡的分摊到多个核上，该项技术就是RPS（Receive Packet Steering）。在接收侧，RPS主要是把软中断的负载均衡到CPU的各个core上，网卡驱动对每个流生成一个hash标识，这个hash值可以通过四元组（源IP地址SIP，源四层端口SPORT，目的IP地址DIP，目的四层端口DPORT）来计算，然后由中断处理的地方根据这个hash标识分配到相应的core上去，这样就可以比较充分地发挥多核的能力了。在发送侧，无论来自哪个CPU的数据包只能往这唯一的队列上发送。通俗点来说，就是在软件层面模拟实现硬件的多队列网卡功能，其实现机制如下图所示：</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc918c47c16b.jpg"></p>
+<p><strong>DPDK对多队列的支持：</strong>观察DPDK提供的一系列以太网设备的API，可以发现其Packet I/O机制具有与生俱来的多队列支持功能，可以根据不同的平台或者需求，选择需要使用的队列数目，并可以很方便地使用队列，指定队列发送或接收报文。根据这样的特性，可以很容易实现CPU核、缓存与网卡队列之间的亲和性，从而达到很好的性能。除此之外，DPDK的队列管理机制还可以避免多核处理器中的多个收发进程采用自旋锁产生的不必要等待。以RTC模型为例，可以从核、内存与网卡队列之间的关系来理解DPDK是如何利用网卡多队列技术带来性能的提升：</p>
+<p>1）将网卡的某个接收队列分配给某个核，从该队列中收到的所有报文都应当在该指定的核上处理。</p>
+<p>2）从核对应的本地存储中分配内存池，接收报文和对应的报文描述符都位于该内存池。</p>
+<p>3）为每个核分配一个单独的发送队列，发送报文和对应的报文描述符都位于该核和发送队列对应的本地内存池中。</p>
+<p><strong>可以看出不同的核，操作的是不同的队列，从而避免了多个线程同时访问一个队列带来的锁的开销。</strong>那么，网卡是如何将网络中的报文分发到不同的队列呢？常用的方法有微软提出的RSS与英特尔提出的Flow Director技术，前者是根据哈希值希望均匀地将包分发到多个队列中。后者是基于查找的精确匹配，将包分发到指定的队列中。此外，网卡还可以根据优先级分配队列提供对QoS的支持。除此之外，网卡多队列机制还可以应用于虚拟化，详见后文《I/O虚拟化详解》。</p>
+<p>高级的网卡设备可以分析出包的类型，包的类型会携带在接收描述符中，应用程序可以根据描述符快速地确定包是哪种类型的包，避免了大量的解析包的软件开销。DPDK的Mbuf结构中含有相应的字段来表示网卡分析出的包的类型，从下面的代码可见Packet_type由二层、三层、四层及tunnel的信息来组成，应用程序可以很方便地定位到它需要处理的报文头部或是内容。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rte_mbuf</span> &#123;</span></span><br><span class="line">	…… </span><br><span class="line">	<span class="keyword">union</span> &#123; </span><br><span class="line">		<span class="keyword">uint32_t</span> packet_type; <span class="comment">/**&lt; L2/L3/L4 and tunnel information．*/</span> </span><br><span class="line">		<span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">			<span class="keyword">uint32_t</span> l2_type：<span class="number">4</span>; <span class="comment">/**&lt; (Outer) L2 type．*/</span> </span><br><span class="line">			<span class="keyword">uint32_t</span> l3_type：<span class="number">4</span>; <span class="comment">/**&lt; (Outer) L3 type．*/</span> </span><br><span class="line">            <span class="keyword">uint32_t</span> l4_type：<span class="number">4</span>; <span class="comment">/**&lt; (Outer) L4 type．*/</span> </span><br><span class="line">            <span class="keyword">uint32_t</span> tun_type：<span class="number">4</span>; <span class="comment">/**&lt; Tunnel type．*/</span> </span><br><span class="line">            <span class="keyword">uint32_t</span> inner_l2_type：<span class="number">4</span>; <span class="comment">/**&lt; Inner L2 type．*/</span> </span><br><span class="line">            <span class="keyword">uint32_t</span> inner_l3_type：<span class="number">4</span>; <span class="comment">/**&lt; Inner L3 type．*/</span> </span><br><span class="line">            <span class="keyword">uint32_t</span> inner_l4_type：<span class="number">4</span>; <span class="comment">/**&lt; Inner L4 type．*/</span> </span><br><span class="line">        &#125;; </span><br><span class="line">	&#125;; </span><br><span class="line">	……</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="网卡硬件卸载功能"><a href="#网卡硬件卸载功能" class="headerlink" title="网卡硬件卸载功能"></a>网卡硬件卸载功能</h3><p>网卡的硬件卸载功能可能是基于端口设置，也有可能是基于每个包设置使能，需要仔细区分。在包粒度而言，每个包都对应一个或者多个Mbuf，DPDK软件利用rte_mbuf数据结构里的64位的标识（ol_flags）来表征卸载与状态。</p>
+<p>如果需要使用硬件卸载功能，网卡驱动需要提供相应的API给上层应用，通过调用API驱动硬件完成相应的工作。而驱动硬件的工作实际上是由网卡驱动程序完成的，网卡驱动程序也是通过硬件提供的接口来驱动硬件。硬件提供的接口一般包括寄存器（Register）和描述符（Descriptor）。寄存器是全局的设置，一般用于开启某项功能或者为某项功能设置全局性的参数配置，一般情况下是基于以太网端口为基本单位。描述符可以看做是每个数据包的属性，和数据包一起发送给硬件，一般用于携带单个数据包的参数或设置。</p>
+<p>对于各种各样的硬件卸载功能，按照功能的相似性大致可分成三类，分别是<strong>计算及更新功能、分片功能、组包功能。</strong></p>
+<p><strong>VLAN硬件卸载：</strong>VLAN在以太网报文中增加了了一个4字节的802.1q Tag（也称为VLAN Tag），如果由软件完成VLAN Tag的插入将会给CPU带来额外的负荷，涉及一次额外的内存拷贝（报文内容复制），最坏场景下，这可能是上百周期的开销。大多数网卡硬件提供了VLAN卸载的功能，VLAN Tag的插入和剥离由网卡硬件完成，可以减轻服务器CPU的负荷。</p>
+<p>1）网卡最典型的卸载功能之一就是在接收侧针对VLAN进行包过滤。在网卡硬件端口设计了VLAN过滤表，无法在过滤表中匹配的VLAN包会被丢弃，没有VLAN信息的以太网则会通过网卡的过滤机制，在DPDK中app/testpmd提供了测试命令与实现代码。</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc91916474a0.jpg"></p>
+<p>2）网卡硬件能够对接收到的包的VLAN Tag进行剥离。首先硬件能够对VLAN包进行识别，原理上是判断以太帧的以太网类型来确定是否是VLAN包。启动这项硬件特性，需要在网卡端口，或者是属于这个网卡端口的队列上设置使能标志，将VLAN剥离特性打开，对应到软件，是通过驱动将配置写入相应的寄存器。DPDK的app/testpmd提供了如何基于端口使能与去使能的测试命令：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">testpmd&gt; <span class="function">vlan <span class="built_in">set</span> <span class="title">strip</span> <span class="params">(on|off)</span> <span class="params">(port_id)</span></span></span><br><span class="line">testpmd&gt; vlan set stripq (on|off) (port_id,queue_id)</span><br></pre></td></tr></table></figure>
+<p>3）网卡硬件会将4字节的VLAN tag从数据包中剥离，VLAN Tag中包含的信息对上层应用是有意义的，不能丢弃，此时，网卡硬件会在硬件描述符中设置两个域，将需要的信息通知驱动软件，包含此包是否曾被剥离了VLAN Tag以及被剥离的Tag。软件省去了剥离VLAN Tag的工作负荷，还获取了需要的信息。在DPDK中，驱动会根据硬件描述符信息对每个接收的数据包进行检测，如果剥离动作发生，需要将rte_mbuf数据结构中的<strong>PKT_RX_VLAN_PKT</strong>置位，表示已经接收到VLAN的报文，并且将被剥离VLAN Tag写入到下列字段，供上层应用处理。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Struct rte_mbuf&#123; </span><br><span class="line">	<span class="keyword">uint16_t</span> vlan_tci; <span class="comment">/**&lt; VLAN Tag Control Identifier(CPU order) */</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4）在发送端口需要在数据包中插入VLAN标识。VLAN Tag由两部分组成：TPID（Tag Protocol Identifier），也就是VLAN的Ether type，和TCI（Tag Control Information）。TPID是一个固定的值，作为一个全局范围内起作用的值，可通过寄存器进行设置。而TCI是每个包相关的，需要逐包设置，在DPDK中，在调用发送函数前，必须提前设置mbuf数据结构中<strong>PKT_TX_VLAN_PKT</strong>位，同时将具体的Tag信息写入vlan_tci字段。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rte_mbuf</span>&#123;</span> </span><br><span class="line">	<span class="keyword">uint16_t</span> vlan_tci; <span class="comment">/**&lt; VLAN Tag Control Identifier(CPU order) */</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>5）为了解决VLAN个数局限，业界发展出了采用双层乃至多层VLAN堆叠模式，随着这种模式（也被称为QinQ技术）在网络应用中变得普遍，现代网卡硬件大多提供对两层VLAN Tag进行卸载，如VLAN Tag的剥离、插入。DPDK的app/testapp应用中提供了测试命令，网卡数据手册有时也称VLAN Extend模式。在DPDK相应测试代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">testpmd&gt; <span class="function">vlan <span class="built_in">set</span> <span class="title">qinq</span> <span class="params">(on|off)</span> <span class="params">(port_id)</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>checksum硬件卸载功能：</strong>checksum计算是网络协议的容错性设计的一部分，基于网络传输不可靠的假设，因此在Ethernet、IPv4、UDP、TCP、SCTP各个协议层设计中都有checksum字段，用于校验包的正确性，checksum不涉及复杂的逻辑，是简单机械的计算，算法稳定，适合固化到硬件中。checksum虽然可以硬件卸载，但依然需要软件的协同配合实现。checksum在收发两个方向上都需要支持，操作并不一致，在接收方向上，主要是检测，通过设置端口配置，强制对所有达到的数据报文进行检测，即判断哪些包的checksum是错误的，对于这些出错的包，可以选择将其丢弃，并在统计数据中体现出来。在DPDK中，和每个数据包都有直接关联的是rte_mbuf，网卡自动检测进来的数据包，如果发现checksum错误，就会设置错误标志。软件驱动会查询硬件标志状态，通过mbuf中的ol_flags字段来通知上层应用。但在发送侧就会复杂一些，硬件需要计算协议的checksum，将且写入合适的位置。。在原理上，网卡在设计之初时就依赖软件做额外设置，软件需要逐包提供发送侧上下文状态描述符，这段描述符需要通过PCIe总线写入到网卡设备内，帮助网卡进行checksum计算。设置上下文状态描述符，在DPDK驱动里面已经实现，对于使用DPDK的程序员，真正需要做的工作是设置rte_mbuf和改写报文头部，保证网卡驱动得到足够的mbuf信息，完成整个运算。</p>
+<p>1）从设置mbuf的角度，需要关注如下字段：<strong>IPv6头部没有checksum字段，无需计算。</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* fields to support TX offloads */</span> </span><br><span class="line"><span class="keyword">uint64_t</span> tx_offload; <span class="comment">/**&lt; combined for easy fetch */</span> </span><br><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span> </span><br><span class="line">	<span class="keyword">uint64_t</span> l2_len：<span class="number">7</span>; <span class="comment">/**&lt; L2 (MAC) Header Length．*/</span> </span><br><span class="line">	<span class="keyword">uint64_t</span> l3_len：<span class="number">9</span>; <span class="comment">/**&lt; L3 (IP) Header Length．*/</span> </span><br><span class="line">	<span class="keyword">uint64_t</span> l4_len：<span class="number">8</span>; <span class="comment">/**&lt; L4 (TCP/UDP) Header Length．*/</span> </span><br><span class="line">	<span class="keyword">uint64_t</span> tso_segsz：<span class="number">16</span>; <span class="comment">/**&lt; TCP TSO segment size */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2）对于IPv4的checksum，在发送侧如果需要硬件完成自动运算与插入，准备工作如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ipv4_hdr-&gt;hdr_checksum = <span class="number">0</span>; <span class="comment">// 将头部的checksum字段清零 </span></span><br><span class="line">ol_flags |= PKT_TX_IP_CKSUM; <span class="comment">// IP层checksum请求标识置位</span></span><br></pre></td></tr></table></figure>
+<p>3）对于UDP或者TCP，checksum计算方法一样，准备工作如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">udp_hdr-&gt;dgram_cksum = <span class="number">0</span>; <span class="comment">// 将头部的checksum字段清零 </span></span><br><span class="line">ol_flags |= PKT_TX_UDP_CKSUM; <span class="comment">// UDP层checksum请求标识置位 </span></span><br><span class="line">udp_hdr-&gt;dgram_cksum = get_psd_sum(l3_hdr, info-&gt;ethertype, ol_flags); <span class="comment">/* 填入IP层伪头部计算码，具体实现参阅DPDK代码*/</span></span><br></pre></td></tr></table></figure>
+<p>4）对于SCTP checksum计算方法一样，准备工作如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sctp_hdr-&gt;hdr_checksum = <span class="number">0</span>; ol_flags |= PKT_TX_SCTP_CKSUM;</span><br></pre></td></tr></table></figure>
+<p><strong>TSO硬件卸载：</strong>TSO（TCP Segment Offload）是TCP分片功能的硬件卸载，显然这是发送方向的功能。TCP会协商决定发送的TCP分片的大小，对于从应用层获取的较大的数据，TCP需要根据下层网络的报文大小限制，将其切分成较小的分片发送。硬件提供的TCP分片硬件卸载功能可以大幅减轻软件对TCP分片的负担。而且这项功能本身也是非常适合由硬件来完成的，因为它是比较简单机械的实现。如下所示，就是采用TSO和不采用TSO的示意图：</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc91d176fb2c.jpg"></p>
+<p>在下图中，我们可以看到，TCP分片需要将现有的较大的TCP分片拆分成较小的TCP分片，在这个过程中，不需要提供特殊的信息，<strong>仅仅需要复制TCP的包头，更新头里面的长度</strong>相关的信息，<strong>重新计算校验和</strong>，显然这些功能非常适合硬件来实现。</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc91f747fceb.jpg"></p>
+<p>在dpdk/testpmd中提供了两条TSO相关的命令行：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tso <span class="built_in">set</span> <span class="number">14000</span>：用于设置tso分片大小。</span><br><span class="line">tso show <span class="number">0</span>：用于查看tso分片的大小。</span><br></pre></td></tr></table></figure>
+<p>和csum硬件卸载功能类似，tso分片硬件卸载功能也需要对mbuf进行设置，同样从设置mbuf的角度，如下字段需要关注：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* fields to support TX offloads */</span> </span><br><span class="line"><span class="keyword">uint64_t</span> tx_offload; <span class="comment">/**&lt; combined for easy fetch */</span> </span><br><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span> </span><br><span class="line">	<span class="keyword">uint64_t</span> l2_len：<span class="number">7</span>; <span class="comment">/**&lt; L2 (MAC) Header Length．*/</span> </span><br><span class="line">	<span class="keyword">uint64_t</span> l3_len：<span class="number">9</span>; <span class="comment">/**&lt; L3 (IP) Header Length．*/</span> </span><br><span class="line">	<span class="keyword">uint64_t</span> l4_len：<span class="number">8</span>; <span class="comment">/**&lt; L4 (TCP/UDP） Header Length．*/</span> </span><br><span class="line">	<span class="keyword">uint64_t</span> tso_segsz：<span class="number">16</span>; <span class="comment">/**&lt; TCP TSO segment size */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同时tso使用了ol_flag中的<strong>PKT_TX_TCP_SEG</strong>来指示收发包处理流程中当前的包需要开启tso的硬件卸载功能。</p>
+<p><strong>RSC组包功能卸载：</strong>RSC（Receive Side Coalescing，接收方聚合）是TCP组包功能的硬件卸载。硬件组包功能针对TCP实现，是接收方向的功能，可以将拆分的TCP分片聚合成一个大的分片，从而减轻软件的处理。如下图所示，LRO是RCS的另一种表述，下图左边是通过硬件层面完成组包功能，下图右边是通过驱动层面完成组包。</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc91f8887da0.jpg"></p>
+<p>当硬件接收到TCP分片后，硬件可以将多个TCP分片缓存起来，并且将其排序，这样多个TCP分片最终传递给软件时将会呈现为一个分片，软件将不再需要分析处理多个数据包的头，同时对TCP包的排序的负担也有所减轻。如下图所示：</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc91fa61ce3e.jpg"></p>
+<p>RSC是一种硬件能力，使用此功能时需要先明确硬件支持此能力。我们通过配置来开启RSC功能，需要关注下面的数据结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** * A structure used to configure the RX features of an Ethernet port. */</span> </span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rte_eth_rxmode</span> &#123;</span> </span><br><span class="line">	<span class="comment">/** The multi-queue packet distribution mode to be used, e.g．RSS．*/</span> </span><br><span class="line">	<span class="keyword">enum</span> rte_eth_rx_mq_mode mq_mode; </span><br><span class="line">	<span class="keyword">uint32_t</span> max_rx_pkt_len; <span class="comment">/**&lt; Only used if jumbo_frame enabled．*/</span> </span><br><span class="line">	<span class="keyword">uint16_t</span> split_hdr_size; <span class="comment">/**&lt; hdr buf size (header_split enabled).*/</span> </span><br><span class="line">	<span class="keyword">uint16_t</span> header_split：<span class="number">1</span>, <span class="comment">/**&lt; Header Split enable．*/</span> </span><br><span class="line">	hw_ip_checksum ：<span class="number">1</span>, <span class="comment">/**&lt; IP/UDP/TCP checksum offload enable．*/</span> </span><br><span class="line">	hw_vlan_filter ：<span class="number">1</span>, <span class="comment">/**&lt; VLAN filter enable．*/</span> </span><br><span class="line">	hw_vlan_strip ：<span class="number">1</span>, <span class="comment">/**&lt; VLAN strip enable．*/</span> </span><br><span class="line">	hw_vlan_extend ：<span class="number">1</span>, <span class="comment">/**&lt; Extended VLAN enable．*/</span> </span><br><span class="line">	jumbo_frame ：<span class="number">1</span>, <span class="comment">/**&lt; Jumbo Frame Receipt enable．*/</span> </span><br><span class="line">	hw_strip_crc ：<span class="number">1</span>, <span class="comment">/**&lt; Enable CRC stripping by hardware．*/</span> </span><br><span class="line">	enable_scatter ：<span class="number">1</span>, <span class="comment">/**&lt; Enable scatter packets rx handler */</span> </span><br><span class="line">	enable_lro ：<span class="number">1</span>; <span class="comment">/**&lt; Enable LRO */</span> </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>当对接收处理进行初始化<strong>ixgbe_dev_rx_init</strong>时，会调用ixgbe_set_rsc，此函数中对enable_lro进行判断，如果其为真，则会对RSC进行相关设置，从而使用此功能。</p>
+<h2 id="DPDK在NFV中应用案例"><a href="#DPDK在NFV中应用案例" class="headerlink" title="DPDK在NFV中应用案例"></a>DPDK在NFV中应用案例</h2><p>回顾ETSI NFV参考架构，NFV技术通过运行在通用x86架构硬件上的虚拟化网络功能，通过软硬件解耦及功能抽象来实现各类网络功能在x86标准服务器上的灵活部署和业务的快速迭代。不同于典型数据中心业务和企业网业务，电信广域网业务要求网元（如DPI、FW等）具有高吞吐、低时延、海量流表支持、用户级QoS控制的特点。考虑到现实环境中的NFV解决方案一般由<strong>NFV基础设施</strong>和<strong>VNF</strong>两类系统服务商提供。因此，相应的NFV端到端性能优化，也应划分为底层的NFV基础设施性能与上层的VNF性能两类，以方便明确各自的性能瓶颈，避免不同层次的性能调优工作带来相互干扰。    </p>
+<p>在NFV基础设施性能优化技术方案中，DPDK软件加速方案已成为一种普遍采用的基本方法，它以用户数据I/O通道优化为基础，结合了Intel VT技术、操作系统、虚拟化层与vSwitch等多种优化方案，已经形成了完善的性能加速整体架构，并提供了用户态API供高速转发类应用访问。</p>
+<h3 id="场景一：VNF在物理机上应用"><a href="#场景一：VNF在物理机上应用" class="headerlink" title="场景一：VNF在物理机上应用"></a>场景一：VNF在物理机上应用</h3><p>运营商现有网络大部分都是专用网络设备，物理设备与应用软件紧耦合，设备升级成本高、功能扩展困难。将这些专用的网络功能设备，以软件化的VNF形式直接运行在物理服务器上，可以实现网络设备形态的通用化，方便设备功能灵活扩展。</p>
+<p>该方案将一部分原来由硬件实现的网络功能，以VNF软件的形式直接运行在x86服务器OS上，同时在物理服务器上加载DPDK组件。此时，DPDK接管了物理网卡的I/O驱动， VNF也不再使用传统Linux内核网络协议栈，而是通过调用DPDK的用户态API进行快速转发。同时，DPDK进程将使用少量的处理器核（如2个核）与内存以满足高速转发处理， VNF 可以直接使用剩余的全部硬件资源，适用于数据转发频繁等资源利用率长期较高的网络业务，比如C/U分离后的U面网元采用VNF部署。该方案下整台服务器仅支持单一VNF应用，但因设备形态统一，软件功能部署灵活，仍具有较高应用价值。具体实现架构如下图所示：</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc9206f09584.jpg"></p>
+<h3 id="场景二：VNF-OVS应用"><a href="#场景二：VNF-OVS应用" class="headerlink" title="场景二：VNF + OVS应用"></a>场景二：VNF + OVS应用</h3><p>当多个VNF分别运行在一台服务器的多个VM中时，为满足VNF之间可能的流量交换或者共享物理网卡的需要，可以在Host OS上安装OVS类虚拟交换机，用于连接各个VNF（VM）和服务器的物理网卡端口。此时，这多个VNF一般是不同类型的VNF应用，VNF之间可能产生交互流量或者业务链处理流量（东西+南北流量模型），而同类型多个VNF或者纯粹共享网卡的多个VNF，一般采用<strong>场景三的“VNF + SR-IOV”方案</strong>。</p>
+<p>在“VNF + OVS”方案中，因主要的性能瓶颈存在于VNF的虚拟I/O通道和OVS交换机，DPDK需要分别安装在运行VNF的VM镜像内部和运行OVS的物理服务器OS上：前者用于优化VM内部的VNF数据平面转发性能，包括提供虚拟化网卡驱动、提供用户态转发API等，DPDK的各种配置方法与VNF运行在物理机中的机制类似，VNF并不能感知是运行在VM环境；后者用于优化OVS交换机性能，连接VM与各NUMA节点上的DPDK端口。该场景可以细分为两种：</p>
+<p>​        A：VM到OVS仅使用单一连接。</p>
+<p>​        B：VM到OVS采用一进一出的双向连接，如各类业务链中的VNF应用，见下图所示。</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc9208d47b71.jpg"></p>
+<p>该方案可以实现VNF的灵活扩容/缩容，以及在资源池中按需迁移，方案中的第三方VNF厂商可以屏蔽物理设备差异，提供各自的高性能业务产品。同时，使用经过DPDK优化后的OVS 交换机，可以灵活实现VNF间流量的灵活转发与互联互通，节省硬件交换机。</p>
+<h3 id="场景三：VNF-SR-IOV"><a href="#场景三：VNF-SR-IOV" class="headerlink" title="场景三：VNF + SR-IOV"></a>场景三：VNF + SR-IOV</h3><p>当多个VNF运行在VM中时，各VM的虚拟网卡可以直接连至HOST上支持SR-IOV功能的物理网卡（VF）进行数据收发，如同独占物理网卡一样。该方案适用于VNF间无需流量交互的场景，或者是基于硬件交换机进行VNF互连和流量控制的场景。由于旁路了HOST的虚拟化层实现直接转发，可以达到近似物理转发的性能，被业界普遍用于消除Hypervisor带来的数据转发性能影响。如下图所示：</p>
+<p><img src="https://i.loli.net/2019/05/01/5cc920bf9fb36.jpg"></p>
+<p>尽管“VNF+SR-IOV”方案消除了从物理网卡到VM虚拟网卡的性能瓶颈，但VM内部仍然需要通过加载DPDK以进一步优化各VNF（VM内部）的转发性能。此时，DPDK可以采用与前两种场景中类似的方法进行加载，同时占用VM内部一定CPU核和内存资源。</p>
+<p><strong><em>综上，就是DPDK技术在电信云中最佳实践的全部内容，后续我们将开始讲述电信云中另一个重要领域内容–虚拟化。</em></strong></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2019/05/01/2019-05-01-DPDK技术栈在电信云中的最佳实践（三）/" title="2019-05-01-DPDK技术栈在电信云中的最佳实践（三）">https://kkutysllb.cn/2019/05/01/2019-05-01-DPDK技术栈在电信云中的最佳实践（三）/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/电信云/" rel="tag"><i class="fa fa-tag"></i> 电信云</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/01/2019-04-30-DPDK技术栈在电信云中的最佳实践（二）/" rel="next" title="2019-04-30-DPDK技术栈在电信云中的最佳实践（二）">
+                <i class="fa fa-chevron-left"></i> 2019-04-30-DPDK技术栈在电信云中的最佳实践（二）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">24</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#DPDK技术基础（3）"><span class="nav-number">1.</span> <span class="nav-text">DPDK技术基础（3）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#网络报文转发模式"><span class="nav-number">1.1.</span> <span class="nav-text">网络报文转发模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PCIe与包处理I-O"><span class="nav-number">1.2.</span> <span class="nav-text">PCIe与包处理I/O</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IO包处理中轮询和中断的抉择"><span class="nav-number">1.3.</span> <span class="nav-text">IO包处理中轮询和中断的抉择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#零拷贝技术"><span class="nav-number">1.4.</span> <span class="nav-text">零拷贝技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网卡多队列技术"><span class="nav-number">1.5.</span> <span class="nav-text">网卡多队列技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网卡硬件卸载功能"><span class="nav-number">1.6.</span> <span class="nav-text">网卡硬件卸载功能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DPDK在NFV中应用案例"><span class="nav-number">2.</span> <span class="nav-text">DPDK在NFV中应用案例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#场景一：VNF在物理机上应用"><span class="nav-number">2.1.</span> <span class="nav-text">场景一：VNF在物理机上应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#场景二：VNF-OVS应用"><span class="nav-number">2.2.</span> <span class="nav-text">场景二：VNF + OVS应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#场景三：VNF-SR-IOV"><span class="nav-number">2.3.</span> <span class="nav-text">场景三：VNF + SR-IOV</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">232k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">3:31</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/05/01/2019-05-01-DPDK技术栈在电信云中的最佳实践（三）/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>
