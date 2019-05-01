@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="useradd：创建用户useradd命令可用于创建新的用户或者更改用户的信息。在使用useradd命令时，若不加任何参数选项，后面直接跟所添加的用户名，那么系统首先会读取/etc/login.defs（用户定义文件）和/etc/default/useradd（用户默认配置文件）文件中所定义的参数和规则，然后根据所设置的规则添加用户，同时还会向/etc/passwd（用户文件）和/etc/grou">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019-05-01-Linux系统命令-第六篇《用户和权限管理命令》">
+<meta property="og:url" content="https://kkutysllb.cn/2019/05/02/2019-05-01-Linux系统命令-第六篇《用户和权限管理命令》/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="useradd：创建用户useradd命令可用于创建新的用户或者更改用户的信息。在使用useradd命令时，若不加任何参数选项，后面直接跟所添加的用户名，那么系统首先会读取/etc/login.defs（用户定义文件）和/etc/default/useradd（用户默认配置文件）文件中所定义的参数和规则，然后根据所设置的规则添加用户，同时还会向/etc/passwd（用户文件）和/etc/grou">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9c976415d5.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9c9996c12d.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9cabf31410.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9cb1030b42.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9cb64a8fb9.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9cb989a510.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9cbf78aa41.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9cc8e80c1b.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9ccf3a411d.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9cd600a4a1.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9cdc60b382.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9cde09ec7d.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9ce03e84da.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9ce7460e57.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9ceeb16911.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9cf580bc4e.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9cfdde0f8a.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9cff386a72.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9d0447fa4c.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9d05b587fb.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9d07861f6f.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5cc9d0c58fb55.jpg">
+<meta property="og:updated_time" content="2019-05-01T17:02:36.871Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019-05-01-Linux系统命令-第六篇《用户和权限管理命令》">
+<meta name="twitter:description" content="useradd：创建用户useradd命令可用于创建新的用户或者更改用户的信息。在使用useradd命令时，若不加任何参数选项，后面直接跟所添加的用户名，那么系统首先会读取/etc/login.defs（用户定义文件）和/etc/default/useradd（用户默认配置文件）文件中所定义的参数和规则，然后根据所设置的规则添加用户，同时还会向/etc/passwd（用户文件）和/etc/grou">
+<meta name="twitter:image" content="https://i.loli.net/2019/05/02/5cc9c976415d5.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2019/05/02/2019-05-01-Linux系统命令-第六篇《用户和权限管理命令》/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2019-05-01-Linux系统命令-第六篇《用户和权限管理命令》 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/05/02/2019-05-01-Linux系统命令-第六篇《用户和权限管理命令》/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019-05-01-Linux系统命令-第六篇《用户和权限管理命令》
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-02 00:28:02 / 修改时间：01:02:36" itemprop="dateCreated datePublished" datetime="2019-05-02T00:28:02+08:00">2019-05-02</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux核心命令/" itemprop="url" rel="index"><span itemprop="name">Linux核心命令</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">33k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">30 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="useradd：创建用户"><a href="#useradd：创建用户" class="headerlink" title="useradd：创建用户"></a>useradd：创建用户</h2><p>useradd命令可用于创建新的用户或者更改用户的信息。在使用useradd命令时，若不加任何参数选项，后面直接跟所添加的用户名，那么系统首先会读取/etc/login.defs（用户定义文件）和/etc/default/useradd（用户默认配置文件）文件中所定义的参数和规则，然后根据所设置的规则添加用户，同时还会向/etc/passwd（用户文件）和/etc/group（组文件）文件内添加新用户和新用户组记录，向/etc/shadow（用户密码文件）和/etc/gshadow（组密码文件）文件里添加新用户和组对应的密码信息的相关记录。最后，系统还会根据/etc/default/useradd文件所配置的信息建立用户的家目录，并将/etc/skel中的所有文件（包括隐藏的环境配置文件）都复制到新用户的家目录中。<a id="more"></a></p>
+<p>当执行useradd带-D参数时，可以更改新建用户的默认配置值（/etc/default/useradd）或者由命令行编辑文件更改预设值。可简单理解该参数（-D）就是用于修改/etc/default/useradduseradd配置文件的内容的，若这个文件的内容被修改，则添加新用户不加参数时默认值就会从该/etc/default/useradd中读取。</p>
+<p><strong>语法格式：useradd [options] [login] 或 useradd -D [options]</strong></p>
+<p><strong>重要选项参数</strong></p>
+<p>useradd不加选项-D的参数选项及说明</p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9c976415d5.jpg"></p>
+<p>useradd加-D选项参数说明：改变新建用户的预设值</p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9c9996c12d.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）不加任何参数添加用户的例子</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 不带任何参数创建一个名为ett的用户</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># useradd ett</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看/home目录下，发现多个一个ett的目录</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -l /home/</span></span><br><span class="line">total 4</span><br><span class="line">drwx------ 2 ett       ett         62 May  1 16:35 ett</span><br><span class="line">drwx------ 7 kkutysllb kkutysllb 4096 Apr 28 00:00 kkutysllb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看/etc/passwd文件关于新建用户ett的记录</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># cat /etc/passwd | grep -w ett</span></span><br><span class="line">ett:x:1001:1001::/home/ett:/bin/bash   <span class="comment"># 这里设置根据文件/etc/login.defs里面预设内容设置</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看/etc/shadow文件关于新建用户ett的记录</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># cat /etc/shadow | grep -w ett</span></span><br><span class="line">ett:!!:18017:0:99999:7:::  <span class="comment"># 虽然没有设置密码，但是还有相关一行记录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看/etc/group文件中关于新建ett的记录</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># cat /etc/group | grep -w ett</span></span><br><span class="line">ett:x:1001:</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看/etc/gshadow文件中关于新建用户ett的记录</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># cat /etc/gshadow | grep -w ett</span></span><br><span class="line">ett:!::</span><br></pre></td></tr></table></figure>
+<p>根据上面的结果，我们将会发现/etc/shadow、/etc/group和/etc/gshadow几个文件都存在与ett用户相关的记录。</p>
+<p><strong>2）useradd的-g、-u参数，执行useradd[参数]username添加用户</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首先创建一个用户组sa，并设置组id为801（创建用户组的命令groupadd后面会将）</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># groupadd -g 801 sa</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建用户user01，使其属于sa用户组，uid为901</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># useradd -g sa -u 901 user01</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># id user01</span></span><br><span class="line">uid=901(user01) gid=801(sa) groups=801(sa)</span><br></pre></td></tr></table></figure>
+<p><strong>3）useradd的-M、-s参数的例子</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个虚拟化vuser01，不自动创建其家目录，并禁止其登录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># /sbin/nologin参数可以设置某个用户没有登录权限</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># useradd -M -s /sbin/nologin vuser01</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -ld /home/vuser01</span></span><br><span class="line">ls: cannot access /home/vuser01: No such file or directory  <span class="comment"># 家目录不存在，-M选项作用</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># cat /etc/passwd | grep -w vuser01</span></span><br><span class="line">vuser01:x:1002:1002::/home/vuser01:/sbin/nologin  <span class="comment"># 该用户没有登录权限，-s选项作用</span></span><br></pre></td></tr></table></figure>
+<p><strong>4）useradd的-c、-u、-G、-s、-d、-m、-e、-f等多个参数组合的综合例子</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建用户user02，并设置用户注释信息为“SysUser”</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># UID指定为806，同时归属root和sa用户组，登录shell使用/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置其家目录为/tmp/user02，用户过期时限为2019-10-31，过期后2天停权</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># useradd -u 801 -s /bin/sh -c SysUser -d /tmp/user02 -G root,sa -e "2019-10-31" -f 2 user02</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># tail -1 /etc/passwd   # 查看user02的家目录，注释信息，登录shell等信息</span></span><br><span class="line">user02:x:801:1003:SysUser:/tmp/user02:/bin/sh</span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># id user02   # 查看user02的uid和gid，所属用户组信息</span></span><br><span class="line">uid=801(user02) gid=1003(user02) groups=1003(user02),0(root),801(sa)</span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chage -l user02  # 查看user02的账号期限信息</span></span><br><span class="line">Last password change					: May 01, 2019</span><br><span class="line">Password expires					: never</span><br><span class="line">Password inactive					: never</span><br><span class="line">Account expires						: Oct 31, 2019</span><br><span class="line">Minimum number of days between password change		: 0</span><br><span class="line">Maximum number of days between password change		: 99999</span><br><span class="line">Number of days of warning before password expires	: 7</span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># tail -1 /etc/shadow  # 查询用户超期停权时限</span></span><br><span class="line">user02:!!:18017:0:99999:7:2:18200:</span><br></pre></td></tr></table></figure>
+<p><strong>5）useradd-D参数的使用说明及案例实践</strong></p>
+<p>使用useradd-D参数的结果实际上就是修改用户的初始配置文件/etc/default/useradd，我们首先看下用户初始配置文件内容，如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]<span class="comment"># cat /etc/default/useradd </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># useradd defaults file</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 依赖于/etc/login.defs的USERGROUP_ENAB参数，如果参数值为no，则组设置由此处控制</span></span><br><span class="line"></span><br><span class="line">GROUP=100  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认把用户家目录创建在/home/目录下</span></span><br><span class="line"></span><br><span class="line">HOME=/home </span><br><span class="line"></span><br><span class="line"><span class="comment"># 是否启用用户过期停权，-1表示不使用</span></span><br><span class="line"></span><br><span class="line">INACTIVE=-1  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户终止日期设置，默认不设置</span></span><br><span class="line"></span><br><span class="line">EXPIRE=   </span><br><span class="line"></span><br><span class="line"><span class="comment"># 新建用户默认使用shell类型</span></span><br><span class="line"></span><br><span class="line">SHELL=/bin/bash  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置新建用户家目录的默认文件存放路径。/etc/skell就是在这里配置生效的，即当我们使用useradd创建用户时，用户家目录下的文件（主要是隐藏文件）都是从这里配置的目录下复制过去的</span></span><br><span class="line"></span><br><span class="line">SKEL=/etc/skel </span><br><span class="line"></span><br><span class="line"><span class="comment"># 是否创建mail文件</span></span><br><span class="line"></span><br><span class="line">CREATE_MAIL_SPOOL=yes</span><br></pre></td></tr></table></figure>
+<p><strong><em>修改实践：</em></strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 良好习惯，一般修改系统配置文件，首先创建好备份</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># cp /etc/default/useradd&#123;,.bak&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改默认登录的shell为/bin/sh</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># useradd -D -s /bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 比对修改前后的两个文件</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># diff /etc/default/useradd&#123;,.bak&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 表示前后两个文件第6行不同，新文件已经修改成为/bin/sh</span></span><br><span class="line"></span><br><span class="line">6c6</span><br><span class="line"></span><br><span class="line"><span class="comment">## &lt; SHELL=/bin/sh</span></span><br><span class="line"></span><br><span class="line">&gt; SHELL=/bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 增加新建用户失效时限为2039-12-31</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># useradd -D -e "2039-12-31"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 比对前后两个文件区别</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># diff /etc/default/useradd&#123;,.bak&#125;</span></span><br><span class="line">5,6c5,6</span><br><span class="line">&lt; EXPIRE=2039-12-31</span><br><span class="line"></span><br><span class="line"><span class="comment">## &lt; SHELL=/bin/sh</span></span><br><span class="line"></span><br><span class="line">&gt; EXPIRE=</span><br><span class="line">&gt; SHELL=/bin/bash</span><br><span class="line">&gt;</span><br><span class="line">&gt; <span class="comment"># 新建一个用户user03</span></span><br><span class="line">&gt;</span><br><span class="line">&gt; [root@C7-Server01 ~]<span class="comment"># useradd user03</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看新建用户user03的配置信息，发现登陆后默认使用/bin/sh作为shell解释器</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># tail -1 /etc/passwd</span></span><br><span class="line">user03:x:1003:1004::/home/user03:/bin/sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看新建用户user03的账号期限，发现为2039年12月31日</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chage -l user03</span></span><br><span class="line">Last password change					: May 01, 2019</span><br><span class="line">Password expires					: never</span><br><span class="line">Password inactive					: never</span><br><span class="line">Account expires						: Dec 31, 2039</span><br><span class="line">Minimum number of days between password change		: 0</span><br><span class="line">Maximum number of days between password change		: 99999</span><br><span class="line">Number of days of warning before password expires	: 7</span><br><span class="line"></span><br><span class="line"><span class="comment"># 完成上述验证后，需要恢复现场</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># cp /etc/default/useradd&#123;.bak,&#125;</span></span><br><span class="line">cp: overwrite ‘/etc/default/useradd’? y    <span class="comment"># 输入y确认</span></span><br></pre></td></tr></table></figure>
+<h2 id="usermod：修改用户信息"><a href="#usermod：修改用户信息" class="headerlink" title="usermod：修改用户信息"></a>usermod：修改用户信息</h2><p>usermod命令用于修改系统已经存在的用户的账号信息。usermod的作用是修改用户，而useradd的作用是添加用户，本质上都是对用户进行操作，因此，参数作用大部分都是类似的，只不过命令不同，就是添加和修改的区别。</p>
+<p><strong>语法格式：usermod [options] [login]</strong></p>
+<p><strong>重要参数选项</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9cabf31410.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>usermod的-c、-u、-G、-s、-d、-m、-e、-f等多个参数组合的例子</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改上面例子创建的user02用户，注释信息修改为TmpUser</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># UID修改为1999，归属用户组修改为只归属sa用户组</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># shell类型修改为/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 家目录修改为/home/user02</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户过期时限修改为2020-01-01，过期后30天停权</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># usermod -u 1999 -s /bin/sh -d /home/user02 -G sa -c TmpUser -e "2020-01-01" -f 30 user02</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查询用户登录shell和注释信息</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># cat /etc/passwd | grep -w user02</span></span><br><span class="line">user02:x:1999:1003:TmpUser:/home/user02:/bin/sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查询用户uid ,gid和归属用户组信息</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># id user02</span></span><br><span class="line">uid=1999(user02) gid=1003(user02) groups=1003(user02),801(sa)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查询用户user02的过期时限</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chage -l user02</span></span><br><span class="line">Last password change					: May 01, 2019</span><br><span class="line">Password expires					: never</span><br><span class="line">Password inactive					: never</span><br><span class="line">Account expires						: Jan 01, 2020</span><br><span class="line">Minimum number of days between password change		: 0</span><br><span class="line">Maximum number of days between password change		: 99999</span><br><span class="line">Number of days of warning before password expires	: 7</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查询用户停权的时限</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># cat /etc/shadow | grep -e user02</span></span><br><span class="line">user02:!!:18017:0:99999:7:30:18262:</span><br></pre></td></tr></table></figure>
+<h2 id="userdel：删除用户"><a href="#userdel：删除用户" class="headerlink" title="userdel：删除用户"></a>userdel：删除用户</h2><p>userdel命令用于删除指定的用户及与该用户相关的文件。</p>
+<p><strong>语法格式：userdel [options] [login]</strong></p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9cb1030b42.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）不加参数删除用户</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询刚才添加的虚拟用户vuser01的信息</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># grep -e vuser01 /etc/passwd</span></span><br><span class="line">vuser01:x:1002:1002::/home/vuser01:/sbin/nologin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不带任何选项参数删除虚拟用户vuser01</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># userdel vuser01</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 再次查看vuser01在系统配置文件/etc/passwd中的信息，结果什么也没有输出</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 为显示效果，在后面追加wc -l命令用于统计屏幕输出行数信息，结果为0</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># grep -e vuser01 /etc/passwd | wc -l</span></span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+<p><strong>2） 加-r参数删除用户及家目录</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在不加任何选项删除用户时，用户信息虽然从/etc/passwd文件删除，但是创建的家目录仍然存在</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 加-r选项删除用户user01，可以同步删除用户家目录信息</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># userdel -r user01</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># grep -w user01 /etc/passwd | wc -l</span></span><br><span class="line">0</span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># grep -w user01 /home/user01 | wc -l</span></span><br><span class="line">grep: /home/user01: No such file or directory</span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+<p><strong>3）强制删除用户示例（此命令请谨慎使用）</strong></p>
+<p>我们复制一个终端，在宿主机使用kkutysllb用户登录，如下：</p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9cb64a8fb9.jpg"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 我们在老的终端下，使用root用户删除kkutysllb用户</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用who命令查询当前登录的用户</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># who</span></span><br><span class="line">root     pts/0        2019-05-01 16:35 (192.168.101.1)</span><br><span class="line">kkutysllb pts/1        2019-05-01 18:17 (192.168.101.1)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 因为本机/home/kkutysllb/目录下有私有配置文件，所以本次演示不使用-r选项</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用-f选项强制删除已登录用户kkutysllb</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># userdel -f kkutysllb</span></span><br><span class="line">userdel: user kkutysllb is currently used by process 10633</span><br><span class="line"></span><br><span class="line"><span class="comment"># 虽然上面提示用户正在登录，但其实用户信息已被删除，当退出后查询/etc/passwd文件已经没有kkutysllb用户的配置信息</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># grep -w kkutysllb /etc/passwd | wc -l</span></span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+<h2 id="groupadd：创建新的用户组"><a href="#groupadd：创建新的用户组" class="headerlink" title="groupadd：创建新的用户组"></a>groupadd：创建新的用户组</h2><p>groupadd命令用于创建新的用户组。但groupadd命令的用途一般不大，因为useradd命令在创建用户的同时还会创建与用户同名的用户组。</p>
+<p><strong>语法格式：groupadd [options] [group]</strong></p>
+<p><strong>重要参数选项</strong></p>
+<p>groupadd命令用于创建新的用户组。但groupadd命令的用途一般不大，因为useradd命令在创建用户的同时还会创建与用户同名的用户组。</p>
+<p><strong>语法格式：groupadd [options] [group]</strong></p>
+<p><strong>重要参数选项</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9cb989a510.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>指定gid添加用户组的例子</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用-g选项指定新增用户组的gid为1024</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># groupadd -g 1024 kkutysllb</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看新增用户组在/etc/group配置文件的信息</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># tail -1 /etc/group</span></span><br><span class="line">kkutysllb:x:1024:</span><br><span class="line"></span><br><span class="line"><span class="comment"># 虽然没有指定组密码，但是在系统配置/etc/gshadow文件中仍有默认配置</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># tail -1 /etc/gshadow</span></span><br><span class="line">kkutysllb:!::</span><br></pre></td></tr></table></figure>
+<p><strong><em>groupadd的命令在工作场景中的应用绝大多数情况下仅限于此，一般掌握上述用法即可。</em></strong></p>
+<p><strong>groupdel：删除用户组</strong></p>
+<p>groupdel命令用于删除指定的用户组，此命令的使用频率极低，了解基本用法即可。需要注意一点：groupdel不能删除还有用户归属的主用户组。</p>
+<p><strong>语法格式：groupdel [group]</strong></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>删除用户组的例子</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 尝试删除root用户组，会提示失败，因为root用户还存在</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># groupdel root</span></span><br><span class="line">groupdel: cannot remove the primary group of user <span class="string">'root'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除sa用户组</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># groupdel sa</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查询系统配置文件sa用户组的信息</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># grep -w sa /etc/group | wc -l</span></span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+<h2 id="passwd：修改用户密码"><a href="#passwd：修改用户密码" class="headerlink" title="passwd：修改用户密码"></a>passwd：修改用户密码</h2><p>passwd命令可以修改用户密码及密码过期时间等内容，是实际中很常用的命令。普通用户和超级用户都可以运行passwd命令，但普通用户只能更改自身的用户密码，超级用户root则可以设置或修改所有用户的密码。root用户修改密码时，如果不符合系统密码规则，则给出警告信息，但密码设置仍然生效。普通用户修改密码时，如果使用弱密码，则给出告警信息，且修改无效。</p>
+<p><strong>语法格式：passwd [option] [username]</strong></p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9cbf78aa41.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）新增/修改用户的密码</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建kkutysllb用户（刚才已删除）</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># useradd -u 1024 -d /home/kkutysllb -g kkutysllb -c AdminUser -e "2199-12-31" -f 30 kkutysllb</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># tail -1 /etc/passwd</span></span><br><span class="line">kkutysllb:x:1024:1024:AdminUser:/home/kkutysllb:/bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># root用户使用passwd命令新增kkutysllb用户的密码</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># passwd kkutysllb</span></span><br><span class="line">Changing password <span class="keyword">for</span> user kkutysllb.</span><br><span class="line">New password:    <span class="comment"># 输入新密码</span></span><br><span class="line">Retype new password:   <span class="comment"># 确认新密码</span></span><br><span class="line">passwd: all authentication tokens updated successfully.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用su命令切换到kkutysllb用户下（从root用户切换到非root用户不用输入密码）</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># su - kkutysllb</span></span><br><span class="line">Last login: Wed May  1 19:32:00 CST 2019 on pts/0</span><br><span class="line">[kkutysllb@C7-Server01 ~]$ </span><br><span class="line"></span><br><span class="line"><span class="comment"># 在kkutysllb用户下修改自身密码为123456，会提示三次密码过于简单，然后退出，设置失败</span></span><br><span class="line"></span><br><span class="line">[kkutysllb@C7-Server01 ~]$ passwd</span><br><span class="line">Changing password <span class="keyword">for</span> user kkutysllb.</span><br><span class="line">Changing password <span class="keyword">for</span> kkutysllb.</span><br><span class="line">(current) UNIX password:   <span class="comment"># 首先输入用户当前密码</span></span><br><span class="line">New password:   <span class="comment"># 然后输入新密码</span></span><br><span class="line">BAD PASSWORD: The password is shorter than 8 characters</span><br><span class="line">New password: </span><br><span class="line">BAD PASSWORD: The password is shorter than 8 characters</span><br><span class="line">New password: </span><br><span class="line">BAD PASSWORD: The password is shorter than 8 characters</span><br><span class="line">passwd: Have exhausted maximum number of retries <span class="keyword">for</span> service</span><br></pre></td></tr></table></figure>
+<p><strong>2）显示账号密码</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 只能在root用户下使用，所以先切换回root用户</span></span><br><span class="line"></span><br><span class="line">[kkutysllb@C7-Server01 ~]$ su -</span><br><span class="line">Password:   <span class="comment"># 从非root用户切换回root用户要求输入密码</span></span><br><span class="line">Last login: Wed May  1 19:35:06 CST 2019 on pts/0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用-S选项查看kkutysllb用户密码简单信息</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># passwd -S kkutysllb</span></span><br><span class="line">kkutysllb PS 2019-05-01 0 99999 7 30 (Password <span class="built_in">set</span>, SHA512 crypt.)</span><br></pre></td></tr></table></figure>
+<p><strong>3）使用一条命令设置密码</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用--stdin选项从标准输入中读取密码，并设置给用户user03</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># echo "Adsds#@123"| passwd --stdin user03</span></span><br><span class="line">Changing password <span class="keyword">for</span> user user03.</span><br><span class="line">passwd: all authentication tokens updated successfully.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看user03用户密码简单信息</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># passwd -S user03</span></span><br><span class="line">user03 PS 2019-05-01 0 99999 7 -1 (Password <span class="built_in">set</span>, SHA512 crypt.)</span><br></pre></td></tr></table></figure>
+<p><strong>4）要求kkutysllb用户7天内不能更改密码，60天以后必须修改密码，过期前10天通知用户，过期后30天后禁止用户登录。</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]<span class="comment"># passwd -n 7 -x 60 -w 10 -i 30 kkutysllb</span></span><br><span class="line">Adjusting aging data <span class="keyword">for</span> user kkutysllb.</span><br><span class="line">passwd: Success</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看kkutysllb密码简单信息</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># passwd -S kkutysllb</span></span><br><span class="line">kkutysllb PS 2019-05-01 7 60 10 30 (Password <span class="built_in">set</span>, SHA512 crypt.)</span><br></pre></td></tr></table></figure>
+<p><strong>chage：修改用户密码有效期</strong></p>
+<p>chage命令用于查看或修改用户密码的有效期，有些参数和passwd的功能相同。</p>
+<p><strong>语法格式：chage [option] [login]</strong></p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9cc8e80c1b.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）要求kkutysllb用户7天内不能更改密码，60天以后必须修改密码，过期前10天通知用户，过期后30天后禁止用户登录。</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用chage命令实现</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chage -m 7 -M 60 -W 10 -I 30 kkutysllb</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用-l选项，查看kkutysllb账号密码期限信息</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chage -l kkutysllb</span></span><br><span class="line">Last password change					: May 01, 2019</span><br><span class="line">Password expires					: Jun 30, 2019</span><br><span class="line">Password inactive					: Jul 30, 2019</span><br><span class="line">Account expires						: Dec 31, 2199</span><br><span class="line">Minimum number of days between password change		: 7</span><br><span class="line">Maximum number of days between password change		: 60</span><br><span class="line">Number of days of warning before password expires	: 10</span><br></pre></td></tr></table></figure>
+<p><strong>2） 测试-E选项</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用-E选项，将user03用户的账号有限期设置为2019-12-31</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chage -E "2019-12-31" user03</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chage -l user03</span></span><br><span class="line">Last password change					: May 01, 2019</span><br><span class="line">Password expires					: never</span><br><span class="line">Password inactive					: never</span><br><span class="line">Account expires						: Dec 31, 2019</span><br><span class="line">Minimum number of days between password change		: 0</span><br><span class="line">Maximum number of days between password change		: 99999</span><br><span class="line">Number of days of warning before password expires	: 7</span><br></pre></td></tr></table></figure>
+<h2 id="chpasswd：批量更新用户密码"><a href="#chpasswd：批量更新用户密码" class="headerlink" title="chpasswd：批量更新用户密码"></a>chpasswd：批量更新用户密码</h2><p>chpasswd命令用于从标准输入中读取一定格式的用户名、密码来批量更新用户的密码，其格式为“用户名：密码”。</p>
+<p><strong>语法格式：chpasswd [option]</strong> </p>
+<p><strong>重要参数选项</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9ccf3a411d.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）命令行批量修改密码</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输入chapasswd后，按照格式 用户名：密码逐行修改密码，每行一个</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改密码的用户必须存在，修改完成后按ctrl+d退出</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chpasswd </span></span><br><span class="line">user02:123456   <span class="comment"># 修改user02的密码为123456</span></span><br><span class="line">user03:123456   <span class="comment"># 修改user03的密码为123456</span></span><br></pre></td></tr></table></figure>
+<p><strong>2）在不使用shell循环下，批量创建10个用户stu01-stu10，并且设置8位随机密码</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 批量创建10个用户</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># echo test&#123;01..10&#125;|xargs -n 1 useradd</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看刚创建的10个用户</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># tail /etc/passwd</span></span><br><span class="line">test01:x:2000:2000::/home/test01:/bin/bash</span><br><span class="line">test02:x:2001:2001::/home/test02:/bin/bash</span><br><span class="line">test03:x:2002:2002::/home/test03:/bin/bash</span><br><span class="line">test04:x:2003:2003::/home/test04:/bin/bash</span><br><span class="line">test05:x:2004:2004::/home/test05:/bin/bash</span><br><span class="line">test06:x:2005:2005::/home/test06:/bin/bash</span><br><span class="line">test07:x:2006:2006::/home/test07:/bin/bash</span><br><span class="line">test08:x:2007:2007::/home/test08:/bin/bash</span><br><span class="line">test09:x:2008:2008::/home/test09:/bin/bash</span><br><span class="line">test10:x:2009:2009::/home/test10:/bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 建立账号:密码格式文件</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># echo test&#123;01..10&#125;:$((RANDOM+10000000))|tr " " "\n" &gt; userpass.txt</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 检验刚创建用户名:密码格式文件</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># cat userpass.txt </span></span><br><span class="line">test01:10013080</span><br><span class="line">test02:10008930</span><br><span class="line">test03:10025107</span><br><span class="line">test04:10009300</span><br><span class="line">test05:10012914</span><br><span class="line">test06:10029118</span><br><span class="line">test07:10018810</span><br><span class="line">test08:10024358</span><br><span class="line">test09:10003684</span><br><span class="line">test10:10008929</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用chpasswd命令从格式文件中读取内容，进行批量设置</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chpasswd &lt; userpass.txt</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 从root用户先切换到test01用户下（无需密码），再切换到test10用户下（需要输入密码）</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># su - test01</span></span><br><span class="line">[test01@C7-Server01 ~]$ su - test10</span><br><span class="line">Password:    <span class="comment"># 输入testt10用户的密码</span></span><br><span class="line">[test10@C7-Server01 ~]$</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用whoami指令检验</span></span><br><span class="line"></span><br><span class="line">[test10@C7-Server01 ~]$ whoami </span><br><span class="line">test10</span><br></pre></td></tr></table></figure>
+<h2 id="su：切换用户"><a href="#su：切换用户" class="headerlink" title="su：切换用户"></a>su：切换用户</h2><p>su命令用于将当前用户切换到指定用户或者以指定用户的身份执行命令或程序。若省略了命令后面的用户名，则默认切换为root用户。）从root用户切换到普通用户时，不需要任何密码；从普通用户切换到root用户时，需要输入root密码。</p>
+<p><strong>语法格式：su [option] [user]</strong></p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9cd600a4a1.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）切换用户忘记-选项，导致环境变量未同步切换</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首先查询当前root用户下环境变量设置</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># env | egrep "USER|MAIL|PWD|LOGNAME"</span></span><br><span class="line">USER=root</span><br><span class="line">MAIL=/var/spool/mail/root</span><br><span class="line">PWD=/root</span><br><span class="line">LOGNAME=root</span><br><span class="line"></span><br><span class="line"><span class="comment"># 先从root用户切换到kkutysllb用户，再切回，不带-选项</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># su - kkutysllb</span></span><br><span class="line">Last login: Wed May  1 19:36:49 CST 2019 on pts/0</span><br><span class="line">[kkutysllb@C7-Server01 ~]$ su</span><br><span class="line">Password: </span><br><span class="line">[root@C7-Server01 kkutysllb]<span class="comment"># </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 再次查询当前root用户的环境变量，发现是kkutysllb用户的环境变量设置</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]<span class="comment"># env | egrep "USER|MAIL|PWD|LOGNAME"</span></span><br><span class="line">USER=kkutysllb</span><br><span class="line">MAIL=/var/spool/mail/kkutysllb</span><br><span class="line">PWD=/home/kkutysllb</span><br><span class="line">LOGNAME=kkutysllb</span><br></pre></td></tr></table></figure>
+<p><strong><em>上述示例告诉我们，在切换用户时要保持好的习惯，带-和用户名切换，确保环境变量与当前用户设置一致。</em></strong></p>
+<p><strong>2）向shell传递单个命令示例</strong></p>
+<p>在后续我们不熟openstack的各项服务时，经常会进行数据库同步操作，完成此操作的语句如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su -s /bin/sh -c <span class="string">"neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head"</span> neutron</span><br></pre></td></tr></table></figure>
+<p>上述语句的意思就是：切换到neutron用户下，以/bin/sh作为shell解释器，执行neutron-db-manage –config-file /etc/neutron/neutron.conf –config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head命令完成neutron数据的库表创建工作。</p>
+<p>因此，如果仅希望在某用户下执行命令，而不用直接切换到该用户下来操作，可以使用su - 用户名 -c”命令”的方式。</p>
+<h2 id="visudo：编辑sudoers文件"><a href="#visudo：编辑sudoers文件" class="headerlink" title="visudo：编辑sudoers文件"></a>visudo：编辑sudoers文件</h2><p>visudo命令是专门用来编辑/etc/sudoers这个文件的，同时提供语法检查等功能。/etc/sudoers文件是sudo命令的配置文件。</p>
+<p><strong>语法格式：visudo [option]</strong> </p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9cdc60b382.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）执行visudo对普通用户kkutysllb授权</strong></p>
+<p><strong>执行visudo命令，按照vim编辑器的使用方法在101行添加如下内容，使得kkutysllb用户拥有root用户的权限。</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9cde09ec7d.jpg"></p>
+<p><strong><em>上述授权内容对应的说明如下：</em></strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9ce03e84da.jpg"></p>
+<p><strong><em>visudo 相当于直接执行vim /etc/sudoers编辑，但用命令方式更安全，推荐使用该命令。同时，</em></strong>通过sudo进行系统授权管理的目的：即能让运维人员干活，又不会威胁系统安全，还可以审计用户使用sudo的提权操作命令，默认的用户是无法获得root权限的。</p>
+<p><strong>2）检查sudoer文件语法</strong></p>
+<p>有的时候用户不是使用visudo（保存时会自动检查语法）编辑的sudoer文件，而是使用vim或者echo等命令编辑的sudoer文件，此时就需要执行如下命令来检查编辑文件的语法是否正确，如果语法不正确，则可能会导致授权无法生效的问题。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过echo命令将kkutysllb用户组也授权为root权限</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]<span class="comment"># echo "%kkutysllb ALL=(ALL) ALL"  &gt;&gt; /etc/sudoers</span></span><br><span class="line">[root@C7-Server01 kkutysllb]<span class="comment"># tail -1 /etc/sudoers</span></span><br><span class="line">%kkutysllb ALL=(ALL) ALL</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用-c选项检查sudoer文件语法合规性</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]<span class="comment"># visudo -c</span></span><br><span class="line">/etc/sudoers: parsed OK</span><br></pre></td></tr></table></figure>
+<h2 id="users：显示已登录用户"><a href="#users：显示已登录用户" class="headerlink" title="users：显示已登录用户"></a>users：显示已登录用户</h2><p>users命令可以显示已经登录系统的用户。如果是同一用户登录多次，则登录几次就会显示几次用户名。</p>
+<p><strong>语法格式：users</strong></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>显示已登录用户，如果是一个用户登录多次，就显示几个同名用户</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 kkutysllb]<span class="comment"># users</span></span><br><span class="line">root  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 再通过root用户登录系统2次</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 kkutysllb]<span class="comment"># users</span></span><br><span class="line">root root root</span><br></pre></td></tr></table></figure>
+<p><strong>whoami：显示当前登录的用户名</strong></p>
+<p>whoami命令用于显示当前登录的用户名，这个命令可以看作英文短句who am i的简写。</p>
+<p><strong>语法格式：whoami</strong></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>显示当前登录的用户名</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 kkutysllb]<span class="comment"># whoami </span></span><br><span class="line">root</span><br><span class="line">[root@C7-Server01 kkutysllb]<span class="comment"># su - kkutysllb</span></span><br><span class="line">Last login: Wed May  1 22:17:04 CST 2019 on pts/0</span><br><span class="line">[kkutysllb@C7-Server01 ~]$ whoami</span><br><span class="line">kkutysllb</span><br></pre></td></tr></table></figure>
+<p><strong>last：显示用户登录列表</strong></p>
+<p>last命令能够从日志文件/var/log/wtmp读取信息并显示用户最近的登录列表。</p>
+<p><strong>语法格式：last [option]</strong> </p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9ce7460e57.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）显示用户最近登录的列表</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]<span class="comment"># last</span></span><br><span class="line">root     pts/2        192.168.101.1    Wed May  1 22:51   still logged <span class="keyword">in</span>   </span><br><span class="line">root     pts/1        192.168.101.1    Wed May  1 22:51   still logged <span class="keyword">in</span>   </span><br><span class="line">kkutysll pts/1        192.168.101.1    Wed May  1 18:17 - 22:51  (04:33)    </span><br><span class="line">root     pts/1        192.168.101.1    Wed May  1 18:13 - 18:17  (00:04)    </span><br><span class="line">root     pts/0        192.168.101.1    Wed May  1 16:35   still logged <span class="keyword">in</span>   </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Wed May  1 16:35 - 22:57  (06:22)    </span><br><span class="line">root     pts/0        192.168.101.1    Mon Apr 29 16:42 - 18:05  (01:23)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Mon Apr 29 16:41 - 22:57 (2+06:16)   </span><br><span class="line">root     pts/1        192.168.101.1    Sun Apr 28 19:14 - crash  (21:27)    </span><br><span class="line">root     pts/0        192.168.101.1    Sun Apr 28 16:53 - crash  (23:48)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Sun Apr 28 16:53 - 22:57 (3+06:04)   </span><br><span class="line">root     pts/0        192.168.101.1    Sat Apr 27 21:43 - down   (04:27)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Sat Apr 27 21:43 - 02:11  (04:27)    </span><br><span class="line">root     pts/0        192.168.101.1    Sat Apr 27 21:42 - down   (00:00)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Sat Apr 27 21:42 - 21:43  (00:01)    </span><br><span class="line">root     pts/0        192.168.101.1    Sat Apr 27 12:00 - down   (00:56)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Sat Apr 27 12:00 - 12:57  (00:57)    </span><br><span class="line">root     pts/0        192.168.101.1    Sat Apr 27 11:13 - crash  (00:46)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Sat Apr 27 10:51 - 12:57  (02:05)    </span><br><span class="line">root     pts/0        192.168.101.1    Fri Apr 26 17:24 - down   (01:04)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Fri Apr 26 17:24 - 18:29  (01:04)    </span><br><span class="line">root     pts/1        192.168.101.1    Tue Apr 23 19:56 - down   (01:39)    </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr 23 18:25 - down   (03:10)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Tue Apr 23 18:24 - 21:36  (03:11)    </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr 23 12:51 - 13:14  (00:23)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Tue Apr 23 12:50 - 13:14  (00:23)    </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr 23 12:42 - down   (00:06)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Tue Apr 23 12:41 - 12:48  (00:06)    </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr 23 10:29 - crash  (02:12)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Tue Apr 23 10:28 - 12:48  (02:19)    </span><br><span class="line">kkutysll tty1                          Tue Apr 23 00:17 - 00:17  (00:00)    </span><br><span class="line">root     pts/0        192.168.101.1    Mon Apr 22 22:53 - crash  (11:35)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Mon Apr 22 22:53 - 12:48  (13:55)    </span><br><span class="line">root     pts/0        192.168.101.1    Mon Apr 22 22:52 - down   (00:00)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Mon Apr 22 22:52 - 22:53  (00:01)    </span><br><span class="line">root     pts/0        192.168.101.1    Mon Apr 22 22:38 - down   (00:13)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Mon Apr 22 22:23 - 22:52  (00:28)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Sun Apr 21 16:27 - 22:52 (1+06:24)   </span><br><span class="line">root     pts/1        192.168.101.1    Sat Apr 20 18:22 - crash  (22:05)    </span><br><span class="line">root     pts/0        192.168.101.1    Sat Apr 20 15:57 - crash (1+00:29)   </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Sat Apr 20 15:57 - 22:52 (2+06:54)   </span><br><span class="line">root     pts/1        192.168.101.1    Sat Apr 20 12:42 - down   (03:14)    </span><br><span class="line">root     pts/1        192.168.101.1    Sat Apr 20 12:40 - 12:40  (00:00)    </span><br><span class="line">root     pts/1        192.168.101.1    Sat Apr 20 12:37 - 12:37  (00:00)    </span><br><span class="line">root     pts/0        192.168.101.1    Sat Apr 20 11:06 - down   (04:50)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Sat Apr 20 11:06 - 15:57  (04:50)    </span><br><span class="line">root     pts/0        192.168.101.1    Fri Apr 19 17:13 - down   (01:16)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Fri Apr 19 16:37 - 18:30  (01:52)    </span><br><span class="line">root     pts/1        192.168.101.1    Wed Apr 17 13:12 - crash (2+03:25)   </span><br><span class="line">root     pts/0        192.168.101.1    Wed Apr 17 10:41 - crash (2+05:55)   </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Wed Apr 17 10:38 - 18:30 (2+07:51)   </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr 16 23:04 - down   (01:13)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Tue Apr 16 22:30 - 00:18  (01:48)    </span><br><span class="line">root     pts/1        192.168.101.1    Tue Apr 16 14:29 - down   (04:09)    </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr 16 10:42 - 16:39  (05:57)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Tue Apr 16 10:41 - 18:38  (07:57)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Tue Apr 16 02:05 - 18:38  (16:32)    </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr 16 02:05 - down   (00:00)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Tue Apr 16 02:05 - 02:05  (00:00)    </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr 16 02:02 - down   (00:00)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Tue Apr 16 02:01 - 02:02  (00:00)    </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr 16 02:00 - down   (00:00)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Tue Apr 16 01:59 - 02:00  (00:00)    </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr 16 01:59 - down   (00:00)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Tue Apr 16 01:59 - 01:59  (00:00)    </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr 16 01:49 - down   (00:08)    </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr 16 01:45 - 01:49  (00:03)    </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr 16 01:34 - 01:45  (00:10)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Tue Apr 16 01:34 - 01:57  (00:23)    </span><br><span class="line">root     pts/0        192.168.101.1    Mon Apr 15 23:45 - down   (00:41)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Mon Apr 15 23:44 - 00:27  (00:42)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Mon Apr 15 18:00 - 00:27  (06:26)    </span><br><span class="line">root     pts/0        192.168.101.1    Mon Apr 15 17:59 - crash  (00:00)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Mon Apr 15 17:59 - 00:27  (06:27)    </span><br><span class="line">root     pts/0        192.168.101.1    Mon Apr 15 17:58 - crash  (00:01)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Mon Apr 15 17:57 - 00:27  (06:29)    </span><br><span class="line">root     pts/0        192.168.101.1    Mon Apr 15 17:45 - down   (00:09)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Mon Apr 15 17:45 - 17:55  (00:10)    </span><br><span class="line">root     pts/0        192.168.101.1    Mon Apr 15 17:44 - down   (00:00)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Mon Apr 15 17:43 - 17:44  (00:01)    </span><br><span class="line">root     pts/0        192.168.101.1    Mon Apr 15 17:06 - crash  (00:36)    </span><br><span class="line">root     pts/0        192.168.101.1    Mon Apr 15 16:45 - 17:06  (00:21)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Mon Apr 15 16:43 - 17:44  (01:00)    </span><br><span class="line">root     pts/0        192.168.101.1    Sat Apr 13 15:44 - 04:36  (12:51)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Sat Apr 13 15:44 - 11:54  (20:10)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Sat Apr 13 15:43 - 11:54  (20:11)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Sat Apr 13 15:42 - 15:42  (00:00)    </span><br><span class="line">root     pts/0        192.168.101.1    Tue Apr  9 17:58 - down   (01:04)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Tue Apr  9 17:58 - 19:03  (01:04)    </span><br><span class="line">root     pts/0        192.168.101.1    Mon Apr  8 01:05 - down   (00:27)    </span><br><span class="line">root     pts/0        192.168.101.1    Sun Apr  7 23:35 - 01:05  (01:29)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Sun Apr  7 23:34 - 01:32  (01:57)    </span><br><span class="line">root     pts/0        192.168.101.1    Sun Apr  7 20:43 - down   (00:03)    </span><br><span class="line">reboot   system boot  3.10.0-862.el7.x Sun Apr  7 20:43 - 20:47  (00:04)</span><br></pre></td></tr></table></figure>
+<p><strong>2）只显示前10行信息</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]<span class="comment"># last -10</span></span><br><span class="line">root     pts/2        192.168.101.1    Wed May  1 22:51   still logged <span class="keyword">in</span>   </span><br><span class="line">root     pts/1        192.168.101.1    Wed May  1 22:51   still logged <span class="keyword">in</span>   </span><br><span class="line">kkutysll pts/1        192.168.101.1    Wed May  1 18:17 - 22:51  (04:33)    </span><br><span class="line">root     pts/1        192.168.101.1    Wed May  1 18:13 - 18:17  (00:04)    </span><br><span class="line">root     pts/0        192.168.101.1    Wed May  1 16:35   still logged <span class="keyword">in</span>   </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Wed May  1 16:35 - 22:59  (06:24)    </span><br><span class="line">root     pts/0        192.168.101.1    Mon Apr 29 16:42 - 18:05  (01:23)    </span><br><span class="line">reboot   system boot  3.10.0-957.10.1. Mon Apr 29 16:41 - 22:59 (2+06:17)   </span><br><span class="line">root     pts/1        192.168.101.1    Sun Apr 28 19:14 - crash  (21:27)    </span><br><span class="line">root     pts/0        192.168.101.1    Sun Apr 28 16:53 - crash  (23:48)</span><br></pre></td></tr></table></figure>
+<p><strong>3）显示指定用户登录情况</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]<span class="comment"># last kkutysllb</span></span><br><span class="line">kkutysll pts/1        192.168.101.1    Wed May  1 18:17 - 22:51  (04:33)    </span><br><span class="line">kkutysll tty1                          Tue Apr 23 00:17 - 00:17  (00:00)    </span><br><span class="line">wtmp begins Sun Apr  7 20:43:09 2019</span><br></pre></td></tr></table></figure>
+<h2 id="lastb：显示用户登录失败的记录"><a href="#lastb：显示用户登录失败的记录" class="headerlink" title="lastb：显示用户登录失败的记录"></a>lastb：显示用户登录失败的记录</h2><p>lastb命令可以从日志文件/var/log/btmp中读取信息，并显示用户登录失败的记录，用于发现系统登录异常。</p>
+<p><strong>语法格式：lastb [option]</strong> </p>
+<p><strong>重要选项参数：</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9ceeb16911.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>显示用户登录失败的列表</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]<span class="comment"># lastb</span></span><br><span class="line">kkutysll ssh:notty    192.168.101.1    Wed May  1 18:21 - 18:21  (00:00)    </span><br><span class="line">kkutysll ssh:notty    192.168.101.1    Wed May  1 18:20 - 18:20  (00:00)    </span><br><span class="line">kkutysll ssh:notty    192.168.101.1    Wed May  1 18:20 - 18:20  (00:00)    </span><br><span class="line">btmp begins Wed May  1 18:20:46 2019</span><br></pre></td></tr></table></figure>
+<p><strong><em>需要多加注意这个命令执行的结果，如果发现未知的登录失败信息，那就要考虑系统是否遭到暴力破解登录。</em></strong></p>
+<h2 id="lastlog：显示所有用户的最近登录记录"><a href="#lastlog：显示所有用户的最近登录记录" class="headerlink" title="lastlog：显示所有用户的最近登录记录"></a>lastlog：显示所有用户的最近登录记录</h2><p>lastlog命令从日志文件/var/log/lastlog中读取信息，并显示所有用户的最近登录记录，用于查看系统是否有异常登录。</p>
+<p><strong>语法格式：lastlog</strong></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>显示所有用户的最近登录记录</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]<span class="comment"># lastlog </span></span><br><span class="line">Username         Port     From             Latest</span><br><span class="line">root             pts/0                     Wed May  1 22:57:53 +0800 2019</span><br><span class="line">bin                                        **Never logged <span class="keyword">in</span>**</span><br><span class="line">daemon                                     **Never logged <span class="keyword">in</span>**</span><br><span class="line">adm                                        **Never logged <span class="keyword">in</span>**</span><br><span class="line">lp                                         **Never logged <span class="keyword">in</span>**</span><br><span class="line">sync                                       **Never logged <span class="keyword">in</span>**</span><br><span class="line">shutdown                                   **Never logged <span class="keyword">in</span>**</span><br><span class="line">halt                                       **Never logged <span class="keyword">in</span>**</span><br><span class="line">mail                                       **Never logged <span class="keyword">in</span>**</span><br><span class="line">operator                                   **Never logged <span class="keyword">in</span>**</span><br><span class="line">games                                      **Never logged <span class="keyword">in</span>**</span><br><span class="line">ftp                                        **Never logged <span class="keyword">in</span>**</span><br><span class="line">nobody                                     **Never logged <span class="keyword">in</span>**</span><br><span class="line">systemd-network                            **Never logged <span class="keyword">in</span>**</span><br><span class="line">dbus                                       **Never logged <span class="keyword">in</span>**</span><br><span class="line">polkitd                                    **Never logged <span class="keyword">in</span>**</span><br><span class="line">tss                                        **Never logged <span class="keyword">in</span>**</span><br><span class="line">sshd                                       **Never logged <span class="keyword">in</span>**</span><br><span class="line">postfix                                    **Never logged <span class="keyword">in</span>**</span><br><span class="line">chrony                                     **Never logged <span class="keyword">in</span>**</span><br><span class="line">ntp                                        **Never logged <span class="keyword">in</span>**</span><br><span class="line">ett                                        **Never logged <span class="keyword">in</span>**</span><br><span class="line">user02                                     **Never logged <span class="keyword">in</span>**</span><br><span class="line">user03                                     **Never logged <span class="keyword">in</span>**</span><br><span class="line">kkutysllb        pts/0                     Wed May  1 22:54:01 +0800 2019</span><br><span class="line">test01           pts/0                     Wed May  1 22:02:48 +0800 2019</span><br><span class="line">test02                                     **Never logged <span class="keyword">in</span>**</span><br><span class="line">test03                                     **Never logged <span class="keyword">in</span>**</span><br><span class="line">test04                                     **Never logged <span class="keyword">in</span>**</span><br><span class="line">test05                                     **Never logged <span class="keyword">in</span>**</span><br><span class="line">test06                                     **Never logged <span class="keyword">in</span>**</span><br><span class="line">test07                                     **Never logged <span class="keyword">in</span>**</span><br><span class="line">test08                                     **Never logged <span class="keyword">in</span>**</span><br><span class="line">test09                                     **Never logged <span class="keyword">in</span>**</span><br><span class="line">test10           pts/0                     Wed May  1 22:03:22 +0800 2019</span><br></pre></td></tr></table></figure>
+<p><strong><em>上面显示Never logged in的表示从未登录过系统的用户，一般都是系统服务的虚拟用户。</em></strong></p>
+<h2 id="chown：改变文件或目录的用户和用户组"><a href="#chown：改变文件或目录的用户和用户组" class="headerlink" title="chown：改变文件或目录的用户和用户组"></a>chown：改变文件或目录的用户和用户组</h2><p>chown命令用于改变文件或目录的用户和用户组。要授权的用户和组名，必须是Linux系统实际存在的。</p>
+<p><strong>常用格式：</strong></p>
+<ul>
+<li><strong>chown 用户 文件或目录 #&lt;==仅仅授权用户。</strong></li>
+<li><strong>chown :组 文件或目录 #&lt;==仅仅授权组。</strong></li>
+</ul>
+<p><strong>语法格式：chown [option] [OWNER][:[GROUP]] [file]，其中的“：”可以用“.”来代替</strong></p>
+<p><strong>【重要选项参数】</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9cf580bc4e.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）更改文件所属的用户属性</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询userpass.txt文件的用户和用户组</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -l userpass.txt </span></span><br><span class="line">-rw-r--r-- 1 root root 160 May  1 21:59 userpass.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更改userpass.txt文件用户为test01</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chown test01 userpass.txt </span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -l userpass.txt </span></span><br><span class="line">-rw-r--r-- 1 test01 root 160 May  1 21:59 userpass.txt</span><br></pre></td></tr></table></figure>
+<p><strong>2）更改文件所属的用户组</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 更改userpass.txt文件的所属用户组为kkutysllb</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chown .kkutysllb userpass.txt </span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -l userpass.txt </span></span><br><span class="line">-rw-r--r-- 1 test01 kkutysllb 160 May  1 21:59 userpass.txt</span><br></pre></td></tr></table></figure>
+<p><strong>3 ）同时更改文件的用户和用户组</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 更改userpass.txt文件的用户为kkutysllb，用户组为root</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chown kkutysllb:root userpass.txt </span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -l userpass.txt </span></span><br><span class="line">-rw-r--r-- 1 kkutysllb root 160 May  1 21:59 userpass.txt</span><br></pre></td></tr></table></figure>
+<p><strong>4）递归更改目录及目录下的所有子目录及文件的用户和用户组的属性</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询/home/test目录的所属用户和用户组信息</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -ld /home/test</span></span><br><span class="line">drwxr-xr-x 5 root root 45 May  1 23:16 /home/<span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用-R选项，递归修改/home/test目录及其子目录的用户和用户组为kkutysllb:kkutysllb</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chown -R kkutysllb:kkutysllb /home/test</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -ld /home/test /home/test/stu01</span></span><br><span class="line">drwxr-xr-x 5 kkutysllb kkutysllb 45 May  1 23:16 /home/<span class="built_in">test</span></span><br><span class="line">drwxr-xr-x 3 kkutysllb kkutysllb 25 May  1 23:16 /home/<span class="built_in">test</span>/stu01</span><br></pre></td></tr></table></figure>
+<h2 id="chmod：改变文件或目录权限"><a href="#chmod：改变文件或目录权限" class="headerlink" title="chmod：改变文件或目录权限"></a>chmod：改变文件或目录权限</h2><p>chmod命令是用来改变文件或目录权限的命令，但是只有文件的属主和超级用户root才能够执行这个命令。模式有两种格式：一种是采用权限字母和操作符表达式；另一种是采用数字。权限示意图如下：</p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9cfdde0f8a.jpg"></p>
+<p><strong>语法格式：chmod [option] [mode] [file]</strong></p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9cff386a72.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）权限字母和操作符表达式</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置所有权限为空</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chmod a= userpass.txt </span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -l userpass.txt </span></span><br><span class="line">---------- 1 kkutysllb root 160 May  1 21:59 userpass.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置文件属主有执行权限</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chmod u+x userpass.txt </span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -l userpass.txt </span></span><br><span class="line">---x------ 1 kkutysllb root 160 May  1 21:59 userpass.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置文件归属用户组有可写权限</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chmod g+w userpass.txt </span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -l userpass.txt </span></span><br><span class="line">---x-w---- 1 kkutysllb root 160 May  1 21:59 userpass.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置其他用户对文件有可读权限</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chmod o+r userpass.txt </span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -l userpass.txt </span></span><br><span class="line">---x-w-r-- 1 kkutysllb root 160 May  1 21:59 userpass.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 恢复刚才的设置，即恢复用户的默认权限</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chmod u=rwx,g=rx,o=x userpass.txt </span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -l userpass.txt </span></span><br><span class="line">-rwxr-x--x 1 kkutysllb root 160 May  1 21:59 userpass.txt</span><br></pre></td></tr></table></figure>
+<p><strong>2）文件的数字权限授权</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置文件userpass.txt为归属用户组可读写执行，其他用户可读可执行</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chmod 075 userpass.txt </span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -l userpass.txt </span></span><br><span class="line">----rwxr-x 1 kkutysllb root 160 May  1 21:59 userpass.txt</span><br></pre></td></tr></table></figure>
+<p><strong>3） 使用-R选项递归授权目录</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 授权/home/test及其子目录所有用户可读，可写，可执行</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chmod -R 777 /home/test</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ls -ld /home/test /home/test/stu&#123;01..03&#125;</span></span><br><span class="line">drwxrwxrwx 5 kkutysllb kkutysllb 45 May  1 23:16 /home/<span class="built_in">test</span></span><br><span class="line">drwxrwxrwx 3 kkutysllb kkutysllb 25 May  1 23:16 /home/<span class="built_in">test</span>/stu01</span><br><span class="line">drwxrwxrwx 3 kkutysllb kkutysllb 25 May  1 23:16 /home/<span class="built_in">test</span>/stu02</span><br><span class="line">drwxrwxrwx 3 kkutysllb kkutysllb 25 May  1 23:16 /home/<span class="built_in">test</span>/stu03</span><br></pre></td></tr></table></figure>
+<p><strong><em>Linux普通文件的读、写、执行权限说明</em></strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9d0447fa4c.jpg"></p>
+<p><strong><em>Linux目录的读、写、执行权限说明</em></strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9d05b587fb.jpg"></p>
+<h2 id="chgrp：更改文件用户组"><a href="#chgrp：更改文件用户组" class="headerlink" title="chgrp：更改文件用户组"></a>chgrp：更改文件用户组</h2><p>chgrp命令只用于更改文件的用户组，功能被chown取代了，了解一下即可。</p>
+<p><strong>语法格式：chgrp [option] [group] [file]</strong></p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9d07861f6f.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）修改文件的用户组属性信息</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看文件userpass.txt文件的用户组信息</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ll userpass.txt </span></span><br><span class="line">----rwxr-x 1 kkutysllb root 160 May  1 21:59 userpass.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改文件用户组为kkutysllb</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chgrp kkutysllb userpass.txt </span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ll userpass.txt </span></span><br><span class="line">----rwxr-x 1 kkutysllb kkutysllb 160 May  1 21:59 userpass.txt</span><br></pre></td></tr></table></figure>
+<p><strong>2）递归修改目录的用户组信息</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改/home/test目录及子目录的用户组为root</span></span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># chgrp -R root /home/test</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ll -d /home/test/stu&#123;01..03&#125;</span></span><br><span class="line">drwxrwxrwx 3 kkutysllb root 25 May  1 23:16 /home/<span class="built_in">test</span>/stu01</span><br><span class="line">drwxrwxrwx 3 kkutysllb root 25 May  1 23:16 /home/<span class="built_in">test</span>/stu02</span><br><span class="line">drwxrwxrwx 3 kkutysllb root 25 May  1 23:16 /home/<span class="built_in">test</span>/stu03</span><br></pre></td></tr></table></figure>
+<h2 id="umask：显示或设置权限掩码"><a href="#umask：显示或设置权限掩码" class="headerlink" title="umask：显示或设置权限掩码"></a>umask：显示或设置权限掩码</h2><p>umask是通过八进制的数值来定义用户创建文件或目录的默认权限。</p>
+<p><strong>语法格式：umask [option] [mode]</strong></p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/05/02/5cc9d0c58fb55.jpg"></p>
+<p><strong>通过umask计算文件目录权限</strong></p>
+<p><strong>文件权限计算：</strong>创建文件默认最大的权限为666（-rw-rw-rw-），默认创建的文件没有可执行权限x位。对于文件来说，umask的设置是在假定文件拥有八进制666的权限上进行的，文件的权限就是666减umask（umask的各个位数字也不能大于6，比如077就不符合条件）的掩码数值，如果得到的3位数字其每一位都是偶数，那么这就是最终结果；如果有若干位的数字是奇数，那么这个奇数需要加1变成偶数，最后得到全是偶数的结果。</p>
+<p><strong>目录权限计算：</strong>创建目录默认最大权限777（-rwx-rwx-rwx），默认创建的目录属主是有x权限的，允许用户进入。对于目录来说，umask的设置是在假定文件拥有八进制777权限上进行，目录八进制权限777减去umask的掩码数值。</p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）查看root用户和非root用户的umask值</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]<span class="comment"># umask </span></span><br><span class="line">0022               <span class="comment"># 超级用户root的umask值是0022</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># su - kkutysllb</span></span><br><span class="line">Last login: Wed May  1 22:54:01 CST 2019 on pts/0</span><br><span class="line">[kkutysllb@C7-Server01 ~]$ <span class="built_in">umask</span> </span><br><span class="line">0002              <span class="comment"># 普通用户的umask值是0002</span></span><br></pre></td></tr></table></figure>
+<p><strong>上述结果意味着，通过root用户创建文件默认权限是644，目录默认权限是755；通过普通用户（普通用户名和用户组名相同的情况下）创建的文件默认权限是664，目录默认权限是775。详细情况参见示例2。</strong></p>
+<p><strong>2）查询umask在系统配置文件的设置规则</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[kkutysllb@C7-Server01 ~]$ sed -n <span class="string">'59,63p'</span> /etc/profile</span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$UID</span> -gt 199 ] &amp;&amp; [ <span class="string">"`/usr/bin/id -gn`"</span> = <span class="string">"`/usr/bin/id -un`"</span> ]; <span class="keyword">then</span></span><br><span class="line">	<span class="built_in">umask</span> 002</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	<span class="built_in">umask</span> 022</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<p><strong>上述结果是shell条件判断语句，有两个判断条件，且为与关系：</strong></p>
+<p><strong>条件1是判断用户的uid是否大于199，条件2是判断用户名是否和用户组名相同，当两个条件都满足时，则为普通用户，umask取值为002，否则为root用户，umask取值为022。</strong></p>
+<p><strong>注意一点：普通用户的umask未必是002，比如满足以下条件，kkutysllb用户属于root组的时候，由于id-gn的执行结果不等于id-un的执行结果，所以umask值为022。</strong></p>
+<p><strong>3）使用-p和-S选项</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用-p选项，输出的权限掩码可直接作为命令来执行，也就是可以使用umask+数字更改umask的默认值</span></span><br><span class="line"></span><br><span class="line">[kkutysllb@C7-Server01 ~]$ <span class="built_in">umask</span> -p</span><br><span class="line"><span class="built_in">umask</span> 0002</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用-S选项，</span></span><br><span class="line"></span><br><span class="line">[kkutysllb@C7-Server01 ~]$ <span class="built_in">umask</span> -S</span><br><span class="line">u=rwx,g=rwx,o=rx</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2019/05/02/2019-05-01-Linux系统命令-第六篇《用户和权限管理命令》/" title="2019-05-01-Linux系统命令-第六篇《用户和权限管理命令》">https://kkutysllb.cn/2019/05/02/2019-05-01-Linux系统命令-第六篇《用户和权限管理命令》/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/01/2019-05-01-DPDK技术栈在电信云中的最佳实践（三）/" rel="next" title="2019-05-01-DPDK技术栈在电信云中的最佳实践（三）">
+                <i class="fa fa-chevron-left"></i> 2019-05-01-DPDK技术栈在电信云中的最佳实践（三）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">25</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#useradd：创建用户"><span class="nav-number">1.</span> <span class="nav-text">useradd：创建用户</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#usermod：修改用户信息"><span class="nav-number">2.</span> <span class="nav-text">usermod：修改用户信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#userdel：删除用户"><span class="nav-number">3.</span> <span class="nav-text">userdel：删除用户</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#groupadd：创建新的用户组"><span class="nav-number">4.</span> <span class="nav-text">groupadd：创建新的用户组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#passwd：修改用户密码"><span class="nav-number">5.</span> <span class="nav-text">passwd：修改用户密码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chpasswd：批量更新用户密码"><span class="nav-number">6.</span> <span class="nav-text">chpasswd：批量更新用户密码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#su：切换用户"><span class="nav-number">7.</span> <span class="nav-text">su：切换用户</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#visudo：编辑sudoers文件"><span class="nav-number">8.</span> <span class="nav-text">visudo：编辑sudoers文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#users：显示已登录用户"><span class="nav-number">9.</span> <span class="nav-text">users：显示已登录用户</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lastb：显示用户登录失败的记录"><span class="nav-number">10.</span> <span class="nav-text">lastb：显示用户登录失败的记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lastlog：显示所有用户的最近登录记录"><span class="nav-number">11.</span> <span class="nav-text">lastlog：显示所有用户的最近登录记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chown：改变文件或目录的用户和用户组"><span class="nav-number">12.</span> <span class="nav-text">chown：改变文件或目录的用户和用户组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chmod：改变文件或目录权限"><span class="nav-number">13.</span> <span class="nav-text">chmod：改变文件或目录权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chgrp：更改文件用户组"><span class="nav-number">14.</span> <span class="nav-text">chgrp：更改文件用户组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#umask：显示或设置权限掩码"><span class="nav-number">15.</span> <span class="nav-text">umask：显示或设置权限掩码</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">265k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">4:01</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/05/02/2019-05-01-Linux系统命令-第六篇《用户和权限管理命令》/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>
