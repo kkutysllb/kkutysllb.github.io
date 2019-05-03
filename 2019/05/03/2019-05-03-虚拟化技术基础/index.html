@@ -126,7 +126,7 @@
 <meta property="og:image" content="https://i.loli.net/2019/05/03/5ccbe06505e42.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/05/03/5ccbe07957b2d.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/05/03/5ccbe090e8fd7.jpg">
-<meta property="og:updated_time" content="2019-05-03T06:42:30.740Z">
+<meta property="og:updated_time" content="2019-05-03T06:48:40.909Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-05-03-虚拟化技术基础">
 <meta name="twitter:description" content="DPDK技术奠定了NFV领域数据包转发性能提升的基础，那么软硬件解耦后，在通用服务器上实现各功能网元，资源层面的隔离和共生问题就需要虚拟化技术来解决。虚拟化使用软件的方法重新定义划分IT资源，可以实现IT资源的动态分配、灵活调度、跨域共享，提高IT资源利用率，使IT资源能够真正成为社会基础设施，服务于各行各业中灵活多变的应用需求。">
@@ -451,7 +451,7 @@
                 
               
 
-              <time title="创建时间：2019-05-03 14:02:14 / 修改时间：14:42:30" itemprop="dateCreated datePublished" datetime="2019-05-03T14:02:14+08:00">2019-05-03</time>
+              <time title="创建时间：2019-05-03 14:02:14 / 修改时间：14:48:40" itemprop="dateCreated datePublished" datetime="2019-05-03T14:02:14+08:00">2019-05-03</time>
             
 
             
@@ -570,7 +570,7 @@
 <p>虚拟化就是通过某种方式隐藏底层物理硬件的过程，从而让多个操作系统可以透明地使用和共享它。这种架构的另一个更常见的名称是平台虚拟化。在典型的分层架构中，提供平台虚拟化的层称为 hypervisor （有时称为虚拟机管理程序 或 VMM）。来宾操作系统称为虚拟机（VM），因为对这些 VM 而言，硬件是专门针对它们虚拟化的。如下图示：</p>
 <p><img src="https://i.loli.net/2019/05/03/5ccbdf268869a.jpg"></p>
 <p>在上图中可以看到，hypervisor 是提供底层机器虚拟化的软件层（在某些情况下需要处理器支持）。并不是所有虚拟化解决方案都是一样的（详见Hypervisor分类部分）。客户机操作系统（GuestOS）对机器的底层资源的访问通过VMM来实现。hypervisor 面对的对象不是客户机中的进程，而是整个客户操作系统（GuestOS）。</p>
-<p><strong>hypervisor主要可以划分为两大类：类型1和类型2，以及在此基础上的混合类型和操作系统类型。</strong></p>
+<p><strong>hypervisor主要可以划分为两大类：类型1和类型2，以及在此基础上衍生出来的混合类型和操作系统类型。</strong></p>
 <p><strong>类型1这种hypervisor是可以直接运行在物理硬件之上的</strong>。如下图所示，也就是说它不需要宿主机操作系统（HostOS）的支持，本身就可以管理底层硬件的资源，其本质是在Hypervisor中嵌入了一个精简的Linux操作系统内核。Xen 和 VMWare 的 ESXi 都属于这个类型，这种虚拟化类型的模型如下图所示，其特点就是需要硬件的支持，转发性能强（因为少了HostOS这一层转发），VMM就是HostOS。</p>
 <p><img src="https://i.loli.net/2019/05/03/5ccbdf4674cf0.jpg"></p>
 <p><strong>类型2这种hypervisor运行在另一个操作系统（运行在物理硬件之上）中</strong>。如下图所示，也就是说这种类型的Hypervisor是部署在HostOS之上的，从HostOS角度来看，其上层的所有VM都对应Hypervisor这一个进程。从VM的角度来看，其访问底层硬件资源需要Hypervisor和HostOS共同配合完成。KVM、VirtualBox 和 VMWare Workstation 都属于这个类型。这种虚拟化类型的模型如下图所示，其特点就是比较灵活，比如支持虚拟机嵌套（嵌套意味着可以在虚拟机中再运行hypervisor），但是转发性能明显不如类型1。</p>
@@ -597,8 +597,7 @@
 <p><strong>2）独立性：</strong>虚拟化前软硬件紧密结合，硬件成本高昂且不够灵活。虚拟化后，操作系统和硬件不相互依赖，虚拟机独立于硬件，能在任何硬件上运行。</p>
 <p><strong>3）程序运行效率：</strong>虚拟化前同一台主机上同时运行多个程序容易产生冲突，运行效率较低。虚拟化后，操作系统和应用程序被封装成单一个体，不同个体间不冲突。同一台机器上运行多个程序，效率高。</p>
 <p><strong>4）安全性：</strong>虚拟化前，故障影响范围大，安全性较差。虚拟化后，通过资源的池化，有强大的安全和故障隔离机制。</p>
-<p><strong>虚拟化技术的发展</strong></p>
-<p>最近几年，随着云计算技术广泛应用，虚拟化技术也被大家所关注。其实，虚拟化技术的出现要早于云计算技术约半个世纪。在上世纪60年代，虚拟化技术就已经在大型机上有所应用，在1999年小型机上出现逻辑分区的概念，这就是存储虚拟化的雏形。而到了2000年，在x86平台上VMware首先提出了平台虚拟化技术的概念，以及后续随着CPU速度越来越快，Intel和AMD分别在CPU指令架构中引入虚拟化指令，在服务器领域和数据中心范围内虚拟化技术得到的极大发展，从而催生了云计算技术的出现。可以说，<strong>虚拟化技术是云计算技术得以实现并推广落地的重要基石</strong>，同时，随着云计算技术的演进，虚拟化技术也同样在不断演进，从最早的计算虚拟化发展到目前的应用虚拟化，两者是一种相辅相成，螺旋式推进的关系。</p>
+<h2 id="虚拟化技术的发展"><a href="#虚拟化技术的发展" class="headerlink" title="虚拟化技术的发展"></a>虚拟化技术的发展</h2><p>最近几年，随着云计算技术广泛应用，虚拟化技术也被大家所关注。其实，虚拟化技术的出现要早于云计算技术约半个世纪。在上世纪60年代，虚拟化技术就已经在大型机上有所应用，在1999年小型机上出现逻辑分区的概念，这就是存储虚拟化的雏形。而到了2000年，在x86平台上VMware首先提出了平台虚拟化技术的概念，以及后续随着CPU速度越来越快，Intel和AMD分别在CPU指令架构中引入虚拟化指令，在服务器领域和数据中心范围内虚拟化技术得到的极大发展，从而催生了云计算技术的出现。可以说，<strong>虚拟化技术是云计算技术得以实现并推广落地的重要基石</strong>，同时，随着云计算技术的演进，虚拟化技术也同样在不断演进，从最早的计算虚拟化发展到目前的应用虚拟化，两者是一种相辅相成，螺旋式推进的关系。</p>
 <p>云计算技术从诞生到当前，共经历了3个阶段，分别称为云计算1.0、云计算2.0和云计算3.0，在不同的阶段，虚拟化技术的表现形式和关注点也不相同，两者关系如下图所示：</p>
 <p><img src="https://i.loli.net/2019/05/03/5ccbe03388332.jpg"></p>
 <p><strong>在云计算1.0时代，主要是将传统IT硬件基础设施转换为虚拟化基础设施，来提升资源利用率。</strong>该阶段的关键特征体现为：<strong>通过计算虚拟化技术的引入</strong>，将企业IT应用与底层的基础设施彻底分离解耦，将多个企业IT应用实例及运行环境(客户机操作系统，GuestOS)复用在相同的物理服务器上，并通过虚拟化集群调度软件，将更多的IT应用复用在更少的服务器节点上，从而实现资源利用效率的提升。</p>
@@ -943,7 +942,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是虚拟化"><span class="nav-number">1.</span> <span class="nav-text">什么是虚拟化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是Hypervisor（VMM）"><span class="nav-number">2.</span> <span class="nav-text">什么是Hypervisor（VMM）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟化的特征和优势"><span class="nav-number">3.</span> <span class="nav-text">虚拟化的特征和优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据中心内部虚拟化技术分类"><span class="nav-number">4.</span> <span class="nav-text">数据中心内部虚拟化技术分类</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是虚拟化"><span class="nav-number">1.</span> <span class="nav-text">什么是虚拟化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是Hypervisor（VMM）"><span class="nav-number">2.</span> <span class="nav-text">什么是Hypervisor（VMM）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟化的特征和优势"><span class="nav-number">3.</span> <span class="nav-text">虚拟化的特征和优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟化技术的发展"><span class="nav-number">4.</span> <span class="nav-text">虚拟化技术的发展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据中心内部虚拟化技术分类"><span class="nav-number">5.</span> <span class="nav-text">数据中心内部虚拟化技术分类</span></a></li></ol></div>
             
 
           </div>
