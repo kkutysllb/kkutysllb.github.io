@@ -126,7 +126,7 @@
 <meta property="og:image" content="https://i.loli.net/2019/05/03/5ccbe06505e42.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/05/03/5ccbe07957b2d.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/05/03/5ccbe090e8fd7.jpg">
-<meta property="og:updated_time" content="2019-05-03T06:48:40.909Z">
+<meta property="og:updated_time" content="2019-05-07T13:19:12.926Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-05-03-虚拟化技术基础">
 <meta name="twitter:description" content="DPDK技术奠定了NFV领域数据包转发性能提升的基础，那么软硬件解耦后，在通用服务器上实现各功能网元，资源层面的隔离和共生问题就需要虚拟化技术来解决。虚拟化使用软件的方法重新定义划分IT资源，可以实现IT资源的动态分配、灵活调度、跨域共享，提高IT资源利用率，使IT资源能够真正成为社会基础设施，服务于各行各业中灵活多变的应用需求。">
@@ -451,12 +451,24 @@
                 
               
 
-              <time title="创建时间：2019-05-03 14:02:14 / 修改时间：14:48:40" itemprop="dateCreated datePublished" datetime="2019-05-03T14:02:14+08:00">2019-05-03</time>
+              <time title="创建时间：2019-05-03 14:02:14" itemprop="dateCreated datePublished" datetime="2019-05-03T14:02:14+08:00">2019-05-03</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-07 21:19:12" itemprop="dateModified" datetime="2019-05-07T21:19:12+08:00">2019-05-07</time>
               
             
           </span>
@@ -509,7 +521,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">8.3k</span>
+                <span title="本文字数">8k</span>
               
 
               
@@ -523,7 +535,7 @@
                 
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
-                <span title="阅读时长">8 分钟</span>
+                <span title="阅读时长">7 分钟</span>
               
             </div>
           
@@ -587,10 +599,6 @@
 <p><strong>2）隔离：在同一服务器虚拟机之间相互隔离。</strong>虚拟机是互相隔离的。例如：一个虚拟机的崩溃或故障（例如，操作系统故障、应用程序崩溃、驱动程序故障，等等）不会影响同一服务器上的其它虚拟机；一个虚拟机中的病毒、蠕虫等与其它虚拟机相隔离，就像每个虚拟机都位于单独的物理机器上一样。可以通过资源控制以提供性能隔离，比如：可以为每个虚拟机指定最小和最大资源使用量，以确保某个虚拟机不会占用所有的资源而使得同一系统中的其它虚拟机无资源可用；可以在单一机器上同时运行多个负载/应用程序/操作系统，而不会出现因为传统 x86 服务器体系结构的局限性发生DLL冲突等问题。</p>
 <p><strong>3）封装：整个虚拟机都保存在文件中，可以通过移动文件的方式来迁移虚拟机。</strong>封装意味着将整个虚拟机（硬件配置、BIOS 配置、内存状态、磁盘状态、CPU 状态）储存在独立于物理硬件的一小组文件中。这样，只需复制几个文件就可以随时随地根据需要复制、保存和移动虚拟机。</p>
 <p><strong>4）相对硬件独立：无需修改即可在任意服务器上运行（主要基于全虚技术的虚拟机，半虚技术的虚拟机只支持开源操作系统，如Linux）。</strong>因为虚拟机运行于虚拟化层之上，所以只能看到虚拟化层提供的虚拟硬件，无需关注物理服务器的情况。这样，虚拟机就可以在任何 x86 服务器（IBM、Dell、HP等）上运行而无需进行任何修改。这打破了操作系统和硬件以及应用程序和操作系统/硬件之间的约束。</p>
-<p>同时，由于Hypervisor的存在，使得<strong>虚拟机又具备同质、高效和资源受控</strong>的3个特点<strong>。</strong></p>
-<p><strong>1）同质 (Equivalence)，</strong>即VM的运行环境和物理机的环境在本质上是相同的，表现上可以有一些差异。如CPU的ISA必须一致（实际可以不一致），CPU core的个数可以不同。</p>
-<p><strong>2）高效 (Efficiency），</strong>即VM的性能必须接近物理机。因此，常见的模拟器 (boches, simics …) 就不能称为VM。为达此目的，软件在 VM 上运行时，大多数指令要直接在硬件上执行，只有少量指令需要 VMM 的模拟或处理。</p>
-<p><strong>3）资源受控 (Resource control)，</strong>即Hypervisor对物理机的所有资源有绝对的控制力。</p>
 <p>物理资源在经过Hypervisor虚拟化后，在<strong>资源利用率、独立性、运行效率</strong>和<strong>安全性</strong>等方面与传统物理服务器相比均有不同的优势。</p>
 <p><img src="https://i.loli.net/2019/05/03/5ccbe01b6cf2a.jpg"></p>
 <p><strong>1）资源利用率：</strong>虚拟化前每台主机一个操作系统，系统的资源利用率低。虚拟化后，主机与操作系统不一一对应，按需分配使用，系统的资源利用率高。</p>
@@ -728,6 +736,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019/05/11/2019-05-11-计算虚拟化概述/" rel="prev" title="2019-05-11-计算虚拟化概述">
+                2019-05-11-计算虚拟化概述 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -803,7 +815,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-count">28</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -981,7 +993,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">305k</span>
+    <span title="站点总字数">310k</span>
   
 
   
@@ -990,7 +1002,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">4:37</span>
+    <span title="站点阅读时长">4:41</span>
   
 </div>
 
