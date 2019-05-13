@@ -103,30 +103,29 @@
 
 
 
-  <meta name="description" content="ETSI定义的NFV网络参考架构ETSI作为NFV的发起标准组织，于2015年年初发布了NFV参考架构等系列文稿，具体包括：用例文档、架构框架、虚拟化需求、NFV基础设施、NFV MANO、VNF、服务质量、接口、安全、PoC框架、最佳实践等内容。虽然ETSI NFV阶段成果不是强制执行的标准，但是得到了业界的普遍认可，已经成为了业界的事实标准。">
+  <meta name="description" content="CPU虚拟化概述CPU虚拟化的一个很大挑战就是要确保虚拟机发出CPU指令的隔离性。即为了能让多个虚拟机同时在一个主机上安全运行，VMM必须将各个虚拟机隔离，以确保不会相互干扰，同时也不会影响VMM内核的正常运行。尤其要注意的是：由于特权指令会影响到整个物理机，必须要使得虚拟机发出的特权指令仅作用于自身，而不会对整个系统造成影响。例如：当虚拟机发出重启命令时，并不是要重启整个物理机，而仅仅是重启所在">
 <meta name="keywords" content="电信云">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2019-04-19-NFV网络参考架构">
-<meta property="og:url" content="https://kkutysllb.cn/2019/04/19/2019-04-19-NFV网络参考架构/index.html">
+<meta property="og:title" content="2019-05-13-计算虚拟化之CPU虚拟化">
+<meta property="og:url" content="https://kkutysllb.cn/2019/05/13/2019-05-13-计算虚拟化之CPU虚拟化/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
-<meta property="og:description" content="ETSI定义的NFV网络参考架构ETSI作为NFV的发起标准组织，于2015年年初发布了NFV参考架构等系列文稿，具体包括：用例文档、架构框架、虚拟化需求、NFV基础设施、NFV MANO、VNF、服务质量、接口、安全、PoC框架、最佳实践等内容。虽然ETSI NFV阶段成果不是强制执行的标准，但是得到了业界的普遍认可，已经成为了业界的事实标准。">
+<meta property="og:description" content="CPU虚拟化概述CPU虚拟化的一个很大挑战就是要确保虚拟机发出CPU指令的隔离性。即为了能让多个虚拟机同时在一个主机上安全运行，VMM必须将各个虚拟机隔离，以确保不会相互干扰，同时也不会影响VMM内核的正常运行。尤其要注意的是：由于特权指令会影响到整个物理机，必须要使得虚拟机发出的特权指令仅作用于自身，而不会对整个系统造成影响。例如：当虚拟机发出重启命令时，并不是要重启整个物理机，而仅仅是重启所在">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://i.loli.net/2019/04/19/5cb931ba78d7f.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/04/19/5cb9322b40969.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/04/19/5cb932ab216a8.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/04/19/5cb932c91623b.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/04/19/5cb9330668e87.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/04/19/5cb9333ca3ab9.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/04/19/5cb933788cc58.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/04/19/5cb933ea434ed.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/04/19/5cb93411aa116.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/04/19/5cb934a9b3902.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/04/19/5cb93518b3cc1.jpg">
-<meta property="og:updated_time" content="2019-04-19T02:41:03.284Z">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd936cddfae743184.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd936ea46c3c16573.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd93705adbec22425.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd937364346e91496.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd9375b03d0624108.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd9378993cc569946.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd937a72be2962794.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd937d8e362836269.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd93848b9b3e66204.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd9386a8ed5914424.jpg">
+<meta property="og:updated_time" content="2019-05-13T09:27:22.418Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2019-04-19-NFV网络参考架构">
-<meta name="twitter:description" content="ETSI定义的NFV网络参考架构ETSI作为NFV的发起标准组织，于2015年年初发布了NFV参考架构等系列文稿，具体包括：用例文档、架构框架、虚拟化需求、NFV基础设施、NFV MANO、VNF、服务质量、接口、安全、PoC框架、最佳实践等内容。虽然ETSI NFV阶段成果不是强制执行的标准，但是得到了业界的普遍认可，已经成为了业界的事实标准。">
-<meta name="twitter:image" content="https://i.loli.net/2019/04/19/5cb931ba78d7f.jpg">
+<meta name="twitter:title" content="2019-05-13-计算虚拟化之CPU虚拟化">
+<meta name="twitter:description" content="CPU虚拟化概述CPU虚拟化的一个很大挑战就是要确保虚拟机发出CPU指令的隔离性。即为了能让多个虚拟机同时在一个主机上安全运行，VMM必须将各个虚拟机隔离，以确保不会相互干扰，同时也不会影响VMM内核的正常运行。尤其要注意的是：由于特权指令会影响到整个物理机，必须要使得虚拟机发出的特权指令仅作用于自身，而不会对整个系统造成影响。例如：当虚拟机发出重启命令时，并不是要重启整个物理机，而仅仅是重启所在">
+<meta name="twitter:image" content="https://i.loli.net/2019/05/13/5cd936cddfae743184.jpg">
 
 
 
@@ -135,7 +134,7 @@
 
 
 
-  <link rel="canonical" href="https://kkutysllb.cn/2019/04/19/2019-04-19-NFV网络参考架构/">
+  <link rel="canonical" href="https://kkutysllb.cn/2019/05/13/2019-05-13-计算虚拟化之CPU虚拟化/">
 
 
 
@@ -145,7 +144,7 @@
   };
 </script>
 
-  <title>2019-04-19-NFV网络参考架构 | 一花一菩提，一云一世界</title>
+  <title>2019-05-13-计算虚拟化之CPU虚拟化 | 一花一菩提，一云一世界</title>
   
 
 
@@ -404,7 +403,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/04/19/2019-04-19-NFV网络参考架构/">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/05/13/2019-05-13-计算虚拟化之CPU虚拟化/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kkutysllb">
@@ -421,7 +420,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2019-04-19-NFV网络参考架构
+          <h1 class="post-title" itemprop="name headline">2019-05-13-计算虚拟化之CPU虚拟化
 
               
             
@@ -447,7 +446,7 @@
                 
               
 
-              <time title="创建时间：2019-04-19 10:23:24 / 修改时间：10:41:03" itemprop="dateCreated datePublished" datetime="2019-04-19T10:23:24+08:00">2019-04-19</time>
+              <time title="创建时间：2019-05-13 17:17:34 / 修改时间：17:27:22" itemprop="dateCreated datePublished" datetime="2019-05-13T17:17:34+08:00">2019-05-13</time>
             
 
             
@@ -469,7 +468,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV基础/" itemprop="url" rel="index"><span itemprop="name">NFV基础</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV关键技术/" itemprop="url" rel="index"><span itemprop="name">NFV关键技术</span></a></span>
 
                 
                 
@@ -539,103 +538,79 @@
       
 
       
-        <h2 id="ETSI定义的NFV网络参考架构"><a href="#ETSI定义的NFV网络参考架构" class="headerlink" title="ETSI定义的NFV网络参考架构"></a>ETSI定义的NFV网络参考架构</h2><p>ETSI作为NFV的发起标准组织，于2015年年初发布了NFV参考架构等系列文稿，具体包括：用例文档、架构框架、虚拟化需求、NFV基础设施、NFV MANO、VNF、服务质量、接口、安全、PoC框架、最佳实践等内容。虽然ETSI NFV阶段成果不是强制执行的标准，但是得到了业界的普遍认可，已经成为了业界的事实标准。<a id="more"></a></p>
-<p>目前，NFV标准框架已基本稳定，如下图所示。NFV标准框架主要包括NFV 基础设施、虚拟网络功能和NFV管理与编排（NFV Management and Orchestration，NFV MANO）。ETSI定义的NFV技术架构同当前网络架构（独立的业务网络+OSS系统）相比，NFV从纵向和横向上进行了解耦，<strong>纵向分为3层：基础设施层、虚拟网络层和运营支撑层。横向分为两个域：业务网络域和管理编排域。</strong></p>
-<p><img src="https://i.loli.net/2019/04/19/5cb931ba78d7f.jpg" alt></p>
-<p>​                                        <strong><em>VIM + NFVI 基本等同于OpenStack管理下的IaaS</em></strong></p>
-<p><strong>NFVI</strong>包括各种计算、存储、网络等硬件设备，以及相关的虚拟化控制软件，将硬件相关的计算、存储和网络资源全面虚拟化，实现资源池化。NFVI物理基础设施可以是多个地理上分散的数据中心，通过高速通信网连接起来，实现资源池统一管理。</p>
-<p><strong>VNF</strong>运行在NFVI之上。VNF旨在实现各个电信网络的业务功能，将物理网元映射为虚拟网元 VNF，VNF所需资源需要分解为虚拟的计算、存储、交换资源。VNF作为一种软件功能，部署在一个或多个虚机上，并由NFVI来承载。VNF之间可以采用传统网络定义的信令接口进行信息交互。VNF的性能和可靠性可通过负载均衡和HA等软件措施以及底层基础设施的动态资源调度来解决。</p>
-<p><strong>EMS（Element Management System，网元管系统）</strong>可以管理VNF，厂商通常对原网管系统进行扩展，统一管理虚拟化和非虚拟化的网元。</p>
-<p><strong>运营支撑层OSS/BSS</strong>，就是目前的OSS/BSS系统，需要为虚拟化进行必要的修改和调整。为了适应 NFV 发展趋势，未来的业务支撑系统（BSS)与运营支撑系统（OSS）将进行升级（中国移动目前正推出OSS4.0系统），实现与VNF Manager和网元编排管理的互通。</p>
-<p><strong>NFV MANO（NFV Management and Orchestration，NFV管理与编排）</strong>负责对整个NFVI资源的管理和编排，业务网络和NFVI资源的映射和关联，OSS业务资源流程的实施等。MANO内部包括编排管理（Orchestrator）、虚拟化的网络功能管理（VNF Manager，VNFM）和虚拟化的基础设施管理（Virtualised Infrastructure Manager，VIM）3个实体，分别完成对NFVI、VNF和NS（Network Service，业务网络提供的网络服务）3个层次的管理。其中，Orchestrator编排管理NFV基础设施和软件资源，在NFVI上实现网络服务的业务流程和管理。VNFM实现VNF生命周期管理，如实例化、更新、查询和弹性等。VIM控制和管理VNF所需要的与算、存储和网络资源的管理和调度，即所谓的Cloud OS。</p>
-<h2 id="NFVI到底是个什么鬼？"><a href="#NFVI到底是个什么鬼？" class="headerlink" title="NFVI到底是个什么鬼？"></a>NFVI到底是个什么鬼？</h2><p>NFVI能够同时为一个或多个VNF实例提供基础设施资源，并实现不同VNF资源的动态配置。ETSI对NFVI功能架构和接口进行了定义，将NFVI细分为<strong>计算域、管理域和网络域</strong>3个功能域。每个域自主管控，通过标准接口进行信息交互，协作实现对VNF的具体承载。</p>
-<p><img src="https://i.loli.net/2019/04/19/5cb9322b40969.jpg" alt></p>
+        <h2 id="CPU虚拟化概述"><a href="#CPU虚拟化概述" class="headerlink" title="CPU虚拟化概述"></a>CPU虚拟化概述</h2><p><strong>CPU虚拟化的一个很大挑战就是要确保虚拟机发出CPU指令的隔离性。</strong>即为了能让多个虚拟机同时在一个主机上安全运行，VMM必须将各个虚拟机隔离，以确保不会相互干扰，同时也不会影响VMM内核的正常运行。尤其要注意的是：<strong>由于特权指令会影响到整个物理机，必须要使得虚拟机发出的特权指令仅作用于自身，而不会对整个系统造成影响。</strong>例如：当虚拟机发出重启命令时，并不是要重启整个物理机，而仅仅是重启所在的虚拟机。因此，VMM必须能够对来自于虚拟机操作硬件的特权指令 进行<strong>翻译</strong>并<strong>模拟</strong>，然后在对应的虚拟设备上执行，而不在整个物理机硬件设备上运行。<a id="more"></a></p>
+<h3 id="软件方式实现的CPU虚拟化—二进制翻译技术"><a href="#软件方式实现的CPU虚拟化—二进制翻译技术" class="headerlink" title="软件方式实现的CPU虚拟化—二进制翻译技术"></a>软件方式实现的CPU虚拟化—二进制翻译技术</h3><p>二进制翻译（Binary Translation，BT）是一 种软件虚拟化技术，由VMware在Workstations和ESX产品中最早实现。在最初没有硬件虚拟化时代，是全虚拟化的唯一途径。由于BT最开始是用来虚拟化32位平台的，因此，也称为BT32。</p>
+<p>二进制翻译，简单来说就是将那些不能直接执行的特权指令进行翻译后才能执行。具体来说，当虚拟机第一次要执行一段指令代码时，VMM会将要执行执行的代码段发给一个称为“Just-In-Time”的BT翻译器，它类似Java中的JVM虚拟机和Python的解释器，实时将代码翻译成机器指令。 翻译器将虚拟机的非特权指令翻译成可在该虚拟机上安全执行的指令子集， 而对于特权指令，则翻译为一组在虚拟机上可执行的特权指令，却不能运行在物理机上。这种机制实现了对虚拟机的<strong>隔离</strong>与<strong>封装</strong>，同时又使得x86指令的语义在虚拟机层次上得到保证。</p>
+<p>在执行效率上，为了降低翻译指令的开销，VMM会将执行过的二进制指令翻译结果进行缓存。如果虚拟机再次执行同样的指令序列，那么之前被缓存的翻译结果可以被复用。这样就可以均衡整个VM执行指令集的翻译开销。为了进一步降低由翻译指令导致的内存开销，VMM还会将虚拟机的内核态代码 翻译结果和用户态代码直接绑定在一起。由于用户态代码不会执行特权指令，因此这种方法可以保证 安全性。<strong>采用BT机制的VMM必须要在虚拟机的地址空间和VMM的地址空间进行严格的边界控制。</strong>VMware VMM利用x86CPU中的段检查功能（Segmentation）来确保这一点。但是由于现代操作系统 Windows、Linux以及Solaris等都很少使用段检查功能，因此VMM可以使用段保护机制来限制虚拟机和VMM之间的地址空间边界控制。在极少数情况下，当虚拟机的确使用了段保护机制并且引发了 VMM冲突，VMM可以转而使用软件的段检查机制来解决这一问题。</p>
+<h3 id="硬件方式实现的CPU虚拟化—VT-x和AMD-v"><a href="#硬件方式实现的CPU虚拟化—VT-x和AMD-v" class="headerlink" title="硬件方式实现的CPU虚拟化—VT-x和AMD-v"></a>硬件方式实现的CPU虚拟化—VT-x和AMD-v</h3><p>2003年，当AMD公司将x86从32位扩展到64位时，也将段检查功能从64位芯片上去除。同样的情况也 出现在Intel公司推出的64位芯片上。这一变化意味着基于BT的VMM无法在64位机上使用段保护机制保护VMM。尽管后来AMD公司为了支持虚拟化又恢复了64位芯片的段检查功能，并一直延续到目前所有的AMD 64位芯片，但是Intel公司却并没有简单恢复 ，而是研发了新的硬件虚拟化技术VT-x，AMD公司紧随后也推出了AMD-V技术来提供CPU指令集虚拟化的硬件支持。VT-x与AMD-V尽管在具体实现上有所不同，但其目的<strong>都是希望通过硬件的途径来限定某些特权指令操作的权限</strong>，而不是原先只能通过二进制动态翻译来解决这个问题。</p>
+<p>如前所述，VT-x提供了2个运行环境：<strong>根（Root）环境</strong>和<strong>非根（Non-root）环境</strong>。根环境专门为VMM准备，就像没有使用VT-x技术的x86服务器，只是多了对VT-x支持的几条指令。非根环境作为一个受限环境用来运行多个虚拟机。</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd936cddfae743184.jpg"></p>
+<p>根操作模式与非根操作模式都有相应的特权级0至特权级3。VMM运行在根模式的特权级0，Guest OS的内核运行在非根模式的特权级0，Guest OS的应用程序运行在非根模式的特权级3。运行环境之间相互转化，从根环境到非根环境叫VM Entry；从非根环境到根环境叫VM Exit。VT-x定义了VM Entry操作，使CPU由根模式切换到非根模式，运行客户机操作系统指令。若在非根模式执行了敏感指令或发生了中断等，会执行VM Exit操作，切换回根模式运行VMM。此外，VT-x还引入了一组新的命令：<strong>VMLanch/ VMResume用于调度Guest OS，发起VM Entry；</strong>VMRead/ VMWrite则用于配置VMCS。</p>
+<p><strong>根模式与非根模式之问的相互转换是通过VMX操作实现的。</strong>VMM可以通过VMX ON 和VMX OFF打开或关闭VT-x。如下图所示：</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd936ea46c3c16573.jpg"></p>
+<p><strong>VMX操作模式流程：</strong></p>
+<ol>
+<li>VMM执行VMX ON指令进入VMX操作模式。</li>
+<li>VMM可执行VMLAUNCH指令或VMRESUME指令产生VM Entry操作，进入到Guest OS，此时CPU处于非根模式。</li>
+<li>Guest OS执行特权指令等情况导致VM Exit的发生，此时将陷入VMM，CPU切换为根模式。VMM根据VM Exit的原因作出相应处理，处理完成后将转到第2步，继续运行GuestOS。</li>
+<li>VMM可决定是否退出VMX操作模式，通过执行VMXOFF指令来完成。</li>
+</ol>
+<p>这样，就无需二进制翻译和半虚拟化来处理这些指令。同时，VT-x与AMD-V都提供了存放虚拟机状态的模块，这样做的的目的就是将虚拟机上 下文切换状态进行缓存，降低频模式繁切换引入的大量开销。 还是以VT-x解决方案为例，VMX新定义了虚拟机控制结构VMCS(Virtual Machine ControlStructure)。VMCS是保存在内存中的数据结构，其包括虚拟CPU的相关寄存器的内容及相关的控制信息。CPU在发生VM Entry或VM Exit时，都会查询和更新VMCS。VMM也可通过指令来配置VMCS，达到对虚拟处理器的管理。VMCS架构图如下图所示：</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd93705adbec22425.jpg"></p>
+<p><strong>每个vCPU都需将VMCS与内存中的一块区域关联起来，此区域称为VMCS区域。</strong>对VMCS区域的操纵是通过VMCS指针来实现的，这个指针是一个指向VMCS的64位的地址值。VMCS区域是一个<strong>最大不超过4KB的内存块，且需4KB对齐</strong>。</p>
+<p>VMCS区域分为三个部分：<strong>偏移地址0起始存放VMCS版本标识，通过不同的版本号，CPU可维护不同的VMCS数据格式</strong>；<strong>偏移地址4起始存放VMX终止指示器，在VMX终止发生时，CPU会在此处存入终止的原因；偏移地址8起始存放VMCS数据区，这一部分控制VMX非根操作及VMX切换。</strong></p>
+<p>VMCS 的数据区包含了VMX配置信息：<strong>VMM在启动虚拟机前配置其哪些操作会触发VM Exit</strong>。VMExit 产生后，处理器把执行权交给VMM 以完成控制，然后VMM 通过指令触发VM Entry 返回原来的虚拟机或调度到另一个虚拟机。<strong>。</strong></p>
+<p>VMCS 的数据结构中，每个虚拟机一个，加上虚拟机的各种状态信息，共由3个部分组成：</p>
 <ul>
-<li><strong>计算域</strong>包括通用高容量服务器和存储设备。</li>
-<li><strong>管理域</strong>包括各种Hypervisor，对硬件进行抽象以支撑软件应用在不同服务器之间的可移植性；为虚拟机VM分配计算域资源；为编排和管理系统提供管理界面，允许虚拟机VM的加载和监控。</li>
-<li><strong>网络域</strong>包括所有的通用高容量交换机，这些交换机互联形成一个可配置网络，提供基础设施网络服务。</li>
+<li><p><strong>Gueststate：</strong>该区域保存了虚拟机运行时的状态，在VM Entry 时由处理器装载；在VM Exit时由处理器保存。它又由两部分组成：</p>
+</li>
+<li><ul>
+<li><strong>Guest OS寄存器状态</strong>：包括控制寄存器、调试寄存器、段寄存器等各类寄存器的值。</li>
+<li><strong>Guest OS非寄存器状态</strong>：记录当前处理器所处状态，是活跃、停机（HLT）、关机（Shutdown）还是等待启动处理器间中断（Startup-IPI）。</li>
 </ul>
-<p><strong>NFVI内部3个域之间接口示意如下图所示：</strong></p>
-<p><img src="https://i.loli.net/2019/04/19/5cb932ab216a8.jpg" alt></p>
-<p><img src="https://i.loli.net/2019/04/19/5cb932c91623b.jpg" alt></p>
-<p>计算域包括各种服务器与存储设备，其作用是结合Hypervisor域的一个管理程序，负责VNF各个组件的需求，提供COTS计算和存储资源。概括地说，计算域提供与网络基础设施领域的接口，但其自身不支持网络连接。根据给定计算域的元素：服务器、存储和网络结构，各种接口可以被归类为：<strong>物理网络接口、内部和外部域接口、管理和编排接口。</strong></p>
-<blockquote>
-<p><strong>物理网络接口：</strong>有几种不同类型的设备接口可能被利用，这些接口包括以太网、光纤通道、无线接入（这几个接口是比较常用的，但不仅限于这3类）。</p>
-<p><strong>内部和外部域接口：</strong>该部分主要是两个接口，一个是NFVI与VIM的内部接口，另一个是与VNF应用的外部接口。NFVI与VIM（Nf-Vi）的接口主要负责VIM与NFVI相连，被用作管理接口，是一个内部接口。而VIM被作为一个单独的外部服务，这样做既考虑了逻辑上的隔离，同时也顾及到安全方面的因素。Nf-Vi接口是唯一授权的NFV管理界面和交互接口，其管理组件就是VIM。同时，在NFVI内，Vl-Ha/CSr连接到外部计算域，包括所有的基础设施，是计算域和Hypervisor域之间的接口，该接口被Hypervisor/OS用于监控计算域内可用的物理资源。</p>
-<p><strong>管理和编排接口：</strong>NFVI的编排和管理是严格通过Nf-Vi接口的。为了正常工作，应当有某种类型的接口，物理接口的类型并不重要，重要的是需要有一个专门的安全接口，该接口将被用来建立基础设施的鉴权和授权。除此接口外，每个底层域组件（如计算、存储、网络）都应当有相应的代理。</p>
-</blockquote>
-<p>Hypervisor域本身是抽象硬件和实现服务的软件环境，如启动/终止虚拟机，作用于策略、缩放、实时迁移和高可用性。仅当VIM被告知或者指示Hypervisor域的主要接口时，服务才能被启用。Hypervisor域的主要接口包括NF-Vi、Vi-Ha和Vn-NF接口，其内部结构如下图示。</p>
-<p><img src="https://i.loli.net/2019/04/19/5cb9330668e87.jpg" alt></p>
-<blockquote>
-<p><strong>NF-Vi接口：</strong>对接VIM的接口，虚拟机监控程序服务请求需通过该接口。只有VIM或NFVO才能通过这些接口与Hypervisor交互。Hypervisor不得自主执行业务，除非是在VIM应用策略的范围内。</p>
-<p><strong>Vi-Ha接口：</strong>通过该接口Hypervisor获取硬件信息，并创建虚拟机需要使用的虚拟硬件组件。</p>
-<p><strong>Vn-NF接口：</strong>该接口是VM到VNF的逻辑接口。一个VNF由一个或多个虚拟机创建。虚拟机在本质上是软件运行某种函数、算法、应用，而忽略其类型、模型、实际物理单元的数量。</p>
-</blockquote>
-<p>网络域的主要功能包括：分布式VNF的虚拟网络功能组件之间进行通信的通道、不同VNF之间通信的通道、VNF编排和管理模块之间的通信通道、NFVI编排和管理功能模块之间的通信通道、VNFC远程部署的方案和现有运营商网络之间交互通信的方案。</p>
-<p><img src="https://i.loli.net/2019/04/19/5cb9333ca3ab9.jpg" alt></p>
-<p>网络域的网络架构应该提前设置好VNF的网络结构，同时提供足够的网络连接。为了实现上述功能，网络架构需要包含足够多的组件来提供网络域的功能。包含的组件如下：</p>
-<blockquote>
-<p>1）网络架构的寻址机制，可以有多于一种的寻址机制，同时该机制还包括地址定位和管理功能；</p>
-<p>2）路由机制，该机制用来生成网络拓扑，并进行路由转发；</p>
-<p>3）带宽定位机制；</p>
-<p>4）OAM集合，用来检测可靠性、可用性、连接服务的完整性。</p>
-</blockquote>
-<p>网络域中的虚拟网络由NFVI中网络组件提供，通常在数据中心内部或数据中心之间使用使用L2或L3的overlay网络来实现。所谓的overlay网络，就是重叠在数据中心内部TOR/EOR交换机组成的物理网络之上的网络，通过在多个虚拟网络功能实体之间建立隧道来完成互联。</p>
-<p>网络域的内部接口可以南北接口和东西接口，按类型分为管理协议接口、管理模块/信息接口、数据模型和流监控协议接口三类。南北向接口可以参见传统网络SNMP接口模型，通过MIB模块中的数据模块提供管理协议接口。新的南北向接口是NetConf接口，使用YANG数据模型，定义简单，支持多种协议，典型应用就是SDN控制器的管理。东西向接口主要分为前向关联和后向反射两种模式。前向关联模式主要用来探测服务故障，后向反射模式主要用来进行故障状态的上报和恢复检测。</p>
-<p>网络域的外部接口主要有：不同网络资源之间的接口[Vi-Ha]/Nr，例如网络资源、端口资源之间就是采用这类接口；[Vn-Nf]/N接口用于VNF（虚拟网元）接入到虚拟网络的接口；Ha/CSr-Ha/Nr计算域、网络域与物理资源的接口；Ex-Nf是NFVI与现有网络之间的永久接口。</p>
-<p>虚拟化场景下的逻辑组网如下</p>
-<p><img src="https://i.loli.net/2019/04/19/5cb933788cc58.jpg" alt></p>
+</li>
+<li><p><strong>Hoststate：</strong>该区域保存了VMM 运行时的状态，主要是一些寄存器值，在VM Exit时由处理器装载。</p>
+</li>
+<li><p><strong>Control data：</strong>该区域包含虚拟机执行控制域、VM Exit控制域、VM Entry控制域、VM Exit信息域和VM Entry信息域。</p>
+</li>
+</ul>
+<p>有了VMCS结构后，对虚拟机的控制就是读写VMCS结构。比如：对vCPU设置中断，检查状态实际上都是在读写VMCS数据结构。</p>
+<h2 id="CPU虚拟化管理"><a href="#CPU虚拟化管理" class="headerlink" title="CPU虚拟化管理"></a>CPU虚拟化管理</h2><p>为了保证电信云/NFV中关键业务虚机运行的性能，就要求同一台物理机上的多个业务虚机实例所获取的资源既能满足其运行的需要，同时不互相产生干扰，这就需要对CPU资源进行精细化的调优和管理，也就是CPU QoS保障技术。在介绍CPU QoS保障技术之前，我们首先来看下CPU虚拟化的本质和超配技术。</p>
+<h3 id="CPU虚拟化的本质和超配"><a href="#CPU虚拟化的本质和超配" class="headerlink" title="CPU虚拟化的本质和超配"></a>CPU虚拟化的本质和超配</h3><p><img src="https://i.loli.net/2019/05/13/5cd937364346e91496.jpg"></p>
+<p>vCPU数量和物理CPU对应关系如上图所示，以华为RH2288H V3服务器使用2.6GHz主频CPU为例，单台服务器有2个物理CPU，每颗CPU有8核，又因为超线程技术，每个物理内核可以提供两个处理线程，因此每颗CPU有16线程，总vCPU数量为2<em>8</em>2=32个vCPU。总资源为32*2.6GHz=83.2GHz。</p>
+<p><strong>虚拟机vCPU数量不能超过单台物理服务器节点可用vCPU数量</strong>。但是，由于多个虚拟机间可以复用同一个物理CPU，因此单物理服务器节点上运行的虚拟机vCPU数量总和可以超过实际vCPU数量，这就叫做<strong>CPU超配技术</strong>。</p>
+<p>例如，以华为的FusionCompute为例，查询显示的服务器可用CPU的物理个数为2个，每个主频2.4GHz。</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd9375b03d0624108.jpg"></p>
+<p>这是特权虚机中占用CPU资源，占用了4个vCPU</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd9378993cc569946.jpg"></p>
+<p>在资源池性能页，可以查看每个物理CPU有6个核，并且开启了超线程，也就是每个物理CPU有12个核的资源，一台服务器总共vCPU数量为：12<em>2=24个。由于在华为的FUSinCompute中CPU的资源统计单位不是逻辑核数，而是频率HZ。因此，可用资源（12</em>2-4）*2.4=48GHz（为什么减4个？因为系统DM0占用了4个vCPU，因此单个客户机最多只能使用20个vCPU）。如下所示，当前已经使用了19.15GHZ，占用率为39.39%。</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd937a72be2962794.jpg"></p>
+<h3 id="CPU的QoS保障"><a href="#CPU的QoS保障" class="headerlink" title="CPU的QoS保障"></a>CPU的QoS保障</h3><p>了解了CPU虚拟化的本质和超配，前文提到的CPU的QoS保障技术主要指的是<strong>CPU上下限配额</strong>及<strong>优先级调度</strong>技术。</p>
+<p><strong>CPU的上下限配额主要指的是vCPU资源管理层面的解决方案。</strong>在CPU虚拟化后，根据虚拟化的资源—频率HZ，来对虚拟机进行分配时，为了保证虚拟机的正常运行，特地定义了三种vCPU资源的划分方式，这就是CPU资源的QoS管理。可以按照限额、份额和预留三种方式进行vCPU资源划分，三者之间是有一定依赖和互斥关系的，其定义具体如下：</p>
 <ul>
-<li><strong>虚拟层 DVS：</strong>虚拟分布式交换机，与物理交换机一样，构建起虚拟机之间的网络，并提供与外部网络互通的能力.</li>
-<li><strong>接入层：</strong>划分为存储网络，业务网络和管理网络，各个网络层面间，通过划分不同的vlan将管理、业务、存储三个平面逻辑隔离。为简化组网提高组网可靠性，建议接入交换机采用堆叠方式</li>
-<li><strong>汇聚层：</strong>接入交换机上行到汇聚层交换机，采用ETH-TRUNK上行至汇聚交换机，汇聚交换机堆叠之后，无需启用VRRP功能，如果需要汇聚交换机提供网关功能，则直接将VLANIF接口作为用户网关地址。建议采用集群方式。.</li>
-<li><strong>核心层：</strong>汇聚交换机上行接入核心层交换机，核心交换机采用OSPF或者静态路由的方式同上层设备进行对接.建议采用集群方式。</li>
+<li><strong>CPU资源限额：</strong>控制虚拟机占用物理资源的上限。</li>
+<li><strong>CPU资源份额：</strong>CPU份额定义多个虚拟机在竞争物理CPU资源的时候按比例分配计算资源。</li>
+<li><strong>CPU资源预留：</strong>CPU预留定义了多个虚拟机竞争物理CPU资源的时候分配的最低计算资源。</li>
 </ul>
-<h2 id="虚拟网元层VNF"><a href="#虚拟网元层VNF" class="headerlink" title="虚拟网元层VNF"></a>虚拟网元层VNF</h2><p>虚拟网元功能VNF旨在通过虚拟化技术实现各种电信业务网络功能，将物理网元映射为虚拟网元VNF，VNF所需资源可以分解为虚拟的计算、存储和交换资源，由NFVI来承载。如下图所示：</p>
-<p><img src="https://i.loli.net/2019/04/19/5cb933ea434ed.jpg" alt></p>
-<p>ETSI NFV架构中，VNF是NFV总体架构的一个功能单元，通过接口参考点Vn-Nf和Ve-Vnfm，分别与NFVI模块和MANO 的VNFM模块进行信息交互。VNF以软件模块形式部署在NFVI提供的资源上，从而实现网络功能虚拟化。</p>
-<p>VNF之间的接口指两个实体之间的交互点，这些实体可以是软硬件服务或者资源。软件接口将各个软件功能实体分开，它们被创建并用于软件实体之间的相互作用与交互，同时限制各软件实体之间的通信。ETSI和3GPP为VNF定义了以下5种接口：</p>
-<p><img src="https://i.loli.net/2019/04/19/5cb93411aa116.jpg" alt></p>
-<ul>
-<li><strong>SWA-1接口：</strong>这是各种网络功能之间明确定义的通信接口，表示网络功能上信令或媒体的接口。SWA-1接口是在2个VNF，或者一个VNF和PNF，或者一个VNF和一个节点之间。一个VNF可以支持多个SWA-1接口。</li>
-<li><strong>SWA-2接口：</strong>属于VNF内部接口，如VNFC到VNFC的通信。这些接口由VNF厂商定义，因此是私有接口。这些接口对底层虚拟化基础设施有明确要求，但对一个 VNF 而言用户是不可见的。SWA-2 接口利用底层的通信机制连接到SWA-5接口上网络连接模块。</li>
-<li><strong>SWA-3接口：</strong>VNF与NFV管理和编排器间的接口，特别是与VNFM间的接口。管理接口用来为一个或多个 VNF 执行生命周期管理，SWA-3 接口可以使用IP/ L2连接。</li>
-<li><strong>SWA-4接口：</strong>EM使用SWA-4接口与VNF通信，用于VNF的运行期的管理。</li>
-<li><strong>SWA-5接口：</strong>对应VNF-NFVI接口，存在于每个VNF和底层NFVI之间的接口。每个不同的VNF依赖于一组不同的SWA-5接口提供的NFVI资源，如网络、计算、存储等。SWA-5接口描述了一种用于VNF的可部署实例的执行环境，是NFVI和VNF本身之间的所有子接口的抽象，SWA-5子接口为：通用计算功能、专用功能、存储、网络I/O。</li>
-</ul>
-<h2 id="NFV管理与编排层"><a href="#NFV管理与编排层" class="headerlink" title="NFV管理与编排层"></a>NFV管理与编排层</h2><p>在传统的网络中，网络功能实现常常与它们运行的架构、资源等紧紧联系在一起。NFV引入了一个新的虚拟化层，让云化后的网络管理格局变得更加复杂，需要更多编排工作，以管理 VNF 和网络服务（Network Service, NS）的全生命周期。VNF能够被其他的VNF或者物理网络关联来实现一个网络服务。VNF软件和NFVI之间的解耦，NS可以包括相关虚拟链路、物理网络功能、虚拟网络功能、网络功能虚拟化基础设置以及相互之间的关系等等这些，它们的协作处理需要一组新的管理和业务流程功能。为此，在NFV网络架构引入了MANO这个逻辑实体，实现NFV网络架构在横向的业务网络管理和编排管理。</p>
-<p>在ETSI的定义中，对引入NFV-MANO架构框架，要求遵循一些原则：</p>
-<blockquote>
-<p>1、编排由多个功能块提供，功能块不进行优先级区分，即没有哪个功能块是优先于其他功能块。</p>
-<p>2、在架构功能的分类上要求遵循总体平等的架构原则。</p>
-<p>3、NFV-MANO功能可能以不同的方式实现，如作为整体的单一实例、作为一个带有多负载均衡的可扩展系统、作为一个分布式协作系统、一个功能上分解的分布式的系统。它也可以实现为云网一体化管理的扩展，或者作为一个实现 NFV功能的与云网管理系统交互的单独系统。</p>
-</blockquote>
-<p>基于上述原则，NFV-MANO既可以通过虚拟化以纯软件的方式实现，也可以异构管理跨地域的NFVI，实现基于策略的分布式统一纳管和自动化响应能力。</p>
-<p>参考ETSI NFV文稿，MANO内部包括虚拟<strong>基础设施管理</strong>、<strong>虚拟网络功能管理</strong>和<strong>网元/服务编排器</strong>3个实体，分别实现对NFVI、VNF和NS这3个层次的管理。MANO的架构如下图右边所示</p>
-<p><img src="https://i.loli.net/2019/04/19/5cb934a9b3902.jpg" alt></p>
-<ul>
-<li><strong>NFVO：</strong>编排器，具有两个主要职责，一是执行资源编排功能，对多VIM之间的NFVI资源进行编排；二是完成网络服务生命周期管理，执行网络服务编排功能。</li>
-<li><strong>VNFM：</strong>虚拟网元管理单元，负责VNF实例的生命周期管理，每个VNF均有一个与之关联的 VNF Manager，一个VNF Manager可以管理一个或多个VNF。</li>
-<li><strong>VIM：</strong>虚拟化基础设施管理单元，主要实现对NFVI纳管的计算、存储和网络资源的控制与管理，通常在一个运营商的基础设施域内。</li>
-<li><strong>NS Catalogue：</strong>网络服务目录，代表所有加载的网络服务资源，通过 NFVO所公开的接口支持创建和管理NS部署模板，包括网络服务描述（Network Service Descriptor，NSD）、虚拟链路描述（Virtual Link Descriptor，VLD）和VNF转发图描述（VNF Forwarding Graph Descriptor，VNFFGD）。</li>
-<li><strong>VNF Catalogue：</strong>虚拟网络功能服务目录，代表了所有加载的VNF网元资源，通过NFVO公开的接口来创建和管理VNF网元，包括虚拟网元功能描述（VNF Descriptor，VNFD）、软件镜像、清单文件和策略文件等。NFVO和VNFM均可通过查询VNF Catalogue来发现和检索VNFD以支持不同的操作，如鉴权授权或检查实例的可行性。</li>
-<li><strong>NFV Instances Repository：</strong>NFV实例库，记录所有VNF实例和网络服务NS实例的信息。每个VNF实例由一条VNF记录来表示，每个NS实例由一条NS记录来表示。这些记录在每个实例的生命周期中被反复刷新，用于反映执行NS生命周期管理操作或VNF生命周期管理操作的变化。</li>
-<li><strong>NFVI Resources Repository：</strong>NFVI资源库，记录可用的、保留的及可分配的NFVI资源信息，支持资源预留、分配和用于监控的有用信息。NFVI资源库主要用于NFVO的资源编排和管理，允许根据与NS和VNF实例相关联的资源来追踪NFVI保留和分配资源，如某个VNF实例在其生命周期内的任意时刻所使用VM的数量、配额、端口和弹性IP等信息。</li>
-</ul>
-<p>NFV-MANO与多个模块或系统具有接口关系，包括资源管理、虚拟化网络功能、运营系统支撑、业务系统支撑功能和NFV基础设施等，例如：Os-Ma-nfvo为OSS/BSS和NFVO之间的接口；Ve-Vnfm-em是EM和VNFM之间的接口等等，通过这些定义良好的接口，实现MANO和外围模块或系统之间良好协作，华为IES，中国移动OSS4.0等都是基于MANO的这些接口实现。</p>
-<p>参考上述ETSI NFV架构，结合电信业务特点，给出一种NFV-MANONFV-MANO系统实现方案。如下图所示，该系统的主要功能模块包括：网络服务编排管理模块（NFVO）、虚拟化网络功能管理模块（VNFM）、虚拟资源管理模块（VIM）、视图管理、接口管理和Rest API。</p>
-<p><img src="https://i.loli.net/2019/04/19/5cb93518b3cc1.jpg" alt></p>
-<p>结合上图实现虚拟化编排的主要系统流程。</p>
-<blockquote>
-<p>1）用户上传VNF以及NS模板；</p>
-<p>2）选取需要实例化NS模板，如IMS；</p>
-<p>3）系统解析模板，根据策略配置决定如何初始化VNF；</p>
-<p>4）根据VNF模板配置初始化需要的虚拟网络环境，如子网、路由、ACL、NAT等；</p>
-<p>5）创建VNF需要的云主机；</p>
-<p>6）实例化NS所需的VNF；</p>
-<p>7）监控脚本监控VNF服务是否启动，并发送监控数据；</p>
-<p>8）通过监控脚本判断IMS是否启动成功。</p>
-</blockquote>
+<p>为了描述上述三种vCPU资源划分方式的关系，我们还是举例来说明。比如：单核CPU主频为3GHz，该资源供两个虚拟机VM1和VM2使用。</p>
+<p><strong>场景一：当</strong>VM1资源限额为2GHz，VM1可用的CPU资源最多为2GHz，也就意味着如果VM2没有设定CPU QoS，那么VM2最多只有1GHZ的vCPU可以使用。</p>
+<p><strong>场景二：当</strong>VM1和VM2的资源份额分别是1000和2000，在资源紧张场景下发生竞争时，VM1最多可获得1GHz的vCPU，VM2最多可获得2GHz的vCPU。</p>
+<p><strong>场景三：当给虚拟机</strong>VM1资源预留2GHz的vCPU资源，VM2资源预留为0，在资源紧张发生竞争时，VM1最少可获得2GHz的vCPU，最多可获得3GHZ的vCPU（在没有超配时），而VM2最多可获得1GHz（3-2=1）的vCPU资源，最少为0。</p>
+<p>上例只是简单描述了各种vCPU划分方式单独生效时的场景，也是在实际中较常用的场景。同时，在实际中还有一些场景是多种vCPU划分方式共同作用的，虽然不常用，但是却是实实在在有意义的。比如：以一个主频为2.8GHz的单核物理机为例，如果运行有三台单CPU的虚拟机A、B、C，份额分别为1000、2000、4000，预留值分别为700MHz、0MHz、0MHz。当三个虚拟机满CPU负载运行时，每台虚拟机应分配到资源计算如下：</p>
+<p>虚拟机A按照份额分配本应得400MHz，由于其预留值大于400MHz，最终计算能力按照预留值700MHz算，剩余的2100MHz资源按照2000:4000也就是1:2的比例在B和C之间进行划分，因此虚拟机B得到700MHz计算资源，虚拟机C得到1400MHz计算资源。</p>
+<p><strong>这里有一点需要注意：CPU的份额和预留只在多个虚拟机竞争物理CPU资源时发生，如果没有竞争发生，有需求的虚拟机可以独占物理CPU的资源。</strong></p>
+<p><strong>而CPU的优先级调度技术主要指的的服务器虚拟化后资源的重分配机制。</strong>从上述虚拟化的结构可以看出，虚拟机和VMM共同构成虚拟机系统vCPU资源的两极调度框架。如下图所示，是一个多核环境下的虚拟机vCPU资源的两级调度框架。</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd937d8e362836269.jpg"></p>
+<p><strong>虚拟机操作系统负责第2级调</strong>度，即<strong>线程或进程在vCPU上的调度</strong>（将核心线程映射到相应的vCPU 上）。VMM负责第1级调度，即<strong>vCPU在物理处理单元上的调度</strong>。<strong>两级调度的策略和机制不存在依赖关系。</strong> vCPU调度器负责物理处理器资源在各个虚拟机之间的分配与调度，本质上把各个虚拟机中的vCPU按照一定的策略和机制调度在物理处理单元上，可以采用任意的策略（如上面资源管理方案）来分配物理资源，满足虚拟机的不同需求。vCPU可以调度在一个或多个物理处理单元执行（分时复用或空间复用物理处理单元），也可以与物理处理单元建立一对一绑定关系（限制访问指定的物理理单元）。</p>
+<h2 id="NUMA架构感知的调度技术"><a href="#NUMA架构感知的调度技术" class="headerlink" title="NUMA架构感知的调度技术"></a>NUMA架构感知的调度技术</h2><p>除了基础的两级调度技术外，还有基于NUMA架构的精细化调度技术。在<a href="[https://kkutysllb.cn/2019/04/27/2019-04-27-DPDK%E6%8A%80%E6%9C%AF%E6%A0%88%E5%9C%A8%E7%94%B5%E4%BF%A1%E4%BA%91%E4%B8%AD%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%EF%BC%88%E4%B8%80%EF%BC%89/](https://kkutysllb.cn/2019/04/27/2019-04-27-DPDK技术栈在电信云中的最佳实践（一）/">《DPDK技术栈在电信云中的最佳实践（一）》</a>)一文中，我们介绍过服务器的NUMA架构，其产生的主要原因就是解决服务器SMP架构扩展性能的问题。同样，在计算虚拟化中的CPU资源调度方面，也有基于服务器NUMA架构的调度技术，这就是<strong>Host NUMA</strong>和<strong>Guest NUMA</strong>技术，<strong>它们都是虚拟化软件技术。</strong></p>
+<p>Host NUMA主要提供CPU负载均衡机制，解决CPU资源分配不平衡引起的VM性能瓶颈问题，当启动VM时，Host NUMA根据当时主机内存和CPU负载，选择一个负载较轻的node放置该VM，使VM的CPU和内存资源分配在同一个node上。</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd93848b9b3e66204.jpg"></p>
+<p>如上图左边所示，Host NUMA把VM的物理内存放置在一个node上，对VM的vCPU调度范围限制在同一个node的物理CPU上，并将VM的vCPU亲和性绑定在该node的物理CPU上。考虑到VM的CPU负载是动态变化，在初始放置的node上，node的CPU资源负载也会随之变化，这会导致某个node的CPU资源不足，而另一个node的CPU资源充足，在此情况下，Host NUMA会从CPU资源不足的node上选择VM，把VM的CPU资源分配在CPU资源充足的node上，从而动态实现node间的CPU负载均衡。 Host NUMA保证VM访问本地物理内存，减少了内存访问延迟，可以提升VM性能，性能提升的幅度与VM虚拟机访问内存大小和频率相关。对于VM的vCPU个数超过node中CPU的核数时，如上图右边所示，Host NUMA把该VM的vCPU和内存均匀地放置在每个node 上，vCPU的调度范围为所有node的CPU。</p>
+<p>如果用户绑定了VM的vCPU亲和性，Host NUMA特性根据用户的vCPU亲和性设置决定VM的放置，若绑定在一个node的CPU上，Host NUMA把VM的内存和CPU放置在一个node上，若绑定在多个node的CPU上，Host NUMA把VM的内存均匀分布在多个node 上，VM的vCPU在多个node的CPU上均衡调度。</p>
+<p><strong>Host NUMA技术的本质保证了VM访问本地物理内存，减少了内存访问延迟，可以提升VM性能，性能提升的幅度与VM访问内存大小和频率相关。Host NUMA主要应用于针对大规格、高性能虚拟机场景，适用Oracle、 SQL Server等关键应用。</strong></p>
+<p><img src="https://i.loli.net/2019/05/13/5cd9386a8ed5914424.jpg"></p>
+<p>Guest NUMA如上图所示，能够使得虚拟机内部程序运行时针对NUMA结构进行优化，CPU会优先使用同一个Node上的内存，从而减小内存访问延时、提高访问效率，以此达到提升应用性能的目的。目前OS和应用都会有针对NUMA的优化，<strong>VMM通过向虚拟机呈现NUMA结构，使Guest OS及其内部应用识别Numa结构， CPU会优先使用同一个Node上的内存，减小内存访问延时、提高访问效率。</strong></p>
+<p><strong>Guest NUMA的本质就是VMM保证NUMNA结构的透传，使虚拟机中的关键应用在NUMA方面的优化生效，减少了内存访问延迟，可以提升VM性能。Guest NUMA主要应用于虚拟机中应用程序减小内存访问延时、提高访问效率，以此达到提升应用性能的目的。</strong></p>
 
       
     </div>
@@ -709,7 +684,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="https://kkutysllb.cn/2019/04/19/2019-04-19-NFV网络参考架构/" title="2019-04-19-NFV网络参考架构">https://kkutysllb.cn/2019/04/19/2019-04-19-NFV网络参考架构/</a>
+    <a href="https://kkutysllb.cn/2019/05/13/2019-05-13-计算虚拟化之CPU虚拟化/" title="2019-05-13-计算虚拟化之CPU虚拟化">https://kkutysllb.cn/2019/05/13/2019-05-13-计算虚拟化之CPU虚拟化/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -735,8 +710,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/19/2019-04-18-NFV基础概念/" rel="next" title="2019-04-18-NFV基础概念">
-                <i class="fa fa-chevron-left"></i> 2019-04-18-NFV基础概念
+              <a href="/2019/05/11/2019-05-11-计算虚拟化概述/" rel="next" title="2019-05-11-计算虚拟化概述">
+                <i class="fa fa-chevron-left"></i> 2019-05-11-计算虚拟化概述
               </a>
             
           </div>
@@ -744,10 +719,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/04/19/2019-04-19-电信云落地过程若干问题/" rel="prev" title="2019-04-19-电信云落地过程若干问题">
-                2019-04-19-电信云落地过程若干问题 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -963,7 +934,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ETSI定义的NFV网络参考架构"><span class="nav-number">1.</span> <span class="nav-text">ETSI定义的NFV网络参考架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NFVI到底是个什么鬼？"><span class="nav-number">2.</span> <span class="nav-text">NFVI到底是个什么鬼？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟网元层VNF"><span class="nav-number">3.</span> <span class="nav-text">虚拟网元层VNF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NFV管理与编排层"><span class="nav-number">4.</span> <span class="nav-text">NFV管理与编排层</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU虚拟化概述"><span class="nav-number">1.</span> <span class="nav-text">CPU虚拟化概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#软件方式实现的CPU虚拟化—二进制翻译技术"><span class="nav-number">1.1.</span> <span class="nav-text">软件方式实现的CPU虚拟化—二进制翻译技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#硬件方式实现的CPU虚拟化—VT-x和AMD-v"><span class="nav-number">1.2.</span> <span class="nav-text">硬件方式实现的CPU虚拟化—VT-x和AMD-v</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU虚拟化管理"><span class="nav-number">2.</span> <span class="nav-text">CPU虚拟化管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU虚拟化的本质和超配"><span class="nav-number">2.1.</span> <span class="nav-text">CPU虚拟化的本质和超配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU的QoS保障"><span class="nav-number">2.2.</span> <span class="nav-text">CPU的QoS保障</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NUMA架构感知的调度技术"><span class="nav-number">3.</span> <span class="nav-text">NUMA架构感知的调度技术</span></a></li></ol></div>
             
 
           </div>
@@ -1159,7 +1130,7 @@
   
     <script>
   window.livereOptions = {
-    refer: '2019/04/19/2019-04-19-NFV网络参考架构/'
+    refer: '2019/05/13/2019-05-13-计算虚拟化之CPU虚拟化/'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];
