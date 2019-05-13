@@ -121,7 +121,7 @@
 <meta property="og:image" content="https://i.loli.net/2019/05/13/5cd937d8e362836269.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/05/13/5cd93848b9b3e66204.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/05/13/5cd9386a8ed5914424.jpg">
-<meta property="og:updated_time" content="2019-05-13T09:27:22.418Z">
+<meta property="og:updated_time" content="2019-05-13T09:29:57.886Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-05-13-计算虚拟化之CPU虚拟化">
 <meta name="twitter:description" content="CPU虚拟化概述CPU虚拟化的一个很大挑战就是要确保虚拟机发出CPU指令的隔离性。即为了能让多个虚拟机同时在一个主机上安全运行，VMM必须将各个虚拟机隔离，以确保不会相互干扰，同时也不会影响VMM内核的正常运行。尤其要注意的是：由于特权指令会影响到整个物理机，必须要使得虚拟机发出的特权指令仅作用于自身，而不会对整个系统造成影响。例如：当虚拟机发出重启命令时，并不是要重启整个物理机，而仅仅是重启所在">
@@ -446,7 +446,7 @@
                 
               
 
-              <time title="创建时间：2019-05-13 17:17:34 / 修改时间：17:27:22" itemprop="dateCreated datePublished" datetime="2019-05-13T17:17:34+08:00">2019-05-13</time>
+              <time title="创建时间：2019-05-13 17:17:34 / 修改时间：17:29:57" itemprop="dateCreated datePublished" datetime="2019-05-13T17:17:34+08:00">2019-05-13</time>
             
 
             
@@ -602,7 +602,7 @@
 <p><strong>而CPU的优先级调度技术主要指的的服务器虚拟化后资源的重分配机制。</strong>从上述虚拟化的结构可以看出，虚拟机和VMM共同构成虚拟机系统vCPU资源的两极调度框架。如下图所示，是一个多核环境下的虚拟机vCPU资源的两级调度框架。</p>
 <p><img src="https://i.loli.net/2019/05/13/5cd937d8e362836269.jpg"></p>
 <p><strong>虚拟机操作系统负责第2级调</strong>度，即<strong>线程或进程在vCPU上的调度</strong>（将核心线程映射到相应的vCPU 上）。VMM负责第1级调度，即<strong>vCPU在物理处理单元上的调度</strong>。<strong>两级调度的策略和机制不存在依赖关系。</strong> vCPU调度器负责物理处理器资源在各个虚拟机之间的分配与调度，本质上把各个虚拟机中的vCPU按照一定的策略和机制调度在物理处理单元上，可以采用任意的策略（如上面资源管理方案）来分配物理资源，满足虚拟机的不同需求。vCPU可以调度在一个或多个物理处理单元执行（分时复用或空间复用物理处理单元），也可以与物理处理单元建立一对一绑定关系（限制访问指定的物理理单元）。</p>
-<h2 id="NUMA架构感知的调度技术"><a href="#NUMA架构感知的调度技术" class="headerlink" title="NUMA架构感知的调度技术"></a>NUMA架构感知的调度技术</h2><p>除了基础的两级调度技术外，还有基于NUMA架构的精细化调度技术。在<a href="[https://kkutysllb.cn/2019/04/27/2019-04-27-DPDK%E6%8A%80%E6%9C%AF%E6%A0%88%E5%9C%A8%E7%94%B5%E4%BF%A1%E4%BA%91%E4%B8%AD%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%EF%BC%88%E4%B8%80%EF%BC%89/](https://kkutysllb.cn/2019/04/27/2019-04-27-DPDK技术栈在电信云中的最佳实践（一）/">《DPDK技术栈在电信云中的最佳实践（一）》</a>)一文中，我们介绍过服务器的NUMA架构，其产生的主要原因就是解决服务器SMP架构扩展性能的问题。同样，在计算虚拟化中的CPU资源调度方面，也有基于服务器NUMA架构的调度技术，这就是<strong>Host NUMA</strong>和<strong>Guest NUMA</strong>技术，<strong>它们都是虚拟化软件技术。</strong></p>
+<h2 id="NUMA架构感知的调度技术"><a href="#NUMA架构感知的调度技术" class="headerlink" title="NUMA架构感知的调度技术"></a>NUMA架构感知的调度技术</h2><p>除了基础的两级调度技术外，还有基于NUMA架构的精细化调度技术。在<a href>《DPDK技术栈在电信云中的最佳实践（一）》</a>一文中，我们介绍过服务器的NUMA架构，其产生的主要原因就是解决服务器SMP架构扩展性能的问题。同样，在计算虚拟化中的CPU资源调度方面，也有基于服务器NUMA架构的调度技术，这就是<strong>Host NUMA</strong>和<strong>Guest NUMA</strong>技术，<strong>它们都是虚拟化软件技术。</strong></p>
 <p>Host NUMA主要提供CPU负载均衡机制，解决CPU资源分配不平衡引起的VM性能瓶颈问题，当启动VM时，Host NUMA根据当时主机内存和CPU负载，选择一个负载较轻的node放置该VM，使VM的CPU和内存资源分配在同一个node上。</p>
 <p><img src="https://i.loli.net/2019/05/13/5cd93848b9b3e66204.jpg"></p>
 <p>如上图左边所示，Host NUMA把VM的物理内存放置在一个node上，对VM的vCPU调度范围限制在同一个node的物理CPU上，并将VM的vCPU亲和性绑定在该node的物理CPU上。考虑到VM的CPU负载是动态变化，在初始放置的node上，node的CPU资源负载也会随之变化，这会导致某个node的CPU资源不足，而另一个node的CPU资源充足，在此情况下，Host NUMA会从CPU资源不足的node上选择VM，把VM的CPU资源分配在CPU资源充足的node上，从而动态实现node间的CPU负载均衡。 Host NUMA保证VM访问本地物理内存，减少了内存访问延迟，可以提升VM性能，性能提升的幅度与VM虚拟机访问内存大小和频率相关。对于VM的vCPU个数超过node中CPU的核数时，如上图右边所示，Host NUMA把该VM的vCPU和内存均匀地放置在每个node 上，vCPU的调度范围为所有node的CPU。</p>
