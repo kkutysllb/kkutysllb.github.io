@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="在前文《存储虚拟化概述》中，我们提到存储虚拟化与软件定义存储SDS的区别就是其控制平面数据和存储平面数据是一种紧耦合的关系，因此各厂商的存储虚拟化解决方案是一种“私有”方案，不仅不同厂商之间不能兼容，甚至通常不同产品之间有可能不兼容。因此，考虑到电信云NFV的应用场景，以及设备商的分布情况，我们这里主要讨论华为的虚拟化存储解决方案和华为的分布式存储Fusion Storage的情况。">
+<meta name="keywords" content="电信云">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019-05-29-华为存储虚拟化解决方案">
+<meta property="og:url" content="https://kkutysllb.cn/2019/05/29/2019-05-29-华为存储虚拟化解决方案/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="在前文《存储虚拟化概述》中，我们提到存储虚拟化与软件定义存储SDS的区别就是其控制平面数据和存储平面数据是一种紧耦合的关系，因此各厂商的存储虚拟化解决方案是一种“私有”方案，不仅不同厂商之间不能兼容，甚至通常不同产品之间有可能不兼容。因此，考虑到电信云NFV的应用场景，以及设备商的分布情况，我们这里主要讨论华为的虚拟化存储解决方案和华为的分布式存储Fusion Storage的情况。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9d428946a52708.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9d89ef79033740.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9dc14243863228.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9dfea5d6515965.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9e1f26a4b48820.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9e3b7dc7412851.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9e85176dd28733.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9ea90c8d696515.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9ec9bb0ac50848.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9ef00c5b983694.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9f18639fe69372.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9f3d9238019790.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9f61b2d8415270.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9f8543c1a89829.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9fa68710a98959.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9fd00b97698132.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5cee9fefc02e591366.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5ceea008f34e382625.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5ceea025ef0ec28574.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5ceea048c4eaa30278.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5ceea074399ec47928.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5ceea09166f4349338.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5ceea0b1be3f817902.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5ceea0daed68148460.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5ceea0f29ec5f50184.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5ceea11807a6c40312.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5ceea13a9c1d752467.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5ceea190153f728001.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5ceea204ed9dd83008.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/29/5ceea2289543282397.jpg">
+<meta property="og:updated_time" content="2019-05-29T15:16:11.145Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019-05-29-华为存储虚拟化解决方案">
+<meta name="twitter:description" content="在前文《存储虚拟化概述》中，我们提到存储虚拟化与软件定义存储SDS的区别就是其控制平面数据和存储平面数据是一种紧耦合的关系，因此各厂商的存储虚拟化解决方案是一种“私有”方案，不仅不同厂商之间不能兼容，甚至通常不同产品之间有可能不兼容。因此，考虑到电信云NFV的应用场景，以及设备商的分布情况，我们这里主要讨论华为的虚拟化存储解决方案和华为的分布式存储Fusion Storage的情况。">
+<meta name="twitter:image" content="https://i.loli.net/2019/05/29/5cee9d428946a52708.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2019/05/29/2019-05-29-华为存储虚拟化解决方案/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2019-05-29-华为存储虚拟化解决方案 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/05/29/2019-05-29-华为存储虚拟化解决方案/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019-05-29-华为存储虚拟化解决方案
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-29 22:53:34 / 修改时间：23:16:11" itemprop="dateCreated datePublished" datetime="2019-05-29T22:53:34+08:00">2019-05-29</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV关键技术/" itemprop="url" rel="index"><span itemprop="name">NFV关键技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">12k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">11 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在前文《存储虚拟化概述》中，我们提到存储虚拟化与软件定义存储SDS的区别就是其控制平面数据和存储平面数据是一种紧耦合的关系，因此各厂商的存储虚拟化解决方案是一种“私有”方案，不仅不同厂商之间不能兼容，甚至通常不同产品之间有可能不兼容。因此，考虑到电信云NFV的应用场景，以及设备商的分布情况，我们这里主要讨论<strong>华为的虚拟化存储解决方案</strong>和<strong>华为的分布式存储Fusion Storage</strong>的情况。<a id="more"></a></p>
+<h2 id="华为存储虚拟化的存储模型"><a href="#华为存储虚拟化的存储模型" class="headerlink" title="华为存储虚拟化的存储模型"></a>华为存储虚拟化的存储模型</h2><p>华为对存储虚拟化的定义：<strong>存储虚拟化是将存储设备抽象为数据存储，虚拟机在数据存储中作为一组文件存储在自己的目录中。而数据存储是逻辑容器，类似于文件系统，它将各个存储设备的特性隐藏起来，并提供一个统一的模型来存储虚拟机文件。同时，存储虚拟化技术可以更好的管理虚拟基础架构的存储资源，使系统大幅提升存储资源利用率和灵活性，提高应用的正常运行时间。</strong></p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9d428946a52708.jpg"></p>
+<p><strong>能够封装为数据存储的存储单元包括：</strong></p>
+<ul>
+<li>SAN存储（包括iSCSI或光纤通道的SAN存储）上划分的LUN；</li>
+<li>NAS存储上划分的文件系统共享目录；</li>
+<li>华为分布式存储FusionStorage上的存储池；</li>
+<li>主机的本地硬盘以及主机的本地内存盘；</li>
+</ul>
+<p><strong>数据存储可支持文件系统格式：</strong></p>
+<ul>
+<li>华为私有的虚拟镜像管理系统（VIMS），为存储虚拟机而优化的高性能文件系统，主机可以将虚拟镜像管理系统数据存储部署在任何基于SCSI的本地或联网存储设备上，包括光纤通道、以太网光纤通道和iSCSI SAN设备。</li>
+<li>网络文件系统（NFS），NAS设备上的文件系统。FusionSphere支持NFS V3协议，可以访问位于NFS服务器上制定的NFS磁盘，挂载该磁盘并满足任何存储需求。</li>
+<li>EXT4，FusionSphere支持服务器的本地磁盘虚拟化。</li>
+</ul>
+<p>从上面华为存储虚拟化的定义可以看出，主要涉及三个概念：<strong>存储资源、存储设备</strong>和<strong>数据存储。</strong>华为的这些基本概念定义的比较奇葩，从我个人理解来看是一种反人类的定义，如下图所示。按照正常人的理解，存储设备指的是真实物理存储，存储资源指的是抽象化后逻辑存储，但是它的定义正好是相反的。</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9d89ef79033740.jpg"></p>
+<p><strong>华为存储虚拟化模型中，存储概念的定义如下：</strong></p>
+<p><strong>存储资源：</strong>表示物理存储设备，例如IPSAN、Advanced SAN、NAS等，其中，Advance SAN是不支持虚拟化的。一个存储资源可以包含多个物理存储。<strong>主机访问存储资源时，先需要添加存储资源，再选定主机关联存储资源。</strong>如下所示：</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9dc14243863228.jpg"></p>
+<p><strong>存储设备：</strong>表示存储资源中的管理单元，包括本地磁盘、LUN、 Advanced SAN存储池、Fusion Storage存储池、NAS共享目录等。多个存储设备可以归属在一个存储资源中，且<strong>存储设备必须被添加为数据存储才能使用</strong>。其中，<strong>LUN在使用前需要在存储侧或者交换机侧进行配置</strong>，该配置根据不同的厂家会不一样，具体需要参照相关厂家的技术文档。<strong>存储设备需要通过主机探测的方式进行扫描来发现：</strong>主机需要链接存储资源后才能扫描存储资源所包含的存储设备，而且每个主机都能发现各自的存储设备，也能发现共享的存储设备。如下所示：</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9dfea5d6515965.jpg"></p>
+<p><strong>数据存储：</strong>表示在存储设备上创建的逻辑管理单元，需要创建在指定的存储设备上，且<strong>一个存储设备只能创建一个数据存储，数据存储和存储设备一一对应，且数据存储大小依赖于存储设备的大小</strong>。数据存储和主机关联，为主机提供资源，数据存储可以关联到多个主机，一个主机也可以使用多个数据存储。数据存储承载了具体的虚拟机业务，例如创建磁盘等。对于SAN存储上的LUN，也可以作为数据存储直接供虚拟机使用，而不再创建虚拟磁盘，此过程称为<strong>裸设备映射</strong>，目前仅支持部分操作系统的虚拟机使用，用于搭建数据库服务器等对磁盘空间要求较大的场景。如果使用裸设备部署应用集群服务（如 Oracle RAC等），建议不要使用虚拟机的快照、快照恢复功能，快照恢复后，会导致应用集群服务异常。数据存储映射的示意图如下：</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9e1f26a4b48820.jpg"></p>
+<p>比如：裸设备映射方式可以将一个SAN设备【<strong>存储资源</strong>】分配的一个LUN【<strong>存储设备</strong>】接入到FusionCompute环境成为一个数据存储【<strong>数据存储</strong>】，可以在该数据存储上创建运行业务的虚拟机，对外提供服务。</p>
+<p>在华为的FusionCompute中配置数据存储时，首先需要完成存储接口的设置，然后可以通过以下流程接入和使用存储资源，如下图所示：</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9e3b7dc7412851.jpg"></p>
+<ol>
+<li>在FusionCompute界面上首先添加存储资源（如：IPSAN等等），并在存储设备上进行主机启动器的配置。</li>
+<li>主机关联存储资源后，执行“<strong>扫描存储设备</strong>”动作，将IPSAN上的LUN扫描到主机。</li>
+<li>主机选择存储设备，执行“<strong>添加数据存储</strong>”动作，并选择“<strong>虚拟化</strong>”，存储配置完成。</li>
+<li>随后，可以在数据存储上可以进行创建卷、创建快照等行为。</li>
+</ol>
+<blockquote>
+<p><strong>所谓存储接口，是指主机与存储设备连接所用的端口。</strong>可以将主机上的一个物理网卡，或者多个物理网卡的绑定设置为存储接口。当使用iSCSI存储时，一般使用主机上两个物理网卡与存储设备多个存储网卡相连，组成存储多路径，此时不需要绑定主机存储平面的物理网卡；当使用NAS存储时，为保证可靠性，建议将<strong>主机的存储平面网卡以主备模式进行绑定设置为存储接口</strong>与NAS设备连接。</p>
+<p>同时，在存储接口设置还有个<strong>存储多路径</strong>的概念，主要指存储设备通过多条链路与主机一个或多个网卡连接，<strong>通过存储设备的控制器控制数据流的路径，实现数据流的负荷分担</strong>，保证存储设备与主机连接的可靠性。一般情况下，iSCSI存储和光纤通道存储（如IP SAN存储设备、FC SAN存储设备、OceanStor 18000系列存储）均支持存储多路径。而且在华为的解决方案中，存储多路径包含<strong>华为多路径</strong>与<strong>通用多路径</strong>两种模式，<strong>通用多路径下虚拟机采用裸设备映射的磁盘时，不支持Windows Server操作系统的虚拟机搭建MSCS集群。</strong></p>
+</blockquote>
+<h2 id="华为虚拟化存储的链接"><a href="#华为虚拟化存储的链接" class="headerlink" title="华为虚拟化存储的链接"></a>华为虚拟化存储的链接</h2><p><strong>FC-SAN：</strong>存储区域网络(Storage Area Networks，SAN)是一个用在服务器和存储资源之间的、专用的、高性能的网络体系。 <strong>SAN是独立于LAN的服务器后端存储专用网络</strong>。 SAN采用<strong>可扩展的网络拓扑结构</strong>连接服务器和存储设备，每个存储设备不隶属于任何一台服务器，所有的存储设备都可以在全部的网络服务器之间作为对等资源共享。SAN主要利用Fibre Channel protocol（光纤通道协议），通过FC交换机建立起与服务器和存储设备之间的直接连接，因此我们通常也称这种利用FC连接建立起来的SAN为FC-SAN。如下图所示，FC特别适合这项应用，原因在于一方面它可以传输大块数据，另一方面它能够实现较远距离传输。SAN主要应用在对于性能、冗余度和数据的可获得性都有很高的要求高端、企业级存储应用上。</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9e85176dd28733.jpg"></p>
+<p><strong>SAN架构中常用的三种协议：</strong></p>
+<ul>
+<li><strong>FC 协议 (Fibre Channel)</strong> ，使用该种协议的SAN架构，称为FC-SAN。</li>
+<li><strong>iSCSI 协议 (Internet SCSI)，</strong>使用该种协议的SAN架构，称为IP-SAN。</li>
+<li><strong>FCoE 协议(Fibre Channel over Ethernet)，</strong>FC 协议通常和iSCSI协议用于现代的SAN架构中，而FCoE协议在服务器需要融合SAN和LAN业务时，也是用得越来越多。</li>
+</ul>
+<p><strong>IP-SAN：</strong>以TCP/IP协议为底层传输协议，采用以太网作为承载介质构建起来的存储区域网络架构。</p>
+<p>实现IP-SAN的典型协议是iSCSI，它定义了<strong>SCSI指令集在IP中传输的封装</strong>方式。IP-SAN把SCSI指令集封装在了TCP/IP上。类似于不管我们是选择哪家快递公司，最终都是把我们想要发送的东西发送至目的地，都是由我们发起寄送请求，快递公司进行响应，差别只在于快递公司不同而已。<strong>iSCSI是全新建立在TCP/IP和SCSI指令集的基础上的标准协议，所以其开放性和扩展性更好。</strong>如下图所示，IP-SAN具备很好的扩展性、灵活的互通性，并能够突破传输距离的限制，具有明显的成本优势和管理维护容易等特点。</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9ea90c8d696515.jpg"></p>
+<p><strong>IP-SAN典型组网方式有：</strong></p>
+<ul>
+<li><strong>直连：</strong>主机与存储之间直接通过以太网卡、TOE卡或iSCSI HBA卡连接，这种组网方式简单、经济，但较多的主机分享存储资源比较困难；</li>
+<li><strong>单交换：</strong>主机与存储之间由一台以太网交换机，同时主机安装以太网卡或TOE卡或iSCSI HBA卡实现连接。这种组网结构使多台主机能共同分享同一台存储设备，扩展性强，但交换机处是一个故障关注点；</li>
+<li><strong>双交换：</strong>同一台主机到存储阵列端可由多条路径连接，扩展性强，避免了在以太网交换机处形成单点故障。</li>
+</ul>
+<p>IP-SAN是基于IP网络来实现数据块传输的网络存储形态，与传统FC SAN的最大区别在于传输协议和传输介质的不同。目前常见的IP-SAN协议有iSCSI、FCIP、iFCP等，其中iSCSI是发展最快的协议标准，大多时候我们所说的IP-SAN就是指基于iSCSI实现的SAN。</p>
+<p><strong>NAS：</strong>网络附加存储，<strong>是一种将分布、独立的数据进行整合，集中化管理，以便于对不同主机和应用服务器进行访问的技术</strong>。如下图所示，NAS和SAN最大的区别就在于<strong>NAS有文件操作和管理系统</strong>，而SAN却没有这样的系统功能，其功能仅仅停留在文件管理的下一层，即数据管理。</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9ec9bb0ac50848.jpg"></p>
+<p>SAN和NAS并不是相互冲突的，是可以共存于一个系统网络中的，但NAS通过一个公共的接口实现空间的管理和资源共享，SAN仅仅是为服务器存储数据提供一个专门的快速后方存储通道。NAS文件共享功能有点儿类似FTP文件服务，但是两者是完全不同的。FTP只能将文件传输到本地的目录之后才能执行，而网络文件系统NAS可以允许直接访问源端的文件，不需要将数据复制到本地再访问。</p>
+<h2 id="华为存储虚拟化的原理"><a href="#华为存储虚拟化的原理" class="headerlink" title="华为存储虚拟化的原理"></a>华为存储虚拟化的原理</h2><p>存储虚拟化技术可以将不同存储设备进行格式化，屏蔽存储设备的能力、接口协议等差异性，将各种存储资源转化为统一管理的数据存储资源，可以用来存储虚拟机磁盘、虚拟机配置信息、快照等信息，使得用户对存储的管理更加同质化。华为的虚拟化存储栈示意图如下所示，其实现存储虚拟化的关键的就是<strong>中间的文件系统</strong>那一层。</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9ef00c5b983694.jpg"></p>
+<p><strong>华为虚拟化存储栈中文件系统作用就是提供文件操作接口，屏蔽底层存储设备的差异，并且为虚拟化卷文件提供存放空间。</strong>当前FusionCompute所支持的文件系统格式有：VIMS、EXT4、NFS。它们在应用场景，虚拟化特性支持方面的差异如下：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>所需存储**</strong>设备**</th>
+<th><strong>是否创建**</strong>文件系统**</th>
+<th><strong>是否支持**</strong>共享**</th>
+<th><strong>是否支持**</strong>延迟置零卷**</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VIMS</td>
+<td>LUN</td>
+<td>是</td>
+<td>是</td>
+<td>是</td>
+</tr>
+<tr>
+<td>EXT4</td>
+<td>本地磁盘</td>
+<td>是</td>
+<td>否</td>
+<td>是</td>
+</tr>
+<tr>
+<td>NFS</td>
+<td>共享目录</td>
+<td>否</td>
+<td>是</td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+<p>其中，NFS不支持创建文件系统是因为NFS本身就具备文件系统功能，而且NFS是以共享目录的方式提供数据存储，如果采用延迟置零卷的分配方式，容易造成数据丢失。EXT4主要用于服务器本地硬盘，如果要支持共享，需要在存储I/O通道上通过锁机制来避免竞争，目前方案不支持。上述的三个文件系统中，VIMS是华为自研的文件系统，其余两个都是标准文件系统类型。</p>
+<p><strong>VIMS (Virtual Image Manage System)虚拟镜像管理系统</strong>，属于华为自研的一种文件系统，是一种高性能集群文件系统。在华为存储虚拟化解决方案中，它是实现是<strong>自动精简置备磁盘、快照、存储迁移等高级特性的技术基础。</strong>如下图所示，VIMS使虚拟化技术的应用超出了单个存储系统的限制，其设计、构建和优化针对虚拟服务器环境，可让多个虚拟机共同访问一个整合的集群式存储池，从而显著提高了资源利用率。</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9f18639fe69372.jpg"></p>
+<p>VIMS兼容FC SAN、IPSAN、NAS、本地磁盘，支持建立<strong>固定空间磁盘、动态空间磁盘、差分磁盘</strong>等。主要应用于需要<strong>存储迁移、快照、链接克隆</strong>等高级存储特性虚拟机。</p>
+<h2 id="虚拟磁盘的类型"><a href="#虚拟磁盘的类型" class="headerlink" title="虚拟磁盘的类型"></a>虚拟磁盘的类型</h2><p>一个虚拟机在虚拟化计算节点文件系统上表现为一个或多个虚拟磁盘文件，也就是说，一个虚拟机磁盘体现为一个或多个虚拟磁盘文件。在华为存储虚拟化解决方案中，虚拟磁盘的格式为VHD镜像格式。它是FusionCompute实现精简卷、快照等功能的基本载体，实现了FusionCompute虚拟机镜像数据的基本储存功能。如下所示，虚拟机的一个虚拟磁盘对应一个VHD文件。</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9f3d9238019790.jpg"></p>
+<p>在华为存储虚拟化解决方案中，虚拟机的虚拟磁盘类型分为三种：<strong>固定空间磁盘、动态空间磁盘</strong>和<strong>差分磁盘。</strong></p>
+<p><strong>固定空间磁盘：</strong>创建时需要将磁盘文件对应的存储块空间全部进行初始化成”0”，创建速度慢，但是IO性能最佳，适用于对IOPS要求较高的场景。如下图所示，磁盘大小恒定，<strong>创建后使用空间和预留空间相等。</strong></p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9f61b2d8415270.jpg"></p>
+<p>数据区主要用来存放虚拟机业务数据，未写满的时候内部空间包含大量0，数据冗余度很高。最后一个扇区用来存放磁盘的元数据，也就是虚拟磁盘的大小、块的个数，位于物理存储的位置等数据，固定空间的磁盘主要应用于系统中的普通卷。</p>
+<p><strong>动态空间磁盘：</strong>创建时只需写头和结束块，<strong>创建速度块，IO性能较差，适用于应用于精简磁盘和普通延迟置零磁盘。</strong>如下图所示，磁盘大小会随着用户写入数据而增长，但不会随着用户删除数据而缩减，只能通过磁盘空间回收来手动缩减应用在系统中的精简磁盘空间。</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9f8543c1a89829.jpg"></p>
+<p>前面和后面共m+1个扇区用来存放虚拟磁盘的元数据信息，其余扇区用来存放虚拟机业务数据。当用来建立精简磁盘时，首次创建只建立头和尾共m+1扇区的元数据区，后续随着虚拟机业务数据的增加逐渐增加数据区的大小，因此在一些IOPS要求不高的场景可以节省物理存储空间。动态空间磁盘通过工具可以和固定空间磁盘互相转换，例如，可以用一个精简磁盘的模板部署一个普通磁盘的虚拟机。</p>
+<p><strong>差分磁盘：</strong>差分磁盘的结构和动态磁盘一模一样，只是<strong>文件头中会记录它的父文件路径，因此差分卷不能独立存在，必须能够访问到父文件才能正常工作</strong>，如下图所示，主要用于链接克隆场景。</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9fa68710a98959.jpg"></p>
+<p>前m个扇区和最后一个扇区存放虚拟磁盘自身的元数据信息，从m+1到k扇区之间存储父文件的元数据信息，数据区存放相对于父文件数据的增量业务数据，所以被称为差分磁盘。差分卷也可以成为父文件，在此场景下，差分卷不仅集成自身父文件的数据，还要向其子卷提供数据，类似祖孙三代中父亲的角色。</p>
+<p>差分磁盘的特性和动态盘类似，但是很多业务有限制。差分磁盘以块为单位记录相对于父文件的修改。配合快照、非持久化磁盘、链接克隆等功能被使用，起到保护源盘不被修改，并可以跟踪虚拟机磁盘差异数据的作用。</p>
+<h2 id="华为存储虚拟化特性"><a href="#华为存储虚拟化特性" class="headerlink" title="华为存储虚拟化特性"></a>华为存储虚拟化特性</h2><p>华为存储虚拟化提供基于磁盘的RAID 2.0+、基于虚拟磁盘的精简置备和空间回收、快照、连接克隆、存储热迁移等特性，适用于各类不同业务场景下的虚拟机。</p>
+<h3 id="RAID-2-0"><a href="#RAID-2-0" class="headerlink" title="RAID 2.0+"></a>RAID 2.0+</h3><p>我们在了解华为RAID2.0+技术原理之前，可以先了解一下我们的传统RAID技术。我们传统的RAID技术是一种<strong>盘级虚拟化</strong>的技术，有RAID0 RAID1 RAID5 RAID10等常见的RAID技术，如下图所示，是一个RAID 50的组合。</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9fd00b97698132.jpg"></p>
+<p>传统RAID的状态主要有几种：<strong>创建RAID 、RAID组正常工作 、RAID组降级、 RAID组失效</strong> 。传统RAID技术热备方式主要是通过<strong>固定的盘</strong>来进行数据的恢复。</p>
+<p>在传统的RAID技术中，是将几块小容量廉价的磁盘组合成一个大的逻辑磁盘给大型机使用。后来硬盘的容量不断增大，组建RAID的初衷不再是构建一个大容量的磁盘，而是利用RAID技术实现数据的可靠性和安全性，以及提升存储性能。如下图所示，由于单个容量硬盘都已经较大了，数据硬盘组建的RAID容量更大，然后再把RAID划分成一个一个的LUN映射给服务器使用。</p>
+<p><img src="https://i.loli.net/2019/05/29/5cee9fefc02e591366.jpg"></p>
+<p>随着硬盘技术的发展，单块硬盘的容量已经达到数T，传统RAID技术在重建的过程中需要的时间越来越长，也增加了在重构过程中其它硬盘再坏掉对数据丢失造成的风险，为了解决这一问题，块虚拟化技术应运而生，将以前以单块硬盘为成员盘的RAID技术再细化，将硬盘划分成若干的小块，再以这些小块为成员盘的方式构建RAID,也就是现在业界所说的RAID2.0+技术。</p>
+<p><img src="https://i.loli.net/2019/05/29/5ceea008f34e382625.jpg"></p>
+<p><strong>RAID2.0+是一种块级的虚拟化技术</strong>，如下图所示。</p>
+<p><img src="https://i.loli.net/2019/05/29/5ceea025ef0ec28574.jpg"></p>
+<p>它由不同类型的硬盘组成硬盘域，把硬盘域内<strong>每个硬盘切分为固定64MB的块（CK）</strong>，硬盘域内同种类型的硬盘被划分为一个个的<strong>Disk Group（DG）</strong>，从同一个DG上随机选择多个硬盘，每个硬盘选取CK按照RAID算法组成<strong>Chunk Group（CKG）</strong>，CKG被划分为固定大小的<strong>Extent</strong>，Thick LUN以Extent为单位映射到LUN（上图上半部分），也可以采用Grain在Extent的基础上进行更细粒度的划分，Thin LUN以Grain 为单位映射到LUN（上图下半部分）。</p>
+<p>为了进一步说明RAID 2.0+各类逻辑概念以及相互之间的关系，通过下图RAID 2.0+的软件逻辑架构进行说明。</p>
+<p><img src="https://i.loli.net/2019/05/29/5ceea048c4eaa30278.jpg"></p>
+<p><strong>Disk Domain（磁盘域）：</strong>一个硬盘域上可以创建多个存储池（Storage Pool）一个硬盘域的硬盘可以选择SSD、SAS、NL-SAS中的一种或者多种，不同硬盘域之间是完全隔离的，包括故障域、性能和存储资源等。　</p>
+<p><strong>Storage Pool（存储池）&amp; Tier：</strong>一个存储池基于指定的一个硬盘域创建，可以从该硬盘域上动态的分配Chunk（CK）资源，并按照<strong>每个存储层级（Tier）</strong>的“<strong>RAID策略</strong>”组成Chunk Group（CKG）向应用提供具有RAID保护的存储资源。</p>
+<p><strong>Disk Group（DG）：</strong>由硬盘域内相同类型的多个硬盘组成的集合，硬盘类型包括SSD、SAS和NL-SAS三种。</p>
+<p><strong>LD（逻辑磁盘）：</strong>是被存储系统所管理的硬盘，和物理硬盘一一对应。</p>
+<p><strong>Chunk（CK）：</strong>是存储池内的硬盘空间切分成若干固定大小的物理空间，每块物理空间的大小为64MB，是组成RAID的基本单位。</p>
+<p><strong>Chunk Group（CKG）：</strong>是由来自于同一个DG内不同硬盘的CK按照RAID算法组成的逻辑存储单元，是存储池从硬盘域上分配资源的最小单位。</p>
+<p><strong>Extent：</strong>是在CKG基础上划分的固定大小的逻辑存储空间，大小可调，是热点数据统计和迁移的最小单元（数据迁移粒度），也是存储池中申请空间、释放空间的最小单位。</p>
+<p><strong>Grain：</strong>在Thin LUN模式下，Extent按照固定大小被进一步划分为更细粒度的块，这些块称之为Grain。</p>
+<p><strong>Volume &amp; LUN：</strong>Volume即卷，是存储系统内部管理对象；LUN是可以直接映射给主机读写的存储单元，是Volume对象的对外体现。</p>
+<p>RAID2.0+ 优秀性能主要体现在<strong>负载均衡优、数据重构时间短</strong>和<strong>提升单卷（LUN）的读写性能</strong>等几个方面。</p>
+<p><strong>1）RAID2.0+的负载均衡更优，</strong>如下图所示，数据在存储池中硬盘上的自动均衡分布，避免了硬盘的冷热不均，从而降低了存储系统整体的故障率。</p>
+<p><img src="https://i.loli.net/2019/05/29/5ceea074399ec47928.jpg"></p>
+<p>RAID 2.0+的负载均衡方式主要有两种：<strong>第一种是根据crush算法</strong>，在创建CKG的时候选择CK，保证硬盘被选中的概率与硬盘剩余容量成正比；<strong>第二种就是smartmotion</strong>，主要用于数据迁移发生在DG层次。当有新盘加入硬盘域的时候，会触发smartmotion，查出待均衡的原CKG，然后给该CKG分配一个目标CKG，该CKG包含来源于新盘的CK，如果原CKG和目标CKG中对应位置的CK落在不同的盘，就会触发实现均衡。那么有数据的原CKG迁移到目标CKG中，没有数据的只需要改变CKG的映射关系即可。</p>
+<p><strong>2）RAID2.0+的数据重构时间短</strong>，如下图所示，相较传统RAID重构数据流串行写入单一热备盘的方式，RAID2.0+采用多对多的重构，重构数据流并行写入多块磁盘，极大缩短数据重构时间，1TB数据仅需30分钟。</p>
+<p><img src="https://i.loli.net/2019/05/29/5ceea09166f4349338.jpg"></p>
+<p>RAID2.0+的数据重构方式主要有三种：<strong>第一种是全盘重构</strong>，就是当一块盘故障或者被拔出之后进行数据恢复；<strong>第二种是局部重构</strong>，就是硬盘上出现坏块，通过RAID算法将上面的数据重构到热备CK中；<strong>第三种是恢复重构</strong>，就是在某块硬盘正常访问期间的写操作无法完成，只能处于降级写状态，会在系统上记录相关的日志并且更新校验值，待硬盘恢复后，将故障期间的数据根据RAID算法计算之后更新数据。</p>
+<p><strong>3）提升单卷（LUN）的读写性能</strong>，如下图所示，RAID2.0+的热备采用的是空间的形式，每个盘上面的CK都可以作为磁盘热点，这种条块化的分割极大提升单卷（LUN）的读写IOPS。</p>
+<p><img src="https://i.loli.net/2019/05/29/5ceea0b1be3f817902.jpg"></p>
+<p>传统存储的RAID通常是以单个磁盘为粒度来建立RAID，RAID被限制在有限的几个磁盘上，所以当主机对一个较小的卷进行密集访问时，只能访问到有限的几个磁盘，这就造成磁盘访问瓶颈，导致磁盘热点。 而RAID2.0+技术基于Chunk而非物理磁盘构成RAID。一个物理磁盘上的不同CK可以用于构成不同RAID类型的卷。对于HVS阵列而言，即使是很小的卷也可以通过CK的方式分布到很多磁盘上。宽条带化技术使得小的卷不再需要额外的大容量即可获得足够的高性能，且避免了磁盘热点。物理磁盘上剩余的CK还可以用于其它的卷。</p>
+<p>在使用RAID 2.0+ 技术时，首先创建硬盘域，指定该硬盘域使用的硬盘类型和每种类型硬盘的数量；另外还要指定针对不同类型的硬盘，使用其上的CK创建CKG时采取的RAID算法，不同类型的硬盘可以使用不同的RAID算法，比如针对故障率高的SATA硬盘采用可靠性更高的RAID 6算法等。接下来创建存储池，一个存储池是基于一个硬盘域的，创建存储池时可以设置该存储池所使用的Extent大小，设置后不能更改。然后在存储池内创建LUN，只需要指定LUN的容量大小即可，系统会根据事先定义的规则（数据分层、自动迁移等）选择适当的Extent完成创建。最后将创建好的LUN映射给需要的主机，主机在使用LUN时RAID 2.0+ 技术就会在后台发挥作用。</p>
+<p><strong>由此可以看出，当一块硬盘损坏时，只会影响该硬盘域上的存储池中的CKG，对于其它硬盘域上的CKG无影响，因此可以实现故障隔离。</strong></p>
+<h2 id="精简磁盘和空间回收"><a href="#精简磁盘和空间回收" class="headerlink" title="精简磁盘和空间回收"></a>精简磁盘和空间回收</h2><p>华为存储虚拟化支持创建精简磁盘，可以随着用户使用而自动分配空间。但是，后续膨胀的精简磁盘不会随着用户删除数据而缩小，必须使用空间回收工具可以将用户删除的数据空间释放到数据存储。如下图所示，创建虚拟机可以选择精简磁盘模式，提高磁盘使用率，增加虚拟机部署密度。</p>
+<p><img src="https://i.loli.net/2019/05/29/5ceea0daed68148460.jpg"></p>
+<p><strong>精简磁盘可应用于局点运行初期，用户磁盘使用率低的情况。</strong>能够降低初始存储投资及维护成本，存储设备只保存有效数据，不保存预留空间，可以提高存储资源利用率。</p>
+<p>在FusionCompute中，选择“存储池”。 进入“存储池”页面。在左侧导航树，选择“站点名称 &gt; 数据存储名称”。 显示“入门”页签。单击“磁盘”。 显示磁盘信息列表。单击“创建磁盘”。 弹出“创建磁盘”对话框，如图所示。</p>
+<p><img src="https://i.loli.net/2019/05/29/5ceea0f29ec5f50184.jpg"></p>
+<p><strong>配置模式：</strong></p>
+<ul>
+<li><strong>普通：</strong>根据磁盘容量为磁盘分配空间，在创建过程中会将物理设备上保留的数据置零。这种格式的磁盘性能要优于其他两种磁盘格式，但创建这种格式的磁盘所需的时间可能会比创建其他类型的磁盘长，且预留空间和实际占用空间相等，建议系统盘使用该模式。</li>
+<li><strong>精简：</strong>该模式下，系统首次仅分配磁盘容量配置值的部分容量，后续根据使用情况，逐步进行分配，直到分配总量达到磁盘容量配置值为止。数据存储类型为“<strong>FusionStorage</strong>”或“<strong>本地内存盘</strong>”时，只支持该模式；数据存储类型为“<strong>本地硬盘</strong>”或“<strong>SAN存储</strong>”时，不支持该模式。</li>
+<li><strong>普通延迟置零：</strong>根据磁盘容量为磁盘分配空间，创建时不会擦除物理设备上保留的任何数据，但后续从虚拟机首次执行写操作时会按需要将其置零。<strong>创建速度比“普通”模式快；IO性能介于“普通”和“精简”两种模式之间。</strong>只有数据存储类型为“<strong>虚拟化本地硬盘</strong>”、“<strong>虚拟化SAN存储</strong>”或版本号为<strong>V3的“Advanced SAN存储</strong>”时，支持该模式。</li>
+</ul>
+<p><strong>磁盘模式：</strong></p>
+<ul>
+<li><strong>从属：</strong>快照中包含该从属磁盘，默认选项。</li>
+<li><strong>独立-持久：</strong>更改将立即并永久写入磁盘，持久磁盘不受快照影响。即对虚拟机创建快照时，不对该磁盘的数据进行快照。使用快照还原虚拟机时，不对该磁盘的数据进行还原。</li>
+<li><strong>独立-非持久：</strong>关闭电源或恢复快照后，丢弃对该磁盘的更改。</li>
+</ul>
+<h3 id="快照和快照链"><a href="#快照和快照链" class="headerlink" title="快照和快照链"></a>快照和快照链</h3><p>虚拟机快照记录了虚拟机在某一时间点的内容和状态，通过恢复虚拟机快照使虚拟机多次快速恢复到这一时间点，比如我们初次手动安装OpenStack服务时，每安装一个服务都会创建一个快照，这样当后续出现错误且无法恢复时，可以通过前面快照恢复这一步安装前的状态，而不用从头再来。虚拟机快照包含磁盘内容、虚拟机配置信息、内存数据，多次快照之间保存差量数据，节约存储空间。主要适用于虚拟机用户在执行一些重大、高危操作前，例如系统补丁，升级，破坏性测试前执行快照，可以用于故障时的快速还原。</p>
+<p>虚拟机快照的创建、恢复和删除都是由用户手动触发的，系统并不会自动执行。如下图所示，创建快照时会生成一个新的差分卷，创建的方式一般包括COW（写时拷贝）、ROW（写时重定向）和WA（随机写），一般都是写时重定向ROW方式创建。</p>
+<p><img src="https://i.loli.net/2019/05/29/5ceea11807a6c40312.jpg"></p>
+<p>当创建快照采用了ROW方式时，快照虚拟机会挂载这个差分卷，快照创建后的写操作会进行重定向，所有的写IO都被重定向到新卷中，所有旧数据均保留在只读的源卷中。</p>
+<p>当用户对一个虚拟机进行多次快照操作，可以形成快照链，如下图所示，一个虚拟机生成快照的数量不能超过<strong>32个</strong>，也是快照链的最大长度。</p>
+<p><img src="https://i.loli.net/2019/05/29/5ceea13a9c1d752467.jpg"></p>
+<p>SNAP1是基于源卷的第一次差分卷，SNAP2是基于SNAP2的第二次差分卷，且虚拟机源卷始终挂载在快照链的最末端。用户可以将虚拟机从当前状态恢复到快照链中的某个状态，且快照链中任意一个快照都可以删除而不影响其余快照。</p>
+<h2 id="链接克隆"><a href="#链接克隆" class="headerlink" title="链接克隆"></a>链接克隆</h2><p>链接克隆在桌面云解决方案里面有重要的地位，在电信云NFV领域目前暂时没有应用，因此只需要了解链接克隆特性以及与快照的区别即可。</p>
+<p>链接克隆技术是一种通过将源卷和差分卷组合映射为一个链接克隆卷，提供给虚拟机使用的技术。如下图所示，一个链接克隆模板可以创建多个链接克隆差分卷，对应创建多个链接克隆虚拟机。</p>
+<p><img src="https://i.loli.net/2019/05/29/5ceea190153f728001.jpg"></p>
+<p>上图中黄色部分为虚拟机源卷，VM1和VM2两个虚拟机是基于源卷+各自差分卷创建出来的链接克隆虚拟机。链接克隆虚拟机新创建的差分卷初始占用空间很小，随着虚拟机的使用，空间会逐渐膨胀。</p>
+<p><strong>与快照相同的是，链接克隆虚拟机的写IO操作也只会更新到差分卷中，且创建数量和创建时间不限。不同的是，链接克隆虚拟机可以和源虚拟机同时运行，且能同时处于同一网络，但是快照与源虚拟机不能同时运行，自然也就不能处于同一网路。而且，快照主要用于记录源虚拟机某一时间的状态，链接克隆虚拟机主要用于同质业务虚拟机多拷贝分发。虚拟机快照可以在源虚拟机运行时创建，但是链接克隆虚拟机必须在源虚拟机关闭时才能创建。</strong></p>
+<h2 id="存储热迁移"><a href="#存储热迁移" class="headerlink" title="存储热迁移"></a>存储热迁移</h2><p>华为存储虚拟化解决方案支持将虚拟机的磁盘从一个数据存储迁移到另一个数据存储。当需要对数据存储空间进行减容时，这时我们需要将源数据存储上的虚拟机磁盘进行迁移，如下如所示，可以将虚拟机的所有磁盘整体迁移，也可以单个磁盘分别迁移。</p>
+<p><img src="https://i.loli.net/2019/05/29/5ceea204ed9dd83008.jpg"></p>
+<p>在迁移虚拟机虚拟磁盘文件时，虚拟机的快照可以一起迁移（<strong>但只支持关机状态下冷迁移</strong>），且无论虚拟机是开启或者关闭状态，都可以迁移。当虚拟机为关机状态时，这种数据存储间的迁移称为冷迁移，数据存储冷迁移前后性能对比如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>源存储类型（源配置模式）</strong></th>
+<th><strong>目的存储类型</strong></th>
+<th><strong>配置模式是否变化</strong></th>
+<th><strong>迁移后模式</strong></th>
+<th><strong>是否支持带**</strong>快照迁移**</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>虚拟化存储（普通，延迟置零，精简）</td>
+<td>虚拟化存储（非NAS）</td>
+<td>否</td>
+<td>保持不变</td>
+<td>是</td>
+</tr>
+<tr>
+<td>虚拟化存储（延迟置零）</td>
+<td>虚拟化存储（NAS）</td>
+<td>是</td>
+<td>精简</td>
+<td>是</td>
+</tr>
+<tr>
+<td>虚拟化存储（延迟置零，精简）</td>
+<td>块存储</td>
+<td>是</td>
+<td>普通</td>
+<td>否</td>
+</tr>
+<tr>
+<td>虚拟化存储（普通）</td>
+<td>块存储</td>
+<td>否</td>
+<td>普通</td>
+<td>否</td>
+</tr>
+<tr>
+<td>块存储</td>
+<td>虚拟化存储</td>
+<td>否</td>
+<td>保持不变</td>
+<td>否</td>
+</tr>
+<tr>
+<td>块存储</td>
+<td>块存储</td>
+<td>否</td>
+<td>保持不变</td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+<p>当虚拟机为开机状态时，这种迁移就称为<strong>存储热迁移</strong>。数据存储冷迁移前后性能对比如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>源存储类型（源配置模式）</strong></th>
+<th><strong>目的存储类型</strong></th>
+<th><strong>配置模式是否变化</strong></th>
+<th><strong>迁移后模式</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>块存储</td>
+<td>虚拟化存储</td>
+<td>是</td>
+<td>迁移时可以选择为普通延迟置零（NAS不支持）或者精简</td>
+</tr>
+<tr>
+<td>虚拟化存储（普通卷）</td>
+<td>虚拟化存储</td>
+<td>是</td>
+<td>迁移时可以选择为普通延迟置零（NAS不支持）或者精简</td>
+</tr>
+<tr>
+<td>虚拟化存储（延迟置零卷）</td>
+<td>虚拟化存储（非NAS）</td>
+<td>否</td>
+<td>保持不变</td>
+</tr>
+<tr>
+<td>虚拟化存储（延迟置零卷）</td>
+<td>虚拟化存储（NAS）</td>
+<td>是</td>
+<td>精简</td>
+</tr>
+<tr>
+<td>虚拟化存储（精简卷）</td>
+<td>虚拟化存储</td>
+<td>否</td>
+<td>保持不变</td>
+</tr>
+</tbody>
+</table>
+<p><strong>当发生存储热迁移时，同时需迁移虚拟机磁盘镜像和系统内存状态，也就说存储热迁移一般和虚拟机热迁移同步进行。</strong>存储热迁移的示意图如下所示：</p>
+<p><img src="https://i.loli.net/2019/05/29/5ceea2289543282397.jpg"></p>
+<p>在存储热迁移场景下，华为的解决方案并不完美，仍然受以下条件限制：<strong>不支持迁移已挂载为“共享”类型的磁盘</strong>和<strong>链接克隆虚拟机的磁盘</strong>。当虚拟机为“运行中”时，不支持<strong>非持久化磁盘、带快照虚拟机磁盘</strong>和<strong>开启iCache功能虚拟机磁盘</strong>的迁移，可将虚拟机关闭后迁移；当虚拟机为“已停止”时，<strong>如果目标数据存储为块存储，不支持非持久化磁盘、带快照虚拟机磁盘的迁移。</strong></p>
+<p>根据上图，华为存储虚拟化解决方案中存储热迁移的步骤如下：</p>
+<p><strong>Step1：</strong>在目的存储上创建一个与源相同的空镜像文件。</p>
+<p><strong>Step2：</strong>将目的存储的镜像文件设置为源镜像文件的mirror，使虚拟机的I/O写也能落盘在目的存储上，保证了脏块数据的同步。</p>
+<p><strong>Step3：</strong>通过迭代迁移的技术，将源镜像的数据迁移到目的镜像中，保证了基线数据的同步。</p>
+<p><strong>Step4：</strong>在基线数据同步完成后，短暂的时间内暂停虚拟机的I/O请求，将虚拟机的存储文件从源镜像切换到目的镜像上，这样就完成了存储的迁移。</p>
+<p><strong>而且，在华为存储虚拟化解决方案中，可以通过界面设置3种不同热迁移速率，应对不同的业务场景：</strong></p>
+<ul>
+<li><strong>适中</strong>  （迁移速率不高于20M/s，用于存储IO压力较大场景，缓解迁移操作对用户虚拟机的影响）</li>
+<li><strong>快速</strong>   （迁移速率不高于30M/s，用于存储IO压力正常场景，在保证迁移速度的同时可以适当减少对用户虚拟机的影响）</li>
+<li><strong>不限</strong>   （迁移速率不高于1024M/s，用于用户虚拟机业务优先级很低的场景）</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2019/05/29/2019-05-29-华为存储虚拟化解决方案/" title="2019-05-29-华为存储虚拟化解决方案">https://kkutysllb.cn/2019/05/29/2019-05-29-华为存储虚拟化解决方案/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/电信云/" rel="tag"><i class="fa fa-tag"></i> 电信云</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/27/2019-05-27-5G：看起来很美，任重而道远/" rel="next" title="2019-05-27-5G：看起来很美，任重而道远">
+                <i class="fa fa-chevron-left"></i> 2019-05-27-5G：看起来很美，任重而道远
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">37</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#华为存储虚拟化的存储模型"><span class="nav-number">1.</span> <span class="nav-text">华为存储虚拟化的存储模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#华为虚拟化存储的链接"><span class="nav-number">2.</span> <span class="nav-text">华为虚拟化存储的链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#华为存储虚拟化的原理"><span class="nav-number">3.</span> <span class="nav-text">华为存储虚拟化的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟磁盘的类型"><span class="nav-number">4.</span> <span class="nav-text">虚拟磁盘的类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#华为存储虚拟化特性"><span class="nav-number">5.</span> <span class="nav-text">华为存储虚拟化特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RAID-2-0"><span class="nav-number">5.1.</span> <span class="nav-text">RAID 2.0+</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#精简磁盘和空间回收"><span class="nav-number">6.</span> <span class="nav-text">精简磁盘和空间回收</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#快照和快照链"><span class="nav-number">6.1.</span> <span class="nav-text">快照和快照链</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链接克隆"><span class="nav-number">7.</span> <span class="nav-text">链接克隆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存储热迁移"><span class="nav-number">8.</span> <span class="nav-text">存储热迁移</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">466k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">7:03</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/05/29/2019-05-29-华为存储虚拟化解决方案/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>
