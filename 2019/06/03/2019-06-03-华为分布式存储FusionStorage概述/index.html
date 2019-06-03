@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="分布式存储基于通用的x86服务器，通过分布式的存储软件来构建存储系统，开放丰富灵活的软件义 策略和接口，允许管理员和租户进行自动化的系统管理和资源调度发放。业界的分布式存储，有多种形态，包括分布式块存储、分布式文件存储、分布式对象存储。各大存储厂商都由自己的解决方案，而开源的代表的就是ceph。考虑到电信云NFV领域的应用特性和相关设备商分布，我们这里主要介绍华为的分布式存储系统FusionSto">
+<meta name="keywords" content="电信云">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019-06-03-华为分布式存储FusionStorage概述">
+<meta property="og:url" content="https://kkutysllb.cn/2019/06/03/2019-06-03-华为分布式存储FusionStorage概述/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="分布式存储基于通用的x86服务器，通过分布式的存储软件来构建存储系统，开放丰富灵活的软件义 策略和接口，允许管理员和租户进行自动化的系统管理和资源调度发放。业界的分布式存储，有多种形态，包括分布式块存储、分布式文件存储、分布式对象存储。各大存储厂商都由自己的解决方案，而开源的代表的就是ceph。考虑到电信云NFV领域的应用特性和相关设备商分布，我们这里主要介绍华为的分布式存储系统FusionSto">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48c6cc124549810.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48c994721e73916.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48cae5829479983.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48cd17f44718707.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48ced3ac0154311.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48d0aa74ae86247.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48d26bece826299.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48d3c621c526479.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48d675d71079948.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48d7c334b591527.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48dabce4eb19183.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48dc0b8e4d39512.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48de4e92a242186.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48dfbc9ce645690.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48e16e330d10346.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48e2d58d2b67146.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48e4357cce64262.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48e5a8ca0983577.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48e853b2db26201.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48e9f11eee84034.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48eb9d887d74962.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48ed84814c85259.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48f00b449b43091.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48f259c14a69801.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/03/5cf48f45d4d4965748.jpg">
+<meta property="og:updated_time" content="2019-06-03T03:13:46.998Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019-06-03-华为分布式存储FusionStorage概述">
+<meta name="twitter:description" content="分布式存储基于通用的x86服务器，通过分布式的存储软件来构建存储系统，开放丰富灵活的软件义 策略和接口，允许管理员和租户进行自动化的系统管理和资源调度发放。业界的分布式存储，有多种形态，包括分布式块存储、分布式文件存储、分布式对象存储。各大存储厂商都由自己的解决方案，而开源的代表的就是ceph。考虑到电信云NFV领域的应用特性和相关设备商分布，我们这里主要介绍华为的分布式存储系统FusionSto">
+<meta name="twitter:image" content="https://i.loli.net/2019/06/03/5cf48c6cc124549810.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2019/06/03/2019-06-03-华为分布式存储FusionStorage概述/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2019-06-03-华为分布式存储FusionStorage概述 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/06/03/2019-06-03-华为分布式存储FusionStorage概述/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019-06-03-华为分布式存储FusionStorage概述
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-03 10:54:41 / 修改时间：11:13:46" itemprop="dateCreated datePublished" datetime="2019-06-03T10:54:41+08:00">2019-06-03</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV关键技术/" itemprop="url" rel="index"><span itemprop="name">NFV关键技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">10k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">9 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>分布式存储基于通用的x86服务器，通过分布式的存储软件来构建存储系统，开放丰富灵活的软件义 策略和接口，允许管理员和租户进行自动化的系统管理和资源调度发放。业界的分布式存储，有多种形态，包括<strong>分布式块存储、分布式文件存储、分布式对象存储</strong>。各大存储厂商都由自己的解决方案，而开源的代表的就是ceph。考虑到电信云NFV领域的应用特性和相关设备商分布，我们这里主要介绍华为的分布式存储系统FusionStorage。<a id="more"></a></p>
+<h2 id="传统SAN架构"><a href="#传统SAN架构" class="headerlink" title="传统SAN架构"></a>传统SAN架构</h2><p>在传统的IT行业和电信云早期时候，计算和存储是分离的，计算由各种x86服务器组成计算集群，存储由各种SAN/NAS组成存储集群，这种分离架构虽然通过多个计算实例共享相同存储，在计算节点发生故障后，无须耗时的外存 数据迁移，即可快速在其他计算节点上恢复故障应用。但是，<strong>这种传统存储资源缺乏共享。</strong>因为，传统存储设备和资源往往由不同厂家提供，之间无法进行资源共享，数据中心看到的是一个个孤立的存储资源。如下图所示。</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48c6cc124549810.jpg"></p>
+<p>而且，SAN机头成为制约系统扩展的单点瓶颈。因为，随着计算集群规模的不断扩展，由于存储资源池集中式控制机头的存在，使得共享存储系统的<strong>扩展性、性能加速、可靠性</strong>受到制约。比如：采用多个SAN系统，单个SAN系统的机头最多由双控扩展到16控，不同的SAN系统独立管理无法组成集群。各计算节点只能依赖于集中式机头内的缓存实现I/O加速，但由于各节点cache有限，且不共享导致cache的I/O缓存加速只能达到GB级别。尽管SAN控制机头自身具有主备机制，但依然存在异常条下主备同时故障的可能性。</p>
+<p><strong>在传统SAN存储系统中，一般采用集中式元数据管理方式</strong>，元数据中会记录所有LUN中不同偏移量的数据在硬盘中的分布，例如LUN1+LBA1地址起始的4KB长度的数据分布在第32块硬盘的LBA2上。<strong>每次I/O操作都需要去查询元数据服务，随着系统规模逐渐变大，元数据的容量也会越来越大，系统所能提供的并发操作能力将受限于元数据服务所在服务器的能力，元数据服务将会成为系统的性能瓶颈。</strong></p>
+<h2 id="什么是Server-SAN"><a href="#什么是Server-SAN" class="headerlink" title="什么是Server SAN?"></a><strong>什么是Server SAN?</strong></h2><p>为了解决上述问题，业界针对大多数企业事务型IT应用而言，提出信息数据的“ 即时处理” 理念，通过计算和存储融合，<strong>引入scale-out存储机制</strong>，也就出现了<strong>Server SAN</strong>的概念。<strong>所谓Server SAN就是由多个独立服务器自带的存储组成一个存储资源池，同时融合了计算和存储资源</strong>。scale-out的存储架构示意图如下：</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48c994721e73916.jpg"></p>
+<p><strong>以数据中心级资源共享为例，</strong>一个数据中心内可以构建一个很大的存储资源池，如下图所示，满足数据中心内各类应用对存储容量，性能和可靠性的需求，实现资源共享和统一管理。</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48cae5829479983.jpg"></p>
+<p>通过在各个计算节点引入分布式控制器VBS，这是一种软件控制机头，线性扩展能力最大到4096个节点。而且，利用各个计算节点的cache组成分布式cache集群，满配情况下可达到TB级别的cache缓存能力。同时，各计算节点存储平面的存储网卡可采用专用IB接口卡，可以实现P2P的无阻赛传输网络，可达到100Gbps的数据传输能力。</p>
+<p><strong>最重要的是，采用分布式软件存储方式属于软件定义存储SDS的范畴，通过将控制面数据抽象和解耦，可与厂商的专有存储硬件解耦，底层的专有存储设备变为通用设备，实现简单统一管理和线性扩展。</strong>以华为FusionStorage为例，由于其采用的DHT算法（分布式哈希表结构，后面会详细讲），不仅数据能够尽可能分布到所有的节点中，可以使得所有节点负载均衡，现有节点上的数据不需要做很大调整实现<strong>数据均衡性</strong>，而且当有新节点加入系统中，系统会重新做数据分配，数据迁移仅涉及新增节点，从而实现数据修改的<strong>单调性</strong>。</p>
+<h2 id="分布式存储池的概念"><a href="#分布式存储池的概念" class="headerlink" title="分布式存储池的概念"></a>分布式存储池的概念</h2><p>分布式存储系统把所有服务器的本地硬盘组织成若干个资源池，基于资源池提供创建/删除应用卷（Volume）、创建/删除快照等接口，为上层软件提供卷设备功能。分布式存储系统资源池示意图如下，具有以下特点。</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48cd17f44718707.jpg"></p>
+<p>每块硬盘分为若干个数据分片<strong>（Partition）</strong>，每个Partition只属于一个资源池，Partition是数据多副本的基本单位，也就是说多个数据副本指的是多个Partition，如上图中的Pn色块。 系统自动保证多个数据副本尽可能分布在不同的服务器上（服务器数大于数据副本数时）。系统自动保证多个数据副本间 的数据强一致性（所谓强一致性是指无论读还是写I/O，都要进行数据一致性检查）。Partition中的数据以Key-Value的方式存储。对上层应用呈现并提供卷设备（Volume），没有LUN的概念，使用简单。系统自动保证每个硬盘上的主用Partition和备用Partition数量相当，避免出现集中的热点。所有硬盘都可以用做资源池的热备盘，单个资源池最大支持数百上千块硬盘。</p>
+<p>分布式存储系统采用<strong>分布式集群控制技术</strong>和<strong>分布式Hash数据路由</strong>技术，提供分布式存储功能特性。这里的概念比价抽象，所以下面结合华为FusionStorage的具体情况进行介绍。</p>
+<h2 id="华为FusionStorage分布式存储概述"><a href="#华为FusionStorage分布式存储概述" class="headerlink" title="华为FusionStorage分布式存储概述"></a>华为FusionStorage分布式存储概述</h2><p>FusionStorage通过创新的架构把分散的、低速的SATA/SAS机械硬盘组织成一个高效的类SAN存储池设备，提供比SAN设备更高的I/O，如下图所示：</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48ced3ac0154311.jpg"></p>
+<p>集群内各服务器节点的硬盘使用独立的I/O带宽，不存在独立存储系统中大量磁盘共享计算设备和存储设备之间有限带宽的问题。其将服务器部分内存用做读缓存，NVDIMM用做写缓存，数据缓存均匀分布到各个节点 上，所有服务器的缓存总容量远大于 采用外置独立存储的方案。即使采用大容量低成本的SATA硬盘，分布式存储系统仍然可以发挥很高的I/O性能，整体性能提升1～3倍，同时提供更大的有效容量。</p>
+<p>由于其采用<strong>无状态的分布式软件机头</strong>，机头部署在各个服务器上，无集中式机头的性能瓶颈。单个服务器上软件机头只占用较少的CPU资源，提供比集中式机头更高的IOPS和吞吐量。例如：假设系统中有20台服务器需要访问FusionStorage提供的存储资源，每台服务器提供给存储平面的带宽为2<em>10Gb，我们在每台服务器中部署1个VBS模块（相当于在每台服务器中部署1个存储机头），20台服务器意味着可部署20个存储机头，所能获取到的总吞吐量最高可达20</em>2*10Gb=400Gb，随着集群规模的不断扩大，<strong>可以线性增加的存储机头，突破了传统的双控或者多控存储系统集中式机头的性能瓶颈。</strong></p>
+<p>华为FusionStorage是一种软件定义存储SDS技术，将通用X86服务器的本地HDD、SSD等介质通过分布式技术组织成大规模存储资源池。同时，以开放API的方式对非虚拟化环境的上层应用和虚拟机提供工业界标准的SCSI和iSCSI接口。关键一点是，华为官方自己吹牛逼的的口号—-<strong>FusionStorage是目前唯一商用支持PB级数据吞吐/存储能力的Server SAN产品。</strong></p>
+<p>华为FusionStorage主要应用于两种场景，如下图所示，而中国移动的电信云NFV领域的应用属于第一种场景。</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48d0aa74ae86247.jpg"></p>
+<p><strong>场景一：与主流云平台的集成，构建云资源池中的存储资源池。</strong>可以和各种云平台集成，如华为FusionSphere、VMware、开源Openstack等，按需分配存储资源。</p>
+<p><strong>场景二：提供传统的存储应用，</strong>如各种业务应用(如SQL、Oracle RAC、Web、行业应用等等)。</p>
+<p>因此，华为FusionStorage是一种<strong>开发兼容</strong>的系统，可以兼容各种主流数据库、各种主流虚拟化平台以及各种主流服务器。同时，<strong>支持虚拟化平台和数据库资源池融合部署</strong>，即共用一个数据中心内的FusionStorage存储资源池。<strong>华为FusionStorage的软硬件兼容性总结如下：</strong></p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48d26bece826299.jpg"></p>
+<p><strong>硬件兼容性主要包括：</strong>服务器、各种HDD盘，SSD盘，PCIE SSD卡/盘以及各种RAID卡，以太网卡， Infiniband卡等。</p>
+<p><strong>软件兼容性主要包括：</strong>各种虚拟化平台、各种操作系统以及各种数据库软件。</p>
+<p>而且，FusionStorage支持使用SSD替代HDD作为高速存储设备，支持使用<strong>Infiniband网络</strong>替代GE/10GE网络提供更高的带宽，为对性能要求极高的大数据量实时处理场景提供完美的支持<strong>千万级IOPS</strong>。InfiniBand（直译为“无限带宽”技术，缩写为IB）是一个用于高性能计算的计算机网络通信标准，它具有极高的吞吐量和极低的延迟，用于计算机与计算机之间的数据互连。InfiniBand也用作服务器与存储系统之间的直接或交换互连，以及存储系统之间的互连。硬件接口图如下：</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48d3c621c526479.jpg"></p>
+<p><strong>inifiniband接口可以实现链路可聚合：</strong>大多数系统使用一个4X聚合。12X链路通常用于计算机集群和超级计算机互连，以及用于内部网络交换器连接。而且，<strong>InfiniBand也提供远程直接内存访问（RDMA）能力以降低CPU负载。除了板式连接，它还支持有源和无源铜缆（最多30米）和光缆（最多10公里）。通过Inifiniband Association可以指定CXP铜连接器系统，</strong>用于通过铜缆或有源光缆达到高达传输速率<strong>120Gbps</strong>的能力。</p>
+<p><strong>FusionStorage的技术规格参数表如下：</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>集群指标</strong></th>
+<th><strong>规格</strong></th>
+<th><strong>卷规格指标</strong></th>
+<th><strong>规格</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单集群存储服务器数量</td>
+<td>4,096个</td>
+<td>集群最大卷数量</td>
+<td>1,280,000个</td>
+</tr>
+<tr>
+<td>单集群硬盘数量</td>
+<td>49,152个</td>
+<td>单资源池最大卷数量</td>
+<td>65,000个</td>
+</tr>
+<tr>
+<td>单集群支持的计算节点数量</td>
+<td>10,240个</td>
+<td>卷容量</td>
+<td>64MB～256TB</td>
+</tr>
+<tr>
+<td>单集群最大资源池数量</td>
+<td>128个</td>
+<td>卷最大共享主机数量</td>
+<td>128个</td>
+</tr>
+<tr>
+<td><strong>资源池规格指标</strong></td>
+<td><strong>规格</strong></td>
+<td>每个主机最大挂载卷数量</td>
+<td>512个</td>
+</tr>
+<tr>
+<td>单资源池的硬盘数量</td>
+<td>两副本（HDD或SSD）：12个～96个三副本（HDD或SSD）：12个～2,048个</td>
+<td>共享卷最大数量</td>
+<td>20,000个</td>
+</tr>
+<tr>
+<td>单资源池的存储服务器数量</td>
+<td>两副本（HDD或SSD）：3个～16个三副本（HDD或SSD）：4个～256个</td>
+<td>单个卷最大快照数量</td>
+<td>无限制，快照总数不超过1,280,000个</td>
+</tr>
+<tr>
+<td>单资源池的机柜数量</td>
+<td>非跨机柜数据安全：1个～12个跨机柜数据安全：3个～12个</td>
+<td>单个卷最大链接克隆数量</td>
+<td>2,048个</td>
+</tr>
+<tr>
+<td>单个服务器最多可划分的资源池数量</td>
+<td>3个</td>
+<td>同步复制卷的最大数量</td>
+<td>4,096个</td>
+</tr>
+<tr>
+<td><strong>iSCSI接口协议指标</strong></td>
+<td><strong>规格</strong></td>
+<td>同步复制卷的最大容量</td>
+<td>2TB</td>
+</tr>
+<tr>
+<td>iSCSI CHAP用户最大数量</td>
+<td>1,024个</td>
+<td>每个主机支持的同步复制卷的总容量</td>
+<td>64TB</td>
+</tr>
+<tr>
+<td>iSCSI卷最大扩容容量</td>
+<td>256TB</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="FusionStorage逻辑架构"><a href="#FusionStorage逻辑架构" class="headerlink" title="FusionStorage逻辑架构"></a>FusionStorage逻辑架构</h2><p>在中国移动电信云NFV中，<strong>主要使用分布式块存储</strong>，华为FusionStorage Block的解决方案将通用X86存储服务器池化，建立大规模块存储资源池，提供标准的块存储数据访问接口（SCSI和iSCSI等）。支持各种虚拟化Hypervisor平台和各种业务应用(如SQL、Web、行业应用等等)，可以和各种云平台集成，如华为FusionSphere、VMware、开源Openstack等，按需分配存储资源。如下图所示：</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48d675d71079948.jpg"></p>
+<p>同时，FusionStorage Block通过及SSD做Cache，构建内存—缓存（SSD)—主存（HDD/SAS/SATA)三级存储等关键技术，将存储系统的性能和可靠性得到极大的提高。</p>
+<p>如下图所示，华为FusionStorage的逻辑架构中，按照管理角色和代理角色分为FSM和FSA两类进程，在代理进程内部按照数据管理、I/O控制和数据读写进一步细分为MDC、VBS和OSD三个子进程，各类软件逻辑模块的功能解释如下：</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48d7c334b591527.jpg"></p>
+<p><strong>FSM（FusionStorage Manager）：</strong>FusionStorage管理模块，<strong>提供告警、监控、日志、配置</strong>等操作维护功能。一般情况下<strong>FSM通过管理虚机主备节点部署</strong>，不考虑资源利用率的场景下，也可以使用物理服务器主备部署。</p>
+<p><strong>FSA（FusionStorage Agent）：</strong>代理进程，部署在各节点上，实现各节点与FSM通信。FSA包含<strong>MDC、VBS</strong>和<strong>OSD</strong>三类不同的子进程。根据系统不同配置要求，分别在不同的节点上启用不同的进程组合来完成特定的功能。比如：单纯存储节点只需要部署OSD子进程，用于构建虚拟存储池。计算和存储融合节点，不仅需要部署OSD进程，还需部署VBS进程，用于控制数据读写I/O。</p>
+<p><strong>MDC（MetaData Controller）：</strong>负责整个分布式存储集群的的元数据控制，实现对<strong>分布式集群的状态控制</strong>，以及<strong>控制数据分布式规则</strong>、<strong>数据重建规则</strong>等。 MDC是整个分布式存储集群的核心，通过MDC模块才能找到数据的具体存储位置，知悉存储副本的数量，分布和大小。因此，MDC子进程必须采用高可用HA的方式部署，默认情况下，是部署在3个节点的<strong>ZK(Zookeeper)盘上</strong>，形成MDC集群。</p>
+<p><strong>VBS（Virtual Block System）：</strong>虚拟块存储管理组件，负责<strong>卷元数据的管理</strong>，也就是我们俗称的”软件机头“。VBS子进程提供分布式集群接入点服务，使计算资源能够通过VBS访问分布式存储资源。VBS上存储的是虚拟机虚拟磁盘卷的元数据，用于描述虚拟卷在OSD的位置，分布和大小等。凡是融合计算资源的节点，<strong>每个节点上默认部署一个VBS进程，形成VBS集群</strong>，由于VBS从OSD读取数据时可以并发，所以节点上也可以通过部署多个VBS来提升IO性能。</p>
+<p><strong>OSD（Object Storage Device）：</strong>对象存储设备服务子进程，执行具体的I/O操作。<strong>在每个存储节点服务器上可以部署多个OSD进程。一般情况下，存储服务器上的一块本地磁盘默认对应部署一个OSD进程</strong>。如果使用大容量SSD卡作主存，为了充分发挥SSD卡的性能，可以在1张SSD卡上部署多个OSD进程进行管理，例如2.4TB的SSD卡可以部署6个OSD进程，每个OSD进程负责管理400GB存储空间。</p>
+<h2 id="FusionStorage部署方式"><a href="#FusionStorage部署方式" class="headerlink" title="FusionStorage部署方式"></a><strong>FusionStorage部署方式</strong></h2><p>在中国移动电信云NFV解决方案中，无论软件由哪家厂商提供，虚拟化Hypervisor都是采用KVM来实现，区别只是不同厂商在开源KVM中私有增强或加固。华为FusionStorage Block支持XEN/KVM之类的Linux开放体系的Hypervisor场景，包括华为基于XEN/KVM增强的FusionSphere UVP虚拟化平台，和非华为的XEN/KVM虚拟化平台。在XEN/KVM的虚拟化场景下，FusionStorage Block既支持计算存储融合的部署模式，又支持计算存储分离的部署模式。</p>
+<p><strong>所谓融合部署，</strong>就是指计算与存储的融合部署方式，也就是说将应用或虚拟机与存储在集群范围内部署在同一台服务器上。如下图所示：</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48dabce4eb19183.jpg"></p>
+<p>融合部署对应到FusionStorage的逻辑架构中，就是指的是<strong>将VBS和OSD部署在同一台服务器中</strong>。这种部署方式提升了资源利用率，虽然一定意义上增加了计算节点服务器的CPU开销，但是通过分布式存储软件策略，可以满足数据就近读写，提升I/O转发性能，同时数据副本异地存放，满足数据存储可靠性。在电信云NFV中，<strong>对时延较敏感的业务控制数据应用虚机推荐采用融合部署的方式部署。</strong></p>
+<p><strong>所谓分离部署，顾名思义就是将</strong>计算与存储的分开部署，也就是将业务虚拟机与存储部署在不同的服务器上。如下图所示：</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48dc0b8e4d39512.jpg"></p>
+<p>分离部署对应到FusionStorage的逻辑架构中，就是将VBS和OSD分别部署在不同的服务器中，其中存储节点服务器只部署OSD子进程，计算节点服务器只部署VBS子进程。计算节点通过存储网络完成存储节点上数据的I/O读写，<strong>一般高性能数据库应用因为需要对数据进行计算，推荐采用分离部署的方式</strong>。但是，这种部署方式在I/O转发性能略差于融合部署。采用分离部署时，<strong>存储节点服务器Host OS可以采用通用的Linux OS操作系统，这就为后续分布式存储解耦提供了基础。</strong></p>
+<h2 id="FusionStorage数据可靠性"><a href="#FusionStorage数据可靠性" class="headerlink" title="FusionStorage数据可靠性"></a>FusionStorage数据可靠性</h2><h3 id="集群管理"><a href="#集群管理" class="headerlink" title="集群管理"></a><strong>集群管理</strong></h3><p>华为分布式存储FusionStorage的分布式存储软件采用集群管理方式，规避单点故障，一个节点或者一块硬盘故障自动从集群内隔离出来，不影响整个系统业务的使用。集群内选举进程Leader，Leader负责数据存储逻辑的处理，当Leader出现故障，系统自动选举其他进程成为新的Leader。</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48de4e92a242186.jpg"></p>
+<h3 id="多数据副本"><a href="#多数据副本" class="headerlink" title="多数据副本"></a><strong>多数据副本</strong></h3><p>华为分布式存储FusionStorage中没有使用传统的RAID模式来保证数据的可靠性（实际采用的RAID2.0+技术），而是采用了多副本备份机制，即<strong>同一份数据可以复制保存多个副本</strong>。<strong>在数据存储前，对数据打散进行分片，分片后的数据按照一定的规则保存集群节点上。</strong>如下图所，FusionStorage采用数据多副本备份机制来保证数据的可靠性，即同一份数据可以复制保存为2~3个副本。</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48dfbc9ce645690.jpg"></p>
+<p>FusionStorage针对系统中的每个卷，默认按照<strong>1MB</strong>进行分片，分片后的数据按照DHT算法保存集群节点上。如上图所示，对于服务器Server1的 磁盘Disk1上的数据块P1，它的数据备份为服务器Server2的磁盘Disk2上P1’，P1和P1’构成了同一个数据块的两个副本。当P1所在的硬盘故障时，P1’可以继续提供存储服务。</p>
+<p><strong>数据分片分配算法保证了主用副本和备用副本在不同服务器和不同硬盘上的均匀分布，换句话说，每块硬盘上的主用副本和备副本数量是均匀的。扩容节点或者故障减容节点时，数据恢复重建算法保证了重建后系统中各节点负载的均衡性。</strong></p>
+<p>### </p>
+<h3 id="数据一致性和弹性扩展"><a href="#数据一致性和弹性扩展" class="headerlink" title="数据一致性和弹性扩展"></a><strong>数据一致性和弹性扩展</strong></h3><p><strong>数据一致性的要求是：当应用程序成功写入一份数据时，后端的几个数据副本必然是一致的，当应用程序再次读取时，无论在哪个副本上读取，都是之前写入的数据，这种方式也是绝大部分应用程序希望的。保证多个数据副本之间的数据一致性是分布式存储系统的重要技术点。</strong>华为分布式存储FusionStorage采用<strong>强一致性复制技术确保各个数据副本的一致性，一个副本写入，多个副本读取。</strong> 如下图所示，</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48e16e330d10346.jpg"></p>
+<p>存储资源池支持多种安全级别，采用强一致性复制协议，冗余策略按需灵活配置、部署。当采用机柜级冗余时，能同时容忍2或3个机柜失效；当采用节点级冗余时，能同时容忍2或3个节点失效。</p>
+<p>FusionStorage还支持Read Repair机制。Read Repair机制是指在读数据失败时，会判断错误类型，如果是磁盘扇区读取错误，可以通过从其他副本读取数据，然后重新写入该副本的方法进行恢复，从而保证数据副本总数不减少。</p>
+<p>同时，FusionStorage的分布式架构具有良好的可扩展性，支持超大容量的存储。如下图所示，<strong>扩容存储节点后不需要做大量的数据搬迁，系统可快速达到负载均衡状态。</strong></p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48e2d58d2b67146.jpg"></p>
+<p>FusionStorage支持灵活扩容方式，不仅支持计算节点、硬盘、存储节点单类性扩容，而且支持同时进行扩容。由于软件机头、存储带宽和Cache都均匀分布到各个节点上，系统IOPS、吞吐量和Cache随着节点扩容线性增加，理论上计算节点和存储节点越多，FusionStorage的性能越强。</p>
+<h3 id="快速数据重建"><a href="#快速数据重建" class="headerlink" title="快速数据重建"></a><strong>快速数据重建</strong></h3><p>分布式存储系统内部需要具备强大的数据保护机制。数据存储时被分片打散到多个节点上，这些分片数据支持分布在不同的存储节点、不同的机柜之间，同时数据存储时采用多副本技术，数据会自动存多份，每一个分片的不同副本也被分散保存到不同的存储节点上。在硬件发生故障导致数据不一致时，分布式存储系统通过内部的自检机制，通过比较不同节点上的副本分片，自动发现数据故障。发现故障后启动数据修复机制，在后台修复数据。如下图所示为华为FusionStorage的数据重建过程示意图。</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48e4357cce64262.jpg"></p>
+<p>FusionStorage中的<strong>每个硬盘都保存了多个DHT分区（Partition）</strong>，这些分区的副本按照策略分散在系统中的其他节点。当FusionStorage检测到硬盘或者节点硬件发生故障时，自动在后台启动数据修复。</p>
+<p>由于分区的副本被分散到多个不同的存储节点上，数据修复时，<strong>将会在不同的节点上同时启动数据重建，每个节点上只需重建一小部分数据，多个节点并行工作，有效避免单个节点重建大量数据所产生的性能瓶颈，对上层业务的影响做到最小化。</strong></p>
+<p>### </p>
+<h3 id="掉电保护"><a href="#掉电保护" class="headerlink" title="掉电保护"></a><strong>掉电保护</strong></h3><p>分布式存储系统运行过程中可能会出现服务器突然下电的情况，此时在内存中的元数据和写缓存数据会随着掉电而丢失，需要使用非易失存储介质来保存和恢复元数据和缓存数据。 华为FusionStorage支持的保电介质为NVDIMM内存条或SSD。如下图所示，程序运行过程中会把元数据和缓存数据写入保电介质中，节点异常掉电并重启后，系统自动恢复保电介质中的元数据和缓存数据。</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48e5a8ca0983577.jpg"></p>
+<p>部署FusionStorage时，要求每一台服务器配备NVDIMM内存条或SSD盘，服务器掉电时会把元数据和缓存数据写入NVDIMM的Flash或SSD盘中，上电后又会把Flash中的数据还原到内存中。FusionStorage能够自动识别出系统中的NVDIMM内存，并把需要保护的数据按照内部规则存放在NVDIMM中，用于提供掉电保护功能。</p>
+<h2 id="FusionStorage的特性"><a href="#FusionStorage的特性" class="headerlink" title="FusionStorage的特性"></a>FusionStorage的特性</h2><p>FusionStorage分布式存储软件总体框架如下所示，由<strong>存储管理模块、存储接口层、存储服务层</strong>和<strong>存储引擎层</strong>4类组成。</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48e853b2db26201.jpg"></p>
+<h3 id="FusionStorage块存储功能-SCSI-iSCSI块接口"><a href="#FusionStorage块存储功能-SCSI-iSCSI块接口" class="headerlink" title="FusionStorage块存储功能 - SCSI/iSCSI块接口"></a>FusionStorage块存储功能 - SCSI/iSCSI块接口</h3><p>FusionStorage通过VBS以SCSI或iSCSI方式提供块接口。当采用SCSI方式时，安装VBS的物理服务器、FusionSphere或KVM等采用SCSI接口（带内方式）；当采用iSCSI方式时，安装VBS以外的虚拟机或主机提供存储访问，VMware、MS SQL Server集群采用iSCSI模式（带外方式）。</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48e9f11eee84034.jpg"></p>
+<p>使用SCSI存储接口时，支持<strong>快照、快照备份、链接克隆</strong>功能，iSCSI暂不支持前述特性。对于iSCSI协议的支持是通过VBS提供iSCSI Target，块存储使用方通过本机的Initiator与iSCSI Target联接来访问存储。FusionStorage支持以下两种安全访问的标准：<strong>CHAP身份验证</strong>和<strong>LUN MASKING给Host对Lun的访问进行授权。</strong></p>
+<h3 id="FusionStorage精简配置功能"><a href="#FusionStorage精简配置功能" class="headerlink" title="FusionStorage精简配置功能"></a><strong>FusionStorage精简配置功能</strong></h3><p>相比传统方式分配物理存储资源，精简配置可显著提高存储空间利用率。FusionStorage天然支持自动精简配置，和传统SAN相比不会带来性能下降。</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48eb9d887d74962.jpg"></p>
+<p>当用户对卷进行写操作时，系统才分配实际物理空间，FusionStorage Block仅处理虚拟卷空间和实际物理空间之前的映射关系，对性能无影响。</p>
+<h3 id="FusionStorage快照功能"><a href="#FusionStorage快照功能" class="headerlink" title="FusionStorage快照功能"></a>FusionStorage快照功能</h3><p>FusionStorage快照机制，将用户卷数据在某个时间点的状态保存下来，可用作导出数据、恢复数据之用。FusionStorage Block快照数据基于DHT机制，数据在存储时采用ROW（Redirect-On-Write）机制，快照不会引起原卷性能下降。比如：针对一块容量为2TB的硬盘，完全在内存中构建索引需要24MB空间，通过一次Hash查找即可判断有没有做过快照，以及最新快照的存储位置，效率很高。</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48ed84814c85259.jpg"></p>
+<ul>
+<li><strong>无限次快照：</strong>快照元数据分布式存储，水平扩展，无集中式瓶颈，理论上可支持无限次快照。</li>
+<li><strong>卷恢复速度快：</strong>无需数据搬迁，从快照恢复卷1S内完成（传统SAN在几小时级别）。</li>
+</ul>
+<h3 id="FusionStorage链接克隆功能"><a href="#FusionStorage链接克隆功能" class="headerlink" title="FusionStorage链接克隆功能"></a><strong>FusionStorage链接克隆功能</strong></h3><p>FusionStorage支持一个卷快照创建多个克隆卷，对克隆卷修改不影响原始快照和其它克隆卷。克隆卷继承普通卷所有功能，即克隆卷可支持创建快照、从快照恢复及作为母卷再次克隆操作。</p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48f00b449b43091.jpg"></p>
+<ul>
+<li><strong>支持批量进行虚拟机卷部署，在1秒时间内创建上百个虚拟机卷。</strong></li>
+<li><strong>支持1:2048的链接克隆比，提升存储空间利用率。</strong></li>
+</ul>
+<h3 id="FusionStorage-Block卷迁移"><a href="#FusionStorage-Block卷迁移" class="headerlink" title="FusionStorage Block卷迁移"></a><strong>FusionStorage Block卷迁移</strong></h3><p>为了存储池之间的容量平衡，FusionStorage支持将容量满的池迁移到一个空闲的池。或者，为了改变卷的性能，FusionStorage支持卷在不同性能的池之间的迁移，从低性能的池向高性能的池迁移。这就是卷迁移使用的场景，在FusionStorage中，由于迁移过程中，源卷不能有写数据的操作，所以这种迁移属于<strong>冷迁移。</strong></p>
+<p><img src="https://i.loli.net/2019/06/03/5cf48f259c14a69801.jpg"></p>
+<p><strong>步骤：</strong></p>
+<p>【创建目标卷】&gt;&gt;&gt;【卷数据复制】&gt;&gt;&gt;【删除源卷】&gt;&gt;&gt;【目标卷改名】&gt;&gt;&gt;【完成】</p>
+<h3 id="FusionStorage-Block双活"><a href="#FusionStorage-Block双活" class="headerlink" title="FusionStorage Block双活"></a><strong>FusionStorage Block双活</strong></h3><p><img src="https://i.loli.net/2019/06/03/5cf48f45d4d4965748.jpg"></p>
+<p>基于AB两个数据中心的两套FusionStorage Block集群构建双活容灾关系，基于两套FusionStorage的卷虚拟出一个双活卷，两数据中心业务的主机能同时进行读写服务。任意数据中心故障，数据零丢失，业务能迅速切换到另外一个站点运行，保证业务连续型。</p>
+<p>在原有基础服务基础上，引入复制集群，按服务化的架构提供双活业务。支持物理部署和虚拟机部署，可以做到独立安装和升级，独立扩展，按卷粒度提供双活服务。且支持优先站点仲裁和第三方仲裁的双仲裁模式，故障自动倒换，无需人工介入。同时，能跟上层Oracle RAC、VMWare等应用形成端到端双活容灾解决方案。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2019/06/03/2019-06-03-华为分布式存储FusionStorage概述/" title="2019-06-03-华为分布式存储FusionStorage概述">https://kkutysllb.cn/2019/06/03/2019-06-03-华为分布式存储FusionStorage概述/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/电信云/" rel="tag"><i class="fa fa-tag"></i> 电信云</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/31/2019-05-31-PXE批量部署原理及kickstart工具实践/" rel="next" title="2019-05-31-PXE批量部署原理及kickstart工具实践">
+                <i class="fa fa-chevron-left"></i> 2019-05-31-PXE批量部署原理及kickstart工具实践
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">39</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#传统SAN架构"><span class="nav-number">1.</span> <span class="nav-text">传统SAN架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是Server-SAN"><span class="nav-number">2.</span> <span class="nav-text">什么是Server SAN?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式存储池的概念"><span class="nav-number">3.</span> <span class="nav-text">分布式存储池的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#华为FusionStorage分布式存储概述"><span class="nav-number">4.</span> <span class="nav-text">华为FusionStorage分布式存储概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FusionStorage逻辑架构"><span class="nav-number">5.</span> <span class="nav-text">FusionStorage逻辑架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FusionStorage部署方式"><span class="nav-number">6.</span> <span class="nav-text">FusionStorage部署方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FusionStorage数据可靠性"><span class="nav-number">7.</span> <span class="nav-text">FusionStorage数据可靠性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#集群管理"><span class="nav-number">7.1.</span> <span class="nav-text">集群管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多数据副本"><span class="nav-number">7.2.</span> <span class="nav-text">多数据副本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据一致性和弹性扩展"><span class="nav-number">7.3.</span> <span class="nav-text">数据一致性和弹性扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#快速数据重建"><span class="nav-number">7.4.</span> <span class="nav-text">快速数据重建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#掉电保护"><span class="nav-number">7.5.</span> <span class="nav-text">掉电保护</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FusionStorage的特性"><span class="nav-number">8.</span> <span class="nav-text">FusionStorage的特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage块存储功能-SCSI-iSCSI块接口"><span class="nav-number">8.1.</span> <span class="nav-text">FusionStorage块存储功能 - SCSI/iSCSI块接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage精简配置功能"><span class="nav-number">8.2.</span> <span class="nav-text">FusionStorage精简配置功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage快照功能"><span class="nav-number">8.3.</span> <span class="nav-text">FusionStorage快照功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage链接克隆功能"><span class="nav-number">8.4.</span> <span class="nav-text">FusionStorage链接克隆功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-Block卷迁移"><span class="nav-number">8.5.</span> <span class="nav-text">FusionStorage Block卷迁移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-Block双活"><span class="nav-number">8.6.</span> <span class="nav-text">FusionStorage Block双活</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">485k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">7:21</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/06/03/2019-06-03-华为分布式存储FusionStorage概述/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>
