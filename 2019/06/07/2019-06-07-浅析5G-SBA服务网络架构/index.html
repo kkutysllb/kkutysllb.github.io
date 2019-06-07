@@ -119,7 +119,7 @@
 <meta property="og:image" content="https://i.loli.net/2019/06/07/5cf9b6a1a3f9833513.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/07/5cf9b6c3cca4469289.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/07/5cf9b6e4bdf5067337.jpg">
-<meta property="og:updated_time" content="2019-06-07T00:59:39.764Z">
+<meta property="og:updated_time" content="2019-06-07T01:01:20.730Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-06-07-浅析5G-SBA服务网络架构">
 <meta name="twitter:description" content="IMT-2020推进组提出的“三朵云“架构前文提出了5G网络架构是一种颠覆性的变化，之所以这么说，是从5G网络架构的实现方式来说的。由于“三朵云”概念的提出，导致5G的网络功能软件模块化实现，也就是我们常说的云化网络架构，其特征就是控制集中化、功能模块化和接口软件化。如下图所示：">
@@ -444,7 +444,7 @@
                 
               
 
-              <time title="创建时间：2019-06-07 07:16:40 / 修改时间：08:59:39" itemprop="dateCreated datePublished" datetime="2019-06-07T07:16:40+08:00">2019-06-07</time>
+              <time title="创建时间：2019-06-07 07:16:40 / 修改时间：09:01:20" itemprop="dateCreated datePublished" datetime="2019-06-07T07:16:40+08:00">2019-06-07</time>
             
 
             
@@ -556,8 +556,7 @@
 <p>还有一点变化就是在5G网络架构中，接入网是一种固移融合的组网形式，统一由AMF完成接入控制。同时，在5G网络用户的移动性附着与承载会话建立是全解耦的，也就是说用户在5G网络附着后，无需建立PDU会话承载，当有业务需求时再按需发起PDU会话承载的建立。而不像4G网络，用户附着网络必须建立一条默认PDN会话承载。这种改变一定程度上减少了全网资源消耗。</p>
 <p><img src="https://i.loli.net/2019/06/07/5cf9a079f0d9e24978.jpg"></p>
 <p>这种服务化架构在云原生的应用就如上图所示，每一朵云都是基于这种SBA的组网形式，不仅云内各服务松耦合，云与云之间也是一种松耦合状态，通过全网统一的编排和管理实现对接。目前，<strong>中国移动内部规划通过OSS4.0实现全网资源的统一编排和管理。</strong></p>
-<p><strong>中国移动电信云&amp;5GC资源池部署演进策略</strong></p>
-<p>前面提到，5G网络架构的实现基于NFV/SDN的一种云化网络架构。因此，各大运营商在部署5G之前必须对传统网络进行一种云化改造。中国移动在2015年底就启动了NFV云化试点工作，经过4年多省市连续试点，目前已经解决大网云化改造中80%的问题。因此，在2019年中国移动启动电信云资源池的建设，全国分为8个大区（西北、西南、华北、华南、东北、华东1、华东2、中部），按照“三步走，两级演进”的策略，最终全网核心控制云8大区共部署10万台服务器，仅西北大区就需部署20000+服务器。如下图所示：</p>
+<h2 id="中国移动电信云-amp-5GC资源池部署演进策略"><a href="#中国移动电信云-amp-5GC资源池部署演进策略" class="headerlink" title="中国移动电信云&amp;5GC资源池部署演进策略"></a>中国移动电信云&amp;5GC资源池部署演进策略</h2><p>前面提到，5G网络架构的实现基于NFV/SDN的一种云化网络架构。因此，各大运营商在部署5G之前必须对传统网络进行一种云化改造。中国移动在2015年底就启动了NFV云化试点工作，经过4年多省市连续试点，目前已经解决大网云化改造中80%的问题。因此，在2019年中国移动启动电信云资源池的建设，全国分为8个大区（西北、西南、华北、华南、东北、华东1、华东2、中部），按照“三步走，两级演进”的策略，最终全网核心控制云8大区共部署10万台服务器，仅西北大区就需部署20000+服务器。如下图所示：</p>
 <p><img src="https://i.loli.net/2019/06/07/5cf9b67d1101088422.jpg"></p>
 <p>如上图所示，三步走策略中目前已基本完成第一步8大区电信云资源池的建设，预计在今年底8大区电信云进入商用阶段。在目前第一阶段中，首先完成大网核心网的云化改造，涉及IMS/EPC两大专业，并在今年完成各省市大网业务的上云割接，同时随着资源池规模的逐步加大，最终预计在2022年完成全网业务云化搬迁。</p>
 <p>同时，在今年9月同步开启二阶段资源池建设，并且在一阶段电信云资源池的基础上引入5GC资源池，同步引入SDN技术。由于SDN的引入需要对已有资源池从虚层开始完成改造和重部署，考虑到已割接上云业务安全和网络稳定性，因此5GC资源池与一阶段电信云资源池采用<strong>“共址不共池”</strong>策略部署。</p>
@@ -905,7 +904,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#IMT-2020推进组提出的“三朵云“架构"><span class="nav-number">1.</span> <span class="nav-text">IMT-2020推进组提出的“三朵云“架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SBA服务化网络架构"><span class="nav-number">2.</span> <span class="nav-text">SBA服务化网络架构</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#IMT-2020推进组提出的“三朵云“架构"><span class="nav-number">1.</span> <span class="nav-text">IMT-2020推进组提出的“三朵云“架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SBA服务化网络架构"><span class="nav-number">2.</span> <span class="nav-text">SBA服务化网络架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#中国移动电信云-amp-5GC资源池部署演进策略"><span class="nav-number">3.</span> <span class="nav-text">中国移动电信云&amp;5GC资源池部署演进策略</span></a></li></ol></div>
             
 
           </div>
