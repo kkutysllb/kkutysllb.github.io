@@ -103,21 +103,29 @@
 
 
 
-  <meta name="description" content="内存管理中的基本概念内存管理一向是所有操作系统书籍不惜笔墨重点讨论的内容，无论市面上或是网上都充斥着大量涉及内存管理的教材和资料。因此，我们这里所要写的Linux内存管理采取避重就轻的策略，从理论层面就不去班门弄斧，贻笑大方了。 遵循“理论来源于实践”的“教条”，我们先不必一下子就钻入内核里去看系统内存到底是如何管理，那样往往会让你陷入似懂非懂的窘境（我当年就犯了这个错误！）。所以最好的方式是先从">
-<meta name="keywords" content="Linux">
+  <meta name="description" content="服务器与外部连接的网络虚拟化主要有基于TOR交换机的虚拟交换技术和高性能的计算网络融合技术。基于接入交换机TOR实现的虚拟交换是指某些物理交换机可通过特殊协议，感知虚拟机的存在，在物理交换机层实现虚拟交换，其代表技术就是VEPA和VN-tag。同时，高性能计算网络及其融合技术中Infiniband、FCOE、RoCE等技术旨在用一种连接线将数据中心存储网络和计算网络（互联网络）聚合起来，使服务器可">
+<meta name="keywords" content="电信云">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2019-03-18-Linux系统的内存管理">
-<meta property="og:url" content="https://kkutysllb.cn/2019/04/15/2019-03-18-Linux系统的内存管理/index.html">
+<meta property="og:title" content="2019-06-18-服务器与外部链接的网络虚拟化">
+<meta property="og:url" content="https://kkutysllb.cn/2019/06/19/2019-06-18-服务器与外部链接的网络虚拟化/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
-<meta property="og:description" content="内存管理中的基本概念内存管理一向是所有操作系统书籍不惜笔墨重点讨论的内容，无论市面上或是网上都充斥着大量涉及内存管理的教材和资料。因此，我们这里所要写的Linux内存管理采取避重就轻的策略，从理论层面就不去班门弄斧，贻笑大方了。 遵循“理论来源于实践”的“教条”，我们先不必一下子就钻入内核里去看系统内存到底是如何管理，那样往往会让你陷入似懂非懂的窘境（我当年就犯了这个错误！）。所以最好的方式是先从">
+<meta property="og:description" content="服务器与外部连接的网络虚拟化主要有基于TOR交换机的虚拟交换技术和高性能的计算网络融合技术。基于接入交换机TOR实现的虚拟交换是指某些物理交换机可通过特殊协议，感知虚拟机的存在，在物理交换机层实现虚拟交换，其代表技术就是VEPA和VN-tag。同时，高性能计算网络及其融合技术中Infiniband、FCOE、RoCE等技术旨在用一种连接线将数据中心存储网络和计算网络（互联网络）聚合起来，使服务器可">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://i.loli.net/2019/04/15/5cb4323465760.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/04/15/5cb432bc7e467.jpg">
-<meta property="og:updated_time" content="2019-05-01T16:23:46.479Z">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d090d97943ef92905.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d090e59c6f8660696.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d090f0675ade78536.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d090fb94590b89863.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d0910fdad3a135154.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d0911c1bf4e865109.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d0912fa79d9362058.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d0913aeb478568261.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d0913fc5e99e73776.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d0914937d09d45006.jpg">
+<meta property="og:updated_time" content="2019-06-18T16:48:29.665Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2019-03-18-Linux系统的内存管理">
-<meta name="twitter:description" content="内存管理中的基本概念内存管理一向是所有操作系统书籍不惜笔墨重点讨论的内容，无论市面上或是网上都充斥着大量涉及内存管理的教材和资料。因此，我们这里所要写的Linux内存管理采取避重就轻的策略，从理论层面就不去班门弄斧，贻笑大方了。 遵循“理论来源于实践”的“教条”，我们先不必一下子就钻入内核里去看系统内存到底是如何管理，那样往往会让你陷入似懂非懂的窘境（我当年就犯了这个错误！）。所以最好的方式是先从">
-<meta name="twitter:image" content="https://i.loli.net/2019/04/15/5cb4323465760.jpg">
+<meta name="twitter:title" content="2019-06-18-服务器与外部链接的网络虚拟化">
+<meta name="twitter:description" content="服务器与外部连接的网络虚拟化主要有基于TOR交换机的虚拟交换技术和高性能的计算网络融合技术。基于接入交换机TOR实现的虚拟交换是指某些物理交换机可通过特殊协议，感知虚拟机的存在，在物理交换机层实现虚拟交换，其代表技术就是VEPA和VN-tag。同时，高性能计算网络及其融合技术中Infiniband、FCOE、RoCE等技术旨在用一种连接线将数据中心存储网络和计算网络（互联网络）聚合起来，使服务器可">
+<meta name="twitter:image" content="https://i.loli.net/2019/06/19/5d090d97943ef92905.jpg">
 
 
 
@@ -126,7 +134,7 @@
 
 
 
-  <link rel="canonical" href="https://kkutysllb.cn/2019/04/15/2019-03-18-Linux系统的内存管理/">
+  <link rel="canonical" href="https://kkutysllb.cn/2019/06/19/2019-06-18-服务器与外部链接的网络虚拟化/">
 
 
 
@@ -136,7 +144,7 @@
   };
 </script>
 
-  <title>2019-03-18-Linux系统的内存管理 | 一花一菩提，一云一世界</title>
+  <title>2019-06-18-服务器与外部链接的网络虚拟化 | 一花一菩提，一云一世界</title>
   
 
 
@@ -395,7 +403,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/04/15/2019-03-18-Linux系统的内存管理/">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/06/19/2019-06-18-服务器与外部链接的网络虚拟化/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kkutysllb">
@@ -412,7 +420,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2019-03-18-Linux系统的内存管理
+          <h1 class="post-title" itemprop="name headline">2019-06-18-服务器与外部链接的网络虚拟化
 
               
             
@@ -438,24 +446,12 @@
                 
               
 
-              <time title="创建时间：2019-04-15 15:21:59" itemprop="dateCreated datePublished" datetime="2019-04-15T15:21:59+08:00">2019-04-15</time>
+              <time title="创建时间：2019-06-19 00:10:00 / 修改时间：00:48:29" itemprop="dateCreated datePublished" datetime="2019-06-19T00:10:00+08:00">2019-06-19</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-05-02 00:23:46" itemprop="dateModified" datetime="2019-05-02T00:23:46+08:00">2019-05-02</time>
               
             
           </span>
@@ -472,7 +468,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux基础/" itemprop="url" rel="index"><span itemprop="name">Linux基础</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV关键技术/" itemprop="url" rel="index"><span itemprop="name">NFV关键技术</span></a></span>
 
                 
                 
@@ -508,7 +504,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">3.6k</span>
+                <span title="本文字数">9.6k</span>
               
 
               
@@ -522,7 +518,7 @@
                 
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
-                <span title="阅读时长">3 分钟</span>
+                <span title="阅读时长">9 分钟</span>
               
             </div>
           
@@ -542,40 +538,95 @@
       
 
       
-        <h2 id="内存管理中的基本概念"><a href="#内存管理中的基本概念" class="headerlink" title="内存管理中的基本概念"></a>内存管理中的基本概念</h2><p>内存管理一向是所有操作系统书籍不惜笔墨重点讨论的内容，无论市面上或是网上都充斥着大量涉及内存管理的教材和资料。因此，我们这里所要写的Linux内存管理采取避重就轻的策略，从理论层面就不去班门弄斧，贻笑大方了。</p>
-<p>遵循“理论来源于实践”的“教条”，我们先不必一下子就钻入内核里去看系统内存到底是如何管理，那样往往会让你陷入似懂非懂的窘境（我当年就犯了这个错误！）。所以最好的方式是先从外部（用户编程范畴）来观察进程如何使用内存，等到大家对内存的使用有了较直观的认识后，再深入到内核中去学习内存如何被管理等理论知识。<a id="more"></a></p>
-<hr>
-<p>每个程序在操作系统中都对应一个进程（例如：QQ，微信等），所有进程都必须占用一定数量的内存，它或是用来存放从磁盘载入的程序代码，或是存放取自用户输入的数据等等。不过进程对这些内存的管理方式因内存用途不一而不尽相同，有些内存是事先静态分配和统一回收的，而有些却是按需要动态分配和回收的。</p>
-<p>对任何一个普通进程来讲，它都会涉及到5种不同的数据段。稍有编程知识的朋友都能想到这几个数据段中包含有“程序代码段”、“程序数据段”、“程序堆栈段”等。不错，这几种数据段都在其中，但除了以上几种数据段之外，进程还另外包含两种数据段。下面我们来简单归纳一下进程对应的内存空间中所包含的5种不同的数据区。</p>
-<p><strong>代码段：</strong>代码段是用来存放可执行文件的操作指令，也就是说它是可执行程序在内存中的镜像。代码段需要防止在运行时被非法修改，所以只准许读取操作，而不允许写入（修改）操作——它是不可写的。</p>
-<p><strong>数据段：</strong>数据段用来存放可执行文件中已初始化全局变量，换句话说就是存放程序静态分配的变量和全局变量。</p>
-<p><strong>BSS段：</strong>BSS段包含了程序中未初始化的全局变量，在内存中 bss段全部置零。</p>
-<p><strong>堆（heap）：</strong>堆是用于存放进程运行中被动态分配的内存段，每一个程序当开始执行，就会在内存中划出一片空间作为程序运行时代码和数据存放地方。它的大小并不固定，可动态扩张或缩减。当进程调用malloc等函数分配内存时，新分配的内存就被动态添加到堆上（堆被扩张）；当利用free等函数释放内存时，被释放的内存从堆中被剔除（堆被缩减）。</p>
-<p><strong>栈：</strong>栈是用户存放程序临时创建的局部变量，也就是说我们函数括弧“{}”中定义的变量（但不包括static声明的变量，static意味着在数据段中存放变量）。除此以外，在函数被调用时，其参数也会被压入发起调用的进程栈中，并且待到调用结束后，函数的返回值也会被存放回栈中。由于栈的先进先出特点，所以栈特别方便用来保存/恢复调用现场。从这个意义上讲，我们可以把堆栈看成一个寄存、交换临时数据的内存区。</p>
-<p>机器语言指令中出现的内存地址，都是逻辑地址，需要转换成线性地址，再经过MMU(CPU中的内存管理单元)转换成物理地址才能够被访问到。我们写个最简单的hello world程序，用gccs编译，再反编译后会看到以下指令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mov    0x8747ab0, %eax</span><br></pre></td></tr></table></figure>
-<p>这里的内存地址0x8747ab0 就是一个逻辑地址，必须加上隐含的DS 数据段的基地址，才能构成线性地址。也就是说 0x8747ab0 是当前任务的DS数据段内的偏移量offset。</p>
-<p>在x86保护模式下，段的信息（段基线性地址、长度、权限等）即<strong>段描述符</strong>占8个字节，段信息无法直接存放在段寄存器中（段寄存器只有2字节）。Intel的设计是段描述符集中存放在GDT或LDT中，而段寄存器存放的是段描述符在GDT或LDT内的索引值(index)。</p>
-<h2 id="Linux系统逻辑地址-线性地址"><a href="#Linux系统逻辑地址-线性地址" class="headerlink" title="Linux系统逻辑地址=线性地址"></a>Linux系统逻辑地址=线性地址</h2><p>为什么这么说呢？因为Linux所有的段（用户代码段、用户数据段、内核代码段、内核数据段）的线性地址都是从 0x00000000 开始，长度4G，这样，线性地址=逻辑地址+ 0x00000000，也就是说逻辑地址等于线性地址了。</p>
-<p>这种情况下Linux只用到了GDT，不论是用户任务还是内核任务，都没有用到LDT。GDT的第12和13项段描述符是 <strong>KERNEL_CS 和</strong>KERNEL_DS，第14和15项段描述符是 <strong>USER_CS 和</strong>USER_DS。内核任务使用<strong>KERNEL_CS 和</strong>KERNEL_DS，所有的用户任务共用<strong>USER_CS 和</strong>USER_DS，也就是说不需要给每个任务再单独分配段描述符。内核段描述符和用户段描述符虽然起始线性地址和长度都一样，但DPL(描述符特权级)是不一样的。<strong>KERNEL_CS 和</strong>KERNEL_DS 的DPL值为0（最高特权），<strong>USER_CS 和</strong>USER_DS的DPL值为3。</p>
-<p>用gdb调试程序的时候，用info reg 显示当前寄存器的值：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cs             0x73     115</span><br><span class="line">ss             0x7b     123</span><br><span class="line">ds             0x7b     123</span><br><span class="line">es             0x7b     123</span><br></pre></td></tr></table></figure>
-<p>可以看到ds值为0x7b, 转换成二进制为 00000000 01111011，TI字段值为0,表示使用GDT，GDT索引值为 01111，即十进制15，对应的就是GDT内的__USER_DATA 用户数据段描述符。</p>
-<p>从上面可以看到，Linux在x86的分段机制上运行，却通过一个巧妙的方式绕开了分段。</p>
-<p>Linux主要以分页的方式实现内存管理。如下图所示：</p>
-<p><img src="https://i.loli.net/2019/04/15/5cb4323465760.jpg" alt></p>
-<p>前面说了Linux中逻辑地址等于线性地址，那么线性地址怎么对应到物理地址呢？这个大家都知道，那就是通过分页机制，具体的说，就是通过页表查找来对应物理地址。</p>
-<p>准确的说分页是CPU提供的一种机制，Linux只是根据这种机制的规则，利用它实现了内存管理。</p>
-<p>在保护模式下，控制寄存器CR0的最高位PG位控制着分页管理机制是否生效，如果PG=1，分页机制生效，需通过页表查找才能把线性地址转换物理地址。如果PG=0，则分页机制无效，线性地址就直接做为物理地址。</p>
-<p>分页的基本原理是把内存划分成大小固定的若干单元，每个单元称为一页（page），每页包含4k字节的地址空间（为简化分析，我们不考虑扩展分页的情况）。这样每一页的起始地址都是4k字节对齐的。为了能转换成物理地址，我们需要给CPU提供<strong>当前任务的</strong>线性地址转物理地址的查找表，即页表(page table)。注意，<strong>为了实现每个任务的平坦的虚拟内存，每个任务都有自己的页目录表和页表</strong>。</p>
-<p>为了节约页表占用的内存空间，x86将线性地址通过页目录表和页表两级查找转换成物理地址。32位的线性地址被分成3个部分：<strong>最高10位 Directory 页目录表偏移量，中间10位 Table是页表偏移量，最低12位Offset是物理页内的字节偏移量。</strong></p>
-<p>页目录表的大小为4k（刚好是一个页的大小），包含1024项，每个项4字节（32位），项目里存储的内容就是<strong>页表的物理地址</strong>。如果页目录表中的页表尚未分配，则物理地址填0。页表的大小也是4k，同样包含1024项，每个项4字节，内容为最终物理页的物理内存起始地址。</p>
-<p><strong>每个活动的任务，必须要先分配给它一个页目录表，并把页目录表的物理地址存入cr3寄存器。页表可以提前分配好，也可以在用到的时候再分配</strong>。</p>
-<p>还是以<strong>mov 0x8747ab0, %eax</strong>中的地址为例分析一下线性地址转物理地址的过程。</p>
-<p>前面说到Linux中逻辑地址等于线性地址，那么我们要转换的线性地址就是 0x8747ab0。转换的过程是由CPU自动完成的，Linux所要做的就是准备好转换所需的页目录表和页表（假设已经准备好，给页目录表和页表分配物理内存的过程很复杂，这里不做展开讨论，喜欢内核优化的可自行研究）。</p>
-<p>线性地址 0x8747ab0 转换成二进制后是 1000 0111 0100 0111 1010 1011 0000 0000，最高10位1000 0111 01的十进制是541，CPU查看页目录表第541项，里面存放的是页表的物理地址。线性地址中间10位00 0111 1010 的十进制是122，页表的第122项存储的是最终物理页的物理起始地址。物理页基地址加上线性地址中最低12位的偏移量，CPU就找到了线性地址最终对应的物理内存单元。</p>
-<p>我们知道Linux中用户进程线性地址能寻址的范围是0 － 3G，那么是不是需要提前先把这3G虚拟内存的页表都建立好呢？一般情况下，32位机器的物理内存是小于3G的，加上同时有很多进程都在运行，根本无法给每个进程提前建立3G的线性地址页表。Linux利用CPU的一个缺页机制解决了这个问题。进程创建后我们可以给页目录表的表项值都填0，CPU在查找页表时，如果表项的内容为0,则会引发一个缺页异常，进程暂停执行，Linux内核这时候可以通过一系列复杂的算法给分配一个物理页，并把物理页的地址填入表项中，进程再恢复执行。当然进程在这个过程中是被蒙蔽的，它自己的感觉还是正常访问到了物理内存。</p>
-<p><img src="https://i.loli.net/2019/04/15/5cb432bc7e467.jpg" alt></p>
+        <p>服务器与外部连接的网络虚拟化主要有基于<strong>TOR交换机的虚拟交换技术</strong>和<strong>高性能的计算网络融合技术</strong>。基于接入交换机TOR实现的虚拟交换是指某些物理交换机可通过特殊协议，感知虚拟机的存在，在物理交换机层实现虚拟交换，其代表技术就是<strong>VEPA</strong>和<strong>VN-tag</strong>。同时，高性能计算网络及其融合技术中<strong>Infiniband、FCOE、RoCE</strong>等技术旨在<strong>用一种连接线将数据中心存储网络和计算网络（互联网络）聚合起来</strong>，使服务器可以灵活的配置网络端口，简化网络部署。<a id="more"></a></p>
+<h2 id="基于物理交换机的分布式虚拟交换机"><a href="#基于物理交换机的分布式虚拟交换机" class="headerlink" title="基于物理交换机的分布式虚拟交换机"></a><strong>基于物理交换机的分布式虚拟交换机</strong></h2><p>如下图所示，<strong>基于物理交换机实现虚拟交换的思想是将虚拟机的网络流量全部导入接入交换机TOR处理，即使是同一VLAN内的流量也要绕出来，二层的广播和组播都由接入交换机TOR来模拟。</strong></p>
+<p><img src="https://i.loli.net/2019/06/19/5d090d97943ef92905.jpg"></p>
+<p><strong>在TOR上实现虚拟交换功能的代表技术就是VEPA（Virtual Ethernet Port Aggregator）</strong>。VEPA将虚拟机之间的交换行为从服务器内部移出到上联交换机上，当两个处于同一服务器内的虚拟机要交换数据时，从虚拟机A出来的数据帧首先会经过服务器网卡送往上联交换机，上联交换机通过查看帧头中带的MAC地址（虚拟机MAC地址）发现目的主机在同一台物理服务器中，因此又将这个帧送回原服务器，完成寻址转发。该技术<strong>依赖物理交换机支持VEPA，需要虚拟交换机软件、服务器物理网口驱动作联动修改</strong>，<strong>节省了虚拟交换机查表对物理主机CPU资源消耗。</strong>物理交换机转发功能依赖芯片，功能扩展性差，目前只有H3C、HP等少数厂家宣传支持。</p>
+<p>VEPA方案的目标是要将虚拟机之间的交换从服务器内部移出到接入硬件交换机TOR上，<strong>实现虚拟机之间的“硬交换”。</strong>采用这种方法，通常只需要对网卡驱动、VMM桥模块和外部交换机的软件做很小的改动，从而实现低成本，且对当前网卡、交换机、现有以太网报文格式和标准影响最小。</p>
+<p>采用VEPA方案，虚拟机的流量都是通过物理接入层TOR交换机完成，它的访问控制和报文下发策略也是基于物理接入层TOR交换机，因此很好地避免了网络和服务器设备管理边界模糊的难题。<strong>VEPA标准协议VDP还能准确的感知虚拟机的工作状态，当虚拟机发生迁移时，VEPA协议会将与此相关的访问控制和报文下发等策略重新部署到新的接入交换机。</strong></p>
+<p><img src="https://i.loli.net/2019/06/19/5d090e59c6f8660696.jpg"></p>
+<p>如上图所示：采用了VEPA方案之后，位于一台物理机上不同虚拟机之间的网络流量不再只是由虚拟交换机来完成，而是都要通过物理接入层TOR交换机(即使是从同一个网络端口)。有人可能会提出这样的疑问：直接在虚拟机内存中交换数据不是更快，而且节省物理网络资源吗？答案是肯定的，数据转发确实受影响。但是，H3C的解释是：<strong>虚拟交换机有助于实现虚拟网卡与服务器上物理网卡之间的转换，但也增加了原有网络结构的复杂性，产生新的“边界”给管理带来了麻烦。而且虚拟交换机在服务器宕机的情况下也同时不可用了。</strong>（个人觉得这个解释很牵强，但是VEPA对虚拟机热迁移确实很有利）</p>
+<p>VN-tag是由Cisco和VMWare共同提出的一项标准，如下图所示，<strong>其核心思想是在标准以太网帧中增加一段专用的标记—VN-Tag，用以区分不同的VIF，从而识别特定虚拟机的流量。</strong></p>
+<p><img src="https://i.loli.net/2019/06/19/5d090f0675ade78536.jpg"></p>
+<p><strong>如上图，每个虚机对应唯一的VIF。VN-Tag中最重要的内容是一对新地址：dvif_id和svif_id，这个地址空间对应的不是交换机的端口或者IP网段，而是虚机的VIF。VN-Tag通过这一对地址说明了数据帧从何而来，到哪里去。</strong></p>
+<p>当数据帧从虚机流出来后，就被加上一个VN-Tag标签。基于VN-Tag的源地址dvif_id就能区分出产生于不同虚机的流量。一台具备VN-Tag协议栈的接入交换机TOR可以将VN-Tag与虚机的VIF对应起来，这样就形成了一个映射关系。物理机的出口网卡称为NIC，而上联交换机被称为TOR。</p>
+<p><strong>级联是VN-Tag的另一大特点</strong>，NIC对应的TOR不必是直接连接服务器的接入交换机，可以是网络内的任意IP可达的设备。这种设计的好处是，接入层设备往往比较简单，通过级联可以将虚拟机的流量拉高到高端的汇聚甚至核心交换机上，利用汇聚、核心交换机丰富的功能特性对流量进行精细化的管理。IEEE最初将VN-Tag标准称为802.1Qbh，后来改为802.1Br。</p>
+<p><strong>VN-Tag本质上是一种端口扩展技术，需要为以太网报文增加TAG，而对应的端口扩展设备TOR借助报文TAG中的信息，将端口扩展设备上的物理端口映射成上行物理交换机上的一个虚拟端口，并且使用TAG中的信息来实现报文转发和策略控制。</strong></p>
+<p><strong>基于接入交换机TOR实现的虚拟交换，优点是：</strong>节省了虚拟交换机查表对物理主机CPU资源消耗缺点，对于对流量监管能力、安全策略部署能力要求较高的场景（如数据中心）而言，是一种优选的技术方案。<strong>缺点是：</strong>是由于流量从虚拟机上被引入到外部网络，带来了更多网络带宽开销的问题。虚拟机之间报文转发性能低于虚拟交换机，兼容性较差，需要特殊物理交换机，并且需要虚拟交换机软件、服务器物理网口驱动作联动修改，物理交换机转发功能依赖芯片，功能扩展性差。</p>
+<h2 id="InfiniBand技术和协议架构分析"><a href="#InfiniBand技术和协议架构分析" class="headerlink" title="InfiniBand技术和协议架构分析"></a><strong>InfiniBand技术和协议架构分析</strong></h2><p>InfiniBand其实并不是什么新技术。1999年左右，当时IT界的七个大佬Compaq、HP、IBM，Dell、Intel、Microsoft、Sun联合起来成立了<strong>IBTA</strong>(InfiniBand Trade Association)，<strong>将InfiniBand定位于高速的I/O互联网络，旨在通过机外的长连接提供机内总线的I/O性能，同时保证机外互联的可扩展性。</strong>不过出于各种原因，各家巨头在IBTA成立后都纷纷离开，InfiniBand没能得到良好的市场推广，只是在超算和高性能数据库领域有所应用。Cisco在2005年收购Topspin后也拥有了InfiniBand的产品线，但是Cisco后面就没怎么继续研发了。Intel在收购QLogic之后，也没有继续研发InfiniBand，而是推出了自己的OmniPath。目前，InfiniBand的厂商主要就是Mellonax一家，基本上可以算是小圈子里面绝对的霸主了。</p>
+<p>Infiniband大量用于FC/IP SAN、NAS和服务器之间的连接，作为<strong>iSCSI RDMA的存储协议iSER已被IETF标准化</strong>。相比FC的优势主要体现在<strong>性能是FC的3.5倍，Infiniband交换机的延迟是FC交换机的1/10，支持SAN和NAS。</strong></p>
+<p><strong>InfiniBand也是一种分层协议(类似TCP/IP协议)，每层负责不同的功能，下层为上层服务，不同层次相互独立。 IB采用IPv6的报头格式。其数据包报头包括本地路由标识符LRH，全局路由标示符GRH，基本传输标识符BTH等。</strong></p>
+<p><img src="https://i.loli.net/2019/06/19/5d090fb94590b89863.jpg"></p>
+<p><strong>InfiniBand的协议栈如上图所示</strong>。InfiniBand的传输层首部叫做<strong>BTH(Base Transport Header)</strong>，通过<strong>Queue Pair（QP）来定位远端的目标内存</strong>，通过<strong>Partition Key实现内存的访问控制</strong>，通过<strong>Sequence Number实现可靠传输</strong>。InfiniBand提供了对多种(包括可靠/不可靠、基于连接/基于报文)传输类型的支持，不同的传输类型使用不同的<strong>ETH(Extended Transport Header)，ETH紧跟在BTH的后面。传输层和传输层以下都能够卸载到InfiniBand网卡中进行硬件加速。</strong>传输层之上是InfiniBand传输层和用户应用间的映射层<strong>ULP(Upper Level Protocol)</strong>，允许用户应用在不改变程序原有语义的情况下使用底层的InfiniBand网络进行传输。比如：不同类型的应用需要不同的ULP，如TCP/IP应用可通过IPoIB这一ULP来进行适配。而<strong>InfiniBand的原生应用则可以调用InfiniBand所提供的Verbs API直接对InfiniBand网卡进行操作。</strong></p>
+<p><strong>InfiniBand的超低时延得益于以下几点：</strong></p>
+<p>1）InfiniBand交换机都会采用<strong>直通式的转发</strong>，减小了串行化延迟；</p>
+<p>2）使用了先进的、<strong>基于Credit的链路层流控机制</strong>，能够有效地防止丢包与死锁；</p>
+<p>3）提供了<strong>对于RDMA的原生支持</strong>，从而大幅地提高了端点的性能。</p>
+<p>传统服务器网卡的工作依赖于中断或者轮询，数据包从网卡到达应用程序需要经过内核协议栈的处理以及内核态与用户态间的切换，在上述过程中还要对数据包进行反复的拷贝，这些操作不仅对CPU资源造成了巨大的消耗，而且严重地制约了应用的I/O性能（详见DPDK相关介绍文章）。相比之下，RDMA首先作为一种DMA机制，能够直接在网卡的缓冲区和应用内存间进行数据交互，降低了中断或者轮询的频率，旁路掉了内核协议栈，并实现了数据的零拷贝，因此应用的I/O性能得以大幅提升，而被解放出来的CPU则可以用于处理应用本身。另外，<strong>RDMA提供了一组标准的数据操作接口</strong>，使得本端应用能够直接操作远端应用在内存中的数据，即字面所述的“<strong>远程DMA</strong>”。InfiniBand在设计之初即提供了<strong>对于RDMA的支持，是InfiniBand实现超低延时的重要基础。</strong></p>
+<p><strong>InfiniBand的网卡称为CA(Channel Adaptor)</strong>，CA又可分为<strong>服务器端的HCA（Host Channel Adaptor）</strong>和<strong>交换机/存储端的TCA（Target Channel Adaptor）</strong>。<strong>CA不仅实现了InfiniBand的物理层与链路层</strong>，而且能够对InfiniBand的网络层和传输层进行硬件加速，CA的Driver工作在内核中，为ULP或者InfiniBand原生应用提供操作接口。<strong>无论是HCA还是TCA，其实质都是一个主机适配器，它是一个具备一定保护功能的可编程DMA引擎。</strong></p>
+<p><strong>QP(Queue Pair)是CA提供RDMA能力的基础，它可完成应用层的虚拟地址到CA上的物理地址的自动映射，如果两端的应用需要通信，那么双方都要申请CA上的物理资源，并通过相应的QP来完成对CA的操作。</strong>如下图所示，每个QP中都包括<strong>Receive和Send两个Work Queue分别用于数据的收和发</strong>。应用在进行网络通信前，首先需要向CA请求建立一个QP，需要发送数据时通过Work Request将数据作为WQE(Work Queue Entry)投入QP的<strong>Send Queue</strong>，应用需要为WQE指定<strong>AV(Address Vector)</strong>，AV中携带着通信目标的地址信息，以及在通信路径上进行传输所需要的参数。CA根据AV开始进行L4～L2层的处理，封装好包头并从相应的物理端口送出。远端的目标CA收到数据包后，会根据传输层的QP字段将数据放入相应QP的<strong>Receive Queue</strong>中，然后将数据直接移动到相应的应用内存。每当一个WQE处理完毕之后，CA会通过<strong>Completion Queue</strong>发送CQE(Completion Queue Entry)给应用，通知其可以继续进行后面的处理。</p>
+<p><img src="https://i.loli.net/2019/06/19/5d0910fdad3a135154.jpg"></p>
+<p>CA将数据包从物理端口送出后，就进入到了InfiniBand Fabric。子网是InfiniBand Fabric中最重要的概念，<strong>子网内部是二层通信，InfiniBand Switch根据链路层LRH中的DLID完成转发，子网间通信需要进行三层的路由，InfiniBand Router通过网络层GRH中的DGID完成。GRH中的SGID和DGID是端到端不变的，而每经过一次路由，链路层LRH中的SLID和DLID都会逐跳发生变化。</strong>InfiniBand对子网采用了集中式的管理与控制方式，每个子网中至少有一个SM(Subnet Manager)，多个SM间可以互为备份。SM既可以硬件实现也可以软件实现，可以实现在子网的任何一个节点上，包括CA、Switch和Router。子网中每个节点上都有一个SMA(SM Agent)，SM和SMA间通过接口SMI(Subnet Management Interface)来实现子网的管理与控制，<strong>SMI主要提供Get、Set、Trap3种类型的操作。</strong>SMI信道上的控制信令称为SMP(Subnet Management Packet)，SMP的传输需要使用专用的QP0(QP0不可用于传输用户应用的数据)，并且要求放在逻辑链路VL 15上(QoS优先级最高)，保证子网的管理和控制流量能够得到优先传输，而不会被数据流量所阻塞。其子网、交换机与路由器的连接如图下图所示：</p>
+<p><img src="https://i.loli.net/2019/06/19/5d0911c1bf4e865109.jpg"></p>
+<p>最后，对SM的主要功能及相关做一简要说明，如下：</p>
+<p><strong>1）获取节点信息发现并维护拓扑。</strong>SM和SMA间以带内的方式交互SMP，在拓扑发现过程中，交换机上还没有任何转发信息，SMP是没有办法进行传输的。为了解决这个问题，InfiniBand设计了一种专用的控制信令Directed Routed SMP，Directed Routed SMP携带了自身的一次性转发信息，因此可以在交换机上尚未形成LID转发表时在InfiniBand Fabric中进行传输。</p>
+<p><strong>2）为节点分配LID、GID。</strong>对每个CA来说，在出厂时会分配一个<strong>64位全球唯一的GUID(Global Unique Identifier)，不过这个GUID只是用来标识CA的，并不用于二层和三层的转发。</strong>LID和GID是由SM为CA集中分配的，分别用于二层和三层的转发。LID的长度为16位，只在子网本地有效，每个CA可以分配一个或者一段连续的LID(通过LMC实现)，发送数据包时CA可以采用不同的LID，以实现Fabric上的多路径转发。GID的长度为128位，由64位的子网前缀+GUID组成，实际上SM为CA分配的是子网前缀，然后CA自己在本地组合出GID。SM还会维护GUID和LID/GID间的映射关系，用于地址解析。</p>
+<p><strong>3）根据拓扑计算路由。</strong>InfiniBand在计算路由时通常都是<strong>以Up/Down算法</strong>为基础的，Up/Down算法会为链路指定Up或者Down两种方向，路径只允许链路方向从Up转为Down，而不允许从Down转为Up，从而可以避免形成路由环路。</p>
+<p><strong>4）形成LID转发表，并将转发表配置给相应的Switch。</strong>Switch会根据数据包的DLID查找LID转发表，然后找到对应的端口进行转发。由于对转发表采用集中式控制方式，为了防止子网内部产生路由环路，InfiniBand通常的做法是等到所有Switch上的转发表都形成之后，再来激活子网中流量的转发。</p>
+<p>除了SM以外，<strong>每个子网还都需要有一个SA(Subnet Administration)，SA在逻辑上是SM的一部分(物理上两者没有必然的联系)，可以看作是子网的数据库，CA间通信所需的信息(如DLID/DGID、Path MTU等)都由SA完成解析。</strong>InfiniBand中还有一些其他的子网管理组件，比如负责维护端到端QP连接的CM（Connection Management），负责性能检测的PM（Performance Manager），负责板上器件检测的BM（Baseboard Manager）等等。除了SM以外，InfiniBand中其余的管理组件统称为GSM（General Services Manager），子网中每个节点上都有相应的GSA（General Services Agent），GSM和GSA间的接口称为GSI（General Services Interface），GSI信道上的控制信令称为GMP（General Services Management Packet），<strong>GMP的传输也需要使用专用的QP1(QP1不可用于传输用户应用的数据)</strong>，不过和SMP不同的是，<strong>GMP不可以放在逻辑链路VL 15上，也就是说GMP需要和数据流量一起接受流控。</strong></p>
+<h2 id="FCOE技术原理解析"><a href="#FCOE技术原理解析" class="headerlink" title="FCOE技术原理解析"></a><strong>FCOE技术原理</strong>解析</h2><p><strong>FCoE采用增强型以太网作为物理网络传输架构，能够提供标准的光纤通道有效内容载荷</strong>，避免了 TCP/IP协议开销，而且FCoE能够像标准的光纤通道那样为上层软件层（包括操作系统、应用程序和管理工具）服务。</p>
+<p>FCoE可以提供多种光纤通道服务，比如发现、全局名称命名、分区等，而且这些服务都可以像标准的光纤通道那样运作。不过，<strong>由于FCoE不使用TCP/IP协议，因此FCoE数据传输不能使用IP网络。FCoE是专门为低延迟、高性能、二层数据中心网络所设计的网络协议。</strong></p>
+<p>　　</p>
+<p><strong>和标准的光纤通道FC一样，FCoE协议也要求底层的物理传输是无损失的。</strong>因此，国际标准化组织已经开发了针对以太网标准的扩展协议族，尤其是针对无损10Gb以太网的速度和数据中心架构。这些扩展协议族可以进行所有类型的传输。这些针对以太网标准的扩展协议族有个高大上的名字，被国际标准组织称为“<strong>融合型增强以太网（CEE）</strong>”。</p>
+<p>FCoE的做法是使用以太网的帧头代替FC-2P和FC-2M，上层的FC-2V、FC-3和FC-4仍然保留，FCoE协议栈如下图所示。<strong>FCoE将服务器的FC节点称为ENode，FCoE交换机称为FCF。</strong></p>
+<p><img src="https://i.loli.net/2019/06/19/5d0912fa79d9362058.jpg"></p>
+<p>在FCoE网络中，服务器通过一块<strong>CNA网卡同时支撑IP和FC两套协议</strong>，相当于HBA和以太网NIC的合体。<strong>FCoE的以太网类型是0x8906</strong>，其外层MAC地址的写法比较讲究，后续通过具体的通信流程会进行介绍。<strong>外层的VLAN对于FCoE来说同样非常关键，其原因主要有两个</strong>：首先，FCoE流量必须在无损无丢包的以太网链路上进行传输，这完全依赖于PFC和ETS机制，而这两种机制都需要根据VLAN标签来对流量进行分类，因此FCoE流量必须承载在特定的VLAN中。其次，FCF要想实现存储网络内部的虚拟化，需要使用不同的VLAN来承载不同VSAN(Virtual Storage Area Network)的流量。</p>
+<p><strong>那么封装外层以太网时具体该使用哪个VLAN呢？这由是FCoE的控制平面决定。FCoE使用FIP(FCoE Initialization Protocol)作为控制平面协议，其以太网类型为0x8914</strong>。FIP主要负责以下3个工作：</p>
+<p><strong>1）VLAN发现。</strong>FIP在原先VLAN中通过VLAN发现报文，并与邻居协商后续FIP信令和FCoE流量所使用的VLAN，其<strong>缺省值为1002</strong>。</p>
+<p><strong>2）FCF发现。</strong>FCF在所有FCoE VLAN内定期组播发现通告报文，使得当前VLAN内的所有的ENode发现自己。</p>
+<p><strong>3）FLOGI/PLOGI。</strong>与FC中相应过程一样，FCF作为Login Server为ENode分配FCID，同时作为Name Server记录ENode的登录信息。</p>
+<p>经过上述3个阶段后，FCoE网络的初始化工作就完成了，FCoE流量得以无损地在以太网中传输。下面来看一个在多跳FCoE网络中典型的报文转发流程，如下图所示：</p>
+<p><img src="https://i.loli.net/2019/06/19/5d0913aeb478568261.jpg"></p>
+<p>由于FCID是端到端的，因此FCoE报文在经过FCF转发时FCID不会发生变化，而外层的MAC地址会逐跳改写。我们知道IP和MAC是通过ARP协议联系在一起的，那么FCID和MAC该如何映射呢？FCoE为ENode规定了如下的映射方法：<strong>使用FC-MAP填充MAC地址的高24位，低24位填充为FCID，得到FPMA作为自己的以太网地址，而弃用CAN网卡出厂时的MAC地址。</strong>其中，FC-MAP为在FIP的FCF发现阶段中，FCF告诉ENode的信息，每个VSAN内部的ENode都使用相同的FC-MAP，不同的VSAN使用不同的FC-MAP。而对于FCF来说，不进行这种转换，直接使用本机MAC地址FCF-MAC进行外层以太网封装。同一个VSAN内的报文都在同一个VLAN内传输，FCF进行VLAN的MAC地址学习，保证了VSAN间的隔离，不同VLAN的优先级不同，通过PFC和ETS进行差异化的传输控制。</p>
+<p>单跳FCoE的转发更为简单，负责接入的FCF收到FCoE流量后，根据FCID进行寻址，然后直接转换成FC-2的帧格式在FC网络中进行传输。</p>
+<p>当在服务器中部署虚拟机的时候，FCF不再是FCoE接入网络的第一跳，很多FIP的交互过程就实现不了了，而FC网络也面临着这个问题。FC网络给出的解决办法是NPIV/NPV，NPIV部署在服务器中作为ENode和FCF之间的代理，为下挂多个虚拟机的ENode完成FLOGI/PLOGI过程，而NPV则将NPIV的功能放到了以太网交换机上。NPIV/NPV的示意如下图所示。同样，FCoE也可以配合NPIV的工作实现虚拟机的FCoE接入。</p>
+<p><img src="https://i.loli.net/2019/06/19/5d0913fc5e99e73776.jpg"></p>
+<h2 id="RoCE与RoCEv2"><a href="#RoCE与RoCEv2" class="headerlink" title="RoCE与RoCEv2"></a><strong>RoCE与RoCEv2</strong></h2><p>相比于以太网，InfiniBand的优势主要在于以下几点：<strong>带宽总是能够领先一步，链路层具有流控能力，RDMA可以通过旁路内核来加速。</strong>不过，InfiniBand太贵，对运维人员要求也较高。因此，随着10GE的普及，40GE/100GE的推广，以太网的带宽资源不再是瓶颈，而DCB协议族的发展也使得以太网具备了不丢包的传输能力，如果再能够提供对RDMA的支持，那么以太网就会有能力和InfiniBand在HPC领域一较高下了。</p>
+<p>2010年，IBTA制定了RoCE(RDMA over Converged Ethernet)，使用以太网代替了IB的链路层，保留了网络层以及传输层对于RDMA的支持，结合DCB(要求至少10G的端口速率)即可以获得微秒级的传输延迟。不过，<strong>RoCE由于在网络层仍保留着IB的GRH，因此是不能进行IP路由的</strong>。为此，IBTA在2014年又制订了<strong>RoCEv2，在RoCE的基础上将IB的网络层替换为IP，</strong>RoCEv2的流量获得了跨越广域网进行传输的能力，因此RoCEv2又称为RRoCE(Routable RoCE)。下图展示了RoCE技术的演进策略。</p>
+<p><img src="https://i.loli.net/2019/06/19/5d0914937d09d45006.jpg"></p>
+<p>相比于FCoE使用FIP协议作为专有的控制平面<strong>，RoCE和RoCEv2并没有专门设计自己的控制协议。</strong>在InfiniBand中管理和控制的组件多是围绕InfiniBand子网来进行的，由于RoCE、RoCEv2中使用了以太网来替换InfiniBand的链路层，因此自然就没有了InfiniBand子网的概念，SM、SA、PM、BM等组件也就失去了存在的意义，只有传输层上用于端到端协商QP的CM保留了下来。在InfiniBand中，地址分配和解析工作是由SM和SA完成的，去掉了SM和SA后，需要由以太网/IP中相应的机制来进行地址分配和解析。三者地址分配和解析机制如下所示。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>L2的生成/分配</th>
+<th>L3的生成/分配</th>
+<th>L2和L3的解析</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IB</td>
+<td>SM分配LID和LMAC</td>
+<td>默认为0xFE::80+GUID，SM分配GID Prefix，覆盖为GID Prefix+GUID</td>
+<td>Query HCA Verb SA</td>
+</tr>
+<tr>
+<td>RoCE</td>
+<td>以太网MAC</td>
+<td>默认为0xFE::80+GUID</td>
+<td>ARP</td>
+</tr>
+<tr>
+<td>RoCEV2</td>
+<td>以太网MAC</td>
+<td>DHCP或者为静态配置</td>
+<td>ARP</td>
+</tr>
+</tbody>
+</table>
+<p>除了RoCE和RoCEv2以外，还有一种融合的方案是iWARP(RDMA over TCP/IP)，通过将TCP/IP卸载到网卡中也可以实现良好的转发性能。不过，iWARP是一种纯应用层的实现，不属于服务器与外部网络连接虚拟化范畴。</p>
+<p>至此，服务器与外部连接的网络虚拟化典型技术介绍完毕。这一块大部分内容对于传统CT运维人员，甚至是不负责存储运维的IT人员都较有难度，涉及许多存储领域的概念和数据包转发流程等知识点。因此，大家在看博客时，需要借助搜索工具让自己对存储领域的一些知识点有个感性认识后，再来看本篇博文就显得轻松许多。</p>
 
       
     </div>
@@ -649,7 +700,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="https://kkutysllb.cn/2019/04/15/2019-03-18-Linux系统的内存管理/" title="2019-03-18-Linux系统的内存管理">https://kkutysllb.cn/2019/04/15/2019-03-18-Linux系统的内存管理/</a>
+    <a href="https://kkutysllb.cn/2019/06/19/2019-06-18-服务器与外部链接的网络虚拟化/" title="2019-06-18-服务器与外部链接的网络虚拟化">https://kkutysllb.cn/2019/06/19/2019-06-18-服务器与外部链接的网络虚拟化/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -662,7 +713,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+            <a href="/tags/电信云/" rel="tag"><i class="fa fa-tag"></i> 电信云</a>
           
         </div>
       
@@ -675,8 +726,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/15/2019-03-02-Linux系统基础介绍/" rel="next" title="2019-03-02-Linux系统基础介绍">
-                <i class="fa fa-chevron-left"></i> 2019-03-02-Linux系统基础介绍
+              <a href="/2019/06/16/2019-06-15-服务器内部虚拟接入技术/" rel="next" title="2019-06-15-服务器内部虚拟接入技术">
+                <i class="fa fa-chevron-left"></i> 2019-06-15-服务器内部虚拟接入技术
               </a>
             
           </div>
@@ -684,10 +735,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/04/15/2019-03-30-Linux的文件系统/" rel="prev" title="2019-03-30-Linux的文件系统">
-                2019-03-30-Linux的文件系统 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -915,7 +962,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#内存管理中的基本概念"><span class="nav-number">1.</span> <span class="nav-text">内存管理中的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux系统逻辑地址-线性地址"><span class="nav-number">2.</span> <span class="nav-text">Linux系统逻辑地址=线性地址</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于物理交换机的分布式虚拟交换机"><span class="nav-number">1.</span> <span class="nav-text">基于物理交换机的分布式虚拟交换机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InfiniBand技术和协议架构分析"><span class="nav-number">2.</span> <span class="nav-text">InfiniBand技术和协议架构分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FCOE技术原理解析"><span class="nav-number">3.</span> <span class="nav-text">FCOE技术原理解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RoCE与RoCEv2"><span class="nav-number">4.</span> <span class="nav-text">RoCE与RoCEv2</span></a></li></ol></div>
             
 
           </div>
@@ -1111,7 +1158,7 @@
   
     <script>
   window.livereOptions = {
-    refer: '2019/04/15/2019-03-18-Linux系统的内存管理/'
+    refer: '2019/06/19/2019-06-18-服务器与外部链接的网络虚拟化/'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];
