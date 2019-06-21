@@ -118,7 +118,7 @@
 <meta property="og:image" content="https://i.loli.net/2019/06/20/5d0b54e0c9ae354705.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/20/5d0b55045351845286.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/20/5d0b5538b393840575.jpg">
-<meta property="og:updated_time" content="2019-06-21T02:46:00.244Z">
+<meta property="og:updated_time" content="2019-06-21T05:47:39.266Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-06-20-SBA架构下的核心网大一统">
 <meta name="twitter:description" content="移动通信核心网络从1G/2G程控交换、电路交换时代的大一统，到2.5G/3G/4G软交换、GPRS、EPC和IMS的专业分家，再到5G时代SBA架构统一，完美印证了那句俗得不能再俗的俗话—“天下大势，合久必分、分久必合”。">
@@ -460,7 +460,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-21 10:46:00" itemprop="dateModified" datetime="2019-06-21T10:46:00+08:00">2019-06-21</time>
+                <time title="修改时间：2019-06-21 13:47:39" itemprop="dateModified" datetime="2019-06-21T13:47:39+08:00">2019-06-21</time>
               
             
           </span>
@@ -556,7 +556,7 @@
 <p>因此，在现网4G网络阶段，移动通信核心网专业从业务承载的角度来看，分为<strong>EPC专业（用户数据业务、彩信业务）、IMS专业（高清语音/视频业务、短信业务）和软交换专业（传统语音业务、短信业务）</strong>三大专业。所以，虽然大家都宣称自己是核心网专业从业人员，但是业务流程、信令协议、网元配置以及人员技能储备等方面都是不同的。</p>
 <p>到了5G时代，由于SBA服务化核心网架构的提出（中移动首提），所有<strong>网元功能模块全部“软”化</strong>，从软件模块化设计理念来看，<strong>这必然会导致业务管理网元功能SMF不仅只继承EPC-C面功能，同时整个IMS-C面功能也是能够集成统一的。而用户面网元功能UPF不仅只继承EPC-U，同样也能集成IMS-U。</strong></p>
 <p><img src="https://i.loli.net/2019/06/20/5d0b5492bf87456950.jpg"></p>
-<p>而且，基于IT领域“生产者/消费者”理念，<strong>导致SBA架构下各网元功能模块之间通过一条逻辑总线互联</strong>，<strong>松耦合且无强依赖关系。</strong>比如：鉴权解耦（AUSF）、用户数据解耦（UDM/UDR）、接入控制解耦（AMF）、业务功能解耦且接口开放（NEF、AF）、数据转发解耦（UPF）、全网路由寻址统一（NRF）等等。<strong>这个理念（生产者/消费者）与现有IMS网络架构设计理念（控制、承载、业务三分离）是相符的，这也为统一提供语音/数据类业务，不再细分IMS/CS/PS等专业打下基础。</strong>不是理解？那我们就来掰扯下IMS网络架构如何与SBA架构融合。。。</p>
+<p>而且，基于IT领域“生产者/消费者”理念，<strong>导致SBA架构下各网元功能模块之间通过一条逻辑总线互联</strong>，<strong>松耦合且无强依赖关系。</strong>比如：鉴权解耦（AUSF）、用户数据解耦（UDM/UDR）、接入控制解耦（AMF）、业务功能解耦且接口开放（NEF、AF）、数据转发解耦（UPF）、全网路由寻址统一（NRF）等等。<strong>这个理念（生产者/消费者）与现有IMS网络架构设计理念（控制、承载、业务三分离）是相符的，这也为统一提供语音/数据类业务，不再细分IMS/CS/PS等专业打下基础。</strong>不是很理解？那我们就来掰扯下IMS网络架构如何与SBA架构融合。。。</p>
 <h2 id="IMS逻辑网元与SBA架构网元功能融合"><a href="#IMS逻辑网元与SBA架构网元功能融合" class="headerlink" title="IMS逻辑网元与SBA架构网元功能融合"></a><strong>IMS逻辑网元与SBA架构网元功能融合</strong></h2><p>IMS网络架构从2008年3GPP R5版本冻结以来，一直没有变化。从这一点来看，正好说明这个架构是非常成熟的。即使到了4G时代，为了给用户提供VoLTE业务，加入了EPC网络。但是，<strong>从VoLTE业务角度来看，EPC只是一个接入网，为用户建立一条承载隧道，使其接入IMS网络，从而享受VoLTE高清类、富媒体类等业务，整体VoLTE业务及其增值业务控制都在IMS网络内，所以，IMS网络才是真正的核心网。</strong></p>
 <p><img src="https://i.loli.net/2019/06/20/5d0b54bbd6f3d87730.jpg"></p>
 <p>整个IMS网络架构也是分层的，分为<strong>接入层，承载层、控制层</strong>和<strong>业务层</strong>共4层。从VoLTE业务角度来看，接入层就是上图的EPC部分，承载层就是上图的IP专网，控制层和业务层就是上图的IMS部分（控制层功能和业务层功能由不同的物理网元实现）。其整体全貌如下，我们就按照从接入层到业务层的层次顺序，来掰扯下面这张图。。。</p>
