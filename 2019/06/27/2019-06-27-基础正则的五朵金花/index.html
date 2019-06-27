@@ -118,7 +118,7 @@
 <meta property="og:image" content="https://i.loli.net/2019/06/27/5d1456002280099045.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/27/5d1456e50c72830042.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/27/5d14571d813d021983.jpg">
-<meta property="og:image" content="c:/Users/KkutysLLB/AppData/Roaming/Typora/typora-user-images/1561614184884.png">
+<meta property="og:image" content="https://i.loli.net/2019/06/27/5d1463005ce9084092.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/27/5d145810956e615136.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/27/5d145836a590472950.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/27/5d1458c87910788625.jpg">
@@ -137,11 +137,11 @@
 <meta property="og:image" content="https://i.loli.net/2019/06/27/5d145e8181a2c65417.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/27/5d145eee25fe838328.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/27/5d145f2da865898868.jpg">
-<meta property="og:image" content="c:/Users/KkutysLLB/AppData/Roaming/Typora/typora-user-images/1561616401216.png">
+<meta property="og:image" content="https://i.loli.net/2019/06/27/5d146343910bc63820.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/27/5d14607c70a2692622.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/27/5d14610017cd230432.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/06/27/5d14612e7203434521.jpg">
-<meta property="og:updated_time" content="2019-06-27T06:28:05.445Z">
+<meta property="og:updated_time" content="2019-06-27T06:33:57.372Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-06-27-基础正则的五朵金花">
 <meta name="twitter:description" content="在前一篇《正则表达式基础入门》中，我们总结了跟“位置匹配”的相关的正则，它其实也是基础正则五朵金花之一，我们只是在入门介绍中单独拿出来进行科普。这篇文章我们就来掰扯掰扯基础正则的其它四朵金花。">
@@ -466,7 +466,7 @@
                 
               
 
-              <time title="创建时间：2019-06-27 13:28:03 / 修改时间：14:28:05" itemprop="dateCreated datePublished" datetime="2019-06-27T13:28:03+08:00">2019-06-27</time>
+              <time title="创建时间：2019-06-27 13:28:03 / 修改时间：14:33:57" itemprop="dateCreated datePublished" datetime="2019-06-27T13:28:03+08:00">2019-06-27</time>
             
 
             
@@ -578,7 +578,7 @@
 <p>如上图，表示“搜索字母a前面出现任意个d的行”，任意个d当然也包含0个d。那么，如何在正则表达式中查找任意长度的任意字符呢？我们可以使用<strong>“.*”</strong>来实现，如下：</p>
 <p><img src="https://i.loli.net/2019/06/27/5d14571d813d021983.jpg" alt></p>
 <p>上图中，表示匹配字母a后面接任意多个任意字符的行。其实，<strong>在正则表达式中“.”符号表示匹配任意单个字符。而在通配符中“?”表示单个字符，这一定同样要注意不要混淆。如下：</strong></p>
-<p><img src="C:\Users\KkutysLLB\AppData\Roaming\Typora\typora-user-images\1561614184884.png" alt="1561614184884"></p>
+<p><img src="https://i.loli.net/2019/06/27/5d1463005ce9084092.jpg" alt></p>
 <p>上图中，匹配条件“aa.”表示aa后面跟任意单个字符的行都会被匹配到，”aa..”表示aa后面跟任意两个字符的行都会被匹配到（空格也算字符）。理解了上述规则，回过头来我们再看“.<em>”就非常容易理解了，**”.\</em>“就表示任意单个字符连续出现多次的意思。**</p>
 <p>接下来，我们再认识两个新的匹配条件：<strong>“\?”</strong>和<strong>“\+”</strong>。<strong>“\?”表示匹配其前面的字符出现0次或1次，也就说要么没有，要么最多出现1次。“\+”表示匹配前面的字符出现至少1次，也就是说前面的字符必须至少出现1次。</strong>我们再通过示例验证下：</p>
 <p><img src="https://i.loli.net/2019/06/27/5d145810956e615136.jpg" alt></p>
@@ -719,7 +719,7 @@
 <h2 id="基础正则中的转义符"><a href="#基础正则中的转义符" class="headerlink" title="基础正则中的转义符"></a><strong>基础正则中的转义符</strong></h2><p>现在，我们来认识下正则中的常用符合，就是<strong>反斜杠”\“。</strong>反斜杠有什么用？我们还是先不解释，通过示例来描述。如下，我们还是创建的一个测试文件test04，内容如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@c7-test01 ~]<span class="comment"># cat test04</span></span><br><span class="line">base</span><br><span class="line">a1<span class="comment">#$</span></span><br><span class="line">ddd</span><br><span class="line">a-!@</span><br><span class="line">cccc</span><br><span class="line">a..</span><br></pre></td></tr></table></figure>
 <p>如上，此时我们想匹配a..这行，利用我们前面了解的知识，规则可能会这样写。匹配条件如下：</p>
-<p><img src="C:\Users\KkutysLLB\AppData\Roaming\Typora\typora-user-images\1561616401216.png" alt="1561616401216"></p>
+<p><img src="https://i.loli.net/2019/06/27/5d146343910bc63820.jpg" alt></p>
 <p>上图中，虽然匹配结果包含了我们的需求，但是也多了其他三行，这让我们很不爽。主要是因为点符号”.”在基础正则中表示任意1个字符。因此，我们如果想要在匹配条件中匹配点点，就需要使用转移符号反斜杠“\”。<strong>转义符号“\”与正则中的符号结合起来就表示这个符号本身。</strong>因此，上面的需求我们可以使用如下的匹配条件：</p>
 <p><img src="https://i.loli.net/2019/06/27/5d14607c70a2692622.jpg" alt></p>
 <p>如上图，\.表示单个点符号，同理\*就表示单个星符号。在前面提到过，在基本正则中，\?表示其前面的字符出现0次或1次，\+表示前面的字符出现至少1次。那么，如果我们相匹配问号?和加号+呢？难道我们还要再在前面加一个反斜杠\\？或\\+，答案是否定的。<strong>在Linux中，如果想要在正则表达式中匹配问号?或加号+，只需要在匹配条件中直接输入?或+即可</strong>，大家可以自己尝试。但是，在某些时候，<strong>我们需要匹配反斜杠自身，这时需要在反斜杠前面再加上反斜杠就行。</strong></p>
