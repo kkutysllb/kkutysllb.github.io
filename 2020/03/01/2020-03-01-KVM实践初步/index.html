@@ -103,13 +103,13 @@
 
 
 
-  <meta name="description" content="在x86-64架构的处理器中，KVM需要的硬件辅助虚拟化分别为Intel的虚拟化技术（Intel VT）和AMD的AMD-V技术。在前面我们介绍过，CPU不仅要在硬件上支持VT技术，还要在BIOS中将其功能打开，KVM才能使用到。目前，大多数服务器和PC的BIOS都默认已经打开VT。至于如何在VMware Workstations虚拟机和物理服务器上打开，详见本站《KVM到底是个啥》一文。">
+  <meta name="description" content="在x86-64架构的处理器中，KVM需要的硬件辅助虚拟化分别为Intel的虚拟化技术（Intel VT）和AMD的AMD-V技术。在前面我们介绍过，CPU不仅要在硬件上支持VT技术，还要在BIOS中将其功能打开，KVM才能使用到。目前，大多数服务器和PC的BIOS都默认已经打开VT。至于如何在VMware Workstations虚拟机和物理服务器上打开，详见本站《KVM到底是个啥？》一文。">
 <meta name="keywords" content="Hypervisor">
 <meta property="og:type" content="article">
 <meta property="og:title" content="2020-03-01-KVM实践初步">
 <meta property="og:url" content="https://kkutysllb.cn/2020/03/01/2020-03-01-KVM实践初步/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
-<meta property="og:description" content="在x86-64架构的处理器中，KVM需要的硬件辅助虚拟化分别为Intel的虚拟化技术（Intel VT）和AMD的AMD-V技术。在前面我们介绍过，CPU不仅要在硬件上支持VT技术，还要在BIOS中将其功能打开，KVM才能使用到。目前，大多数服务器和PC的BIOS都默认已经打开VT。至于如何在VMware Workstations虚拟机和物理服务器上打开，详见本站《KVM到底是个啥》一文。">
+<meta property="og:description" content="在x86-64架构的处理器中，KVM需要的硬件辅助虚拟化分别为Intel的虚拟化技术（Intel VT）和AMD的AMD-V技术。在前面我们介绍过，CPU不仅要在硬件上支持VT技术，还要在BIOS中将其功能打开，KVM才能使用到。目前，大多数服务器和PC的BIOS都默认已经打开VT。至于如何在VMware Workstations虚拟机和物理服务器上打开，详见本站《KVM到底是个啥？》一文。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/clipboard.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301142932.png">
@@ -132,10 +132,10 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145805.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145843.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145921.png">
-<meta property="og:updated_time" content="2020-03-01T07:05:15.219Z">
+<meta property="og:updated_time" content="2020-03-01T07:09:43.008Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2020-03-01-KVM实践初步">
-<meta name="twitter:description" content="在x86-64架构的处理器中，KVM需要的硬件辅助虚拟化分别为Intel的虚拟化技术（Intel VT）和AMD的AMD-V技术。在前面我们介绍过，CPU不仅要在硬件上支持VT技术，还要在BIOS中将其功能打开，KVM才能使用到。目前，大多数服务器和PC的BIOS都默认已经打开VT。至于如何在VMware Workstations虚拟机和物理服务器上打开，详见本站《KVM到底是个啥》一文。">
+<meta name="twitter:description" content="在x86-64架构的处理器中，KVM需要的硬件辅助虚拟化分别为Intel的虚拟化技术（Intel VT）和AMD的AMD-V技术。在前面我们介绍过，CPU不仅要在硬件上支持VT技术，还要在BIOS中将其功能打开，KVM才能使用到。目前，大多数服务器和PC的BIOS都默认已经打开VT。至于如何在VMware Workstations虚拟机和物理服务器上打开，详见本站《KVM到底是个啥？》一文。">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/clipboard.png">
 
 
@@ -457,7 +457,7 @@
                 
               
 
-              <time title="创建时间：2020-03-01 13:17:00 / 修改时间：15:05:15" itemprop="dateCreated datePublished" datetime="2020-03-01T13:17:00+08:00">2020-03-01</time>
+              <time title="创建时间：2020-03-01 13:17:00 / 修改时间：15:09:43" itemprop="dateCreated datePublished" datetime="2020-03-01T13:17:00+08:00">2020-03-01</time>
             
 
             
@@ -549,7 +549,7 @@
       
 
       
-        <p>在x86-64架构的处理器中，KVM需要的硬件辅助虚拟化分别为Intel的虚拟化技术（Intel VT）和AMD的AMD-V技术。在前面我们介绍过，CPU不仅要在硬件上支持VT技术，还要在BIOS中将其功能打开，KVM才能使用到。目前，大多数服务器和PC的BIOS都默认已经打开VT。至于如何在VMware Workstations虚拟机和物理服务器上打开，详见本站<a href>《KVM到底是个啥》</a>一文。<a id="more"></a></p>
+        <p>在x86-64架构的处理器中，KVM需要的硬件辅助虚拟化分别为Intel的虚拟化技术（Intel VT）和AMD的AMD-V技术。在前面我们介绍过，CPU不仅要在硬件上支持VT技术，还要在BIOS中将其功能打开，KVM才能使用到。目前，大多数服务器和PC的BIOS都默认已经打开VT。至于如何在VMware Workstations虚拟机和物理服务器上打开，详见本站《KVM到底是个啥？》一文。<a id="more"></a></p>
 <h2 id="部署和安装KVM"><a href="#部署和安装KVM" class="headerlink" title="部署和安装KVM"></a><strong>部署和安装KVM</strong></h2><p><strong>KVM的部署和安装主要有两种方式：一种源码编译安装，另一种就是通过CentOS的YUM工具安装。</strong>作为学习实验途径，我们这里主要介绍YUM工具安装方式。至于源码编译安装一般属于生产研发人员的操作，这里我们只给一些关键提示，有兴趣的同学可自行研究。</p>
 <p><strong>1）源码编译安装方式。</strong>KVM作为Linux内核的一个module，是从Linux内核版本2.6.20开始的，所以要编译KVM，你的Linux操作系统内核必须在2.6.20版本以上，也就是CentOS 6.x和CentOS 7.x都天生支持，但是CentOS 5.x以下版本需要先升级内核。</p>
 <p><strong>下载KVM源代码，主要通过以下三种方式：</strong></p>
