@@ -103,33 +103,44 @@
 
 
 
-  <meta name="description" content="华为FusionStorage中的基础概念FusionStorage采用全分布式DHT架构，将所有元数据按规则分布在各存储节点，不存在跨节点的元数据访问，彻底避免了元数据瓶颈。该核心架构设计保证了FusionStorage系统相比分布式文件系统具备更大规模的线性扩展能力。">
-<meta name="keywords" content="电信云">
+  <meta name="description" content="virt-instal工具简介virt-install是一个命令行工具，它能够为KVM、Xen或其它支持libvrit API的hypervisor创建虚拟机并完成GuestOS安装；此外，它能够基于串行控制台、VNC或SDL支持文本或图形安装界面。安装过程可以使用本地的安装介质如CDROM，也可以通过网络方式如NFS、HTTP或FTP服务实现。对于通过网络安装的方式，virt-install可以">
+<meta name="keywords" content="Hypervisor">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2019-06-07-华为分布式存储FusionStorage原理详解">
-<meta property="og:url" content="https://kkutysllb.cn/2019/06/07/2019-06-07-华为分布式存储FusionStorage原理详解/index.html">
+<meta property="og:title" content="2020-03-01-KVM虚拟机的各种安装方法">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/01/2020-03-01-KVM虚拟机的各种安装方法/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
-<meta property="og:description" content="华为FusionStorage中的基础概念FusionStorage采用全分布式DHT架构，将所有元数据按规则分布在各存储节点，不存在跨节点的元数据访问，彻底避免了元数据瓶颈。该核心架构设计保证了FusionStorage系统相比分布式文件系统具备更大规模的线性扩展能力。">
+<meta property="og:description" content="virt-instal工具简介virt-install是一个命令行工具，它能够为KVM、Xen或其它支持libvrit API的hypervisor创建虚拟机并完成GuestOS安装；此外，它能够基于串行控制台、VNC或SDL支持文本或图形安装界面。安装过程可以使用本地的安装介质如CDROM，也可以通过网络方式如NFS、HTTP或FTP服务实现。对于通过网络安装的方式，virt-install可以">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf998494d5e771062.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99877a3e4e24277.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf9989fd248f84381.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf998fe60e0e62718.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf9992d3f1b431081.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99972273ce79632.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf9999da7c9d70499.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf999beef1c284728.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf999f73062d18561.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99a1ac589f26534.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99a60c14b049375.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99a8a5198479125.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99aa4c463820797.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99aca30dfa92476.jpg">
-<meta property="og:updated_time" content="2019-06-06T22:59:37.477Z">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/8h7pLTIGjpIA.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/Vz0l4nn8rfrG.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/g23WFSzoMi86.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/CCcvSaBXLyzV.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/Mg1jNeuPheOz.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/GSiPEXUgO8hK.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/mODBkfX9JvPd.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/poIofAW7g8rO.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/3VzJdfq3iWea.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/yd9HUluqTuxw.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/3LCymbL4DjcE.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/xiMr145MYNS2.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/RzAabqMfbimw.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/OBslPPz9qRyz.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/cV37uADblJG4.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/HmLaBCUbe4OL.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/fkQjaiYjEbrI.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/Kl5gCrHopMBl.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/05H8pcgg7tWr.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/qxi9Lh37MYeC.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/duowiSJnM12D.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/IPjfNbXTAktd.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/tTEnd55F6vDR.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/Y0wbcGDO6FIF.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/lI8SNxelT4gE.png?imageslim">
+<meta property="og:updated_time" content="2020-03-01T10:37:39.774Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2019-06-07-华为分布式存储FusionStorage原理详解">
-<meta name="twitter:description" content="华为FusionStorage中的基础概念FusionStorage采用全分布式DHT架构，将所有元数据按规则分布在各存储节点，不存在跨节点的元数据访问，彻底避免了元数据瓶颈。该核心架构设计保证了FusionStorage系统相比分布式文件系统具备更大规模的线性扩展能力。">
-<meta name="twitter:image" content="https://i.loli.net/2019/06/07/5cf998494d5e771062.jpg">
+<meta name="twitter:title" content="2020-03-01-KVM虚拟机的各种安装方法">
+<meta name="twitter:description" content="virt-instal工具简介virt-install是一个命令行工具，它能够为KVM、Xen或其它支持libvrit API的hypervisor创建虚拟机并完成GuestOS安装；此外，它能够基于串行控制台、VNC或SDL支持文本或图形安装界面。安装过程可以使用本地的安装介质如CDROM，也可以通过网络方式如NFS、HTTP或FTP服务实现。对于通过网络安装的方式，virt-install可以">
+<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/8h7pLTIGjpIA.png?imageslim">
 
 
 
@@ -138,7 +149,7 @@
 
 
 
-  <link rel="canonical" href="https://kkutysllb.cn/2019/06/07/2019-06-07-华为分布式存储FusionStorage原理详解/">
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/01/2020-03-01-KVM虚拟机的各种安装方法/">
 
 
 
@@ -148,7 +159,7 @@
   };
 </script>
 
-  <title>2019-06-07-华为分布式存储FusionStorage原理详解 | 一花一菩提，一云一世界</title>
+  <title>2020-03-01-KVM虚拟机的各种安装方法 | 一花一菩提，一云一世界</title>
   
 
 
@@ -407,7 +418,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/06/07/2019-06-07-华为分布式存储FusionStorage原理详解/">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/01/2020-03-01-KVM虚拟机的各种安装方法/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kkutysllb">
@@ -424,7 +435,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2019-06-07-华为分布式存储FusionStorage原理详解
+          <h1 class="post-title" itemprop="name headline">2020-03-01-KVM虚拟机的各种安装方法
 
               
             
@@ -450,7 +461,7 @@
                 
               
 
-              <time title="创建时间：2019-06-07 06:46:10 / 修改时间：06:59:37" itemprop="dateCreated datePublished" datetime="2019-06-07T06:46:10+08:00">2019-06-07</time>
+              <time title="创建时间：2020-03-01 18:19:09 / 修改时间：18:37:39" itemprop="dateCreated datePublished" datetime="2020-03-01T18:19:09+08:00">2020-03-01</time>
             
 
             
@@ -472,7 +483,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV关键技术/" itemprop="url" rel="index"><span itemprop="name">NFV关键技术</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
 
                 
                 
@@ -508,7 +519,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">8.1k</span>
+                <span title="本文字数">6.1k</span>
               
 
               
@@ -522,7 +533,7 @@
                 
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
-                <span title="阅读时长">7 分钟</span>
+                <span title="阅读时长">6 分钟</span>
               
             </div>
           
@@ -542,91 +553,379 @@
       
 
       
-        <h2 id="华为FusionStorage中的基础概念"><a href="#华为FusionStorage中的基础概念" class="headerlink" title="华为FusionStorage中的基础概念"></a>华为FusionStorage中的基础概念</h2><p>FusionStorage采用全分布式DHT架构，将<strong>所有元数据按规则分布在各存储节点，不存在跨节点的元数据访问</strong>，彻底避免了元数据瓶颈。该核心架构设计保证了FusionStorage系统相比分布式文件系统具备更大规模的线性扩展能力。<a id="more"></a></p>
-<p><strong>所谓DHT架构，就是分布式哈希表，Distributed Hash Table</strong>。如下图所示，它是FusionStorage中指数据路由算法。</p>
-<p><img src="https://i.loli.net/2019/06/07/5cf998494d5e771062.jpg"></p>
-<p>DHT机制可以保证上层应用对数据的IO操作会均匀分布在不同服务器的不同硬盘上，不会出现局部的热点，实现全局复负载均衡。DHT采用的是开源对象存储swift中一致性哈希算法（详见OpenStack的swift介绍），每个存储节点负责存储一小部分数据，基于DHT实现整个系统的<strong>寻址</strong>和<strong>存储</strong>。</p>
-<p>上图中，<strong>Partition</strong>代表了一块数据分区，在DHT环上映射为固定Hash段代表的数据区Pn（n=1,2,3…)。<strong>Key-Value键值对</strong>表示底层磁盘上的数据组织索引，每个Value代表一个块存储空间。当我们要查找某一个数据的存放位置时，通过key值计算散列值（哈希值），根据计算的散列值找到DHT换上某一个Partition，然后根据Partition与disk的映射关系找到对应的磁盘，再通过Value值查找磁盘上的具体数据。具体如下所示</p>
-<p><img src="https://i.loli.net/2019/06/07/5cf99877a3e4e24277.jpg"></p>
-<p><strong>Volume</strong>代表应用卷，也就是虚拟机能看见并挂载的虚拟磁盘，它本质上代表了应用看到的一个LBA连续编址。而Volume的LBA连续编址就是上述用于数据查找的key值。</p>
-<p>在华为FusionStorage中还有一个基础概念就是<strong>资源池，它是由上述一组分区Partition构成的存储池。</strong>如下图所示，<strong>每个资源池对应一个DHT环。</strong></p>
-<p><img src="https://i.loli.net/2019/06/07/5cf9989fd248f84381.jpg"></p>
-<p>在上图中，由两个资源池，分别对应两个DHT环，左边三个硬盘对应DHT1的三个Partition分区（P1、P2和Px），右边三块硬盘对应DHT2的三个Partition分区（P1、P2和Py）。当虚拟机挂载上面的Volume1/2/3时，将对应的LBA散列后，计算的结果分别对用DHT1的P1/P2/Px；当虚拟机挂载上面的Volume10/11时，将对应的LBA散列后，计算的结果分别对应DHT2的P1/P2/Py。</p>
-<p>华为FusionStorage的资源池类似于SAN存储中的RAID组概念，但是<strong>与RAID相比，其优点是主要有三点：一是条带宽度大</strong>，最大支持96块盘（2份拷贝），提供超大存储空间，而且系统自动将每个卷的数据块打散存储在不同服务器的不同硬盘上，冷热不均的数据会均匀分布在不同的服务器上，不会出现集中的热点，<strong>避免高I/O应用导致热点瓶颈；二是具有动态热备功能</strong>，资源池内所有硬盘都可用作资源池的热备盘；<strong>三是结构简单</strong>，通过资源池和Volume二层结构，使服务器直接看到Volume，消除了中间的LUN逻辑存储，提升I/O读写性能。</p>
-<h2 id="FusionStorage的数据路由原理"><a href="#FusionStorage的数据路由原理" class="headerlink" title="FusionStorage的数据路由原理"></a>FusionStorage的数据路由原理</h2><p>如下所示，<strong>FusionStorage数据路由采取分层处理方式：1）VBS通过计算确定数据存放在哪个服务器的哪块硬盘上。2）OSD通过计算确定数据存放在硬盘的具体位置。</strong></p>
-<p><img src="https://i.loli.net/2019/06/07/5cf998fe60e0e62718.jpg"></p>
-<p><strong>Step1：</strong>系统初始化时，FusionStorage将哈希空间（0~2^32）划分为N等份，每一等份是1个分区（Partition），这N等份按照硬盘数量取整除并进行均分。例如：<strong>二副本场景下，系统N默认为3600</strong>，假设当前系统有36块硬盘，则每块硬盘承载100个分区。<strong>上述“分区-硬盘”的映射关系在系统初始化时会分配好，后续会随着系统中硬盘数量的变化会进行调整</strong>。该映射表所需要的空间很小，FusionStorage系统中的节点会在内存中保存该映射关系，用于进行快速路由。</p>
-<p><strong>Step2：</strong>FusionStorage<strong>会对每个LUN在逻辑上按照1MB大小进行切片</strong>，例如1GB的LUN则会被切成1024*1MB分片。当应用侧访问FusionStorage时候，在SCSI命令中会带上LUN ID和LBA ID以及读写的数据内容，OS转发该消息到本节点VBS模块，<strong>VBS根据LUN ID和LBA ID组成一个key，该key会包含LBA ID对1MB的取整计算信息</strong>。通过DHT Hash计算出一个整数(范围在0~2^32内)，并落在指定Partition中；根据内存中记录的“<strong>分区-硬盘</strong>”映射关系确定具体硬盘，VBS将IO操作转发到该硬盘所属的OSD模块。</p>
-<p><strong>Step3：</strong>每个OSD会管理一个硬盘，<strong>系统初始化时，OSD会按照1MB为单位对硬盘进行分片管理，并在硬盘的元数据管理区域记录每个1MB分片的分配信息</strong>。<strong>OSD接收到VBS发送的I/O操作后，根据key查找该数据在硬盘上的具体分片信息，获取数据后返回给VBS</strong>。从而完成整个数据路由过程。</p>
-<p>比如：应用需要访问LUN1+LBA1地址起始的4KB长度的数据，首先构造key=LUN1+LBA1/1M，对该key进行HASH计算得到哈希值，并对N取模，得到partition号，根据内存中记录的“分区-硬盘“映射表可得知数据归属的硬盘。</p>
-<p><strong>总结：</strong>VBS将操作系统的SCSI命令中的key提取出来（Key值的计算方式：Key=LUN ID+LBA ID/1MB），通过哈希运算，确定访问数据内容落到DHT环上的哪块Partition上，根据Partition和Disk的对应关系（系统初始化时形成），确定数据存放在那个服务器上的哪块盘上，再通过OSD通过计算确定数据存放在硬盘的具体位置并将获取的数据返回给VBS。</p>
-<h2 id="FusionStorage的内部组件功能和相互关系"><a href="#FusionStorage的内部组件功能和相互关系" class="headerlink" title="FusionStorage的内部组件功能和相互关系"></a>FusionStorage的内部组件功能和相互关系</h2><h3 id="FusionStorage-VBS模块及处理流程"><a href="#FusionStorage-VBS模块及处理流程" class="headerlink" title="FusionStorage VBS模块及处理流程"></a>FusionStorage VBS模块及处理流程</h3><p>VBS模块作为FusionStorage系统存储功能的接入侧，负责完成两大类业务：<strong>一是卷和快照的管理功能；二是I/O的接入和处理。</strong>VBS模块内部如下图所示，主要由：<strong>VBM、VBP、CLIENT、DATANET、SCSI协议控制（SCSI Initiator和SCSI Target）</strong>和<strong>心跳控制模块HeartBeat</strong>组成。</p>
-<p><img src="https://i.loli.net/2019/06/07/5cf9992d3f1b431081.jpg"></p>
-<p><strong>VBM模块是VBS中的控制管理模块，主要负责完成卷和快照的管理功能。</strong>比如：创建卷、挂载卷、卸载卷、查询卷、删除卷、创建快照、删除快照、基于快照创建卷等。</p>
-<p><strong>I/O数据流在VBS进程中需要经过三个模块的处理，分别为**</strong>SCSI<strong><strong>、</strong></strong>VBP<strong><strong>、</strong></strong>CLIENT<strong>**：</strong></p>
-<p><strong>Step1：</strong>SCSI启动器模块SCSI Initiator负责从内核（VSC.KO）中将I/O引入VBS进程，SCSI目标模块SCSI Target接收到的I/O数据包是<strong>标准SCSI协议格式的I/O请求</strong>，通过<strong>SCSI协议的四元组</strong>（host_id/channel_id/target_id/lun_id）和该I/O数据包在块设备上的偏移地址<strong>offset</strong>，<strong>读写的数据长度len共三个参数标识符，唯一标识一个I/O数据包</strong>，SCSI目标模块SCSI Target将收到的I/O信息交给VBP(Virtual Block Process)模块。</p>
-<p><strong>Step2：</strong>VBP内部将通用块格式的I/O数据包<strong>转换为FusionStorage内部Key-Value</strong>格式的I/O数据包下发给client，其中<strong>KEY的组成为</strong>：<strong>tree_id（4Byte）</strong>+<strong>block_no（4Byte）</strong>+ <strong>branch_id（2Byte）</strong>+<strong>snap_id（2Byte）</strong>，<strong>tree_id/branch_id/snap_id是FusionStorage内部对卷、快照的唯一标识</strong>；<strong>block_no是将卷按照1M的块划分，本次I/O落在哪一个1M块上的编号。（**</strong>block_no对1M取整后与tree_id/branch_id/snap_id求和就是key值，对1M取余后得到的余数就是offset<strong>**）</strong></p>
-<p><strong>Step3：</strong>I/O数据包请求到达client模块后，<strong>client根据KEY中的tree_id/branch_id进行hash计算</strong>，<strong>确定本次I/O发给哪一个OSD进程处理</strong>，确定后将I/O通过DATANET模块发给对应的OSD处理。</p>
-<p><strong>Step4：</strong>OSD完成I/O数据收取后在物理硬盘上执行真正的读写I/O操作，然后将操作结果逐层返回返回给内核VSC.KO模块。</p>
-<p><strong><em>备注：卷和快照的通用属性信息（如卷大小、卷名等）及卷和快照在DSware系统内部的一些私有属性（如用于定位卷和快照数据在系统中存储位置的tree_id/branch_id/snap_id）保存在DSware内部的一个私有逻辑卷中，该卷我们就称为元数据卷。</em></strong></p>
-<h3 id="FusionStorage-OSD模块及处理流程"><a href="#FusionStorage-OSD模块及处理流程" class="headerlink" title="FusionStorage OSD模块及处理流程"></a><strong>FusionStorage OSD模块及处理流程</strong></h3><p>FusionStorage存储池管理的每个物理磁盘对应一个OSD进程，OSD进程作为FusionStorage中读写磁盘I/O的执行进程，主要实现3大功能：一是磁盘的管理；二是I/O数据流的复制；三是I/O数据流的Cache处理。</p>
-<p><img src="https://i.loli.net/2019/06/07/5cf99972273ce79632.jpg"></p>
-<p>如上图所示，OSD进程是一种主备方式部署的进程，由MDC模块实时监控主备OSD进程的状态。当指定Partition所在的主OSD故障时，存储服务会实时自动切换到备OSD，保证了业务的连续性。OSD进程内部主要分为RSM、SNAP、CACHE、AIO和SMIO等子进程。各类子进程的作用的如下：</p>
-<ul>
-<li><strong>RSM：</strong>采用复制协议实现I/O数据流的复制。</li>
-<li><strong>SNAP：</strong>实现卷与快照的I/O功能、磁盘空间的管理。</li>
-<li><strong>CACHE：</strong>实现cache功能。</li>
-<li><strong>AIO：</strong>实现异步I/O数据流下发到底层SMIO模块，并且通过调用SMIO接口来监控介质故障。</li>
-<li><strong>SMIO：**</strong>下发I/O数据流到实际的物理介质、监控物理介质故障、获取磁盘信息。**</li>
-</ul>
-<p>每个OSD会管理一个硬盘，系统初始化时，OSD会按照1MB为单位对硬盘进行分片管理，并在硬盘的元数据管理区域记录每个1MB分片的分配信息。OSD接收到VBS发送的I/O数据流操作后，根据key查找该数据在硬盘上的具体分片信息，获取数据后返回给VBS，从而完成整个数据路由过程。</p>
-<p>对于写请求，OSD根据<strong>分区-主磁盘-备磁盘1-备磁盘2</strong>映射表，通知各个备磁盘的OSD进行写操作，主与备OSD进程都完成写后返回VBS。<strong>（在多副本场景下，备OSD数据由主OSD数据同步写入，避免调用VBS进程占用计算节点资源）</strong></p>
-<p><strong>在OSD内核部分还有有一个VDB子进程（上图中VDL，新版本已改为VDB），也就是Key-Value DB数据库。如下图所示：</strong></p>
-<p><img src="https://i.loli.net/2019/06/07/5cf9999da7c9d70499.jpg"></p>
-<p>磁盘的每一个1M空间都固定的分配给一个key，一定数量连续的key组成一个chunk。所谓的Chunk就是组成Partition的基本单位，一个Partition的存储空间由1个或多个Chunk构成。</p>
-<h3 id="FusionStorage-MDC模块功能"><a href="#FusionStorage-MDC模块功能" class="headerlink" title="FusionStorage MDC模块功能"></a><strong>FusionStorage MDC模块功能</strong></h3><p><strong>MDC（Metadata Controller）是一个高可靠集群，通过HA(High Availability)机制保证整个系统的高可用性和高可靠性，如下图所示：</strong></p>
-<p><img src="https://i.loli.net/2019/06/07/5cf999beef1c284728.jpg"></p>
-<p>MDC模块部署在Zookeeper集群中，通过ZooKeeper集群，实现元数据（如Topology、OSD View、Partition View、VBS View等）的可靠保存。ZK盘的配置原则为：在32台服务器内，默认选择3个独立的ZK盘（HDD）；在32~128台服务器内，默认选择5个独立ZK盘（HDD）；在多于128台服务器，默认选择5个独立ZK盘（SSD）；当使用SSD卡做主存时，选择3个ZK分区。</p>
-<p>### </p>
-<p>MDC模块内部通过Partition分配算法，实现数据多份副本的RAID可靠性。并且，作为FusionStorage的主控制模块，通过与OSD、VBS间的消息交互，实现对OSD、VBS节点的状态变化的获取与通知。</p>
-<p>通过与Agent间的消息交互，MDC实现系统的扩减容、状态查询、维护等。通过心跳检测机制，MDC模块完成对OSD、VBS的状态监控。</p>
-<p><strong>Zookeeper(简称ZK) 分布式服务框架主要用来解决分布式应用中经常遇到的，如：统一命名服务、状态同步服务、集群管理、分布式应用配置项的管理等，ZK主要工作包括三项：</strong></p>
-<ul>
-<li><strong>MDC主备管理：</strong> MDC采用一主两备部署模式；在MDC模块进程启动后，各个MDC进程会向ZK注册选主，先注册的为主MDC；运行过程中，ZK记录MDC主备信息，并通过心跳机制监控MDC主备健康状况，一旦主MDC进程故障，会触发MDC重新选主。</li>
-<li><strong>数据存储：</strong>在MDC运行过程中，会生成各种控制视图信息，包括目标视图、中间视图、IO视图信息等，<strong>这些信息的保存、更新、查询、删除操作都通过ZK提供的接口实现</strong>。</li>
-<li><strong>数据同步：</strong>数据更新到主ZK，由主ZK自动同步到两个备ZK，保证主备ZK数据实时同步。一旦ZK发生主备切换，业务不受影响</li>
-</ul>
-<p><strong>在FusionStorage典型部署中，为了保证系统可靠性，ZK采用一主两备部署模式，每个管理节点部署一个ZK进程，ZK主备管理由ZK内部机制保证。</strong></p>
-<p><strong>MDC进程与ZK进程采用C/S模式，通过TCP协议通信</strong>；MDC可以连接到任意一个ZK服务器，并且维持TCP连接。如果这个TCP连接中断，MDC能够顺利切换到另一个ZK服务器。</p>
-<h3 id="FusionStorage中的视图"><a href="#FusionStorage中的视图" class="headerlink" title="FusionStorage中的视图"></a>FusionStorage中的视图</h3><p>如下图所示，FusionStorage中有三种视图最为关键，分别是：<strong>OSD View、IO View和Partition View。</strong></p>
-<p><img src="https://i.loli.net/2019/06/07/5cf999f73062d18561.jpg"></p>
-<p><strong>其中，OSD View</strong>主要记录OSD进程的ID和状态；而<strong>IO View</strong>中记录了主Partition分区ID和对应的OSD节点之间的映射关系；<strong>Partition View</strong>中记录主备Partition与OSD的对应关系。<strong>IO View是Partition View的子集。</strong></p>
-<p><strong>MDC通过心跳感知OSD的状态，</strong>OSD每秒上报给MDC特定的消息（比如：OSD容量等），当MDC连续在特定的时间内（比如：当前系统为5s）没有接收到OSD的心跳信息，则MDC认为该OSD已经出故障（<strong>比如：OSD进程消失或OSD跟MDC间网络中断等</strong>），MDC则会发送消息告知该OSD需要退出，MDC更新系统的OSD视图信息，并给每台OSD发送视图变更通知，OSD根据新收到的视图，来决定后续的操作对象。</p>
-<p><strong>多副本复制取决于MDC的视图</strong>；两副本情况下，当client发送一个写请求到达该OSD的时候，<strong>该OSD将根据Partition视图的信息，将该写请求复制一份到该Partition的备OSD</strong>。多副本情况下，则会复制发送多个写请求到多个备OSD上。</p>
-<h3 id="FusionStorage-主要模块交互关系"><a href="#FusionStorage-主要模块交互关系" class="headerlink" title="FusionStorage 主要模块交互关系"></a>FusionStorage 主要模块交互关系</h3><p><img src="https://i.loli.net/2019/06/07/5cf99a1ac589f26534.jpg"></p>
-<p><strong>Step1：**</strong>系统启动时，MDC与ZK互动决定主MDC**。主MDC与其它MDC相互监控心跳，主MDC决定某MDC故障后接替者。其它MDC发现主MDC故障又与ZK互动升任主MDC。</p>
-<p><strong>Step2：**</strong>OSD启动时向主MDC查询归属MDC,向归属MDC报告状态，归属MDC把状态变化发送给VBS。<strong>当归属MDC故障，主MDC指定一个MDC接管，</strong>最多两个池归属同一个MDC。**</p>
-<p><strong>Step3：**</strong>VBS启动时查询主MDC，向主MDC注册（主MDC维护了一个活动VBS的列表，主MDC同步VBS列表到其它MDC，以便MDC能将OSD的状态变化通知到VBS），向MDC确认自己是否为leader<strong>；</strong>VBS从主MDC获取IO View<strong>，</strong>主VBS向OSD获取元数据，其它VBS向主VBS获取元数据**。</p>
-<p>FusionStorage系统中会存在多个VBS进程，如果多个VBS同时操作元数据卷，会引起数据被写坏等问题。<strong>为避免该问题，FusionStorage系统对VBS引入了主备机制，只有主VBS可操作元数据卷，所有的备VBS不允许操作元数据卷</strong>，<strong>一套FusionStorage系统中只存在一个主VBS</strong>；VBS的主备角色由MDC进程确定，所有VBS通过和MDC间的心跳机制保证系统中不会出现双主的情况。</p>
-<p><strong>只有主VBS能够操作元数据，所以备VBS收到的卷和快照管理类命令需要转发到主VBS处理，对于挂载、卸载等流程，主VBS完成元数据的操作后，还需要将命令转到目标VBS实现卷的挂载、卸载等操作。</strong></p>
-<h2 id="FusionStorage的I-O读写流程"><a href="#FusionStorage的I-O读写流程" class="headerlink" title="FusionStorage的I/O读写流程"></a><strong>FusionStorage的I/O读写流程</strong></h2><h3 id="FusionStorage-Cache读机制"><a href="#FusionStorage-Cache读机制" class="headerlink" title="FusionStorage Cache读机制"></a><strong>FusionStorage Cache读机制</strong></h3><p>FusionStorage的<strong>读缓存采用分层机制</strong>，第一层为内存cache，内存cache采用LRU机制缓存数据。第二层为SSD cache，SSD cache采用热点读机制，系统会统计每个读取的数据，并统计热点访问子，当达到阈值时，系统会自动缓存数据到SSD中，同时会将长时间未被访问的数据移出SSD。FusionStorage预读机制，统计读数据的相关性，读取某块数据时自动将相关性高的块读出并缓存到SSD中。</p>
-<p><img src="https://i.loli.net/2019/06/07/5cf99a60c14b049375.jpg"></p>
-<p><strong>如上图所示，OSD收到VBS发送的读I/O操作的步骤处理：</strong></p>
-<p><strong>Step 1：</strong>从<strong>“内存读cache”</strong>中查找是否存在所需I/O数据，存在则直接返回，并调整该I/O数据到“<strong>读cache”LRU队首</strong>，否则执行Step 2；</p>
-<p><strong>Step 2：</strong>从<strong>“SSD的读cache”</strong>中查找是否存在所需I/O数据，存在则直接返回，并增加该I/O数据的热点访问因子，否则执行Step 3；</p>
-<p><strong>Step 3：</strong>从<strong>“SSD的写cache”</strong>中查找是否存在所需I/O数据，存在则直接返回，并增加该I/O数据的热点访问因子；如果热点访问因子达到阈值，则会被缓存在<strong>“SSD的读cache”</strong>中。如果不存在，执行Step 4；</p>
-<p><strong>Step 4：</strong>从硬盘中查找到所需I/O数据并返回，同时增加该I/O数据的热点访问因子，如果热点访问因子达到阈值，则会被缓存在<strong>“SSD的读cache”</strong>中；</p>
-<p><strong>读修复：</strong>在读数据失败时，系统会判断错误类型，如果是磁盘扇区读取错误，系统会自动从其他节点保存的副本读取数据，然后重新写入该副本数据到硬盘扇区错误的节点，从而保证数据副本总数不减少和副本间的数据一致性。</p>
-<h3 id="FusionStorage-Cache写机制"><a href="#FusionStorage-Cache写机制" class="headerlink" title="FusionStorage Cache写机制"></a>FusionStorage Cache写机制</h3><p>OSD在收到VBS发送的写I/O操作时，会将写I/O缓存在SSD cache后完成本节点写操作。OSD会周期性地将缓存在SSD cache中的写I/O数据批量写入到硬盘，写Cache有一个水位值，未到刷盘周期超过设定水位值也会将Cache中数据写入到硬盘中。</p>
-<p><img src="https://i.loli.net/2019/06/07/5cf99a8a5198479125.jpg"></p>
-<p><strong>FusionStorage支持将服务器部分内存用作读缓存，NVDIMM和SSD用作写缓存。并且支持大块直通，按缺省配置大于256KB的块直接落盘不写Cache，这个配置可以人为修改。</strong></p>
-<h3 id="FusionStorage-读I-O流程"><a href="#FusionStorage-读I-O流程" class="headerlink" title="FusionStorage 读I/O流程"></a><strong>FusionStorage 读I/O流程</strong></h3><p><img src="https://i.loli.net/2019/06/07/5cf99aa4c463820797.jpg"></p>
-<p><strong>Step1：</strong>APP下发读IO请求到OS，OS转发该IO请求到本服务器的VBS模块；VBS根据读I/O信息中的LUN和LBA信息，通过数据路由机制确定数据所在的Primary OSD；如果此时Primary OSD故障，VBS会选择secondary OSD读取所需数据。</p>
-<p><strong>Step2：</strong>Primary OSD接收到读I/O请求后，按照Cache机制中的“<strong>Read cache机制</strong>”获取到读I/O所需数据，并返回读I/O成功给VBS。</p>
-<h3 id="FusionStorage-写I-O流程"><a href="#FusionStorage-写I-O流程" class="headerlink" title="FusionStorage 写I/O流程"></a><strong>FusionStorage 写I/O流程</strong></h3><p><img src="https://i.loli.net/2019/06/07/5cf99aca30dfa92476.jpg"></p>
-<p><strong>Step1：</strong>APP下发写I/O请求到OS，OS转发该I/O请求到本服务器的VBS模块；VBS根据写I/O信息中的LUN和LBA信息，通过数据路由机制确定数据所在的Primary OSD。</p>
-<p><strong>Step2：</strong>Primary OSD接收到写I/O请求后，同时以同步方式写入到本服务器SSD cache以及数据副本所在其他服务器的secondary OSD，secondary OSD也会同步写入本服务器SSD cache。Primary OSD接收到两个都写成功后，返回写I/O成功给VBS；同时，SSD cache中的数据会异步刷入到硬盘。</p>
-<p><strong>Step3：</strong>VBS返回写I/O成功，如果是3副本场景，primary OSD会同时同步写I/O操作到secondary OSD和third OSD。</p>
+        <h2 id="virt-instal工具简介"><a href="#virt-instal工具简介" class="headerlink" title="virt-instal工具简介"></a><strong>virt-instal工具简介</strong></h2><p>virt-install是一个命令行工具，它能够为KVM、Xen或其它支持libvrit API的hypervisor创建虚拟机并完成GuestOS安装；此外，它能够基于串行控制台、VNC或SDL支持文本或图形安装界面。安装过程可以使用本地的安装介质如CDROM，也可以通过网络方式如NFS、HTTP或FTP服务实现。对于通过网络安装的方式，virt-install可以自动加载必要的文件以启动安装过程而无须额外提供引导工具。当然，virt-install也支持PXE方式的安装过程，也能够直接使用现有的磁盘映像直接启动安装过程。<a id="more"></a></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/8h7pLTIGjpIA.png?imageslim" alt="mark"></p>
+<p>virt-install命令有许多选项，这些选项大体可分为下面几大类，同时对每类中的常用选项也做出简单说明。</p>
+<table>
+<thead>
+<tr>
+<th>普通选项</th>
+<th></th>
+<th style="text-align:left"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>选项</strong></td>
+<td><strong>子选项</strong></td>
+<td style="text-align:left"><strong>说明</strong></td>
+</tr>
+<tr>
+<td>-n或–name</td>
+<td></td>
+<td style="text-align:left">虚拟机名称，全局唯一</td>
+</tr>
+<tr>
+<td>-r或–ram</td>
+<td></td>
+<td style="text-align:left">虚拟机内存大小，单位为MB</td>
+</tr>
+<tr>
+<td>–vcpus</td>
+<td>maxvcpu，sockets，cores，threads</td>
+<td style="text-align:left">vCPU的个数及相关配置</td>
+</tr>
+<tr>
+<td>–cpu</td>
+<td></td>
+<td style="text-align:left">CPU模式及特性，可以使用qemu-kvm -cpu ? 来获取支持的类型</td>
+</tr>
+<tr>
+<td>安装方法选项</td>
+<td></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>选项</td>
+<td>子选项</td>
+<td style="text-align:left">说明</td>
+</tr>
+<tr>
+<td>-c或–cdrom</td>
+<td></td>
+<td style="text-align:left">光盘安装介质</td>
+</tr>
+<tr>
+<td>-l或–location</td>
+<td></td>
+<td style="text-align:left">安装源URL，支持FPT，HTTP及NFS，如:<a href="ftp://172.0.6.1/pub" target="_blank" rel="noopener">ftp://172.0.6.1/pub</a></td>
+</tr>
+<tr>
+<td>–pxe</td>
+<td></td>
+<td style="text-align:left">基于PXE完成安装</td>
+</tr>
+<tr>
+<td>–livecd</td>
+<td></td>
+<td style="text-align:left">把光盘当做启动引导CD</td>
+</tr>
+<tr>
+<td>–os-type</td>
+<td></td>
+<td style="text-align:left">操作系统类型，如linux、windows或unix等</td>
+</tr>
+<tr>
+<td>–os-variant</td>
+<td></td>
+<td style="text-align:left">某类型操作系统的发行版，如rhel7、Ubuntud等</td>
+</tr>
+<tr>
+<td>-x或–extra-args</td>
+<td></td>
+<td style="text-align:left">根据–location指定的方式安装GuestOS时，用于传递给内核的参数选项，例如指定kickstart文件的位置。</td>
+</tr>
+<tr>
+<td>–boot</td>
+<td></td>
+<td style="text-align:left">指定安装过程完成后的配置选项，如指定引导设备的次序、使用指定的而非安装kernel/initrd来引导系统。比如：–boot cdrom、hd、network：指定引导次序分别为光驱、硬盘和网络；–boot kernel=KERNEL,initrd=INITRD,kernel_args=”console=/dev/ttyS0”：指定启动系统的内核及initrd文件，并创建一个模拟终端</td>
+</tr>
+<tr>
+<td><strong>存储配置</strong></td>
+<td></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td><strong>选项</strong></td>
+<td><strong>子选项</strong></td>
+<td style="text-align:left"><strong>说明</strong></td>
+</tr>
+<tr>
+<td>–disk</td>
+<td></td>
+<td style="text-align:left">指定存储设备的路径及其属性</td>
+</tr>
+<tr>
+<td></td>
+<td>device</td>
+<td style="text-align:left">设备类型，如cdrom、disk或floppy等，默认为disk</td>
+</tr>
+<tr>
+<td></td>
+<td>bus</td>
+<td style="text-align:left">磁盘总线类型，可以为ide、scsi、usb、virtio或xen</td>
+</tr>
+<tr>
+<td></td>
+<td>perms</td>
+<td style="text-align:left">访问权限，如rw、ro或sh（共享可读写），默认为rw</td>
+</tr>
+<tr>
+<td></td>
+<td>size</td>
+<td style="text-align:left">新建磁盘镜像大小，单位为GB</td>
+</tr>
+<tr>
+<td></td>
+<td>cache</td>
+<td style="text-align:left">缓存类型，可以为none、writethrouth及writeback</td>
+</tr>
+<tr>
+<td></td>
+<td>format</td>
+<td style="text-align:left">磁盘镜像格式，如raw、qcow2、vmdk等</td>
+</tr>
+<tr>
+<td></td>
+<td>sparse</td>
+<td style="text-align:left">磁盘镜像的存储数据格式为稀疏格式，即不立即分配指定大小的空间</td>
+</tr>
+<tr>
+<td>–nodisks</td>
+<td></td>
+<td style="text-align:left">不适用本地磁盘，在LiveCD模式中常用</td>
+</tr>
+<tr>
+<td><strong>网络配置</strong></td>
+<td></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td><strong>选项</strong></td>
+<td><strong>子选项</strong></td>
+<td style="text-align:left"><strong>说明</strong></td>
+</tr>
+<tr>
+<td>-w或–network</td>
+<td></td>
+<td style="text-align:left">将虚拟机连入虚拟网络中</td>
+</tr>
+<tr>
+<td></td>
+<td>bridge=BRIDGE</td>
+<td style="text-align:left">虚拟网络为名称为BRIDGE的网桥设备</td>
+</tr>
+<tr>
+<td></td>
+<td>network=NAME</td>
+<td style="text-align:left">虚拟网络为名称NAME的网络</td>
+</tr>
+<tr>
+<td></td>
+<td>model</td>
+<td style="text-align:left">GuestOS中看见的虚拟网络设备类型</td>
+</tr>
+<tr>
+<td></td>
+<td>mac</td>
+<td style="text-align:left">配置固定的MAC地址，省略此选项时，MAC地址随机分配，但是无论何种方式，KVM的网络设备的MAC地址前三段必须为52:54:00</td>
+</tr>
+<tr>
+<td>–nonetworks</td>
+<td></td>
+<td style="text-align:left">虚拟机不使用网络</td>
+</tr>
+<tr>
+<td><strong>图形配置</strong></td>
+<td></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td><strong>选项</strong></td>
+<td><strong>子选项</strong></td>
+<td style="text-align:left"><strong>说明</strong></td>
+</tr>
+<tr>
+<td>–graphics</td>
+<td></td>
+<td style="text-align:left">指定图形显示相关的配置，此选项不会配置任何硬件，而是指定虚拟机启动后对其访问的图形界面接口</td>
+</tr>
+<tr>
+<td></td>
+<td>TYPE</td>
+<td style="text-align:left">指定显示类型，可以为vnc，spice、sdl或none</td>
+</tr>
+<tr>
+<td></td>
+<td>port</td>
+<td style="text-align:left">TYPE为vnc或spice时其监听的端口</td>
+</tr>
+<tr>
+<td></td>
+<td>listen</td>
+<td style="text-align:left">TYPE为vnc或spice时其监听的IP地址，默认为127.0.0.1，可以通过修改/etc/libvirt/qemu.conf定义新的默认值</td>
+</tr>
+<tr>
+<td></td>
+<td>password</td>
+<td style="text-align:left">TYPE为vnc或spice时为远程访问监听的服务指定认证密码</td>
+</tr>
+<tr>
+<td>–noautoconsole</td>
+<td></td>
+<td style="text-align:left">禁止自动连接到虚拟机的控制台</td>
+</tr>
+<tr>
+<td><strong>设备选项</strong></td>
+<td></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td><strong>选项</strong></td>
+<td><strong>子选项</strong></td>
+<td style="text-align:left"><strong>说明</strong></td>
+</tr>
+<tr>
+<td>–serial</td>
+<td></td>
+<td style="text-align:left">附加一个串行设备到当前虚拟机，根据设备类型不同，可以使用不同的选项，格式为–serial type,opt1=val1,opt2=val2</td>
+</tr>
+<tr>
+<td></td>
+<td>pty</td>
+<td style="text-align:left">创建伪终端</td>
+</tr>
+<tr>
+<td></td>
+<td>dev,path=HOSTPATH</td>
+<td style="text-align:left">附加主机设备至此虚拟机</td>
+</tr>
+<tr>
+<td>–video</td>
+<td></td>
+<td style="text-align:left">指定显卡设备类型，如cirrus、vga、qxl或vmvga</td>
+</tr>
+<tr>
+<td><strong>虚拟化平台</strong></td>
+<td></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td><strong>选项</strong></td>
+<td><strong>子选项</strong></td>
+<td style="text-align:left"><strong>说明</strong></td>
+</tr>
+<tr>
+<td>-v或–hvm</td>
+<td></td>
+<td style="text-align:left">当宿主机同时支持全虚和半虚时，使用此选项指定硬件辅助的全虚</td>
+</tr>
+<tr>
+<td>-p或–paravirt</td>
+<td></td>
+<td style="text-align:left">指定使用半虚</td>
+</tr>
+<tr>
+<td>–virt-type</td>
+<td></td>
+<td style="text-align:left">指定使用的hypervisor，如kvm、xen、qemu等，其值可以通过virsh capabilities获得</td>
+</tr>
+<tr>
+<td><strong>其它</strong></td>
+<td></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td><strong>选项</strong></td>
+<td><strong>子选项</strong></td>
+<td style="text-align:left"><strong>说明</strong></td>
+</tr>
+<tr>
+<td>–autostart</td>
+<td></td>
+<td style="text-align:left">指定虚拟机是否在物理机启动后自动启动</td>
+</tr>
+<tr>
+<td>–print-xml</td>
+<td></td>
+<td style="text-align:left">如果虚拟机不需要安装过程(–import、–boot)，则显示生成的XML而不是创建虚拟机。默认情况下，此选项仍会创建虚拟磁盘</td>
+</tr>
+<tr>
+<td>–force</td>
+<td></td>
+<td style="text-align:left">禁止进入命令交互模式，如需回答yes或no，默认自动回答yes</td>
+</tr>
+<tr>
+<td>–dry-run</td>
+<td></td>
+<td style="text-align:left">执行创建虚拟机的整个过程，但不创建虚拟机，改变主机上的设备配置信息及将其创建的需求通知给libvirt；</td>
+</tr>
+<tr>
+<td>-d或–debug</td>
+<td></td>
+<td style="text-align:left">显示debug信息；</td>
+</tr>
+</tbody>
+</table>
+<p><strong>尽管virt-install命令有着类似上述的众多选项，但实际使用中，其必须提供的选项仅包括–name、–ram、–disk（也可是–nodisks）及安装过程相关的选项。此外，有时还需要使用括–connect=CONNCT选项来指定连接至一个非默认的hypervisor。</strong></p>
+<h2 id="图形化界面安装"><a href="#图形化界面安装" class="headerlink" title="图形化界面安装"></a><strong>图形化界面安装</strong></h2><p>这里的使用图形化界面不是通过virt-manager和virt-view工具在图形化服务器或宿主机来安装，而是通过–graphics选项指定vnc或spice方式安装，安装过程中需要宿主机通过vnc client连接图形化接口实现。在我们的KVM实践初步一文中介绍安装ubuntu1204桌面版虚拟机就是采用这种方式。忘了的，可以回顾本站那篇文章。</p>
+<p>现在，我们这里演示的是另一种图形化安装方法，还是通过vnc实现，安装介质使用ubuntu18.10桌面版ISO。如下：</p>
+<p><strong>step1：</strong>我们先查看下当前激活的虚拟网络有哪些，方便后续安装虚拟机时配置网络（图中红色框部分）。同时，我们创建一个qcow2格式的虚拟机磁盘镜像，大小为120G（图中黄色框部分）。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/Vz0l4nn8rfrG.png?imageslim" alt="mark"></p>
+<p><strong>step2：</strong>通过virt-install工具安装第一个模板虚拟机ubt1810d。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/g23WFSzoMi86.png?imageslim" alt="mark"></p>
+<p>上图中，我们指定了虚拟机当前vcpu为2个，最大可分配4个（黄色框部分），同时指定了虚拟机的镜像磁盘格式为qcow2格式（采用qcow2格式，此项必须明确指定，并且通过size选项指定大小，否则生成的磁盘大小异常，或者在创建镜像磁盘时通过-o选项明确指定也可以），总线类型为virtio类型（图中蓝色框部分）</p>
+<p><strong>step3：</strong>通过vncdisplay命令查询当前虚拟机图形界面接口服务vnc监听的端口号，并通过物理机的vnc client连接开始安装。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/CCcvSaBXLyzV.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/Mg1jNeuPheOz.png?imageslim" alt="mark"></p>
+<p><strong>step4：</strong>完成虚拟机系统安装后，我们通过vnc client登录虚拟机，打开虚拟机的console控制接口，便于后续通过宿主机console连接虚拟机控制台。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/GSiPEXUgO8hK.png?imageslim" alt="mark"></p>
+<p><strong>以上，就是通过图形界面接口实现kvm虚拟机的安装过程。一般通过图形界面接口安装，主要用于安装桌面版的操作系统，比如上面的ubuntu desktop版本，windows的各种版本等。</strong>由于ubuntu系统默认不开启root用户的ssh登录，为了方便后续管理，我们可以在ubuntu系统打开ssh的root登录权限。但是，记得首先要设置root的登录密码。这些操作就可以通过宿主机console控制台来完成。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/mODBkfX9JvPd.png?imageslim" alt="mark"></p>
+<h2 id="文本字符界面安装"><a href="#文本字符界面安装" class="headerlink" title="文本字符界面安装"></a><strong>文本字符界面安装</strong></h2><p>上面的图形化安装方式主要借助vnc或spice客户端来实现图形界面安装接口，主要用于桌面操作系统的安装。在实际运维时，一般用于app的虚拟机大部分采用非桌面系统，而且打开vnc或spice监听端口不便于批量安装。这种情况下，就需要通过文本界面实现自动安装。主要通过-x选项打开一个串行接口终端tty和ttyS0实现。但是，如果使用-x选项安装，安装介质必须使用–location选项，而不能使用–cdrom来完成。此时，有两个选择，一是将iso镜像拷贝到宿主机的某个目录，通过-l（–location）选项指定即可，类似–cdrom方式。另一种是将iso挂载到某个目录，通过http、nfs或ftp方式发布，然后在-l选项指定URL即可。我们这里采用第二种方式的http方式进行安装，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/poIofAW7g8rO.png?imageslim" alt="mark"></p>
+<p>上述安装方式，通过-l选项指定安装介质的挂载目录，通过-x选项安装使用kiskstart文件，以及打开串行终端console，通过–nographics选项指定不采用图形界面方式安装。命令执行后，安装界面如下，且通过kickstart文件自动化安装。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/3VzJdfq3iWea.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/yd9HUluqTuxw.png?imageslim" alt="mark"></p>
+<p>以上这种安装方式，也是实际运维中常用的安装方式，同时可以在kickstart文件中指定初始化脚本，这样在系统安装完成后自动完成初始化配置。后续，就可以将此虚拟机作为模板镜像，批量分发。</p>
+<p>但是，如果要将当前虚拟机作为模板镜像，需要删除当前虚拟机中的MAC和UUID，同时清空本地规则和系统规则中网卡配置文件，这样后续通过该虚拟机的模板镜像生成的新的虚拟机就会自动生成新的MAC和网卡名称，而不用通过在XML配置文件中手动指定MAC，实现自动化运维。上面的要求，需要在虚拟机中完成以下配置，然后关机作为后续分发虚拟机的模板。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/3LCymbL4DjcE.png?imageslim" alt="mark"></p>
+<p><strong>虚机模板方式安装</strong></p>
+<p>模板方式安装一般有两种方式：一种是通过–import选项导入镜像虚拟机的磁盘来生成一个新的虚拟机，这种方式只能生成一个新虚拟机，当要生成第二个虚拟机时会提示磁盘被占用错误。另一种方式就是利用模板镜像虚拟机的XML文件，生成新的虚拟机的XML配置文件，需要删除源模板镜像虚拟机XML文件中的uuid、mac address，并修改磁盘路径为新虚拟机的磁盘（差分盘或新磁盘都可），而且需要修改XML文件中的虚拟机name为新建虚拟机name。完成后，再通过virsh define预定义一个新虚拟机，然后通过virsh start启动即可。下面，我们就对这两种方式逐一进行验证。</p>
+<p><strong>1）通过–import选项导入现有虚拟机磁盘生成一个新的虚拟机</strong></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/xiMr145MYNS2.png?imageslim" alt="mark"></p>
+<p>完成上面的操作后，我们就能立即生成一个新的虚拟机cirros01。然后，我们可以通过virsh console命令登录并执行相关操作。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/RzAabqMfbimw.png?imageslim" alt="mark"></p>
+<p>此时，我们如果需要再通过上面镜像盘生成一个虚拟机时，会提示镜像盘被占用的错误。如下：</p>
+<p>因此，这种方式只能生成一个新虚拟机，一般用于很小的初始化配置测试。所以，在实际运维中，主要通过第二种方式利用模板镜像虚拟机来批量创建虚拟。</p>
+<p><strong>2）通过模板镜像虚机利用virsh-define和virsh-start实现新虚机创建</strong></p>
+<p>首先，我们利用模板镜像虚机磁盘创建一个差分磁盘，用于新虚机的系统盘（也可以创建非差分盘，看实际业务需求而定）。如下，通过-b选项指定backing file为模板镜像虚机的磁盘。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/OBslPPz9qRyz.png?imageslim" alt="mark"></p>
+<p>然后，利用模板镜像虚机的xml文件生成新虚机的xml配置文件。需要删除uuid，mac address配置，修改磁盘存储位置为新创建的虚机差分盘，修改name为新虚机的name。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/cV37uADblJG4.png?imageslim" alt="mark"></p>
+<p>然后，通过virsh-define定义新虚机，再通过virsh-start启动新虚机，然后通过console控制台进入虚机。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/HmLaBCUbe4OL.png?imageslim" alt="mark"></p>
+<p>如下图，可以发现系统为我们自动生成mac和ip，而且mac必然是52:54:00开头。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/fkQjaiYjEbrI.png?imageslim" alt="mark"></p>
+<p>而且，新生成的虚拟机具备访问外网和宿主机的权利。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/Kl5gCrHopMBl.png?imageslim" alt="mark"></p>
+<h2 id="批量创建KVM虚拟机的脚本"><a href="#批量创建KVM虚拟机的脚本" class="headerlink" title="批量创建KVM虚拟机的脚本"></a><strong>批量创建KVM虚拟机的脚本</strong></h2><p>掌握上面各种创建KVM虚拟机的方法后，我们可以写一个shell脚本来完成批量创建虚拟机的任务。</p>
+<p>首先，我们需要准备创建虚拟机的镜像磁盘，主要有两种方法：一种是拷贝模板虚拟机的镜像磁盘，这种主要用于创建独立虚拟机，优点是不依赖于模板虚拟机磁盘镜像，可以完整保留数据。缺点就是占用存储空间较大。另一种方式就是我们上面的通过建立差分磁盘实现，优点是存储空间占用较小，缺点就是模板镜像磁盘一旦损坏将造成所有依赖虚拟机无法启动。</p>
+<p>完成虚拟磁盘创建后，我们就可以按照上面办法通过模板镜像虚机的XML配置文件批量创建新的虚拟机XML配置文件，并修改里面的NAME、UUID、MAC ADDRESS和DISK PATH等配置项。最终，通过define和start命令完成新虚拟机的定义和启动。</p>
+<p>通过上面的分析，要实现KVM虚拟机批量创建shell脚本，只需要通过两个for循环就能完成。同时，在程序开始要检查程序脚本的执行权限，从管理角度来说非root用户不能执行。还要给脚本进行传参，用来设定需要批量拉起的KVM虚拟机的上限值和下限值，也就是确定批量拉起的虚机个数。那么，传递的参数就必须是2个，不能多也不能少，且两个参数都必须是数字，参数1的值要小于参数2。</p>
+<p>以上，就是我们程序要实现的逻辑，可以采用函数式编程的概念封装成三个函数，实现简单模块化设计。为了讲述清楚，我这里就不封装了。接下来，我们就来一步步写这个脚本。</p>
+<p><strong>Step1：</strong>通过第一个for循环批量创建虚拟机的虚拟磁盘，这里我们采用差分磁盘的方式。如下</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/05H8pcgg7tWr.png?imageslim" alt="mark"></p>
+<p>脚本执行后效果如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/qxi9Lh37MYeC.png?imageslim" alt="mark"></p>
+<p><strong>Step2：</strong>通过第二个for循环批量创建虚拟机的XML配置文件，并定义和启动虚拟机。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/duowiSJnM12D.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/IPjfNbXTAktd.png?imageslim" alt="mark"></p>
+<p>完成上面的替换，在脚本执行virsh defiine和virsh start命令定义新的虚拟机并完成启动。脚本执行后效果如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/tTEnd55F6vDR.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/Y0wbcGDO6FIF.png?imageslim" alt="mark"></p>
+<p>至此，KVM虚拟机的各种创建方法介绍完毕，网上还有一种通过qemu-kvm命令创建虚拟机的方法，与通过virt-install方法创建大同小异，且红帽官方并不建议这种方法。因此，只要掌握virt-install方法创建虚拟机即可。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/lI8SNxelT4gE.png?imageslim" alt="mark"></p>
 
       
     </div>
@@ -700,7 +999,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="https://kkutysllb.cn/2019/06/07/2019-06-07-华为分布式存储FusionStorage原理详解/" title="2019-06-07-华为分布式存储FusionStorage原理详解">https://kkutysllb.cn/2019/06/07/2019-06-07-华为分布式存储FusionStorage原理详解/</a>
+    <a href="https://kkutysllb.cn/2020/03/01/2020-03-01-KVM虚拟机的各种安装方法/" title="2020-03-01-KVM虚拟机的各种安装方法">https://kkutysllb.cn/2020/03/01/2020-03-01-KVM虚拟机的各种安装方法/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -713,7 +1012,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/电信云/" rel="tag"><i class="fa fa-tag"></i> 电信云</a>
+            <a href="/tags/Hypervisor/" rel="tag"><i class="fa fa-tag"></i> Hypervisor</a>
           
         </div>
       
@@ -726,8 +1025,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/06/03/2019-06-03-华为分布式存储FusionStorage概述/" rel="next" title="2019-06-03-华为分布式存储FusionStorage概述">
-                <i class="fa fa-chevron-left"></i> 2019-06-03-华为分布式存储FusionStorage概述
+              <a href="/2020/03/01/2020-03-01-KVM管理工具libvirt/" rel="next" title="2020-03-01-KVM管理工具libvirt">
+                <i class="fa fa-chevron-left"></i> 2020-03-01-KVM管理工具libvirt
               </a>
             
           </div>
@@ -735,10 +1034,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/06/07/2019-06-07-2G-5G网络架构的演进/" rel="prev" title="2019-06-07-2G~5G网络架构的演进">
-                2019-06-07-2G~5G网络架构的演进 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -972,7 +1267,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#华为FusionStorage中的基础概念"><span class="nav-number">1.</span> <span class="nav-text">华为FusionStorage中的基础概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FusionStorage的数据路由原理"><span class="nav-number">2.</span> <span class="nav-text">FusionStorage的数据路由原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FusionStorage的内部组件功能和相互关系"><span class="nav-number">3.</span> <span class="nav-text">FusionStorage的内部组件功能和相互关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-VBS模块及处理流程"><span class="nav-number">3.1.</span> <span class="nav-text">FusionStorage VBS模块及处理流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-OSD模块及处理流程"><span class="nav-number">3.2.</span> <span class="nav-text">FusionStorage OSD模块及处理流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-MDC模块功能"><span class="nav-number">3.3.</span> <span class="nav-text">FusionStorage MDC模块功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage中的视图"><span class="nav-number">3.4.</span> <span class="nav-text">FusionStorage中的视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-主要模块交互关系"><span class="nav-number">3.5.</span> <span class="nav-text">FusionStorage 主要模块交互关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FusionStorage的I-O读写流程"><span class="nav-number">4.</span> <span class="nav-text">FusionStorage的I/O读写流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-Cache读机制"><span class="nav-number">4.1.</span> <span class="nav-text">FusionStorage Cache读机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-Cache写机制"><span class="nav-number">4.2.</span> <span class="nav-text">FusionStorage Cache写机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-读I-O流程"><span class="nav-number">4.3.</span> <span class="nav-text">FusionStorage 读I/O流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-写I-O流程"><span class="nav-number">4.4.</span> <span class="nav-text">FusionStorage 写I/O流程</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#virt-instal工具简介"><span class="nav-number">1.</span> <span class="nav-text">virt-instal工具简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图形化界面安装"><span class="nav-number">2.</span> <span class="nav-text">图形化界面安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文本字符界面安装"><span class="nav-number">3.</span> <span class="nav-text">文本字符界面安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#批量创建KVM虚拟机的脚本"><span class="nav-number">4.</span> <span class="nav-text">批量创建KVM虚拟机的脚本</span></a></li></ol></div>
             
 
           </div>
@@ -1168,7 +1463,7 @@
   
     <script>
   window.livereOptions = {
-    refer: '2019/06/07/2019-06-07-华为分布式存储FusionStorage原理详解/'
+    refer: '2020/03/01/2020-03-01-KVM虚拟机的各种安装方法/'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];
