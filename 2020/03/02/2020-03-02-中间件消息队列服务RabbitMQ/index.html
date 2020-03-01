@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="概述OpenStack是由Nova、Neutron、Cinder等多个组件构成的开源云计算项目，各组件之间通过REST接口进相互通信和彼此调用，而组件之间的REST接口调用，是建立在基于高级消息队列协议（AdvancedMessageQueueProtocol，AMQP）上的RPC通信。在OpenStack中，AMQP Broker（可以是Qpid Broker，也可以是RabbitMQ Brok">
+<meta name="keywords" content="云计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020-03-02-中间件消息队列服务RabbitMQ">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="概述OpenStack是由Nova、Neutron、Cinder等多个组件构成的开源云计算项目，各组件之间通过REST接口进相互通信和彼此调用，而组件之间的REST接口调用，是建立在基于高级消息队列协议（AdvancedMessageQueueProtocol，AMQP）上的RPC通信。在OpenStack中，AMQP Broker（可以是Qpid Broker，也可以是RabbitMQ Brok">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/TuHomnveYICk.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/q4PhV0IJedYz.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/1uuidxvSy3jq.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/4z0qQ8QJccq4.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/Pqx1RBsCsYSp.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/qMugcYjPeKea.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/0AXlMvj7dBGY.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/yytpQMWeUkwI.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/7ow5j9p9PiR4.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/EVkykmoPYWIo.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/LYkO22AfsQ44.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/jnWdoCzbWgmb.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/mVnY7x0BhLyH.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/3HwQgizFzOvp.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/a7xWk1oPueHW.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/mpLKS1WWfFGx.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/wzW0sa1k7WLY.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/M2Vi3cVazt3P.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/3LjtqFXRA15d.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/msBLuPrWthUp.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/kO64BRmCx1Jl.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/93uRXP3iJU9g.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/3m8oOBIBqHYn.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/Ctn9zT4qKQOw.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/jfG7pegVyang.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/l9FoAwNFS8Pg.png?imageslim">
+<meta property="og:updated_time" content="2020-03-01T16:17:30.646Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2020-03-02-中间件消息队列服务RabbitMQ">
+<meta name="twitter:description" content="概述OpenStack是由Nova、Neutron、Cinder等多个组件构成的开源云计算项目，各组件之间通过REST接口进相互通信和彼此调用，而组件之间的REST接口调用，是建立在基于高级消息队列协议（AdvancedMessageQueueProtocol，AMQP）上的RPC通信。在OpenStack中，AMQP Broker（可以是Qpid Broker，也可以是RabbitMQ Brok">
+<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/TuHomnveYICk.png?imageslim">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2020-03-02-中间件消息队列服务RabbitMQ | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2020-03-02-中间件消息队列服务RabbitMQ
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-02 00:02:05 / 修改时间：00:17:30" itemprop="dateCreated datePublished" datetime="2020-03-02T00:02:05+08:00">2020-03-02</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">19k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">17 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>OpenStack是由Nova、Neutron、Cinder等多个组件构成的开源云计算项目，各组件之间通过REST接口进相互通信和彼此调用，而<strong>组件之间的REST接口调用，是建立在基于高级消息队列协议（AdvancedMessageQueueProtocol，AMQP）上的RPC通信</strong>。在OpenStack中，AMQP Broker（可以是Qpid Broker，也可以是RabbitMQ Broker）位于OpenStack的任意两个内部组件之间，并使得OpenStack内部组件<strong>以松耦合的方式进行通信</strong>。纵观OpenStack的组件架构设计，其中的消息队列在OpenStack全局架构中扮演着至关重要的组件通信作用，也正是因为基于消息队列的分布式通信技术，才使得OpenStack的部署具有灵活、模块松耦合、架构扁平化和功能节点弹性扩展等特性，所以消息队列在OpenStack的架构设计和实现中扮演着极为核心的消息传递作用。同时，消息队列系统的消息收发性能和消息队列的高可用性也将直接影响OpenStack的集群性能。<a id="more"></a></p>
+<p>在OpenStack的部署过程中，用户可以选择不同的消息队列系统来为OpenStack提供消息服务，但是在众多的消息队列系统中，RabbitMQ是使用最多也是综合性能最接近生产系统要求的消息队列系统。华为FusionSPhere OpenStack的解决方案中，也是采用的RabbitMQ作为消息队列系统。</p>
+<h2 id="AMQP-高级消息队列协议"><a href="#AMQP-高级消息队列协议" class="headerlink" title="AMQP-高级消息队列协议"></a><strong>AMQP-高级消息队列协议</strong></h2><p>AMQP是应用层协议的一个开放标准，专为面向消息的中间件而设计，同时，AMQP也是面向消息、队列、路由、可靠性和安全性而设计的高级消息队列系统。AMQP提供统一消息服务的应用层标准协议，客户端与消息中间件基于此协议传递消息，并且消息传递不受不同客户端/中间件产品和不同开发语言等条件的限制。在消息的传递过程中，消息中间件主要用于组件之间的<strong>解耦</strong>，即<strong>消息生产者不用关系消息由谁来消费，消息消费者也不用关系消息由谁产生</strong>。</p>
+<p>AMQP协议本质上是一种二进制协议，可以让客户端应用与消息中间件之间异步、安全、高效地交互。该协议框架也是分层结构，总体上分为三层，分别是：<strong>Model层、Seesion层</strong>和<strong>Transport层</strong>，消息在Session层与Transport层之间传递，用于执行Model层的Command，本质上就是二进制的封装和解封装过程。</p>
+<ul>
+<li><strong>Model层：</strong>决定了基本域模型所产生的行为，这种行为在AMQP中用“Command”表示。</li>
+<li><strong>Session层：</strong>定义客户端与Broker之间的通信，通信双方都是一个Peer，可互称作Partner，会话层为模型层的Command提供可靠的传输保障。</li>
+<li><strong>Transport层：</strong>专注于数据传送，并与Session保持交互，接受上层的数据并组装成二进制流，数据传送到Receiver后再进行解析并交付给Session层。Session层需要Transport层完成网络异常情况的汇报，顺序传送Command等工作。</li>
+</ul>
+<h2 id="RabbitMQ中的基本概念"><a href="#RabbitMQ中的基本概念" class="headerlink" title="RabbitMQ中的基本概念"></a><strong>RabbitMQ中的基本概念</strong></h2><p>RabbitMQ用Erlang语言开发，是AMQP的开源实现。在RabbitMQ的部署使用和故障排除过程中，将会接触到很多RabbitMQ的基础概念，了解和掌握这些概念，是使用RabbitMQ为集群系统提供消息服务的基础。</p>
+<h3 id="Connection和Channel"><a href="#Connection和Channel" class="headerlink" title="Connection和Channel"></a><strong>Connection和Channel</strong></h3><p><strong>ConnectionFactory、Connection和Channel都是RabbitMQ对外提供的API中最基本的对象。</strong>Connection是RabbitMQ的Socket连接，本质上是一个TCP协议连接，消息的生产者Producer和消费者Consumer都通过Connection建立的TCP链接连接到RabbitMQ Server，因此RabbitMQ服务启动时的初始化过程就是创建一个Connection的连接，而ConnnectionFactory是Connection对象的工厂函数，用来初始化Connection对象。Channel是客户端与RabbitMQ交互消息最重要的一个接口，客户端大部分的业务操作是在Channel这个API接口中完成的，包括定义Queue和Exchange、绑定Queue与Exchange、发布消息等操作。Channel本质上是一个虚拟连接，它建立在TCP连接中，数据流动都是在Channel中进行，通常，程序启动后首先建立TCP连接，接着就是建立Channel对象。RabbitMQ使用Channel而不直接使用TCP，就是因为TCP的建立和拆除系统开销过大，容易引起消息队列系统瓶颈。</p>
+<h3 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a><strong>Queue</strong></h3><p>Queue是RabbitMQ的内部对象，用于存储消息，Queue可以看成是存储消息的容器。消息的生产者与消费者之间可以是一对多或者多对多的关系，即多个消费者可以订阅同一个Queue，这时，<strong>Queue中的消息会被平均分摊给多个消费者进行处理，而不是每个消费者都收到所有的消息并处理</strong>。如下图所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/TuHomnveYICk.png?imageslim" alt="mark"></p>
+<h3 id="Message-Acknowledgment"><a href="#Message-Acknowledgment" class="headerlink" title="Message Acknowledgment"></a><strong>Message Acknowledgment</strong></h3><p>RabbitMQ会要求消费者在处理完消息后发送一个回执应答给RabbitMQ Broker，RabbitMQ收到消息回执（Message-Acknowledgment）后才将该消息从Queue中移除。如果RabbitMQ没有收到回执并检测到消费者与RabbitMQ Broker的连接断开，则RabbitMQ会将该消息发送给其他消费者（如果存在多个消费者）继续处理。<strong>RabbitMQ的消息处理过程中并不存在Timeout的概念</strong>，即一个消费者处理消息所花的时间再长，只要其连接还存在，RabbitMQ就不会将该消息发送给其他消费者。这种情况会产生另外一个问题，如果开发人员在处理完业务逻辑后，忘记发送回执给RabbitMQ，这将会导致Queue中堆积的消息越来越多，而消费者重新连接到RabbitMQ后会重复消费这些消息并重复执行业务逻辑。因此，<strong>在处理完业务逻辑后一定要向RabbitMQ发送应答回执，否则会造成应用系统存在重大BUG</strong>。</p>
+<h3 id="Message-Durability"><a href="#Message-Durability" class="headerlink" title="Message Durability"></a><strong>Message Durability</strong></h3><p>如果希望即使在RabbitMQ服务重启的情况下，消息也不会丢失，则可以<strong>将Queue与Message均做持久化设置，即MessageDurability</strong>，这样便可保证绝大部分情况下RabbitMQ的消息不会丢失。但是，消息持久化方法依然解决不了小概率丢失消息事件的发生，如RabbitMQ服务器已经接收到生产者的消息，但还没来得及持久化该消息时RabbitMQ服务器就断电了，如果需要解决这种小概率事件下的消息丢失情况，那么就要用到事务RabbitMQ的高级功能或者将RabbitMQ部署为高可用集群。</p>
+<h3 id="Prefetch-Count"><a href="#Prefetch-Count" class="headerlink" title="Prefetch Count"></a><strong>Prefetch Count</strong></h3><p>如果有多个消费者同时订阅同一个Queue中的消息，Queue中的消息会被平分给多个消费者。这时如果每个消费者处理消息的时间不同，就有可能会导致某些消费者一直处于繁忙状态，而另外一些消费者因为处理能力较强而很快就处理完并一直处于空闲状态。要解决这一情况以提高整个消息系统的消息处理效率，可以设置预获取数目（PrefetchCount）来限制Queue每次发送给某个消费者的消息数，默认PrefetchCount=1，则Queue每次给每个消费者发送一条消息，消费者处理完这条消息后Queue会再给该消费者发送下一条消息。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/q4PhV0IJedYz.png?imageslim" alt="mark"></p>
+<h3 id="Exchange"><a href="#Exchange" class="headerlink" title="Exchange"></a><strong>Exchange</strong></h3><p>消息投递过程实际上是生产者将消息发送到Exchange，由Exchange将符合转发规则的消息路由到一个或多个Queue中，而将不符合规则的消息直接丢弃。从功能实现上来看，Exchange的功能就像一个路由器，符合路由规则的数据则转发到对应的目标地址，其他数据则被拒绝或者丢弃。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/1uuidxvSy3jq.png?imageslim" alt="mark"></p>
+<h3 id="Routing-Key"><a href="#Routing-Key" class="headerlink" title="Routing Key"></a><strong>Routing Key</strong></h3><p>RoutingKey定义了消息的路由规则，但是，RoutingKey需要与ExchangeType和BindingKey共同使用才能最终决定消息投递到哪个队列中。在实际使用中，ExchangeType与BindingKey通常为预先设定值，而消息生产者在发送消息给Exchange时，需为消息设定相应的RoutingKey，便可决定消息应该投递到哪个Queue。通常，<strong>RabbitMQ为RoutingKey设定的长度限制为255字节。</strong></p>
+<h3 id="Binding和BindingKey"><a href="#Binding和BindingKey" class="headerlink" title="Binding和BindingKey"></a><strong>Binding和BindingKey</strong></h3><p>Binding是RabbitMQ中将Exchange与Queue关联起来的操作，绑定的过程需要用到消息的RoutingKey和绑定自身的BindingKey。BindingKey代表了Queue与Exchange之间的对应关系。消息生产者将消息发送给Exchange时，通常会给消息指定一个RoutingKey。在Exchange中，如果BindingKey与RoutingKey相匹配，则带有该RoutingKey的消息将会被路由到BindingKey所对应的Queue中，即实现了消息到特定队列的投递过程。但是，消息到队列的投递另一个决定因素就是Exchange Type，投递过程会因Exchange Type的不同而有所不同。根据Exchange Type类型不同，在绑定多个Queue到同一个Exchange的时候，Binding操作允许使用相同的BindingKey，也可以不使用BindingKey。比如：在Fanout类型的Exchange中，绑定操作就不会用到BindingKey，而是将消息路由到所有绑定到该Exchange的Queue中。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/4z0qQ8QJccq4.png?imageslim" alt="mark"></p>
+<h3 id="Exchange-Type"><a href="#Exchange-Type" class="headerlink" title="Exchange Type"></a><strong>Exchange Type</strong></h3><p>RabbitMQ使用不同的交换器类型来将不同的消息投递到特定的队列中，不同类型的交换器使用不同的方式进行消息投递，常用的ExchangeType有<strong>Fanout、Direct、Topic</strong>和<strong>Headers</strong>四种。</p>
+<ul>
+<li><strong>Fanout类型：</strong>会把所有发送到该Exchange的消息直接投递到所有与它绑定的Queue中，其功能就像路由交换中的广播，主要作用就是将多个Queue绑定到同一个Exchange中，从而实现消息生产者与队列之间一对多的对应关系。在Fanout类型的Exchange中，消息到队列的投递过程并不依赖消息的RoutingKey和Binding的BindingKey，Exchange仅起到消息传递的作用。</li>
+<li><strong>Direct类型：</strong>Direct仅把RoutingKey与Binding的BindingKey匹配的消息路由到对应的Queue中，其功能就像路由交换中的点到点路由，主要作用就是实现消息的精确匹配投递。</li>
+<li><p><strong>Topic类型：</strong>其与Direct类型的Exchage相似，也是将消息路由到BindingKey与RoutingKey相匹配的Queue中，但Topic采用的匹配规并非完全匹配，而是更加灵活的通配符模式匹配，Topic匹配规则具有如下限定：</p>
+</li>
+<li><ol>
+<li>RoutingKey由点号“.”分隔的字符串组成（通常将句点号“.”分隔开的每一段独立字符串称为一个单词），如值为“stock.usd.nyse”的RoutingKey，其有三个单词组成，而值为“nyse.vmw”的RoutingKey，则由两个单词组成。</li>
+<li>BindingKey与RoutingKey一样也是由句点号“.”分隔的字符串。</li>
+<li>BindingKey中可以包含两种特殊字符“<em>”与“#”，用于做模糊匹配，其中“</em>”用于匹配一个单词，“#”用于匹配零个或多个单词，但是，BindingKey中的匹配最小单位为第一条约束中定义的单词，而不是常见的字母匹配。</li>
+</ol>
+</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/Pqx1RBsCsYSp.png?imageslim" alt="mark"></p>
+<p>如上图所示，RoutingKey为“quick.orange.rabbit”的消息会被Exchange同时路由到Q1与Q2队列，因为根据BindingKey的匹配规则，Q1与Q2的BindingKey均与此RoutingKey匹配。RoutingKey为“lazy.brown.fox”的消息只会被路由到Q2队列，因为BindingKey中的“#”字符匹配零个或多个单词，只有Q2中的BindingKey匹配此消息的RoutingKey。同样，根据匹配规则，RoutingKey为“lazy.orange.fox”的消息只会被路由到Q1队列。RoutingKey为“lazy.pink.rabbit”的消息尽管与Q2的两个BindingKey都匹配，但是此消息只会投递给Q2一次。当消息的RoutingKey为“quick.brown.fox”、“orange”或“quick.orange.male.rabbit”时，由于没有任何匹配的BindingKey规则，这些消息将会被Exchange丢弃。</p>
+<p><strong>Topic是一种推送-订阅（Pub-Sub，Publish-Subscribe）模式的模糊路由匹配，由于Topic类型的Exchange具有灵活自动的匹配模式，其在OpenStack的应用场景中是使用最多的Exchange类型。</strong></p>
+<ul>
+<li><strong>Headers类型：</strong>Headers类型的Exchange不依赖于RoutingKey和BindingKey的匹配规则来路由消息，而是根据消息内容中的Headers属性来进行Queue选择。在Headers类型的Exchange中，在绑定Queue与Exchange时通常会设定一组Key-Value键值对，而当消息发送到Exchange时，RabbitMQ会提取此消息的Headers值（其值也是一个Key-Value键值对），并对比其中的键值对是否完全匹配Queue与Exchange绑定时设定的键值对，如果完全匹配则消息会路由到该Queue，否则不会路由到该Queue。该类型交换机并不常见。</li>
+</ul>
+<h3 id="Remote-Procedure-Call"><a href="#Remote-Procedure-Call" class="headerlink" title="Remote Procedure Call"></a><strong>Remote Procedure Call</strong></h3><p>在实际的应用场景中，用户很可能需要进行某些同步处理，因此需要同步等待客户端将用户发送的消息处理完成后再进行下一步处理，而这相当于远程过程调用（RPC，Remote Procedure Call），RabbitMQ也支持远程过程调用RPC。<strong>RabbitMQ中实现RPC的机制为：</strong>消息生产者在发送消息时，在消息的属性（AMQP协议中定义了14种消息属性，这些属性会随着消息一起发送）中设置两个值，分别为<strong>ReplyTo</strong>和<strong>CorrelationId</strong>。其中，ReplyTo的值是一个Queue名称，用于告诉消息的消费客户端消息处理完成后将应答消息发送到指定的这个Queue中，CorrelationId表示此次请求的标识号，客户端处理完成后需要将此属性一并返还，消息发送端将根据返回值中的这个id值来判断执行成功或失败的是已经发送出去的那条消息。消息接收客户端收到消息并处理，处理完消息后，将会生成一条应答消息到ReplyTo指定的Queue，同时带上CorrelationId属性，消息发送端之前已订阅了ReplyTo指定的Queue，因此可以从中接收客户端的应答消息，并根据其中的CorrelationId属性分析哪条请求已经被执行，然后根据执行结果进行后续的业务处理。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/qMugcYjPeKea.png?imageslim" alt="mark"></p>
+<h2 id="RabbitMQ的工作原理和集群配置"><a href="#RabbitMQ的工作原理和集群配置" class="headerlink" title="RabbitMQ的工作原理和集群配置"></a><strong>RabbitMQ的工作原理和集群配置</strong></h2><p>RabbitMQ是AMQP的一个开源实现，其主要作用是在分布式集群中进行功能组件之间的异步消息传递，简单的描述就是消息生产者将带有RoutingKey的消息发送至交换器Exchange，Exchange使用BindingKey与Queue进行绑定，然后Exchange将RoutingKey与BindingKey进行匹配对比，并将匹配的消息投递至对应的Queue中。如下图所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/0AXlMvj7dBGY.png?imageslim" alt="mark"></p>
+<p>1）客户端连接至消息队列服务器Broker，在TCP连接中建立一个虚拟Channel。</p>
+<p>2）客户端声明一个Exchange，并设置相关属性。</p>
+<p>3）客户端声明一个Queue，并设置相关属性。</p>
+<p>4）客户端在Exchange和Queue之间建立好绑定关系，并设置BindingKey。</p>
+<p>5）客户端投递带有RoutingKey的消息到Exchange中。</p>
+<p>6）Exchange接收到消息后，根据消息的RoutingKey和已经设置的BindingKey，进行消息路由，将消息投递到一个或多个队列里。</p>
+<p>上图主要由三个环节构成，分别是<strong>发送消息的客户端、解耦消息发送端与接收端的RabbitMQServer</strong>以及<strong>消息的接收客户端</strong>。RabbitMQ Sever也称为Broker Server，其作用主要是负责消息从Producer到Consumer的传递路径，Broker接收从客户端发送过来的消息，然后转发给接收消息的客户端，Broke将发送与接收客户端进行了解耦，从而实现消息发送端与接收端的异步工作。客户端A和B是消息的发送方，即消息的生产者Producer，Producer发出的Messages由Playload和Label两部分数据组成。其中Playload是消息的主体部分，Label是消息的属性部分，属性部分包含了详细的RoutingKey，当消息到达Broker Server后，消息会被RabbitMQ根据消息属性（Label中的RoutingKey）转发到相应的队列中。客户端1、2和3是消息的接收者，即消息消费者Consumers。Broker Server根据消息的Label属性和Consumers对队列（队列已经绑定到Exchange中）的订阅（Subscribe）情况，将消息的Playload主体转发给相应的Consumers。Consumers接收到的消息是没有Label属性的，而仅有消息的主体Playload部分，此外，Consumers也不知道该消息是来自发送消息的客户端A还是B。</p>
+<p>正常情况下，系统中成功安装RabbitMQServer程序后，用户只需启动RabbitMQ服务便可使其正常运行，即RabbitMQ使用自带的默认配置便可提供强大的异步消息传递服务。在某些情况下，用户可能希望自定义RabbitMQ服务，因此RabbitMQ提供了三种自定义配置Broker Server的方式，分别是<strong>环境变量配置方式、配置文件修改方式</strong>和<strong>运行时参数修改方式</strong>。具体的配置方式，可以根据各厂家产品解决方案的描述和RabbitMQ社区相关文档进行了解，这里不再赘述。但是，需要强调一点的是，无论采用哪种配置方式，以下几项参数的配置是必须有的：</p>
+<ul>
+<li><strong>RABBITMQ_NODE_IP_ADDRESS：</strong>该变量主要用于设定RabbitMQServer服务运行时监听的接口IP地址，默认为/etc/hosts配置文件中主机名对应的接口IP地址。</li>
+<li><strong>RABBITMQ_NODE_PORT：</strong>该变量主要用于设置RabbitMQServer服务运行时监听的IP端口号，默认为系统的5672端口。</li>
+<li><strong>RABBITMQ_NODENAME：</strong>该变量表示RabbitMQ集群的节点名称，默认为rabbit@hostname格式，其中“hostname”为当前节点的主机名，对于FQN格式的主机名，如node1.exmple.com，则RabbitMQ节点的名称为默认为rabbit@node1。</li>
+<li><strong>RABBITMQ_USE_LONGNAME：</strong>该变量的定义与RABBITMQ_NODENAME类似，不过此变量代表的是RabbitMQ的长节点名，而RABBITMQ_NODENAME为短节点名称。在RabbitMQ集群的配置中，如果此变量设置为True，则RabbitMQ的节点名称将使用FQN全名，即<a href="mailto:rabbit@node1.exmple.com" target="_blank" rel="noopener">rabbit@node1.exmple.com</a>。</li>
+</ul>
+<p>RabbitMQ Broker是一个或几个运行RabbitMQ应用的Erlang节点的组合，这些节点之间共享Users、VirtualVosts、Queues、Bindings、Exchanges和运行时参数，通常把这些运行RabbitMQ服务的节点组合称为RabbitMQ的集群。在RabbitMQ集群中，RabbitMQ Broker运行所需的元数据和状态信息会自动在集群节点之间进行复制。但是，<strong>在普通的RabbitMQ集群配置中，消息队列Queues不会在多个节点之间复制</strong>，即集群Queues通常只位于集群中的某一个节点上，而其他节点虽然可以看到和访问这个节点上的消息队列，但是不会将该节点上的消息队列复制到其本地。对于普通的RabbitMQ集群模式，假设集群由A和B两个RabbitMQ节点构成，则A、B两个节点都有相同的集群元数据，但是只有A（或者B）节点持有集群消息队列，当消息进入A节点的Queues后，如果Consumer从B节点提取消息，则RabbitMQ会临时在A、B间进行消息传输，把A中的消息取出并经过B发送给Consumer。由于消息集中存放在A节点的队列中，无论Consumer从A或B提取消息，消息总要从A发出，这势必会导致A节点出现性能瓶颈。此外，这种普通集群模式当A节点故障后，B节点无法提取到A节点中还未消费的消息实体，最终因A节点的单点故障而导致整个集群消息系统不可用。解决这个问题一种办法就是将A节点的Queues持久化，尽管可以对A中的Queues做消息持久化，但在A故障后，也必须等待A节点恢复才可继续提供消息传递服务。但是，如果没有消息持久化，则即使A节点恢复，也无法恢复A中的队列消息。<strong>如果要将集群队列Queues进行镜像复制，则需要用到RabbitMQ的HeightAvailable功能。</strong></p>
+<p>在RabbitMQ的集群中，节点通常被划分为两类，即<strong>磁盘（Disk/Disc）节点</strong>和<strong>内存（RAM）节点</strong>。而在多数情况下，集群中的节点均默认是Disk节点，内存节点主要用于具有深度队列和大量Exchanges的集群中以提高消息传递的性能。由于内存节点将消息数据保存到内存中，因此重启内存节点会导致消息丢失。所以，如果存在内存节点，则消息队列必须做持久化，在做了持久化的消息队列中，即使在内存节点上，消息也会被保存到磁盘上，因此重启内存节点也可保证不丢失消息队列。</p>
+<p>如上所述，在默认的RabbitMQ集群中，消息队列Queue不会在集群节点之间进行复制备份，而仅位于集群中的某个节点上，通常该节点是最初声明Queues的节点。与Queues不同，Exchanges和Bindings信息会复制到集群中的每个节点上，因此在默认的RabbitMQ集群配置中，尽管集群的Exchanges和Bindings信息能够避免单点故障，但是由于Queues及其保存的Messages是中心化单点存放的，所以集群中的消息队列仍然具有单点故障而无法实现彻底的高可用，如果拥有Queues的节点发生故障，则虽然整个RabbitMQ集群可以继续提供消息服务，但是即使在消息做了持久化存储，之前位于Queues中还未被取走的消息将会丢失或者暂时不可用。</p>
+<p>为了避免消息队列Queue的单点故障，通常的做法是将队列在节点之间进行镜像复制。在队列镜像模式下，每个镜像的队列由一个Master和一个或多个Slave提供。如果当前的Master故障，则最先成为Slave角色的节点会被选举为新的Master节点。同时，消息生产者投递到Queues中的消息会被复制到所有Slave节点上，并且不论消费者Consumers连接到哪个集群节点，其最终都是到Master节点的Queues中提取消息。又因为Master需要将消息复制到多个Slaves节点，所以<strong>队列镜像模式虽然增加了RabbitMQ集群的高可用性，但是并没有将集群的消息服务负载分散到每个集群节点中。</strong></p>
+<p>实现RabbitMQ集群队列镜像的最主要方式就是RabbitMQ提供的<strong>Policy功能</strong>，Policy功能可以在集群运行的任何时候使用，即可以动态地将一个未镜像的集群消息队列改变为镜像队列。因此，创建镜像队列最简单有效的方式就是先创建一个非镜像的队列，然后通过Policy设置成为镜像队列。但是，刚开始设置的镜像队列与非镜像队列是有区别的：<strong>非镜像队列因为没有额外的镜像操作，所以其运行效率相对要高很多。因此，在RabbitMQ集群的镜像队列设置中，我们可以选择性地对某些队列进行镜像，而其他队列可以不用镜像。</strong>RabbitMQ设置Policy时，最关键的两个参数分别是<strong>ha-mode</strong>和<strong>ha-params</strong>，ha-params参数的值根据ha-mode的取值不同而不同，具体的组合如下：</p>
+<ul>
+<li>ha-mode=all，ha-params=NULL时，将队列镜像到全部集群节点上。</li>
+<li>ha-mode=exactly，ha-params=count时，将队列镜像到count个节点上。如果实际节点数小于count，则镜像到全部节点；如果实际节点数据大于count，则节点孤战过后，重新镜像到count个节点上。</li>
+<li>ha-mode=nodes，ha-params=node name时，将队列镜像到node name指定的节点上。</li>
+</ul>
+<p>示例如下：</p>
+<ul>
+<li>RabbitMQctl set_policy ha-all “^ha.“ ‘{“ha-mode”:”all”}’ #&lt;===将名称全部以“ha.”开头的队列镜像到所有集群节点中</li>
+<li>RabbitMQctl set_policy ha-two “^ha.“ ‘{“ha-mode”:”exactly”,”ha-params”:2,”ha-sync-mode”:”automatic”}’ #&lt;===将名称全部以“ha.”开头的队列镜像到集群中任意两个节点</li>
+<li>RabbitMQctl set_policy ha-nodes “^nodes.“‘{“ha-mode”:”nodes”,”ha-params”:[“rabbit@nodeA”, “rabbit@nodeB”]}’ #&lt;===将名称全部以“nodes.”开头的队列镜像到集群中特定节点上</li>
+</ul>
+<p><strong>队列镜像中的一个特殊情况是独占队列，独占队列在声明队列的连接终止后会被RabbitMQ自动清除，就如程序段中的一个临时变量。因此，针对独占队列没有必要持久化存储。而且，即使队列名称匹配镜像策略的模式，独占队列也不会被RabbitMQ的镜像策略进行镜像。同时，即使对独占队列进行持久化声明，其也不会被持久化。</strong></p>
+<p>在RabbitMQ集群中，设置了镜像策略节点上的队列并非任何时候都是彼此同步的。如果一个节点新加入集群，并且集群Policy将其设为队列镜像的节点，则队列会将此节点当做一个新的Slave节点。但是，此时的新Slave节点上并没有任何的队列，或者说此时新Slave节点上的队列是空的。正常情况下，新加入的Slave节点只会接收晚于其加入镜像队列时间点新增的消息，并最终随着时间推移，新加入的Slave节点中的队列消息会逐步<strong>与原集群队列尾部的消息同步</strong>，并且随着原有队列头部消息被不断消耗，新Slave节点队列中不同步的消息数目会不断减少并最终达到完全同步。因此，基于RabbitMQ的这种队列同步模式，默认设置下，新加入的Slave节点对其加入前已经存在的集群消息并不能形成任何的冗余和高可用，除非对原有集群队列执行显式的同步操作。</p>
+<p>从RabbitMQ3.6开始，RabbitMQ新增了ha-sync-batch-size参数，使得显式的队列同步在速度上有了极大提升，显示队列同步可以有两种实现方式，即<strong>手工同步</strong>和<strong>自动同步</strong>。如果队列被配置为自动同步，则不论新的Slave节点何时加入集群，集群中的队列都会被自动同步到新增的Slave节点。但是，同步过程中的消息队列相应地会变迟钝，这种响应变慢的过程会一直持续到队列同步完成为止。队列自动同步的设置很简单，只需在Policy的镜像设置中指定ha-sync-mode参数，使其值为automatic即可。<strong>ha-sync-mode</strong>参数允许的值是manual和automatic，如果不显式指定automatic，则其值默认为manual。同时，默认情况下，队列在镜像时对消息进行逐条同步，而在RabbitMQ3.6之后，新增了批量同步参数<strong>ha-sync-batch-size</strong>，用户通过设置该参数的值，即可实现批量同步消息，默认值为1。</p>
+<p>RabbitMQ可以工作在<strong>Active/Passive</strong>或者<strong>Active/1active</strong>模式的集群中。当RabbitMQ集群运行在Active/Passive模式时，如果Active节点故障，则正常运行时由Active节点持久化写入磁盘中的消息队列可以被Passive节点恢复。当然，在Active/Passive模式下，如果Active节点的消息队列没有进行持久化操作，则Active节点故障后位于其上的消息就会丢失，尽管Passive节点可以重新提供消息服务，但是之前未被取走的消息却已无法恢复，因此Active/Passive模式下的消息队列必须进行持久化操作。Active/Passive模式的另一可能的问题是，当Active节点故障，并需要提升Passive节点为Active节点以恢复和接管消息时，RabbitMQ集群的消息服务可能会出现短暂中断。<strong>Active/1active高可用模式的本质是将RabbitMQ集群中的队列在集群节点上实现彼此镜像</strong>，在Active/1active模式下，集群中的某一RabbitMQ节点故障后，RabbitMQ服务会自动切换到其他节点，并使用该节点上的镜像队列继续提供消息服务，从而实现消息系统的服务高可用性。在部署OpenStack的高可用集群中，推荐部署的RabbitMQ高可用模式便是Active/1active高可用集群模式。</p>
+<h2 id="RabbitMQ在OpenStack中的应用分析"><a href="#RabbitMQ在OpenStack中的应用分析" class="headerlink" title="RabbitMQ在OpenStack中的应用分析"></a><strong>RabbitMQ在OpenStack中的应用分析</strong></h2><p>在实际应用中，RabbitMQ Broker位于OpenStack的任意两个组件之间，OpenStack的任意两个组件通过RabbitMQ Broker进行松耦合通信。更准确地说，OpenStack的各个组件之间通过远程过程调用RPC来实现彼此的通信，并且组件间的RPC消息传递是基于RabbitMQ的推送-订阅（Publish/Subscribe）模式实现的。OpenStack在消息传递过程中使用到的交换器Exchange的类型主要是Direct、Fanout和Topic类型。OpenStack组件之间关系示意如下图所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/yytpQMWeUkwI.png?imageslim" alt="mark"></p>
+<p>在OpenStack中，默认使用kombu（一种实现了AMQP协议的Python函数库）连接到RabbitMQ服务器，因为消息的收发者都需要一个连接到RabbitMQ服务器的Connetion对象。以nova为例，在Nova的各个连接到RabbitMQ Broker的组件中，其中某个组件可能是消息的发送者Publisher，如Nova-api和Nova-scheduler，也可能是消息的接收者Consumer，如Nova-compute和Nova-network（现已被Neutron代替，但是不影响我们理解AMQP交互）。此外，某个组件在不同的时刻既可以是Publisher，也可以是Consumer。组件发送消息有两种方式，即<strong>同步调用（RPC.CALL）</strong>和<strong>异步调用（RPC.CAST）</strong>，当Nova发起RPC.CALL调用的时候，Nova-api充当的就是消息的Consumer，否则是消息的Publisher。</p>
+<p>在启动Nova的服务时，初始化函数会创建两个队列，其中的一个队列用于接收<strong>RoutingKey格式为“NODE-TYPE.NODE-ID”</strong>的消息，如compute.node1，其中的compute表示该节点为计算节点；另一个队列用于接收R<strong>outingKey格式为”NODE-TYPE”格式的消息</strong>，如compute。比如当Nova的客户端发送“nova stop instance_name”命令到Nova-api时，Nova-api就会将此命令以消息形式投递到第一种队列中（具体消息的路由投递由Exchange操作），从而通过RoutingKey中的NODE-ID（节点主机名）找到目标计算节点，并将命令转发到此Hypervisor主机上以进行实例的停止操作。</p>
+<p>在实际应用中，Nova的各个功能模块根据其逻辑功能可以划分为两类，即<strong>Invoker组件</strong>和<strong>Worker组件</strong>。其中Invoker组件的主要功能是向消息队列中发送系统请求消息，如Nova-api和Nova-Scheduler通常属于Invoker；而Worker模块则负责从消息队列中提取Invoker模块发送的消息并向其返回应答消息，如Nova-Compute和Nova-Network通常属于Worker。<strong>Invoker通过RPC.CALL和RPC.CAST两个进程发送系统请求消息，然后Worker从消息队列中接收消息，并对RPC.CALL做出应答响应，</strong>如下图所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/7ow5j9p9PiR4.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>Topic Publisher：</strong>该对象在Nova中的组件发起RPC.CALL调用时创建，消息发送出去之后便结束，生命周期短暂，主要用于将消息发送到队列系统中，每个Topic Publisher都会连接到Topic类型的Exchange中。</li>
+<li><strong>Direct Consumer：</strong>该对象创建于RPC.CALL调用之后，专门用来接收RPC.CALL调用返回的应答消息，接收到应答消息后便结束。每个Direct Consumer连接到一个以msg_id为BindingKey的专有队列中，同时该队列绑定到一个只接收消息的RoutingKey为msg_id的交换器Exchange中，而这个消息的msg_id被封装在Topic Publisher发出的消息中，并且是由一个专门的UUID生成器所生成。</li>
+<li><strong>Topic Consumer：</strong>该对象在Nova组件服务启动时创建，在服务结束时候销毁，主要用于接收消息队列中的消息。每个Worker都有两个Topic Consumer，一个连接BindingKey为Topic的队列，一个连接BindingKey为Topic.host的队列。每个Topic Consumer通过一个独占或者共享的队列与Topic Publisher连接到同一个Topic类型的Exchange。</li>
+<li><strong>Direct Publisher：</strong>该对象创建于Nova中的RPC.CALL调用返回应答消息时，当Response消息发送完成后便结束，与BindingKey为特定msg_id的Direct类型Exchange连接。</li>
+</ul>
+<p>以Nova客户端发出创建实例请求为例，实例的创建过程伴随着Nova组件之间的消息传递，Topic Publisher（Nova-api）会将消息发送至NODE-TYPE（这里节点类型为compute）的共享队列中，从而全部Topic Consumer（全部运行Nova-compute的节点）都可以提取到共享队列的消息。如果客户端发出的是针对已有实例的Update、Reboot、Stop和Start等操作，由于消息必须转发到拥有该实例的某个特定计算节点上，因此Topic Publisher（Nova-api）会将消息转发至NOTE-TYPE.HOST（compute.hostname）的专有队列中。</p>
+<p>在Openstack的Nova项目中，主要通过两种RPC调用来实现消息传递，即<strong>RPC.CALL和RPC.CAST</strong>。</p>
+<p><strong>1）RPC.CALL属于请求/响应类型的调用</strong>，当请求发送出去以后，需要等待执行结果的响应，这类调用需要指定执行请求的目标对象节点，并等待目标返回的执行结果。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/EVkykmoPYWIo.png?imageslim" alt="mark"></p>
+<p>Step1：初始化一个TopicPublisher，用以将发送消息到RabbitMQ的消息队列。此外，在发送消息之前，需要初始化一个DirectConsumer并以msg_id作为Direct类型Exchange的名称，用于等待消息执行后的应答响应。</p>
+<p>Step2：请求消息被Exchange路由到NODE-TYPE.HOST消息队列，然后，订阅了此队列的相应服务节点（Nova中为compute节点）上的Topic-Consumer会从该队列中获取消息。</p>
+<p>Step3：TopicConsumer从队列中提取消息后，服务结点根据消息内容（调用函数及参数）调用相应函数完成消息请求处理，处理完成之后，DirectPublisher被初始化，并根据请求消息msg_id，将应答消息发送到相应的Exchange和消息队列中。</p>
+<p>Step4：应答消息被位于发起RPC.CALL调用方的DirectConsumer获取到，RPC.CALL调用过程完成。</p>
+<p><strong>2）RPC.CAST属于单向RPC请求</strong>，即只将请求发送出去，无须等待返回执行结果。因此，RPC.CAST调用不关心请求由哪个服务节点完成，只需将请求发送到消息队列即可，而接收消息的队列通常为共享队列，该队列中的消息可以被某一类型的多个节点（如Nova中的全部计算节点）接收。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/LYkO22AfsQ44.png?imageslim" alt="mark"></p>
+<p>Step1：Invoker初始化TopicPublisher，并将消息发送到RabbitMQ消息服务器中。</p>
+<p>Step2：RabbitMQ的交换器将消息转发到NODE-TYPE类型的共享消息队列中，并被相应服务节点（Nova中为Compute节点）的TopicConsumer获取。</p>
+<p>Step3：TopicConsumer提取到订阅队列的消息后，Woker便开始处理消息请求，至此，RPC.CAST的过程已经完成，Invoker不会再等待Woker返回请求消息执行后的结果。</p>
+<h2 id="RabbitMQ集群管理实战"><a href="#RabbitMQ集群管理实战" class="headerlink" title="RabbitMQ集群管理实战"></a><strong>RabbitMQ集群管理实战</strong></h2><h3 id="集群配置"><a href="#集群配置" class="headerlink" title="集群配置"></a>集群配置</h3><p>现假设三个节点系统中都安装了RabbitMQ-server软件包，RabbitMQ服务已经正常启动，并且RabbitMQ的命令行工具RabbitMQctl已经可以正常使用。由于RabbitMQ节点之间使用Erlang Cookie来建立连接，因此要想让各个RabbitMQ节点之间彼此可以通信，则各个节点需要共享同一个Erlang Cookie。Erlang Cookie是在RabbitMQ-server启动过程中创建的一个随机字符串，在Linux系统中，Cookie保存在/var/lib/RabbitMQ/.erlang.cookie文件中。要让RabbitMQ的各个节点共享同一个Erlang Cookie，最简单的方式就是在某个节点（kvm-server01）中启动RabbitMQ-server，然后将kvm-server01中的/var/lib/RabbitMQ/.erlang.cookie拷贝到kvm-server02和kvm-server03中。另外一种方式就是在启动RabbitMQ-sever过程中或者在RabbitMQctl的命令行中通过参数“-setcookie cookie_str”的方式将特定的Erlang Cookie传入给当前节点的RabbitMQ服务。如果节点之间的Erlang Cookie未能正确匹配，则RabbitMQ的log中会有“Connection attempt from disallowed node”和“Could not auto-Cluster”的记录。我们这里采用第一种方式，如下：</p>
+<p><strong>Step1：</strong> kvm-server01、kvm-server02、kvm-server03三个节点首先停止服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop rabbitmq-server.service</span><br></pre></td></tr></table></figure>
+<p><strong>Step2：</strong>将kvm-server01的erlang.cookie拷贝到kvm-server02和kvm-server03节点上：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/jnWdoCzbWgmb.png?imageslim" alt="mark"></p>
+<p><strong>Step3：</strong>重启三个节点的rabbitmq服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart rabbitmq-server.service</span><br></pre></td></tr></table></figure>
+<p><strong>Step4：</strong>待各个节点的RabbitMQ-server服务启动完成后，便创建了三个独立的RabbitMQ Broker，即每个节点是一个独立的RabbitMQ Broker，通过RabbitMQctl命令行工具可以验证各个节点的Broker的运行状态：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/mVnY7x0BhLyH.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/3HwQgizFzOvp.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/a7xWk1oPueHW.png?imageslim" alt="mark"></p>
+<p><strong><em># 为了实现一个三节点的RabbitMQ集群，通常的做法是首先创建一个两节点的集群，然后再通过新增节点的形式扩展至三节点集群</em></strong></p>
+<p><strong>Step5</strong>：停止kvm-server02上的服务，完成如下操作，并观察节点的服务状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl stop_app</span><br><span class="line"></span><br><span class="line">rabbitmqctl join_cluster rabbit@kvm-server01</span><br><span class="line"></span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/mpLKS1WWfFGx.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/wzW0sa1k7WLY.png?imageslim" alt="mark"></p>
+<p><strong>Step6</strong>：停止kvm-server03上的服务，完成如下操作，并观察节点的服务状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl stop_app</span><br><span class="line"></span><br><span class="line">rabbitmqctl join_cluster rabbit@kvm-server02</span><br><span class="line"></span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/M2Vi3cVazt3P.png?imageslim" alt="mark"></p>
+<p>至此，三节点的RabbitMQ集群创建完毕，如上图通过RabbitMQctl命令行工具在任何一个节点上均可验证RabbitMQ集群的运行状态，并且在正常情况下，在任一节点上所看到的集群状态应该是一致的。从节点的集群状态输出中可以看到，每个RabbitMQBroker节点都加入到了集群中，并且集群由三个节点组成，每个节点上都正在运行RabbitMQ服务，并且节点默认都是磁盘类型的节点。</p>
+<h3 id="集群节点的启停"><a href="#集群节点的启停" class="headerlink" title="集群节点的启停"></a>集群节点的启停</h3><p>在一个正在运行的RabbitMQ集群中，可以将任何一个或多个节点停止，并且集群中剩下的节点将会正常运行而不会受到某个节点停止的影响。而当停止的节点重新启动后，该节点又会自动加入集群，集群状态自动恢复正常。</p>
+<p><strong>Step1：</strong>在kvm-server01节点上，执行如下操作，停止服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl stop</span><br></pre></td></tr></table></figure>
+<p><strong>Step2：</strong>在kvm-server02和kvm-server03上观察集群的状态</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/3LjtqFXRA15d.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/msBLuPrWthUp.png?imageslim" alt="mark"></p>
+<p><strong>Step3：</strong>重新启动kvm-server01上的服务，并再次观察kvm-server02和kvm-server03节点上集群运行状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-server -detached</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/kO64BRmCx1Jl.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/93uRXP3iJU9g.png?imageslim" alt="mark"></p>
+<p>可以看到，当重新启动kvm-server01节点后，kvm-server01节点会自动加入集群运行，三节点集群状态自动恢复如初，即集群中三个集群成员都在运行，并可同时对外提供消息服务。在RabbitMQ全部集群节点均被停止并需重新重启时，有两点需要特别指出：</p>
+<ul>
+<li><strong>如果整个RabbitMQ集群中的节点都停止，则重启时应该根据节点停止顺序的逆序重新启动节点</strong>。如果首先启动的不是最后停止的节点，则启动过程中会给出30s的等待时间，以等待最后停止的节点变为运行状态，如果在30s内最后停止节点仍然未能激活，则节点启动过程就以失败告终。而<strong>如果最后停止的节点无法启动，则可以使用forget_Cluster_node命令将该节点从集群中移除</strong>，forget_Cluster_node命令的具体使用方式可以参考RabbitMQctl命令行工具的帮助页面。</li>
+<li><strong>如果整个集群节点被同时停止或者发生了掉电等意外情况</strong>导致全部RabbitMQ节点同时关闭，则集群中每个节点都会认为自己不是集群中最后停止的节点，而会认为其他节点将在自己后面停止。如果出现这种情况，<strong>则可使用RabbitMQctl的force_boot命令来重新启动节点</strong>。</li>
+</ul>
+<h3 id="集群节点的移除"><a href="#集群节点的移除" class="headerlink" title="集群节点的移除"></a><strong>集群节点的移除</strong></h3><p>在正常运行的RabbitMQ集群中，当一个节点再也无须加入RabbitMQ集群并作为其成员节点运行的时候，就需要将此节点从集群中移除。要移除集群节点，首先需要停止该节点的RabbitMQ应用，然后重置节点，最后重启该节点的RabbitMQ应用。</p>
+<p><strong>Step1：</strong>执行如下操作，将kvm-server03节点从集群中移除，移除后的节点将作为一个独立节点提供服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl stop_app</span><br><span class="line"></span><br><span class="line">rabbitmqctl reset</span><br><span class="line"></span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
+<p><strong>Step2：</strong>观察三个节点的运行状态</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/3m8oOBIBqHYn.png?imageslim" alt="mark"></p>
+<p>可见，在移除kvm-server03后，集群中只有kvm-server01和kvm-server02两个节点，同时kvm-server03节点中只有一个RabbitMQ Broker在运行。如果集群中某个节点已经失去了响应，且不能通过正常方式将其移除，则可以在本地节点通过forget_Cluster_node命令以远程移除的方式来将此节点从集群中移除。</p>
+<p><strong>Step3：</strong>在kvm-server01节点上停止服务，并在kvm-server02上将kvm-server01节点强制移除</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># server01</span></span><br><span class="line"></span><br><span class="line">rabbitmqctl stop_app</span><br><span class="line"></span><br><span class="line"><span class="comment"># server02</span></span><br><span class="line"></span><br><span class="line">rabbitmqctl forget_cluster_node rabbit@kvm-server01</span><br></pre></td></tr></table></figure>
+<p><strong>Step4：</strong>kvm-server01在本地节点以远程方式从集群中移除后，其仍然会认为自己还属于集群节点，因此在启动本地kvm-server01节点的RabbitMQ应用时会报错，在重启之前将其重置即可解决</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/Ctn9zT4qKQOw.png?imageslim" alt="mark"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># server01</span></span><br><span class="line"></span><br><span class="line">rabbitmqctl reset</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/jfG7pegVyang.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/l9FoAwNFS8Pg.png?imageslim" alt="mark"></p>
+<p>如果此时将kvm-server03以同样办法从集群移除，则三个节点将恢复独立运行状态。但是kvm-server02仍然保存有集群的状态信息，即kvm-server02仍然还是集群成员，只不过集群有且只有kvm-server02一个成员。而kvm-server01和kvm-server03已经重新初始化为独立的RabbitMQ Broker，因此这两个节点不会保存任何集群信息，而如果要将kvm-server02也重新初始化为独立的RabbitMQ Broker，需要完成如下操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># server02</span></span><br><span class="line"></span><br><span class="line">rabbitmqctl stop_app</span><br><span class="line"></span><br><span class="line">rabbitmqctl reset</span><br><span class="line"></span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
+<h2 id="思考："><a href="#思考：" class="headerlink" title="思考："></a><strong>思考：</strong></h2><p><strong>1、在OpenStack中哪些服务之间交互使用了消息队列机制？哪些场景在哪些服务之间或子服务之间的RPC.CALL的调用关系？哪些场景在哪些服务之间或子服务之间是RPC.CAST的调用关系？（从虚拟机全生命周期管理的场景举例即可）</strong></p>
+<p><strong>2、在请详细描述一下虚拟机实例销毁流程中，Nova各个组件之间的RPC调用流程？</strong></p>
+<p><strong>3、在OpenStack中哪些服务或子服务之间没有使用消息队列的交互机制？（从keystone、glance、nova、neutron、cinder、ceilometer、heat等服务中举例即可）</strong></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/" title="2020-03-02-中间件消息队列服务RabbitMQ">https://kkutysllb.cn/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/云计算/" rel="tag"><i class="fa fa-tag"></i> 云计算</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/01/2020-03-01-OpenStack概述/" rel="next" title="2020-03-01-OpenStack概述">
+                <i class="fa fa-chevron-left"></i> 2020-03-01-OpenStack概述
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">64</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AMQP-高级消息队列协议"><span class="nav-number">2.</span> <span class="nav-text">AMQP-高级消息队列协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RabbitMQ中的基本概念"><span class="nav-number">3.</span> <span class="nav-text">RabbitMQ中的基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Connection和Channel"><span class="nav-number">3.1.</span> <span class="nav-text">Connection和Channel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Queue"><span class="nav-number">3.2.</span> <span class="nav-text">Queue</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Message-Acknowledgment"><span class="nav-number">3.3.</span> <span class="nav-text">Message Acknowledgment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Message-Durability"><span class="nav-number">3.4.</span> <span class="nav-text">Message Durability</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Prefetch-Count"><span class="nav-number">3.5.</span> <span class="nav-text">Prefetch Count</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Exchange"><span class="nav-number">3.6.</span> <span class="nav-text">Exchange</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Routing-Key"><span class="nav-number">3.7.</span> <span class="nav-text">Routing Key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Binding和BindingKey"><span class="nav-number">3.8.</span> <span class="nav-text">Binding和BindingKey</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Exchange-Type"><span class="nav-number">3.9.</span> <span class="nav-text">Exchange Type</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Remote-Procedure-Call"><span class="nav-number">3.10.</span> <span class="nav-text">Remote Procedure Call</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RabbitMQ的工作原理和集群配置"><span class="nav-number">4.</span> <span class="nav-text">RabbitMQ的工作原理和集群配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RabbitMQ在OpenStack中的应用分析"><span class="nav-number">5.</span> <span class="nav-text">RabbitMQ在OpenStack中的应用分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RabbitMQ集群管理实战"><span class="nav-number">6.</span> <span class="nav-text">RabbitMQ集群管理实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#集群配置"><span class="nav-number">6.1.</span> <span class="nav-text">集群配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集群节点的启停"><span class="nav-number">6.2.</span> <span class="nav-text">集群节点的启停</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集群节点的移除"><span class="nav-number">6.3.</span> <span class="nav-text">集群节点的移除</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考："><span class="nav-number">7.</span> <span class="nav-text">思考：</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">767k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">11:38</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

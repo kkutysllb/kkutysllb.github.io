@@ -392,6 +392,206 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/" class="post-title-link" itemprop="url">2020-03-02-中间件消息队列服务RabbitMQ</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-02 00:02:05 / 修改时间：00:17:30" itemprop="dateCreated datePublished" datetime="2020-03-02T00:02:05+08:00">2020-03-02</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">19k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">17 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>OpenStack是由Nova、Neutron、Cinder等多个组件构成的开源云计算项目，各组件之间通过REST接口进相互通信和彼此调用，而<strong>组件之间的REST接口调用，是建立在基于高级消息队列协议（AdvancedMessageQueueProtocol，AMQP）上的RPC通信</strong>。在OpenStack中，AMQP Broker（可以是Qpid Broker，也可以是RabbitMQ Broker）位于OpenStack的任意两个内部组件之间，并使得OpenStack内部组件<strong>以松耦合的方式进行通信</strong>。纵观OpenStack的组件架构设计，其中的消息队列在OpenStack全局架构中扮演着至关重要的组件通信作用，也正是因为基于消息队列的分布式通信技术，才使得OpenStack的部署具有灵活、模块松耦合、架构扁平化和功能节点弹性扩展等特性，所以消息队列在OpenStack的架构设计和实现中扮演着极为核心的消息传递作用。同时，消息队列系统的消息收发性能和消息队列的高可用性也将直接影响OpenStack的集群性能。
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </p></div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+	</div>
+	
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/01/2020-03-01-OpenStack概述/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2177,206 +2377,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/06/27/2019-06-27-打造文件实时同步架构之sersync篇/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="kkutysllb">
-      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一花一菩提，一云一世界">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/06/27/2019-06-27-打造文件实时同步架构之sersync篇/" class="post-title-link" itemprop="url">2019-06-27-打造文件实时同步架构之sersync篇</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-06-27 17:30:01 / 修改时间：18:15:51" itemprop="dateCreated datePublished" datetime="2019-06-27T17:30:01+08:00">2019-06-27</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux常用运维工具/" itemprop="url" rel="index"><span itemprop="name">Linux常用运维工具</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-symbolscount">
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">本文字数：</span>
-                
-                <span title="本文字数">6.5k</span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">6 分钟</span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>前文讲述的rsync主要用于较大量数据同步，一般简单的服务器数据传输会使用ftp/sftp等方式，但是这样的方式效率不高，不支持差异化增量同步也不支持实时传输。针对数据实时同步需求大多数人会选择rsync+inotify-tools的解决方案，但是这样的方案也存在一些缺陷，（下文会具体指出），sersync是国人基于前两者开发的工具，不仅保留了优点同时还强化了实时监控，文件过滤，简化配置等功能，帮助用户提高运行效率，节省时间和网络资源。
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/06/27/2019-06-27-打造文件实时同步架构之sersync篇/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </p></div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-	
-	<div>
-	
-	</div>
-	
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2426,7 +2426,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">63</span>
+                    <span class="site-state-item-count">64</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2605,7 +2605,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">748k</span>
+    <span title="站点总字数">767k</span>
   
 
   
@@ -2614,7 +2614,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">11:20</span>
+    <span title="站点阅读时长">11:38</span>
   
 </div>
 
