@@ -103,49 +103,66 @@
 
 
 
-  <meta name="description" content="在前一篇《正则表达式基础入门》中，我们总结了跟“位置匹配”的相关的正则，它其实也是基础正则五朵金花之一，我们只是在入门介绍中单独拿出来进行科普。这篇文章我们就来掰扯掰扯基础正则的其它四朵金花。">
-<meta name="keywords" content="DevOps">
+  <meta name="description" content="在上一篇我们介绍了KVM最重要的管理工具libvirt，它是KVM其他管理工具的基础，处于KVM管理架构的中间适配层。本篇我们主要要介绍libvirt的命令行管理工具的virsh，它也是将libvirt作为基础，通过封包调用实现的。所以，在看本篇内容之前，最好将上一篇的内容做个预习。">
+<meta name="keywords" content="Hypervisor">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2019-06-27-基础正则的五朵金花">
-<meta property="og:url" content="https://kkutysllb.cn/2019/06/27/2019-06-27-基础正则的五朵金花/index.html">
+<meta property="og:title" content="2020-03-01-KVM虚拟机全生命周期管理实战">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/01/2020-03-01-KVM虚拟机全生命周期管理实战/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
-<meta property="og:description" content="在前一篇《正则表达式基础入门》中，我们总结了跟“位置匹配”的相关的正则，它其实也是基础正则五朵金花之一，我们只是在入门介绍中单独拿出来进行科普。这篇文章我们就来掰扯掰扯基础正则的其它四朵金花。">
+<meta property="og:description" content="在上一篇我们介绍了KVM最重要的管理工具libvirt，它是KVM其他管理工具的基础，处于KVM管理架构的中间适配层。本篇我们主要要介绍libvirt的命令行管理工具的virsh，它也是将libvirt作为基础，通过封包调用实现的。所以，在看本篇内容之前，最好将上一篇的内容做个预习。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d1454b93712376409.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d1454e06833880580.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d14551e6bbfa73556.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d1455b05f2b135997.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d1456002280099045.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d1456e50c72830042.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d14571d813d021983.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d1463005ce9084092.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145810956e615136.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145836a590472950.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d1458c87910788625.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d14595a9f34d13289.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d1459f80399818712.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145a7cbf8b763261.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145acb223a362278.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145b22aa7ea24329.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145bae6ce1253207.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145c61b70a939419.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145c83109d716151.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145d00bb06e90017.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145d47db40a55740.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145dfc9085770478.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145e2ff1cd886406.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145e8181a2c65417.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145eee25fe838328.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d145f2da865898868.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d146343910bc63820.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d14607c70a2692622.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d14610017cd230432.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/27/5d14612e7203434521.jpg">
-<meta property="og:updated_time" content="2019-06-27T06:33:57.372Z">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/fNyrRSVA9glH.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/TUGt0wEfs2pj.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/9yVENoFcQwhX.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/4gsgTjd4d1Ep.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/LbwDCAd424XA.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/esJBKFdwGiKl.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/RLux9MLg8mKj.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/8XPMr9oRPeMj.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/A0Bjs5ILCXn4.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/YLvs5uu9lgBJ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/4VWpRaG4AmYb.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/6zNyvuUoag6r.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/CKrHPluyFt1j.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/CxDRz9nrNYsF.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/PRyNutTXm0SG.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/wEdflEs6oMM2.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/LVRtyuOYOcVX.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/OCgetrISBfwv.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/S5QOTUYPNi1o.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/5yVMDua18bFh.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/iD8ljAitUc6O.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/GAu17SrIoRO4.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/CdbV1xieK9zt.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/oaJm85WftQvP.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/l5PQmvz25OML.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/Vy0jiitQreAe.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/R4cBVmR8R43C.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/D0vPFQXRc26s.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/vQCDbEPgABXf.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/zCAm9gf8p9n7.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/HgoivxdhLga0.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/rSaQdVAzV6F8.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/NDzzCdfmkSOD.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/wngwtCqhKtgs.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/XLRkoENtnjf4.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/iS3MgSR2soep.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/xE60sntllmev.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/YNuKDAIkgcPD.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/ENTb8klo7Hoz.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/9z3VTf9gx7QF.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/JH3k3bXx8vJn.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/pOLQ9JHHMtYk.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/tpVeYi8s5QxT.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/PwzLx1VP9W9Y.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/p0kNJc95gQ0S.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/tOd4XoLcPp6z.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/sKXOckTYzt8U.png?imageslim">
+<meta property="og:updated_time" content="2020-03-01T11:02:23.739Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2019-06-27-基础正则的五朵金花">
-<meta name="twitter:description" content="在前一篇《正则表达式基础入门》中，我们总结了跟“位置匹配”的相关的正则，它其实也是基础正则五朵金花之一，我们只是在入门介绍中单独拿出来进行科普。这篇文章我们就来掰扯掰扯基础正则的其它四朵金花。">
-<meta name="twitter:image" content="https://i.loli.net/2019/06/27/5d1454b93712376409.jpg">
+<meta name="twitter:title" content="2020-03-01-KVM虚拟机全生命周期管理实战">
+<meta name="twitter:description" content="在上一篇我们介绍了KVM最重要的管理工具libvirt，它是KVM其他管理工具的基础，处于KVM管理架构的中间适配层。本篇我们主要要介绍libvirt的命令行管理工具的virsh，它也是将libvirt作为基础，通过封包调用实现的。所以，在看本篇内容之前，最好将上一篇的内容做个预习。">
+<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/fNyrRSVA9glH.png?imageslim">
 
 
 
@@ -154,7 +171,7 @@
 
 
 
-  <link rel="canonical" href="https://kkutysllb.cn/2019/06/27/2019-06-27-基础正则的五朵金花/">
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/01/2020-03-01-KVM虚拟机全生命周期管理实战/">
 
 
 
@@ -164,7 +181,7 @@
   };
 </script>
 
-  <title>2019-06-27-基础正则的五朵金花 | 一花一菩提，一云一世界</title>
+  <title>2020-03-01-KVM虚拟机全生命周期管理实战 | 一花一菩提，一云一世界</title>
   
 
 
@@ -423,7 +440,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/06/27/2019-06-27-基础正则的五朵金花/">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/01/2020-03-01-KVM虚拟机全生命周期管理实战/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kkutysllb">
@@ -440,7 +457,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2019-06-27-基础正则的五朵金花
+          <h1 class="post-title" itemprop="name headline">2020-03-01-KVM虚拟机全生命周期管理实战
 
               
             
@@ -466,7 +483,7 @@
                 
               
 
-              <time title="创建时间：2019-06-27 13:28:03 / 修改时间：14:33:57" itemprop="dateCreated datePublished" datetime="2019-06-27T13:28:03+08:00">2019-06-27</time>
+              <time title="创建时间：2020-03-01 18:44:01 / 修改时间：19:02:23" itemprop="dateCreated datePublished" datetime="2020-03-01T18:44:01+08:00">2020-03-01</time>
             
 
             
@@ -488,7 +505,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/shell编程/" itemprop="url" rel="index"><span itemprop="name">shell编程</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
 
                 
                 
@@ -524,7 +541,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">6.7k</span>
+                <span title="本文字数">7.2k</span>
               
 
               
@@ -538,7 +555,7 @@
                 
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
-                <span title="阅读时长">6 分钟</span>
+                <span title="阅读时长">7 分钟</span>
               
             </div>
           
@@ -558,177 +575,241 @@
       
 
       
-        <p>在前一篇《正则表达式基础入门》中，我们总结了跟<strong>“位置匹配”</strong>的相关的正则，它其实也是基础正则五朵金花之一，我们只是在入门介绍中单独拿出来进行科普。这篇文章我们就来掰扯掰扯基础正则的其它四朵金花。<a id="more"></a></p>
-<h2 id="基础正则的连续次数匹配"><a href="#基础正则的连续次数匹配" class="headerlink" title="基础正则的连续次数匹配"></a><strong>基础正则的连续次数匹配</strong></h2><p>连续次数匹配是什么意思？空口白话不容易说清楚，我们还是举个例子来说明。为了说明连续次数匹配的，我们首先得重新创建一个测试文件，如下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d1454b93712376409.jpg" alt></p>
-<p>现在，我们想查找测试文件中哪些行包含的连续的两个字母a。聪明如你，肯定想到了如下的查找办法：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d1454e06833880580.jpg" alt></p>
-<p>如上图，我们通过匹配“aa”就能将包含连续两个a的行搜索出来（注意：上面的条件是指至少包含两个连续的a）。那么，我们现在需要找出连续10个a的行呢？简单。。。查找“aaaaaaaaaa”不就行了。但是，如果要找包含连续100个a的行呢？上面的笨办法显然不科学，<strong>这时候就要用了基础正则中连续次数匹配条件—”{n}“了，里面n代表具体的数字，也就是连续多少个的意思。</strong>上面的示例，我们使用基础正则中的连续匹配条件可以改写成下面的格式：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d14551e6bbfa73556.jpg" alt></p>
-<p>如上图，结果符合我们的预期。“{2}”表示连续出现2次的意思，a\{2\}就表示连续出现两次a的意思。现在，你肯定能举一反三。比如：如果我们要匹配连续100个a，可以写成如下匹配条件“a\{100\}”，<strong>也就是我们只需要修改其中的数字n即可。</strong></p>
-<p>上面的用法刚才也提到了，它实际的意思的是：<strong>“包含至少2个连续a的行”。</strong>如果，我们只想找到<strong>“只包含连续两个a的行”</strong>时怎么办？这时候，就要用到我们上一篇提到的“位置规则”匹配条件。我们可以配合使用单词界定符”\&lt;,\&gt;”或者”\b”，具体命令如下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d1455b05f2b135997.jpg" alt></p>
-<p>如上图，我们单词界定符“\b”（前后的\b表示单词界定符，中间的字母b表示要查找的内容，后面花括号中的数字2表示要匹配的次数），将测试文件test01中的<strong>“只包含连续两个b的行找了出来”。</strong>那么，我们现在再继续延伸一下，首先来验证下<strong>d\{2,3\}的匹配条件</strong>表示什么意思，如下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d1456002280099045.jpg" alt></p>
-<p>上图中的匹配条件将<strong>“包含至少2个连续的d，至多3个连续的d的行”</strong>查找了出来。也就是说<strong>“\{x,y\}”这类匹配条件，表示的是“至少连续出现x次，至多连续出现y次”的意思。</strong>举一反三，“\{x</p>
-<p>,\}”表示“至少连续出现x次，至多不限次数”的意思，”\{,y\}”表示“至少出现0次，至多连续出现y次”的意思。</p>
-<p><strong>我们现在用中学数学的方法小结一下：\{x,y\}表示“至少连续出现x次，至多连续出现y次”。如果y=0，表示“至少连续出现x次，至多次数不限”，且“\{x\}”和“\{x,\}”的意思是一样的。如果x=0，表示“至多出现y次，至少出现0次”的意思。</strong></p>
-<p>现在，我们再来认识另一个匹配次数的<strong>正则符号“*”。其实，在通配符中也有符号“*”，表示匹配任意长度的任意字符。但是，在正则表达式中，符号“*”表示之前的字符连续出现任意次的意思。注意：千万不要和通配符中的“*”混淆了。</strong>具体使用方法如下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d1456e50c72830042.jpg" alt></p>
-<p>如上图，表示“搜索字母a前面出现任意个d的行”，任意个d当然也包含0个d。那么，如何在正则表达式中查找任意长度的任意字符呢？我们可以使用<strong>“.*”</strong>来实现，如下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d14571d813d021983.jpg" alt></p>
-<p>上图中，表示匹配字母a后面接任意多个任意字符的行。其实，<strong>在正则表达式中“.”符号表示匹配任意单个字符。而在通配符中“?”表示单个字符，这一定同样要注意不要混淆。如下：</strong></p>
-<p><img src="https://i.loli.net/2019/06/27/5d1463005ce9084092.jpg" alt></p>
-<p>上图中，匹配条件“aa.”表示aa后面跟任意单个字符的行都会被匹配到，”aa..”表示aa后面跟任意两个字符的行都会被匹配到（空格也算字符）。理解了上述规则，回过头来我们再看“.<em>”就非常容易理解了，**”.\</em>“就表示任意单个字符连续出现多次的意思。**</p>
-<p>接下来，我们再认识两个新的匹配条件：<strong>“\?”</strong>和<strong>“\+”</strong>。<strong>“\?”表示匹配其前面的字符出现0次或1次，也就说要么没有，要么最多出现1次。“\+”表示匹配前面的字符出现至少1次，也就是说前面的字符必须至少出现1次。</strong>我们再通过示例验证下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145810956e615136.jpg" alt></p>
-<p>如上图，“a\?”表示a这个字符出现0次或1次的行，不仅匹配到了空行，也将包含连续多个a的也匹配到了。我们再看下面的例子：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145836a590472950.jpg" alt></p>
-<p>上图中，将a字符至少出现1次的行都匹配输出，那么空行也就自然不输出了。</p>
-<p>到此，基础正则连续次数匹配规则就全部介绍完了，国际惯例，我们还是总结一下，便于后续用到了查询：</p>
-<ul>
-<li><strong>*符号：</strong>表示前面的字符连续出现任意次，包括0次。</li>
-<li><strong>.符号：</strong>表示单个任意字符。</li>
-<li><strong>.*组合：</strong>表示任意长度的任意字符。</li>
-<li><strong>\?组合：</strong>表示匹配前面的的字符0次或1次。</li>
-<li><strong>\+组合：</strong>表示匹配其前面的字符至少1次，或连续多次，连续次数上不封顶。</li>
-<li><strong>\{n\}符号：</strong>表示前面的字符连续出现n次，将会被匹配到</li>
-<li><strong>\{x,y\}组合：</strong>表示前面的字符至少连续出现x次，最多连续出现y次，都能被匹配到，换句话说就是之前的字符连续出现的次数在x和y之间，即可被匹配。</li>
-<li><strong>\{,n\}组合：</strong>表示之前的字符连续出现至多n次，最少0次，即可被匹配。</li>
-<li><strong>\{n,\}组合：</strong>表示之前的字符连续出现至少n次，才会被匹配到。</li>
-</ul>
-<h2 id="基础正则中的常用符号"><a href="#基础正则中的常用符号" class="headerlink" title="基础正则中的常用符号"></a><strong>基础正则中的常用符号</strong></h2><p>之前介绍的使用正则表达式去“匹配连续次数”中，我们使用过特殊符号“.”和”*”，分别用于匹配单个任意字符和连续出现任意次数。如果我们需要更精确的匹配呢？比如我们想从测试文本中找出a字母后接任意3个的字母的字串所在行，我们可以使用如下规则：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d1458c87910788625.jpg" alt></p>
-<p>如上图，“[[:alpha:]]”就是我们现在需要认识的新符号。<strong>在正则表达式中，“[[:alpha:]]”表示“任意字母（不区分大小写）”。</strong>“[[:alpha:]]”这个符号看上去有些复杂，吐啊。。。吐啊。。。习惯就好了。其实，这个符号可以拆分成两部分去理解，所以也没那么可怕。<strong>“[[:alpha:]]”的第一部分是最外层的[ ]，表示指定范围内的任意单个字符，第二部分是最内层的[:alpha:]，表示不区分大小写的任意字母。所以，当两部分合起来就是表示任意单个字母（不区分大小写）。</strong></p>
-<p>上面的[[:alpha:]]表示不区分大小写的任意字母，如果我们现在需要区分大小写呢？比如，上面的示例我们再细化一下，需要匹配a后面跟随的3个字母必须是小写字母，可以使用如下规则：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d14595a9f34d13289.jpg" alt></p>
-<p>上图中，<strong>[[:lower:]]就是我们现在认识的第二个符号，它在正则表达式中表示任意单个小写字母。同样的，[[:upper:]]就表示任意单个大写字母。</strong></p>
-<p><strong>聪明如你，一定发现了一些规律，那就是替换“[[: :]]”中的单词，就可表示不同的含义。在基础正则中，主要包含如下特殊符号：</strong></p>
-<ul>
-<li><strong>[[:alpha:]]：</strong>表示任意1个不区分大小写的字母。</li>
-<li><strong>[[:lower:]]：</strong>表示任意1个小写字母。</li>
-<li><strong>[[:upper:]]：</strong>表示任意1个大写字母。</li>
-<li><strong>[[:digit:]]：</strong>表示0-9之间任意1个数字，包括0和9。</li>
-<li><strong>[[:alnum:]]：</strong>表示任意1个数字或字母。</li>
-<li><strong>[[:space:]]：</strong>表示任意1个空白字符，包括“空格”、“tab键”等。</li>
-<li><strong>[[:punct:]]：</strong>表示任意一个标点符号。</li>
-</ul>
-<p>除了上面的特殊符号表示法外，还有其他办法实现 上述的匹配效果。还记得我们在正则表达式基础入门一文中举得一个[a-z]*的例子不？示例中，<strong>[a-z]其实就表示任意一个小写字母，效果与[[:lower:]]一样。同理，[A-Z]就与[[:upper:]]是等价的，表示任意一个大写字母；[0-9]与[[:digit:]]是等价的，表示任意一个0-9的数字。如下所示：</strong></p>
-<p><img src="https://i.loli.net/2019/06/27/5d1459f80399818712.jpg" alt></p>
-<p>那么，有了上面的基础，“[a-z][A-Z][0-9]”就表示任意一个不区分大小写的字母或0-9的数字，等价于[[:alnum:]]。</p>
-<p><strong>上述两种表示的特殊符号使用没有强制性，看个人喜好而定。</strong>这里还需要强调下<strong>[ ]的作用，它表示匹配指定范围内的任意单个字符。</strong>还是先看下面的示例：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145a7cbf8b763261.jpg" alt></p>
-<p>如上图，字母a后面接一个方括号[]，里面有bcd三个字母。既然方括号[ ]表示匹配任意范围内的单字符，那么上面的匹配条件就是<strong>“匹配字母a后面紧跟b或c或d三个字母一次的行”。</strong>我们活学活用，<strong>[Bd#3]表示什么意思呢？它就表示字符是大写B、或者是小写d、或者是特殊符号#、再或者是数字3各一次的场景，都可以被匹配到。</strong>如下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145acb223a362278.jpg" alt></p>
-<p>上图中，表示匹配包含om或oe或oo或ob字符串的行。</p>
-<p><strong>现在，我们理解了方括号[  ]的含义，那么我们再来认识一下它的性格迥异的亲兄弟[^  ]，它表示匹配指定范围外的任意一个字符，与方括号[  ]的含义正好相反。</strong>还是看下面示例：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145b22aa7ea24329.jpg" alt></p>
-<p>如上图，与前面示例的效果正好相反，将测试文件中不包含om，或不包含oe，或不包含oo，或不包含ob字符的行匹配输出。同理，[^0-9]就表示匹配单个非数字字符，[^a-z]就表示匹配单个非小写字母等等，这里就不再举例了，很好理解。这里有个疑问，比如前面说了[0-9]与[[:digit:]]是等价的，<strong>那么[^0-9]与[^[:digit:]]是否等价？</strong>试试就知道了，如下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145bae6ce1253207.jpg" alt></p>
-<p><strong>针对这些常用符号，我们总结出一张表如下：</strong></p>
+        <p>在上一篇我们介绍了KVM最重要的管理工具libvirt，它是KVM其他管理工具的基础，处于KVM管理架构的中间适配层。本篇我们主要要介绍libvirt的命令行管理工具的virsh，它也是将libvirt作为基础，通过封包调用实现的。所以，在看本篇内容之前，最好将上一篇的内容做个预习。<a id="more"></a></p>
+<h2 id="libvirt命令行工具virsh"><a href="#libvirt命令行工具virsh" class="headerlink" title="libvirt命令行工具virsh"></a><strong>libvirt命令行工具virsh</strong></h2><p>virsh通过调用libvirt API实现虚拟化管理，与virt-manager工具类似，都是管理虚拟化环境中的虚拟机和Hypervisor的工具，只不过virsh是命令行文本方式的，也是更常用的方式。</p>
+<p>在使用virsh命令行进行虚拟化管理操作时，可以使用两种工作模式：交互模式和非交互模式。交互模式是连接到Hypervisor上，然后输入一个命令得到一个返回结果，直到输入quit命令退出。非交互模式是直接在命令上通过建立URI连接，然后执行一个或多个命令，执行完后将命令的输出结果返回到终端上，然后自动断开连接。两种操作模式的截图如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/fNyrRSVA9glH.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/TUGt0wEfs2pj.png?imageslim" alt="mark"></p>
+<p>我们经常在本地使用virsh命令，这是一种特殊的交互模式，也是最常用的模式，它本质上就是默认连接到本节点的Hypervisor上。</p>
+<p>libvirt中实现的功能和最新的QEMU/KVM中的功能相比有一定的滞后性，因此virsh只是实现了对QEMU/KVM中的大多数而不是全部功能的调用。同时，由于virsh还实现了对Xen、VMware等其他Hypervisor的支持，因此有部分功能对QEMU/KVM无效。下面，我们还是按照“边验证边理解”的套路，对virsh常用的命令进行分类整理说明。</p>
+<h2 id="域管理（虚拟机管理）命令"><a href="#域管理（虚拟机管理）命令" class="headerlink" title="域管理（虚拟机管理）命令"></a><strong>域管理（虚拟机管理）命令</strong></h2><p>virsh的最重要的功能之一就是实现对域（虚拟机）的管理，但是与虚拟机相关的命令是很多的，包括后面的网络管理、存储管理也都有很多是对域（虚拟机）的管理。为了简单起见，本文使用“<id>”来表示一个域的唯一标识（而不专门指定为“<id or name uuid>”这样冗长的形式）。常用的virsh域管理命令如下：</id></id></p>
 <table>
 <thead>
 <tr>
-<th>符号</th>
-<th>等价于</th>
-<th>含义</th>
+<th><strong>virsh中的虚拟机管理命令</strong></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>[a-z]</td>
-<td>[[:lower:]]</td>
-<td>任意一个小写字母</td>
+<td>命令</td>
+<td>功能描述</td>
 </tr>
 <tr>
-<td>[^a-z]</td>
-<td>[^[:lower:]]</td>
-<td>任意一个非小写字母</td>
+<td>list</td>
+<td>获取当前节点上多有虚拟机的列表</td>
 </tr>
 <tr>
-<td>[A-Z]</td>
-<td>[[:upper:]]</td>
-<td>任意一个大写字母</td>
+<td>domstate<id></id></td>
+<td>获取一个虚拟机的运行状态</td>
 </tr>
 <tr>
-<td>[^A-Z]</td>
-<td>[^[:upper:]]</td>
-<td>任意一个非大写字母</td>
+<td>dominfo<id></id></td>
+<td>获取一个虚拟机的基本信息</td>
 </tr>
 <tr>
-<td>[0-9]</td>
-<td>[[:digit:]]</td>
-<td>任意一个0-9的数字</td>
+<td>domid<name or uuid></name></td>
+<td>根据虚拟机的名称或UUID返回虚拟机的ID</td>
 </tr>
 <tr>
-<td>[^0-9]</td>
-<td>[^[:digit:]]</td>
-<td>任意一个非0-9的数字</td>
+<td>domname<id or uuid></id></td>
+<td>根据虚拟机的ID或UUID返回虚拟机的名称</td>
 </tr>
 <tr>
-<td>[a-zA-Z]</td>
-<td>[[:alpha:]]</td>
-<td>任意一个不区分大小写的字母</td>
+<td>dommemstat<id></id></td>
+<td>获取一个虚拟机的内存使用情况的统计信息</td>
 </tr>
 <tr>
-<td>[^a-zA-Z]</td>
-<td>[^[:alpha:]]</td>
-<td>任意一个非字母的字符</td>
+<td>setmem<id> <mem-size></mem-size></id></td>
+<td>设置一个虚拟机的大小（默认单位的KB）</td>
 </tr>
 <tr>
-<td>[a-zA-Z0-9]</td>
-<td>[[:alnum:]]</td>
-<td>任意一个数字或字母</td>
+<td>vcpuinfo<id></id></td>
+<td>获取一个虚拟机的vCPU的基本信息</td>
 </tr>
 <tr>
-<td>[^a-zA-Z0-9]</td>
-<td>[^[:alnum:]]</td>
-<td>任意一个非数字或字母的字符，比如符号</td>
+<td>vcpupin<id><vcpu><pcpu></pcpu></vcpu></id></td>
+<td>将一个虚拟机的vCPU绑定到某个物理CPU上运行</td>
+</tr>
+<tr>
+<td>setvcpus<id><vcpu-num></vcpu-num></id></td>
+<td>设置一个虚拟机的vCPU的个数</td>
+</tr>
+<tr>
+<td>vncdisplay<id></id></td>
+<td>获取一个虚拟机的VNC连接IP地址和端口</td>
+</tr>
+<tr>
+<td>create&lt;dom.xml&gt;</td>
+<td>根据虚拟机的XML配置文件创建一个虚拟机</td>
+</tr>
+<tr>
+<td>define&lt;dom.xml&gt;</td>
+<td>定义一个虚拟机但不启动，此时虚拟机处于预定义状态</td>
+</tr>
+<tr>
+<td>start<id></id></td>
+<td>启动一个预定义的虚拟机</td>
+</tr>
+<tr>
+<td>suspend<id></id></td>
+<td>暂停一个虚拟机</td>
+</tr>
+<tr>
+<td>resume<id></id></td>
+<td>恢复一个虚拟机</td>
+</tr>
+<tr>
+<td>shutdown<id></id></td>
+<td>对一个虚拟机下电关机</td>
+</tr>
+<tr>
+<td>reboot<id></id></td>
+<td>让一个虚拟机重启</td>
+</tr>
+<tr>
+<td>reset<id></id></td>
+<td>与reboot的区别是，它是强制一个虚拟机重启，相当于在物理机上长按reset按钮，可能会循环虚拟机系统盘的文件系统</td>
+</tr>
+<tr>
+<td>destroy<id></id></td>
+<td>立即销毁一个虚拟机，相当于物理机上直接拔电源</td>
+</tr>
+<tr>
+<td>save<id>&lt;file.img&gt;</id></td>
+<td>保存一个运行中的虚拟机状态到一个文件中</td>
+</tr>
+<tr>
+<td>restore&lt;file.img&gt;</td>
+<td>从一个被保存的文件中恢复一个虚拟机的运行</td>
+</tr>
+<tr>
+<td>migrate<id>&lt;dest_uri&gt;</id></td>
+<td>将一个虚拟机迁移到另一个目标地址</td>
+</tr>
+<tr>
+<td>dump<id>&lt;core.file&gt;</id></td>
+<td>coredump一个虚拟机保存到一个文件</td>
+</tr>
+<tr>
+<td>dumpxml<id></id></td>
+<td>以XML格式转存出一个虚拟机的信息到标准输出中</td>
+</tr>
+<tr>
+<td>attach-device<id>&lt;device.xml&gt;</id></td>
+<td>向一个虚拟机添加xml文件中的设备，也就是热插拔</td>
+</tr>
+<tr>
+<td>detach-device<id>&lt;device.xml&gt;</id></td>
+<td>将一个XML文件中的设备从虚拟机中移除</td>
+</tr>
+<tr>
+<td>console<id></id></td>
+<td>连接到一个虚拟机的控制台</td>
 </tr>
 </tbody>
 </table>
-<p>其实，不仅[0-9]、[[:digit:]]可以匹配数字，还有一种简写的格式符号也能表示数字，比如”\d”就是表示十进制数字0-9。但是，<strong>并不是所有的正则表达式解释器都能够识别这些简写格式。</strong>因此，建议大家还是采用上述非简写格式来编写规则。</p>
-<h2 id="基础正则中的分组与后向引用"><a href="#基础正则中的分组与后向引用" class="headerlink" title="基础正则中的分组与后向引用"></a><strong>基础正则中的分组与后向引用</strong></h2><p>在正则表达式中除了使用“位置匹配”、“连续次数匹配”和“常用符号”外，还可以使用分组和后向引用。那么，什么是分组？我们还是通过示例来说明，如下先创建一个测试文件test02：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145c61b70a939419.jpg" alt></p>
-<p>我们先使用如下规则进行匹配：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145c83109d716151.jpg" alt></p>
-<p>如上图，后面的匹配次数2只影响前面单字母b，所以上例中kkutysllbb、kkutysllbbb都会被匹配到。如果，我们想将上面示例中匹配要求改成连续匹配两次kkutysllb怎么办？这个时候，我们就需要使用分组的匹配的规则，将kkutysllb当做一个整体group来匹配。命令规则如下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145d00bb06e90017.jpg" alt></p>
-<p>上图中，<strong>\(  \)就表示分组，它将其中的内容看做一个整体。</strong>分组还可以嵌套，什么意思呢？接着往下看：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145d47db40a55740.jpg" alt></p>
-<p>如上图，为了说明分组嵌套，我们将上例中存在重复字母的地方做了单字母分组，实际环境时没必要这样分组。在上图中，我们将字母k和字母l做了两个子分组，且指定每个子分组各连续出现两次。同时，将kkutysllb做了一个大分组，包括上述的两个子分组，且指定整个大分组也连续出现两次。</p>
-<p>我想我把分组的概念应该是说清楚了，接下来我们再看看什么是后向引用？之所以先讲分组，后介绍后向引用，是因为<strong>后向引用是以分组为前提的。</strong>还是以示例切入介绍，我们再创建一个测试文件test03，如下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145dfc9085770478.jpg" alt></p>
-<p>现在，我们通过正则表达式将上述文件中的各行进行匹配，如下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145e2ff1cd886406.jpg" alt></p>
-<p>H.\{4\}表示大写字母H的后面跟随了4个任意字符，其中”.”表示任意单个字符，前面已经说过了。通过上面的匹配规则，Hello和Hilll两个单词都会被匹配到，也就是上述测试文件三行都符合规则。我们现在有了新需求，需要找出kkutysllb单词前后两个词一致的行，通过上面的规则明显无法满足需求，这时候就需要用到后向引用了。如下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145e8181a2c65417.jpg" alt></p>
-<p>上图中，<strong>后面那个\1就表示后向引用，它的意思是kkutysllb后面的单词必须与前面\(H.\{4\}\)完全一致才符合规则。</strong>这究竟是什么道理呢？其实，<strong>\1的意思是等价整个正则中第1个分组的正则匹配到的结果。</strong>大白话就是，上例中整个正则只有一个分组\(H.\{4\}\)，当它与测试文件的第一行文本匹配时，会匹配到Hello，这时\1也为Hello。当它与测试文件第二行文本匹配时，会匹配到Hilll，这时\1也为HIlll。换句话说，\1引用整个正则中第1个分组的正则，同理，\2就引用了整个正则中第2个分组的正则，以此类推。。。如果你还是不明白，那就看下图理解吧，如果仍然不明白，那我也没招了。。。</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145eee25fe838328.jpg" alt></p>
-<p>以上就是后向引用，再次强调，<strong>使用后向引用的前提是将需要引用的部分进行分组。</strong></p>
-<p>在前述内容的例子中，我们使用了分组嵌套，那么在对分组嵌套后向引用时，到底哪个是分组1，哪个是分组n呢？我们来看下图：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d145f2da865898868.jpg" alt></p>
-<p>在上图中，红色部分是一对分组，蓝色部分是另一对分组，当我们需要后向引用时，外层分组也就是红色分组是第1个分组，内层分组也就是蓝色分组是第2个分组。<strong>这是因为分组的顺序取决于分组符号的左侧部分的顺序</strong>，由于红色分组的左侧部分排在最前面，所以红色分组是第1个。</p>
-<p>至此，分组和后向引用我们掰扯完了，我们还是保持国际惯例，对分组和后向引用做个总结，便于我们后续查询，如下：</p>
-<ul>
-<li><strong>\( \)：</strong>表示分组，我们可以将其中的内容当做一个整体，分组是可以嵌套的。</li>
-<li><strong>\(ab\)：</strong>表示将ab当做一个整体去处理。</li>
-<li><strong>\1：</strong>表示引用整个正则表达式中第1个分组中的正则匹配到的结果。</li>
-<li><strong>\2：</strong>表示引用整个正则表达式中第2个分组中的正则匹配到的结果。</li>
-</ul>
-<h2 id="基础正则中的转义符"><a href="#基础正则中的转义符" class="headerlink" title="基础正则中的转义符"></a><strong>基础正则中的转义符</strong></h2><p>现在，我们来认识下正则中的常用符合，就是<strong>反斜杠”\“。</strong>反斜杠有什么用？我们还是先不解释，通过示例来描述。如下，我们还是创建的一个测试文件test04，内容如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@c7-test01 ~]<span class="comment"># cat test04</span></span><br><span class="line">base</span><br><span class="line">a1<span class="comment">#$</span></span><br><span class="line">ddd</span><br><span class="line">a-!@</span><br><span class="line">cccc</span><br><span class="line">a..</span><br></pre></td></tr></table></figure>
-<p>如上，此时我们想匹配a..这行，利用我们前面了解的知识，规则可能会这样写。匹配条件如下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d146343910bc63820.jpg" alt></p>
-<p>上图中，虽然匹配结果包含了我们的需求，但是也多了其他三行，这让我们很不爽。主要是因为点符号”.”在基础正则中表示任意1个字符。因此，我们如果想要在匹配条件中匹配点点，就需要使用转移符号反斜杠“\”。<strong>转义符号“\”与正则中的符号结合起来就表示这个符号本身。</strong>因此，上面的需求我们可以使用如下的匹配条件：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d14607c70a2692622.jpg" alt></p>
-<p>如上图，\.表示单个点符号，同理\*就表示单个星符号。在前面提到过，在基本正则中，\?表示其前面的字符出现0次或1次，\+表示前面的字符出现至少1次。那么，如果我们相匹配问号?和加号+呢？难道我们还要再在前面加一个反斜杠\\？或\\+，答案是否定的。<strong>在Linux中，如果想要在正则表达式中匹配问号?或加号+，只需要在匹配条件中直接输入?或+即可</strong>，大家可以自己尝试。但是，在某些时候，<strong>我们需要匹配反斜杠自身，这时需要在反斜杠前面再加上反斜杠就行。</strong></p>
-<p>下面我们写个经常会使用的正则表达式—<strong>-匹配ifconfig输出中的各个网卡的ip地址。</strong>如下：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d14610017cd230432.jpg" alt></p>
-<p>此时，我们需要首先对ipv4的地址做个分析，首先它是由4组三位数组成，且每组数字不大于255，前3组三位数后面都带一个点号”.”，那么我们的正则规则可以如下来写：</p>
-<p><img src="https://i.loli.net/2019/06/27/5d14612e7203434521.jpg" alt></p>
-<p>上图中，([0-2]{,1})([0-9]{1,2}).表示至少为1位数字，最多为3位数字，且首位数字不大于2，后面以点号“.”结尾的字段，然后将这部分作为一个分组连续匹配3次，最后这一段([0-2]{,1})([0-9]{1,2})也表示至少为1位数字，最多为3位数字，且首位数字不大于2。<strong>注意：上面的ip地址匹配并不精确，我们其实并没有限制每组数字范围在1-254。不过，没关系，当我们了解了扩展正则就能写一个更精确的ip地址匹配规则。</strong></p>
-<p>至此，基础的正则的五朵金花也就介绍完了。在正则入门时我们说过，Linux中正则表达式分为基础正则表达式与扩展正则表达式，在下一篇文章中我们会介绍扩展正则，其实它们的用法都是相似的，而且写法也差不多，基础正则理解并掌握了，扩展正则几乎不费力。</p>
+<p>上表中，只是列出常用的几个KVM虚拟机全生命周期管理命令，如果想查找全量KVM虚拟机全量生命周期管理命令，可以使用命令帮助。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/9yVENoFcQwhX.png?imageslim" alt="mark"></p>
+<p>如上图，由于输出太长，我们只截取了一部分。上图中每个命令后面都有详细的文字说明来描述命令的用途。</p>
+<h2 id="虚拟机全生命周期管理实战"><a href="#虚拟机全生命周期管理实战" class="headerlink" title="虚拟机全生命周期管理实战"></a><strong>虚拟机全生命周期管理实战</strong></h2><h3 id="虚拟机状态信息查询"><a href="#虚拟机状态信息查询" class="headerlink" title="虚拟机状态信息查询"></a><strong>虚拟机状态信息查询</strong></h3><p>有了上面的命令储备后，我们下来在环境中进行实操验证。首先，我们通过<strong>list命令，查看下当前节点的虚拟机个数</strong>，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/4gsgTjd4d1Ep.png?imageslim" alt="mark"></p>
+<p>如上图，本节点有2个虚拟机，当前状态均为shut off，也就是没有启动。那么，我们现在<strong>通过start命令，将上述两个虚拟机同时启动</strong>，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/LbwDCAd424XA.png?imageslim" alt="mark"></p>
+<p>启动后，我们可以<strong>通过domstate命令查看虚拟机当前的状态</strong>，并且<strong>通过dominfo命令查看虚拟机的详细信息</strong>，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/esJBKFdwGiKl.png?imageslim" alt="mark"></p>
+<p>同时，我们可以<strong>通过dommemstate和vcpuinfo命令，查看虚拟机的虚拟内存信息及vCPU信息。</strong>如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/RLux9MLg8mKj.png?imageslim" alt="mark"></p>
+<h3 id="虚拟机vCPU与vMEM管理操作"><a href="#虚拟机vCPU与vMEM管理操作" class="headerlink" title="虚拟机vCPU与vMEM管理操作"></a><strong>虚拟机vCPU与vMEM管理操作</strong></h3><p>如上图，通过上面的vCPU的详细信息，我们发现cto74d的两个vCPU都与pCPU0默认绑定。那么，我们现在<strong>可以通过vcpupin命令将vCPU1与pCPU1进行绑定。</strong>如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/8XPMr9oRPeMj.png?imageslim" alt="mark"></p>
+<p>同时，我们发现cto74d虚拟机只有2个vCPU。现在，我们需要给它增加到4个vCPU怎么办？在KVM中，可以<strong>通过setvcpus命令完成cto74d虚拟机的vCPU在线热添加。</strong>但是，在热添加之前，我们需要明确一个概念，那就是<strong>虚拟机的vCPU最大可分配数与当前vCPU数的区别</strong>。为了讲明白这个概念，我们还是先来看虚拟机cto74d的XML配置文件，可以<strong>通过dumpxml命令将虚拟机XML配置文件输出到屏幕上。</strong>如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/A0Bjs5ILCXn4.png?imageslim" alt="mark"></p>
+<p>上图中表示cto74d虚拟机的vCPU最大可分配数为2。而且，我们还可以<strong>通过指令emulatorpin查看虚拟机当前的vCPU使用情况。</strong>如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/YLvs5uu9lgBJ.png?imageslim" alt="mark"></p>
+<p>上图中表示虚拟机cto74d当前使用的vCPU个数也为2。所以，在这种配置要求下，自然无法通过指令将cto74d虚拟机的vCPU数量调整为4个。为了实现我们的需求，首先需要<strong>通过shutdown命令将虚拟机下电</strong>，然后修改配置文件如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/4VWpRaG4AmYb.png?imageslim" alt="mark"></p>
+<p>上图中，红色框部分表示我们将虚拟机下电，黄色框部分我们将虚拟机的vCPU配置修改为：最大支持4个vCPU，当前使用2个vCPU。我们可以查看XML文件验证下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/6zNyvuUoag6r.png?imageslim" alt="mark"></p>
+<p>完成上述修改后，我们需要<strong>通过define命令重新定义下cto74d这个虚拟机</strong>，然后通过start命令启动虚拟机。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/CKrHPluyFt1j.png?imageslim" alt="mark"></p>
+<p>现在，我们具备条件后，就可以使用命令setvcpus命令在线对cto74d虚拟机的vCPU进行热添加，添加到4个。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/CxDRz9nrNYsF.png?imageslim" alt="mark"></p>
+<p>在完成vCPU的热插后，那么vCPU是否可以热拔呢？<strong>答案是不可以</strong>，因为当vCPU被分配给虚拟机使用时，虚拟机中的程序进程就会占用刚分配的vCPU，此时如果我们进行热拔操作，前提是需要将上面的进程迁移到别的vCPU，但是我们是无法确切知道有哪些进程的。所以，vCPU自然不支持热拔操作。那么，既然KVM支持CPU和内存的虚拟化，内存是否也支持在线调整呢？答案是必须支持。我们首先通过dominfo命令看下当前虚拟机的内存情况。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/PRyNutTXm0SG.png?imageslim" alt="mark"></p>
+<p>上图表示，虚拟机当前最大内存和可用内存都是4194304KB，也就是4GB大小。我们可以通过<strong>通过setmem指令设置虚拟机的可用内存。</strong>与vCPU概念类似，<strong>这种方式支持的在线调整范围只能小于当前虚拟机的最大内存配额，也就是4GB以内。否则，需要关机，先调整虚拟机支持的最大内存，然后再调整虚拟机支持的可用内存。</strong>如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/wEdflEs6oMM2.png?imageslim" alt="mark"></p>
+<p>从上图，我们发现，内存在线调整内存是可以减小的，即在线将虚拟机原内存从4G调整为3G。另外，<strong>setmaxmem指令用于调整虚拟机的最大可支持内存，只能在虚拟机下电后执行。</strong>否则会报如下错误：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/LVRtyuOYOcVX.png?imageslim" alt="mark"></p>
+<h3 id="虚拟机磁盘和网卡的热插拔"><a href="#虚拟机磁盘和网卡的热插拔" class="headerlink" title="虚拟机磁盘和网卡的热插拔"></a><strong>虚拟机磁盘和网卡的热插拔</strong></h3><p>完成了vCPU和内存的在线调整实战后，我们接下来玩玩热插拔。先来玩热插拔磁盘，<strong>在KVM中通过virsh管理工具向虚拟机热插拔磁盘，可以使用attach-disk命令。</strong>为了实现上述需求，首先我们需要创建一个虚拟磁盘文件，然后通过attach-disk命令将其挂载到虚拟机中，然后通过控制台进入虚拟机对新挂载的磁盘进行格式化，并创建对应目录对其挂载。最后，我们向挂载目录中写入测试文件测试。同时，需注意向虚拟机挂载raw格式qcow2格式的磁盘是不一样的。</p>
+<p>我们先来热插raw格式的磁盘，操作过程如下：</p>
+<p><strong>Step1：创建一个虚拟磁盘cto74d_data.raw，磁盘格式为raw，大小为5G</strong></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/OCgetrISBfwv.png?imageslim" alt="mark"></p>
+<p><strong>Step2：为虚拟机热插磁盘，需要注意指定磁盘的位置要使用绝对路径，并设置虚拟盘符为vdb</strong></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/S5QOTUYPNi1o.png?imageslim" alt="mark"></p>
+<p><strong>Step3：通过控制台进入虚拟机cto74d，查看磁盘信息</strong></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/5yVMDua18bFh.png?imageslim" alt="mark"></p>
+<p><strong>Step4：对新挂载的磁盘格式化，并创建一个/data目录进行挂载</strong></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/iD8ljAitUc6O.png?imageslim" alt="mark"></p>
+<p><strong>Step5：写入一个大文件进行测试</strong></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/GAu17SrIoRO4.png?imageslim" alt="mark"></p>
+<p><strong>Step6：我们在宿主机上通过domblklist命令查看虚拟机的磁盘信息</strong></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/CdbV1xieK9zt.png?imageslim" alt="mark"></p>
+<p>如上图，可以看见当前虚拟机有两块磁盘，一块系统盘，一块数据盘。我们查看虚拟机XML文件信息进行验证。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/oaJm85WftQvP.png?imageslim" alt="mark"></p>
+<p>以上就是raw格式磁盘的热插操作过程，如果想热插qcow2格式的磁盘（后缀为<em>.qcow2）或想热插qcow2格式的镜像文件（后缀为</em>.img），在Step1创建磁盘时，需要通过<strong>-o size选项指定预分配大小</strong>，否则系统会默认挂载一个几百K大小虚拟盘，这样会导致空间不够。同事，还需要通过preallocation选项指定磁盘格式为metadata，也就是元数据格式。除此之外，这两种类型磁盘的热插操作与raw格式磁盘一致。</p>
+<p>上面完成了磁盘的热插，那么<strong>要实现磁盘的热拔呢？可以通过detach-disk这个命令完成。</strong>但是，这时需要注意一点：<strong>使用virsh指令删除磁盘会直接强制将虚拟机中磁盘删除，如果磁盘已经挂载使用，要停止该磁盘的写操作，否则会造成数据丢失，拔掉的磁盘并没有删除，仍然存储在当时创建的位置，需要使用可以再挂载使用。</strong>因此，在热拔磁盘之前，我们需要先进入虚拟机将对该磁盘的写入进程全部暂停，然后将磁盘从挂载点卸载，最后回到宿主机通过detach-disk命令完成磁盘的热拔。这里，大家自己玩吧，我就不陪着演示了。。。。。</p>
+<p>磁盘的热插拔我们验证了，接下来我们玩网卡的热插拔。<strong>在KVM虚拟机中，要实现网卡的热插，可以使用attach-interface命令完成。同理，热拔的命令就是detach-interface。</strong>首先，我们通过domiflist命令查看当前虚拟机的网络和网卡信息，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/l5PQmvz25OML.png?imageslim" alt="mark"></p>
+<p>如上图，黄色框部分就表示当前虚拟机cto74d的网络信息，类型（type）为network，源设备（source）为default。如果在创建KVM虚拟机时，网络配置是自定义网桥，那么这里的类型（type）为bridge，源设备（source）为自定义网桥名称，如br0，</p>
+<p>有了上面的知识储备后，下面我们<strong>通过attach-interface命令来热插一个网卡</strong>，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/Vy0jiitQreAe.png?imageslim" alt="mark"></p>
+<p>同时，我们可以<strong>通过domifaddr命令查看新增加的网卡动态获得的IP地址</strong>，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/R4cBVmR8R43C.png?imageslim" alt="mark"></p>
+<p>接下来，我们尝试下在宿主机通过SSH方式远程连接vnet2的地址是否成功。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/D0vPFQXRc26s.png?imageslim" alt="mark"></p>
+<p>上图表示，可以通过vnet2的地址192.168.122.230远程连接虚拟机cto74d，表明我们新增加的网卡有效且地址分配正常（这个地址是通过DHCP方式动态分配的），通过输入密码就可以远程登录。</p>
+<p>搞定网卡的热插后，我们接下来自然要实现网卡的热拔。与磁盘类似，在对网卡热拔时，首先需要停止网卡的工作，这样后续数据包就不会转发到该网卡上，不到导致网络丢包。而且，在对网卡热拔时，我们要根据网卡的MAC地址来实现，而不能通过网卡名称，否则libvirt内部会将该网卡名称归属的同一个二层设备上所有端口销毁。<strong>对网卡热拔的命令就是detach-ifinterface。</strong>如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/vQCDbEPgABXf.png?imageslim" alt="mark"></p>
+<p>上图中，通过–mac参数指定mac地址删除，就不会发生误删除事件。</p>
+<h2 id="虚拟机的热迁移"><a href="#虚拟机的热迁移" class="headerlink" title="虚拟机的热迁移"></a><strong>虚拟机的热迁移</strong></h2><p>接下来，我们再来玩一个更高级的操作，就是<strong>KVM虚拟机的热迁移</strong>。在KVM中虚拟机的迁移分为热迁移和冷迁移。每一种迁移方式又细分为基于本地存储和基于共享存储两种。</p>
+<p>两种方式下的冷迁移均比较简单，就是将原虚拟机的磁盘文件和配置文件拷贝至目标服务器，然后通过配置文件定义一个新的虚拟机启动即可。而基于本地存储的热迁移与此类似，也需要在目标主机创建同一个存储文件，通过暴露TCP端口，基于socket完成迁移，同样比较简单，但是过程很慢。有兴趣的可参考<a href="https://www.cnblogs.com/lyhabc/p/6104555.html这篇文章。" target="_blank" rel="noopener">https://www.cnblogs.com/lyhabc/p/6104555.html这篇文章。</a></p>
+<p>我们这里演示的是<strong>基于共享存储的热迁移（电信云采用分布式存储，每一个计算组规划区都是一个共享存储池）</strong>，它实现的前提就是需要源目服务器之间有共享存储。因此，为了演示这个操作，我们需要在源主机（192.168.101.251）和目标主机（192.168.101.252）之间通过NFS方式建立共享文件系统，也可以使用GFS2集群文件系统来实现。至于，NFS网络共享文件系统如何配置，请参见本站的Linux常用运维工具分类中的NFS网络文件共享系统一文，这里不再赘述。</p>
+<p>整个实验的拓扑如下，源主机和目标主机都作为NFS的客户端与NFS服务器（192.168.101.11）之间互通，实现数据的共享存储。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/zCAm9gf8p9n7.png?imageslim" alt="mark"></p>
+<p><strong>Step1：首先确保两个NFS客户端服务器与NFS服务器端共享目录正常，且两个客户端服务器上存放虚拟机磁盘的目录一致。</strong>如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/HgoivxdhLga0.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/rSaQdVAzV6F8.png?imageslim" alt="mark"></p>
+<p><strong>Step2：在251服务器首先将虚拟机磁盘创建在/mydata/nfsdir下，格式为qcow2格式，然后去252服务器的对应目录下检查确保文件共享正常。</strong>如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/NDzzCdfmkSOD.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/wngwtCqhKtgs.png?imageslim" alt="mark"></p>
+<p><strong>Step3：在251服务器创建虚拟机cto67s，并启动。</strong>如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/XLRkoENtnjf4.png?imageslim" alt="mark"></p>
+<p>在安装过程中，我们手动通过图形化方式安装，因此需要查询vnc图形化界面的连接地址和服务端口。<strong>可以通过vncdisplay命令查看虚拟机的VNC客户端连接地址及服务端口</strong>，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/iS3MgSR2soep.png?imageslim" alt="mark"></p>
+<p>然后，还是通过vnc界面安装虚拟机，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/xE60sntllmev.png?imageslim" alt="mark"></p>
+<p>完成，虚拟机OS安装后，需要重启生效。然后，源主机（192.168.101.251）中通过start命令，启动虚拟机cto67s。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/YNuKDAIkgcPD.png?imageslim" alt="mark"></p>
+<p><strong>Step4：开始虚拟机cto67s的热迁移。</strong>如下：</p>
+<p>如上图，当前虚拟机cto67s在源主机（192.168.101.251）处于开机运行状态，为了清晰说明热迁移的过程，我们需要知道虚拟机cto67s的ip地址，这样在虚拟机热迁移时，由于内存热数据的迭代拷贝，会有一个暂停-恢复-暂停-恢复的过程，反映在网络测就会出抖动或丢包。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/ENTb8klo7Hoz.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/9z3VTf9gx7QF.png?imageslim" alt="mark"></p>
+<p>完成上述的准备工作后，我们<strong>通过migrate命令开始进行虚拟机热迁移</strong>。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/JH3k3bXx8vJn.png?imageslim" alt="mark"></p>
+<p><strong>如上图，我们期望的热迁移失败啦。。。。这是为啥？</strong>我们看上图红色框部分的报错内容，<strong>提示：域名解析失败。</strong>其实，在迁移期间，目标主机上运行的libvirtd会从其希望接收迁移数据的地址和端口创建URI，并将其发送回在源主机上运行的libvirtd。在我们的例子中，目标主机（192.168.122.252）的名称设置为“c7-test02”。出于某种原因，在该主机上运行的libvirtd无法将该名称解析为可以发回的IP地址，因此它发送了主机名，希望源libvirtd在解析名称时会更成功。但是，源主机的libvirt因为也没有配置这个主机名的解析，所以提示：Name or service not know。</p>
+<p>有了上面的分析，那就简单了，无非就是在源主机和目的主机上配置主机名和IP的解析就可解决上述问题。这里，有两种配置方法：一种是在/etc/resolve中配置DNS解析，但是不建议这样配置，因为这里一般是配置公网域名解析的地方。另一种就是在/etc/hosts中配置主机名与IP的映射关系。我们采用第二种方法解决。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/pOLQ9JHHMtYk.png?imageslim" alt="mark"></p>
+<p>完成上面的配置后，我们再次尝试热迁移。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/tpVeYi8s5QxT.png?imageslim" alt="mark"></p>
+<p>同时，我们在源主机和目标主机分别查看虚拟机cto67s的状态。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/PwzLx1VP9W9Y.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/p0kNJc95gQ0S.png?imageslim" alt="mark"></p>
+<p>此时，虽然虚拟机cto67s已经在目标主机上启动，但是目标主机上还没有虚拟机cto67s的配置文件。所以需要根据当前虚拟机的状态，创建配置文件并定义虚拟机。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/tOd4XoLcPp6z.png?imageslim" alt="mark"></p>
+<p>最后，我们从目标主机上进入虚拟机cto67s进行验证，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/sKXOckTYzt8U.png?imageslim" alt="mark"></p>
+<p>至此，KVM虚拟机热迁移演示完成。这里需要提示一下，由于我们创建的虚拟机都是nat网络模式的，这样在迁移后，在源主机ping虚拟机测试会提示目标不可达，但是在虚拟机内部ping源主机可以ping通，只是迁移过程中会有1-2个ICMP包丢失或抖动。如果，非要在宿主机上ping测试虚拟机来观察迁移过程中的丢包或抖动过程，可以将虚拟机的网络模式改为桥接bridge。而且，源主机和目标主机必须归属同一个网桥bridge。</p>
+<p>以上，就是我们KVM虚拟机全生命周期管理实战的全部内容，至于虚拟机的挂起、恢复等操作都比较简单，我也就懒得举例演示，各位可以自行玩玩，挺有意思的，真的。。。。</p>
 
       
     </div>
@@ -802,7 +883,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="https://kkutysllb.cn/2019/06/27/2019-06-27-基础正则的五朵金花/" title="2019-06-27-基础正则的五朵金花">https://kkutysllb.cn/2019/06/27/2019-06-27-基础正则的五朵金花/</a>
+    <a href="https://kkutysllb.cn/2020/03/01/2020-03-01-KVM虚拟机全生命周期管理实战/" title="2020-03-01-KVM虚拟机全生命周期管理实战">https://kkutysllb.cn/2020/03/01/2020-03-01-KVM虚拟机全生命周期管理实战/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -815,7 +896,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/DevOps/" rel="tag"><i class="fa fa-tag"></i> DevOps</a>
+            <a href="/tags/Hypervisor/" rel="tag"><i class="fa fa-tag"></i> Hypervisor</a>
           
         </div>
       
@@ -828,8 +909,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/06/24/2019-06-24-Linux原生网络虚拟化实践/" rel="next" title="2019-06-24-Linux原生网络虚拟化实践">
-                <i class="fa fa-chevron-left"></i> 2019-06-24-Linux原生网络虚拟化实践
+              <a href="/2020/03/01/2020-03-01-KVM虚拟机的各种安装方法/" rel="next" title="2020-03-01-KVM虚拟机的各种安装方法">
+                <i class="fa fa-chevron-left"></i> 2020-03-01-KVM虚拟机的各种安装方法
               </a>
             
           </div>
@@ -837,10 +918,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/06/27/2019-06-27-打造文件实时同步架构之sersync篇/" rel="prev" title="2019-06-27-打造文件实时同步架构之sersync篇">
-                2019-06-27-打造文件实时同步架构之sersync篇 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -1074,7 +1151,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基础正则的连续次数匹配"><span class="nav-number">1.</span> <span class="nav-text">基础正则的连续次数匹配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基础正则中的常用符号"><span class="nav-number">2.</span> <span class="nav-text">基础正则中的常用符号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基础正则中的分组与后向引用"><span class="nav-number">3.</span> <span class="nav-text">基础正则中的分组与后向引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基础正则中的转义符"><span class="nav-number">4.</span> <span class="nav-text">基础正则中的转义符</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#libvirt命令行工具virsh"><span class="nav-number">1.</span> <span class="nav-text">libvirt命令行工具virsh</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#域管理（虚拟机管理）命令"><span class="nav-number">2.</span> <span class="nav-text">域管理（虚拟机管理）命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟机全生命周期管理实战"><span class="nav-number">3.</span> <span class="nav-text">虚拟机全生命周期管理实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机状态信息查询"><span class="nav-number">3.1.</span> <span class="nav-text">虚拟机状态信息查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机vCPU与vMEM管理操作"><span class="nav-number">3.2.</span> <span class="nav-text">虚拟机vCPU与vMEM管理操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机磁盘和网卡的热插拔"><span class="nav-number">3.3.</span> <span class="nav-text">虚拟机磁盘和网卡的热插拔</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟机的热迁移"><span class="nav-number">4.</span> <span class="nav-text">虚拟机的热迁移</span></a></li></ol></div>
             
 
           </div>
@@ -1270,7 +1347,7 @@
   
     <script>
   window.livereOptions = {
-    refer: '2019/06/27/2019-06-27-基础正则的五朵金花/'
+    refer: '2020/03/01/2020-03-01-KVM虚拟机全生命周期管理实战/'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];
