@@ -103,30 +103,33 @@
 
 
 
-  <meta name="description" content="内存虚拟化概述所谓的内存虚拟化，即如何在多个虚拟机之间共享物理内存以及如何进行动态分配。在《x86架构基础》一文中已经介绍操作系统对物理服务器内存管理的知识，它的本质就是将物理内存地址映射到一段线性地址空间，也有叫逻辑地址空间，应用程序访问内存物理地址是通过段页查询机制完成。而这个线性地址空间或逻辑地址空间本身就是物理内存的虚拟化呈现。在虚拟化环境中，分配给虚拟机内存非常类似于操作系统中关于线性地">
-<meta name="keywords" content="电信云">
+  <meta name="description" content="OpenStack是什么？2010年7月，RackSpace和美国国家航空航天局合作，分别贡献出RackSpace云文件平台代码和NASA Nebula平台代码，并以Apache许可证开源发布了OpenStack。OpenStack由此诞生，至此已经走过10个年头，最新发布的版本编号已到达T版本。OpenStack是目前最成熟并且符合生产部署的一套开源云操作系统，全球各大IT，CT厂商，甚至运营商">
+<meta name="keywords" content="云计算">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2019-05-18-计算虚拟化之内存虚拟化">
-<meta property="og:url" content="https://kkutysllb.cn/2019/05/18/2019-05-18-计算虚拟化之内存虚拟化/index.html">
+<meta property="og:title" content="2020-03-01-OpenStack概述">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/01/2020-03-01-OpenStack概述/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
-<meta property="og:description" content="内存虚拟化概述所谓的内存虚拟化，即如何在多个虚拟机之间共享物理内存以及如何进行动态分配。在《x86架构基础》一文中已经介绍操作系统对物理服务器内存管理的知识，它的本质就是将物理内存地址映射到一段线性地址空间，也有叫逻辑地址空间，应用程序访问内存物理地址是通过段页查询机制完成。而这个线性地址空间或逻辑地址空间本身就是物理内存的虚拟化呈现。在虚拟化环境中，分配给虚拟机内存非常类似于操作系统中关于线性地">
+<meta property="og:description" content="OpenStack是什么？2010年7月，RackSpace和美国国家航空航天局合作，分别贡献出RackSpace云文件平台代码和NASA Nebula平台代码，并以Apache许可证开源发布了OpenStack。OpenStack由此诞生，至此已经走过10个年头，最新发布的版本编号已到达T版本。OpenStack是目前最成熟并且符合生产部署的一套开源云操作系统，全球各大IT，CT厂商，甚至运营商">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf720f6123725981.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf7229c2feb27866.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf728ab26fc27225.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf72c9c659e24729.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf72f7358ee63929.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf732c5c23754430.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf734451c6887409.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf735c64aa688044.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf73824ce0891613.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf7398dc3fa66352.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf73c2b12e968100.jpg">
-<meta property="og:updated_time" content="2019-05-18T02:54:36.837Z">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/T8UkJRyO7F1f.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/UnJtqApro3Ai.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/8ktXhQI82Mah.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/E7DVQEyaOWgK.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/vnrx6Ioi2tKJ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/8lq3Q9ciLVil.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/sakeKz2qOqrG.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/xSKPHXlQfSov.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/3pASuW4PJX4E.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/7yjonu5aRi1X.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/A7DRSCqdwKC6.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/ASvQMScNvMDe.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/kDJkQaYA2QYd.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/xRveNTHokG5C.png?imageslim">
+<meta property="og:updated_time" content="2020-03-01T15:55:06.933Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2019-05-18-计算虚拟化之内存虚拟化">
-<meta name="twitter:description" content="内存虚拟化概述所谓的内存虚拟化，即如何在多个虚拟机之间共享物理内存以及如何进行动态分配。在《x86架构基础》一文中已经介绍操作系统对物理服务器内存管理的知识，它的本质就是将物理内存地址映射到一段线性地址空间，也有叫逻辑地址空间，应用程序访问内存物理地址是通过段页查询机制完成。而这个线性地址空间或逻辑地址空间本身就是物理内存的虚拟化呈现。在虚拟化环境中，分配给虚拟机内存非常类似于操作系统中关于线性地">
-<meta name="twitter:image" content="https://i.loli.net/2019/05/18/5cdf720f6123725981.jpg">
+<meta name="twitter:title" content="2020-03-01-OpenStack概述">
+<meta name="twitter:description" content="OpenStack是什么？2010年7月，RackSpace和美国国家航空航天局合作，分别贡献出RackSpace云文件平台代码和NASA Nebula平台代码，并以Apache许可证开源发布了OpenStack。OpenStack由此诞生，至此已经走过10个年头，最新发布的版本编号已到达T版本。OpenStack是目前最成熟并且符合生产部署的一套开源云操作系统，全球各大IT，CT厂商，甚至运营商">
+<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200301/T8UkJRyO7F1f.png?imageslim">
 
 
 
@@ -135,7 +138,7 @@
 
 
 
-  <link rel="canonical" href="https://kkutysllb.cn/2019/05/18/2019-05-18-计算虚拟化之内存虚拟化/">
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/01/2020-03-01-OpenStack概述/">
 
 
 
@@ -145,7 +148,7 @@
   };
 </script>
 
-  <title>2019-05-18-计算虚拟化之内存虚拟化 | 一花一菩提，一云一世界</title>
+  <title>2020-03-01-OpenStack概述 | 一花一菩提，一云一世界</title>
   
 
 
@@ -404,7 +407,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/05/18/2019-05-18-计算虚拟化之内存虚拟化/">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/01/2020-03-01-OpenStack概述/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kkutysllb">
@@ -421,7 +424,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2019-05-18-计算虚拟化之内存虚拟化
+          <h1 class="post-title" itemprop="name headline">2020-03-01-OpenStack概述
 
               
             
@@ -447,7 +450,7 @@
                 
               
 
-              <time title="创建时间：2019-05-18 10:45:07 / 修改时间：10:54:36" itemprop="dateCreated datePublished" datetime="2019-05-18T10:45:07+08:00">2019-05-18</time>
+              <time title="创建时间：2020-03-01 23:44:51 / 修改时间：23:55:06" itemprop="dateCreated datePublished" datetime="2020-03-01T23:44:51+08:00">2020-03-01</time>
             
 
             
@@ -469,7 +472,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV关键技术/" itemprop="url" rel="index"><span itemprop="name">NFV关键技术</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
 
                 
                 
@@ -505,7 +508,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">8.3k</span>
+                <span title="本文字数">4.6k</span>
               
 
               
@@ -519,7 +522,7 @@
                 
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
-                <span title="阅读时长">8 分钟</span>
+                <span title="阅读时长">4 分钟</span>
               
             </div>
           
@@ -539,80 +542,43 @@
       
 
       
-        <h2 id="内存虚拟化概述"><a href="#内存虚拟化概述" class="headerlink" title="内存虚拟化概述"></a>内存虚拟化概述</h2><p><strong>所谓的内存虚拟化，即如何在多个虚拟机之间共享物理内存以及如何进行动态分配</strong>。在《x86架构基础》一文中已经介绍操作系统对物理服务器内存管理的知识，它的本质就是将物理内存地址映射到一段线性地址空间，也有叫逻辑地址空间，应用程序访问内存物理地址是通过段页查询机制完成。而这个线性地址空间或逻辑地址空间本身就是物理内存的虚拟化呈现。在虚拟化环境中，分配给虚拟机内存非常类似于操作系统中关于线性地址空间的实现。操作系统负责维护虚页号到实页号的映射，并将这一 映射信息保存到页表（Page Table）。在 x86架构的CPU中，内存管理单元MMU与TLB这两个模块就负责实现并优化虚拟内存的性能。详见《DPDK技术在电信云中最佳实践》系列文章。<a id="more"></a></p>
-<p>一个操作系统对其物理内存存在两个主要的基本认识：<strong>物理地址从0开始</strong>和<strong>内存地址连续性</strong>（至少在一些大的粒度上连续）。</p>
-<p><img src="https://i.loli.net/2019/05/18/5cdf720f6123725981.jpg"></p>
-<p>如上图所示，而VMM与客户机操作系统在对物理内存的认识上存在冲突，这使得真正拥有物理内存的VMM必须对客户机操作系统所访问的内存进行一定程度的虚拟化。换句话说，就是VMM 负责将MMU进行虚拟化，为客户机操作系统提供一段连续的“物理”地址空间，而操作系统本身不会意识到这种变化，仍能够将虚拟机虚拟地址（Guest Virtual Address，GVA）映射到虚拟机物理地址（Guest Physical Address，GPA），但是需要VMM将虚拟机物理地址映射到物理机物理地址（Host Physical Address，HPA）。</p>
-<p>所以，<strong>内存虚拟化的本质就是把物理机的真实物理内存统一管理，包装成多份虚拟的内存给若干虚拟机使用</strong>。内存虚拟化的核心，在于引入一层新的地址空间—<strong>客户机物理地址空间</strong>，客户机以为自己运行在真实的物理地址空间中，实际上它是通过VMM访问真实的物理地址的。在VMM中保存客户机地址空间和物理机地址空间之间的映射表。</p>
-<p><strong>如下图所示：虚拟化系统中包括三层内存地址空间：虚拟机虚拟地址GVA、虚拟机物理地址GPA和物理机物理地址HPA。因此，原先由MMU完成的线性地址到物理地址的映射已经不能满足，必须由VMM接入来完成这三层地址的映射维护和转换。</strong></p>
-<p><img src="https://i.loli.net/2019/05/18/5cdf7229c2feb27866.jpg"></p>
-<ul>
-<li><strong>GVA：</strong>指GuestOS提供给其应用程序使用的线性地址空间。</li>
-<li><strong>GPA：</strong>经VMM抽象的，虚拟机看到的伪物理地址空间。</li>
-<li><strong>HPA：</strong>真实的机器地址，即地址总线上出现的地址信号。</li>
+        <h2 id="OpenStack是什么？"><a href="#OpenStack是什么？" class="headerlink" title="OpenStack是什么？"></a><strong>OpenStack是什么？</strong></h2><p>2010年7月，RackSpace和美国国家航空航天局合作，分别贡献出RackSpace云文件平台代码和NASA Nebula平台代码，并以Apache许可证开源发布了OpenStack。OpenStack由此诞生，至此已经走过10个年头，最新发布的版本编号已到达T版本。OpenStack是目前最成熟并且符合生产部署的一套开源云操作系统，全球各大IT，CT厂商，甚至运营商都为此投入了大量的人力、物力和精力。由于其开源的特性，全世界的云计算爱好者也为此贡献了很多。OpenStack是开源云操作系统，可控制整个数据中心的大型计算，存储和网络资源池。用户能够通过Web界面、命令行或API接口配置资源。<a id="more"></a></p>
+<p> <img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/T8UkJRyO7F1f.png?imageslim" alt="mark"></p>
+<h2 id="OpenStack不是虚拟化"><a href="#OpenStack不是虚拟化" class="headerlink" title="OpenStack不是虚拟化"></a><strong>OpenStack不是虚拟化</strong></h2><p>在1959年国际信息处理大会上，Christopher Strachey亲手为虚拟化埋下了种子，他在名为《大型高速计算机中的时间共享》的报告中，提出了“虚拟化”的概念，从此拉开了虚拟化发展的帷幕。到21世纪，VMware的亮相，开启了虚拟化的X86时代，虚拟化的发展进入了一个爆发期。至此，目前业界主流的虚拟化解决方案有开源的KVM、Xen，商业的VMware、Hyper-V、Xen-Server和华为的FusionSphere。虚拟化技术的出现，主要出于提升资源利用率，降低资源投入成本的目的。从这一点上说，显然OpenStack不是虚拟化，因为OpenStack只是系统的控制面，并不包括系统的数据面组件。比如：Hypervisor、存储和网络设等。OpenStack与虚拟化有着本质上的区别，它本身并不提供虚拟化技术，而是对多种虚拟化技术架构进行管理，并能实现异构统一纳管。就像我们的win10操作系统，能够利用驱动程序对底层多种硬件进行统一管理，协调各类硬件的I/O占用。所以，这就是OpenStack被成为Cloud OS的原因，它本身只是个管理层面的系统。反而，虚拟化只是OpenStack的底层具体实现技术之一，但不是核心关注点。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/UnJtqApro3Ai.png?imageslim" alt="mark"></p>
+<h2 id="OpenStack不是云计算"><a href="#OpenStack不是云计算" class="headerlink" title="OpenStack不是云计算"></a><strong>OpenStack不是云计算</strong></h2><p>1983年，Sun提出“网络即是电脑”（“The Network is the Computer”），这被认为是云计算的雏形，而随后计算机技术的迅猛发展以及互联网行业的兴起，似乎都在向这个概念不断靠拢。在这个不断靠拢的过程中，首先写上浓重一笔的是亚马逊。2006年3月，亚马逊推出弹性计算云（Elastic Computing Cloud，EC2），按用户使用的资源进行收费，开启了云计算商业化的元年。云计算概念诞生之初，市场上对其概念有很多种理解，经过一段时间的争论，现在大家一般来说都认可的就是美国标准与技术研究院的它给出的一个最标准的定义。它把云计算定义为一种模式，而不是一种技术。这种模式既可以是商业模式，也可以是服务模式。显然，OpenStack并不是一种模式，它只是实现云计算这种模式的技术之一，但却是构建云计算模式的关键技术，整个云计算模式的内核、骨干、框架、总线均由OpenStack来构建。随着容器云概念的提出，另一种构建云计算的关键技术也随之出现，也就是我们常说的K8S（Kubernetes）。需要明确一点，OpenStack和K8S这两种构建云计算的关键技术既可以独立部署，也可以混合部署，并且在混合部署下丝毫没有违和感。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/8ktXhQI82Mah.png?imageslim" alt="mark"></p>
+<h2 id="OpenStack的体系架构"><a href="#OpenStack的体系架构" class="headerlink" title="OpenStack的体系架构"></a><strong>OpenStack的体系架构</strong></h2><p>在介绍OpenStack的体系架构之前，不得不提一下AWS Cloud。因为，OpenStack最早就是作为AWS Cloud的追随者出现的。AWS由一系列服务组成，去实现IaaS系统所需要的功能。AWS架构由5层组成，自下而上分别是AWS全球基础架构、基础服务、应用平台服务、管理和用户应用程序（华为的FusionSphere解决方案也很类似，不过华为是4层架构）而就服务类型本身而言，AWS主要提供6类服务：计算和网络、存储和内容分发、数据库、分析、部署管理和应用服务。AWS的功能十分强大，而且还在不断发展之中，OpenStack从诞生之初就一直向AWS模仿和学习，同时，OpenStack也提供开放接口去兼容各种AWS服务。做为一个IaaS范畴的云平台，完整的OpenStack系统通过网络将用户和网络背后丰富的硬件资源分离开。OpenStack一方面负责与运行在物理节点上的Hypervisor进行交互，实现对各种硬件资源的管理与控制；另一方面为用户提供一个满足要求的虚拟机。至于OpenStack内部，作为AWS的一个跟随者，它的体系结构里不可避免地体现着前面所介绍的AWS各个组件的痕迹。比如：AWS中最为核心的EC2模块，负责计算资源的管理，以及虚拟机的调度和管理，在OpenStack中对应的就是Nova项目；AWS中的简单存储服务S3，在OpenStack中有Swift项目与其功能相近；AWS中的块存储模块EBS，对应OpenStack的Cinder项目；AWS的验证访问管理服务IAM，对应OpenStack的KeyStone项目；AWS的监控服务CloudWatch，对应OpenStack的Ceilometer项目；AWS有CloudInformation，OpenStack则有Heat项目；AWS支持关系数据库RDS和NoSQL数据库DynamoDB，OpenStack也支持mySQL、postgre和NoSQL数据库MongoDB等等。</p>
+<p>OpenStack共有7个核心组件，分别是计算（Nova）、对象存储（Swift）、认证（Keystone）、用户界面（Horizon）、块存储（Cinder）、网络（Neutron）、镜像服务（Glance）。每个组件都是多个服务的集合，一个服务意味着运行着的一个进程，根据部署Openstack的规模，决定了你是选择将所有服务运行在同一个机器上还是多个机器上。随着OpenStack发展至今，除了上述7个组件，还出现了其他社区高度关注并重点发展的项目，所有组件按照运营层、编排层、服务层和共享层的全景视图如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/E7DVQEyaOWgK.png?imageslim" alt="mark"></p>
+<p>OpenStack的生产环境部署架构如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/vnrx6Ioi2tKJ.png?imageslim" alt="mark"></p>
+<h2 id="OpenStack的关键组件介绍"><a href="#OpenStack的关键组件介绍" class="headerlink" title="OpenStack的关键组件介绍"></a><strong>OpenStack的关键组件介绍</strong></h2><ul>
+<li><p><strong>认证服务Keystone：</strong>首次出现在OpenStack的“Essex”版本中。Keystone提供身份验证，服务发现和分布式多租户授权，支持LDAP，OAuth，OpenID Connect，SAML和SQL。Keystone服务不依赖其他OpenStack服务，为其他OpenStack服务提供认证支持。<img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/8lq3Q9ciLVil.png?imageslim" alt="mark"></p>
+</li>
+<li><p><strong>操作界面Horizon</strong>：首次出现在OpenStack的“Essex”版本中。Horizon提供基于Web的控制界面，使云管理员和用户能够管理各种OpenStack资源和服务，它依赖于Keystone服务。<img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/sakeKz2qOqrG.png?imageslim" alt="mark"></p>
+</li>
+<li><strong>镜像服务Glance：</strong>首次出现在OpenStack的“Bexar”版本中。Glance提供发现、注册和检索虚拟机镜像功能，提供的虚拟机实例镜像可以存放在不同地方，例如本地文件系统、对象存储、块存储等。它同样依赖于Keystone服务。<img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/xSKPHXlQfSov.png?imageslim" alt="mark"></li>
+<li><strong>计算服务Nova：</strong>首次出现在OpenStack的“Austin”版本中。Nova提供大规模、可扩展、按需自助服务的计算资源，支持管理裸机，虚拟机和容器。它依赖于Keystone、Neutron和Glance三个服务。<img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/3pASuW4PJX4E.png?imageslim" alt="mark"></li>
+<li><p><strong>块存储服务Cinder：</strong>首次出现在OpenStack的“Folsom”版本中。Cinder提供块存储服务，为虚拟机实例提供持久化存储，调用不同存储接口驱动，将存储设备转化成块存储池，用户无需了解存储实际部署的位置或设备类型。它依赖于服务Keystone。<img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/7yjonu5aRi1X.png?imageslim" alt="mark"></p>
+</li>
+<li><p><strong>对象存储服务Swift：</strong>首次出现在OpenStack的“Austin”版本中。Swift提供高度可用、分布式、最终一致的对象存储服务，可以高效、安全且廉价地存储大量数据，非常适合存储需要弹性扩展的非结构化数据。它同样不依赖于其他服务，可以为其他服务提供对象存储服务。<img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/A7DRSCqdwKC6.png?imageslim" alt="mark"></p>
+</li>
+<li><p><strong>网络服务Neutron：</strong>首次出现在OpenStack的“Folsom”版本中。Neutron负责管理虚拟网络组件，专注于为OpenStack提供网络即服务。它依赖于服务Keystone。<img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/ASvQMScNvMDe.png?imageslim" alt="mark"></p>
+</li>
+<li><p><strong>编排服务Heat</strong>：首次出现在OpenStack的“Havana”版本中。Heat为云应用程序编排OpenStack基础架构资源，可以提供OpenStack原生Rest API和CloudFormation兼容的查询API。它依赖于服务Keystone。<img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/kDJkQaYA2QYd.png?imageslim" alt="mark"></p>
+</li>
 </ul>
-<p>为了实现上述映射和转换关系，主要有两种解决方案：<strong>软件解决方案—影子页表和硬件解决方案—Intel的EPT和AMD的RVI。</strong></p>
-<h2 id="内存虚拟化软件解决方案"><a href="#内存虚拟化软件解决方案" class="headerlink" title="内存虚拟化软件解决方案"></a>内存虚拟化软件解决方案</h2><h3 id="MMU半虚拟化（MMU-Paravirtualization）这种方式主要为Xen所用"><a href="#MMU半虚拟化（MMU-Paravirtualization）这种方式主要为Xen所用" class="headerlink" title="MMU半虚拟化（MMU Paravirtualization）这种方式主要为Xen所用"></a>MMU半虚拟化（MMU Paravirtualization）这种方式主要为Xen所用</h3><p><strong>MMU半虚拟化主要原理是：</strong></p>
-<p>1）当Guest OS创建新页表时，VMM从维护的空闲内存中为其分配页面并进行注册。后续，Guest OS对该页表的写操作都会陷入VMM进行验证和转换；VMM检查页表中的每一项，确保它们只映射到属于该虚拟机的机器页面，而且不包含对页表页面的可写映射。</p>
-<p>2）然后，VMM会根据其维护的映射关系PA-MA，将页表项中的虚拟机逻辑地址VA替换为相应的机器地址MA。</p>
-<p>3）最后把修改过的页表载入MMU，MMU就可以根据修改过的页表直接完成虚拟地址VA到机器地址MA的转换。</p>
-<p><strong>这种方式的本质是将映射关系VA-MA直接写入Guest OS的页表中，以替换原来的映射VA-PA映射关系。</strong></p>
-<h3 id="影子页表"><a href="#影子页表" class="headerlink" title="影子页表"></a>影子页表</h3><p>相比较MMU半虚，大部分虚拟化厂商在VMM中还使用了一种称为<strong>影子页表（Shadow Page Table）</strong>的技术实现上述功能。对于每个虚拟机的主页表（Primary Page Table），VMM都维持一个影子页表来记录和维护GVA与HPA的映射关系。 影子页表包括以下两种映射关系，如下图所示：</p>
-<p><img src="https://i.loli.net/2019/05/18/5cdf728ab26fc27225.jpg"></p>
-<p><strong>1）GVA&gt;&gt;&gt;GPA，</strong>虚拟机操作系统负责维护从虚拟机逻辑地址到虚拟机物理地址的映射关系，VMM可以从虚拟机主页表中获取这种映射关系。</p>
-<p><strong>2）GPA&gt;&gt;&gt;HPA，</strong>VMM负责维护从虚拟机物理地址到物理机物理地址的映射关系。</p>
-<p>通过这种两级映射的方式，VMM为Guest OS的每个页表维护一个影子页表，并将GVA-HPA的映射关系写入影子页表，Guest OS的页表内容保持不变，然后，VMM将影子页表写入MMU。同时，又对虚拟机可访问的内存边界进行了有效控制。并且，使用TLB缓存影子页表的内容可以大大提高虚拟机问内存的速度。</p>
-<p>影子页表的维护将带来<strong>时间</strong>和<strong>空间</strong>上的较大开销。<strong>时间开销</strong>主要体现在Guest OS构造页表时不会主动通知VMM，VMM必须等到Guest OS发生缺页错误时（必须Guest OS要更新主页表），才会分析缺页原因再为其补全影子页表。而<strong>空间开销</strong>主要体现在VMM需要支持多台虚拟机同时运行，每台虚拟机的 Guest OS通常会为其上运行的每个进程创建一套页表系统，因此影子页表的空间开销会随着进程数量的增多而迅速增大。</p>
-<p>为权衡时间开销和空间开销，现在一般采用<strong>影子页表缓存</strong>（Shadow Page Table Cache）技术，即VMM在内存中维护部分最近使用过的影子页表，只有当影子页表在缓存中找不到时，才构建一个新的影子页表。<strong>当前主要的虚拟化技术都采用了影子页表缓存技术</strong>。</p>
-<h3 id="内存虚拟化的硬件解决方案"><a href="#内存虚拟化的硬件解决方案" class="headerlink" title="内存虚拟化的硬件解决方案"></a>内存虚拟化的硬件解决方案</h3><p>为了解决影子页表导致的上述开销问题，除了使用影子页表缓存技术外（这项技术虽然能避免时间上的一部分开销，但是空间开销还是实实在在存在的）， Intel与AMD公司都针对MMU虚拟化给出了自 的解决方案：Intel公司在Nehalem微架构CPU中推出<strong>扩展页表（Extended Page Table，EPT）</strong>技术；AMD公司在四核皓龙CPU中推出<strong>快速虚拟化索引（Rapid Virtualization Index，RVI）</strong>技术。</p>
-<p>RVI与EPT尽管在具体实现细节上有所不同，但是在设计理念上却完全一致：<strong>通过在物理MMU中保存两个不同的页表，使得内存地址的两次映射都在硬件中完成，进而达到提高性能的目的。</strong>具体来说，MMU中管理管理了两个页表，第一个是GVA &gt;&gt;&gt;GPA，由虚拟机决定；第二个是GPA&gt;&gt;&gt;HPA，对虚拟机透明，由VMM决定。根据这两个映射页表，CPU中的page walker就可以生成最近访问过key-value键值对&lt;GVA，HPA&gt; ，并缓存在TLB中（类似影子页表缓存技术思路）。</p>
-<p>另外，原来在影子页表中由VMM维持的GPA&gt;&gt;&gt;HPA映射关系，则由一组新的数据结构扩展页表（Extended Page Table，也称为Nested Page Table）来保存。由于GPA &gt;&gt;&gt;HPA的映射关系非常定，并在虚拟机创建或修改页表时无需更新，因此VMM在虚拟机更新页表的时候无需进行干涉。VMM也无需参与到虚拟机上下文切换，虚拟机可以自己修改GVA &gt;&gt;&gt;GPA的页表。</p>
-<p>我们以Intel EPT技术为例说明。Intel EPT是Intel VT-x 提供的内存虚拟化支持技术，其基本原理下图所示。在原有的CR3页表地址映射的基础上，EPT引入EPT页表来实现另一次映射。比如：假设客户机页表和EPT页表都是4级页表，CPU完成一次地址转换的基本过程如下：</p>
-<p><img src="https://i.loli.net/2019/05/18/5cdf72c9c659e24729.jpg"></p>
-<p>CPU首先查找客户机CR3寄存器指向的L4页表。客户机CR3寄存器给出的是GPA，所以，CPU通过EPT页表将客户机CR3中的GPA转换为HPA：CPU 首先查找EPT TLB，如果没有相应的记录，就进一步查找EPT页表，如果还没有，CPU则抛出EPT Violation异常交给VMM处理。</p>
-<p>CPU获得L4页表地址（指的是HPA）后，CPU根据GVA和L4页表项的内容来获取L3 页表项的GPA。如果L4页表中GVA对应的表项显示为“缺页”，那么CPU 产生Page Fault，直接交由客户机操作系统处理。获得L3 页表项的GPA后，CPU通过查询EPT页表来将L3的GPA转换为HPA。同理，CPU 会依次完成L2、L1页表的查询，获得GVA所对应的GPA，然后进行最后一次查询EPT页表获得HPA。</p>
-<p>正如上图所示，CPU需要5次查询EPT页表，每次查询都需要4次内存访问。这样，在最坏的情况下总共需要20次内存访问。<strong>EPT硬件通过增大EPT TLB 尽量减少内存访问。</strong></p>
-<h2 id="内存虚拟化管理"><a href="#内存虚拟化管理" class="headerlink" title="内存虚拟化管理"></a>内存虚拟化管理</h2><p>在虚拟化环境中，内存是保证虚拟机工作性能的关键因素。如何尽可能提高虚拟机的性能、提高内存利用率、降低虚拟机上下文切换的内存开销，依然非常复杂，这就引入了<strong>内存虚拟化管理的问题</strong>。像介绍CPU虚拟化管理一样，我们还是通过实例来说明内存的虚拟化管理。以VMware的ESX解决方案为例，在没有出现硬件支持的内存虚拟化技术之前，ESX/ESXi采用影子页表来实现虚拟机的虚拟地址到物理机物理地址的快速转换。当Intel和AMD公司分别推出了EPT与RIV技术之后，ESX/ESXi很快转向硬件支持来提高内存虚拟化的性能。</p>
-<p>在虚拟化内存管理 上，ESX/ESXi实现了主机内存超分配的目标：即<strong>多个虚拟机总的内存分配量大于物理机的实际内存容量</strong>。如下图所示，一个物理内存只有4GB的Host，可以同时运行三个内存配置为2GB的虚拟机。</p>
-<p><img src="https://i.loli.net/2019/05/18/5cdf72f7358ee63929.jpg"></p>
-<p>主机内存超分配功能意味着VMM必须能够有效地回收虚拟机中不断释放的内存，并在有限的内存容量中尽能 地提高内存利用率。因为，Host Memory与Guest Memory并不是一一对应的关系，通过Host Memory超配技术可以实现某一个Host上某一个虚拟机内存大于主机内存，这一点与CPU虚拟化不一样。但是，在执行超配技术时，需要考虑主机性能问题，不能过大。一般的超配限额是主机内存的50%。要实现主机内存超配，必须通过<strong>内存复用</strong>技术实现。目前常用的内存复用技术有：<strong>零页共享技术、内存气球回收技术</strong>和<strong>内存置换技术</strong>三种。</p>
-<h3 id="零页（透明页）共享技术"><a href="#零页（透明页）共享技术" class="headerlink" title="零页（透明页）共享技术"></a>零页（透明页）共享技术</h3><p>当运行多个虚拟机时，有些内存页面的内容很可能是完全一样的，比如：什么数据都没有的零页。这就为虚拟机之间甚至在虚拟机内部提供了共享内存的可能。例如：当几个虚拟机都运行相同的操作系统、相同的应用程序或者包含相同的用户数据时，那些包含相同数据的内存页面完可以被共享。基于这个原理，VMM完全可通过回收冗余数据的内存页面，仅维持一个被多个虚拟机共享的内存拷贝来实现这个功能。</p>
-<p><strong>如下图所示，是华为FusionCompute的零页共享技术示意图：</strong></p>
-<p><img src="https://i.loli.net/2019/05/18/5cdf732c5c23754430.jpg"></p>
-<p><strong>其基本原理是</strong>：用户进程定时扫描虚拟机的的内存数据，如果发现其数据内容全为零，则通过修改PA to MA映射的形式，把其指向一个特定的零页，从而做到在物理内存中只保留一份零页拷贝，虚拟机的所有零页均指向该页，从而达到节省内存资源的目的。当零页数据发生变动时，由Xen动态分配一页内存出来给虚拟机，使修改后的数据有内存页进行存放。因此，对GuestOS来说，整个零页共享技术是完全不感知的。</p>
-<p>而在VMware的ESX解决方案中，也有同样的技术。在VMware ESX/ESXi中，检测页面数据是否冗余是通过<strong>散列</strong>的方法来实现的，如下图所示。</p>
-<p><img src="https://i.loli.net/2019/05/18/5cdf734451c6887409.jpg"></p>
-<p>首先VMM会维持一个全局散列表，其中<strong>每个表项都记录了一个物理页面数据的散列值与页号</strong>。当对某一个虚拟机进行页面共享扫描时，VMM会针对该虚拟机物理页面的数据计算散列值，并在全局散列表 中进行遍历及匹配是否有相同的散列值的表项。<strong>当找到了匹配的表项，还要对页面数据内容逐位比较，以避免由于散列冲突而导致的页面内容不一样的可能性。</strong>一旦确定页面数据完全一致，则会修改逻辑地址到物理地址的映射关系，即<strong>将从逻辑地址对应到包含冗余数据的物理地址的映射关系（上图中虚线所示）改为对应到要被共享物理地址的映射关系，并回收冗余的物理页面</strong>。这一过程对于虚拟机操作系统是完全透明的。因此，<strong>共享页面中含有敏感数据的部分不会在虚拟机之间泄露</strong>。</p>
-<p>当虚拟机对共享页面发生写操作时，通过“写时拷贝”（ Copy-on-Write）技术来实现。 如下图所示：</p>
-<p><img src="https://i.loli.net/2019/05/18/5cdf735c64aa688044.jpg"></p>
-<p>具体来说，任何一个对共享页面的写操作都会引发页面错误（Minor Page Fault）。当VMM捕获到这个错误时，会给发起写操作的虚拟机创建一个该页面的私有拷贝，并将被写的逻辑地址映射到这个私有拷贝页面。这样虚拟机就可以安全地进行写操作，并且不会影响到其他共享该页面的虚拟机。相比于对非共享页面的写操作，尽管这种处理方法的确导致了一些额外的开销，但是却在一定程度上提高了内存页面的利用率。</p>
-<h3 id="内存气球回收技术"><a href="#内存气球回收技术" class="headerlink" title="内存气球回收技术"></a>内存气球回收技术</h3><p><strong>内存气球回收技术也称为内存气泡技术，</strong>基于气球回收法的内存管理机制与页面共享完全不同。在虚拟化环境中，VMM会一次性在虚拟机启动后分配给虚拟机内存，由于虚拟机并没有意识到自己运行于 虚拟化平台上，之后它会一直运行在分配好的内存空间，而不主动释放分配的物理内存给其他虚拟机。因此VMM需要一种机制使得虚拟机能够主动释放空闲内存归还给物理机，再由VMM分配给其他有需求的虚拟机。并且，在内存资源需求紧张时还能从物理机中“拿回”自己释放的那部分内存。 </p>
-<p><strong>如下所示，是华为FusionCompute内存气泡技术示意图：</strong></p>
-<p><img src="https://i.loli.net/2019/05/18/5cdf73824ce0891613.jpg"></p>
-<p><strong>原理如下：</strong>Hypervisor通过利用预装在用户虚拟机中的前端驱动程序，“偷取”Guest OS的内存贡献给VMM，以供其他虚拟机使用，反向时由VMM“偷取”气泡中的内存给特定虚拟机使用。内存气泡本质是将较为空闲的虚拟机内存释放给内存使用率较高的虚拟机，从而提升内存利用率。</p>
-<p>在VMware的ESX解决方案中，也有类似的技术。下图给出了内存释放过程的原理图。</p>
-<p><img src="https://i.loli.net/2019/05/18/5cdf7398dc3fa66352.jpg"></p>
-<p>在上图（a）中，VMM有四个页面被映射到虚拟机的内存页面空间中，其中左侧两个页面被应用程序占用，而另两个被打上星号的页面则是在内存空闲列表中。当VMM要从虚拟机中回收内存时，比如要回收两个内存页面，VMM就会将Balloon驱动的目标膨胀大小设置为两个页面。Balloon驱动获得了目标膨胀值之后，就会在虚拟机内部申请两个页面空间的内存，并如上图（b）所示，调用虚拟机操系统的接口标示这两个页面被“ <strong>钉住</strong>”，即不能再被分配出去。</p>
-<p>内存申请完毕后，Balloon驱动会通知VMM这两个页面的页号，这样VMM就可以找到相应的物理页号并进行回收。在上（b）中虚线就标示了这两个页面从虚拟机分配出去的状态。</p>
-<p>由于被释放的页面在释放前已经在虚拟机的空闲列表中，因此没有进程会对该页面进行读写操作。如果虚拟机的进程接下来要重新访问这些页面，那么VMM可以像平常分配内存一样，再分配新的物理内存给这台虚拟机。当VMM决定收缩气球膨胀大小时，通过设置更小的目标膨胀值，balloon驱动会将已经被“<strong>钉住</strong>” 的页面归还给虚拟机。</p>
-<p>通过气球回收法，尽管虚拟机的负载略微增加，但VMM却成功地将系统内存压力转移到各个虚拟机上。当balloon驱动发起申请内存的请求时，由虚拟机操作系统决定了是否要将虚拟机物理内存换出来满足balloon驱动的申请内存请求。如果虚拟机有充足的空闲内存，那么balloon驱动申请内存并不会对虚拟机的性能造成影响；如果虚拟机内存已经吃紧，那么就需要由虚拟机的操作系统决定换出哪些内存页面，满足balloon驱动的请求。因此，<strong>气球回收法巧妙地利用了各个虚拟机操作系统的内存换页机制来确定哪些页面要被释放给物理机，而不是由VMM来决定</strong>。 </p>
-<p><strong>气球回收法要求虚拟机操作系统必须安装balloon驱动</strong>，在VMware的ESX/ESXi产品中，就是VMware Tool。另外，气球回收法回收内存需要一段时间，不能马上满足系统的需求。</p>
-<h3 id="内存置换技术"><a href="#内存置换技术" class="headerlink" title="内存置换技术"></a>内存置换技术</h3><p>页面共享机制与气球回收法都从不同的角度尽可能地提高虚拟机的内存利用率，从虚拟机中收回可以复用或者空闲的内存。然而这两种方法都不能在短时间内满足系统内存回收的要求：<strong>页面共享依赖于页面的扫描速度，以及是否有页面可共享；气球回收法则取决于虚拟机操作系统对于balloon驱动申请内存的响应时间</strong>。如果这两种温和的方法都不能满足需求，<strong>VMM则会采取内存换出机制，即强制性地从虚拟机中夺回内存，这就是内存置换技术。</strong></p>
-<p><strong>如下所示，是华为FusionCompute和VMware ESX/ESXI的内存置换技术示意图。</strong></p>
-<p><img src="https://i.loli.net/2019/05/18/5cdf73c2b12e968100.jpg"></p>
-<p><strong>原理如下：</strong>通过VMM实现请页功能，这时Guest OS类似进程一样在VMM缺少内存时，能被换出到宿主机磁盘上，也就是将虚拟机长时间未访问的内存内容被置换到存储中，并建立映射，当虚拟机再次访问该内存内容时再置换回来。该方法也对虚拟机透明，即虚拟机不感知。</p>
-<p>具体来说，VMM会在每个虚拟机启动时创建一个单独的换页文件（Swap File）。在必要的时候，VMM会主动将虚拟机的物理内存页面换到这个换页文件上，释放给其他虚拟机使用。内存换出机制是VMM需要在短时间内缓解内存压力的一种有效方法，然而这种方法却很可能严重导致VMM的性能下降。由于VMM对于虚拟机的内存使用状态并不解，且该方法对虚拟机透明，强制内存换出可能触发虚拟机操作系统内部的一些换页机制。举例来说，虚拟机操作系统永远都不会将内核的内存页面换出，而VMM并不知道哪些页正在被内核使用，一旦这些页面被换出，会使得虚拟机性能严重受损。</p>
-<h3 id="内存的回收"><a href="#内存的回收" class="headerlink" title="内存的回收"></a>内存的回收</h3><p>接下来以VMware ESX为例，结合上述三种内存复用技术，介绍内存回收机制。一般来说，ESX会对物理机的空闲内存状态按照空闲内存的百分比设置四种状态，分别是：<strong>高（6%）、平缓（4%）、繁重（2%）和低（1%）</strong>。ESX会按照这四种状态来选择前述三种内存回收机制。</p>
-<p>缺省状态下，ESX会启用页面共享机制，因为页面共享机制能以较小的开销提高内存利用率。何时启用气球回收和换页则取决于当前系统的内存状态。当内存状态处于“高”，很显然此时总的虚拟机内存使用量要小于物理机的内存容量，因此不管虚拟机的内存是否已经被过载分配，VMM都不会使用气球 或者换页的方法回收内存。</p>
-<p>然而，当物理机空闲内存状态下降到了“平缓” 状态，VMM则开始使用气球回收法。事实上，气球回收法是在空闲内存的百分比高于“平缓” 的阈值4%之前启动的，这是因为该方法总是需要一段时间才能在虚拟机内申请到一些内存。通常气球回收法都能够及时将空闲内存比的阈值控制在“平缓”状态之上。</p>
-<p>一旦气球回收法不能够及时回收内存，并且空闲内存下降到“繁重”状态，即空闲内存比低于2%，那么VMM就会再启动内存换出机制强制从虚拟机回收内存。使用这种办法，VMM能够很快回收内存，并将空闲内存比控制回“平缓”状态。</p>
-<p>在最坏的情况下，万一空闲内存状态低于“低”状态，即空闲内存比低于1%，那么VMM会继续使用内存换出法，同时将那些消耗内存值超过内存配置值的虚拟机挂起。</p>
-<p>在某些情况下，VMM可能不会考虑物理机空闲内存状态，而仍然启动物理机内存回收机制。比如，即使整个系统的物理机空闲内存状态为“高”，如果某个虚拟机的内存使用量超过了其指定的内存上限，那么VMM会启动气球回收法，如有必要，也会启动内存换出机制从虚拟机回收内存，直到该虚拟机的内存低于指定的内存上限。</p>
-<h3 id="内存QoS保障"><a href="#内存QoS保障" class="headerlink" title="内存QoS保障"></a>内存QoS保障</h3><p>在虚拟化系统中，内存虚拟化的QoS保障包括两个基本特征：<strong>预留</strong>和<strong>份额</strong>。</p>
-<p><strong>内存预留：</strong>虚拟机预留的最低内存。预留的内存会被VM独占。即，一旦内存被某个虚拟机预留，即使虚拟机实际内存使用量不超过预留量，其它VM也无法抢占该VM的内存空闲资源。即，上述的三种内存复用技术对该虚拟机不生效。</p>
-<p><strong>内存份额：</strong>适用上述三种资源复用场景，按比例分配内存资源。以6G内存规格的主机为例，假设其上运行有3台4G内存规格的虚拟机VMA，VMB，VMC。内存份额分别为20480，20480，40960，那么其内存分配比例为1：1：2。当三台VM内部逐步加压，策略会根据三个虚拟机的份额按比例分配调整内存资源，最终三台虚拟机获得的内存量稳定为1.5G/1.5G/3G。</p>
-<p><strong>同样需要注意一点：内存份额只在各虚拟机发生资源竞争时生效。如没有竞争，则有需求的虚拟机可独占物理内存。</strong></p>
-<p><strong>但是，内存QoS不像CPU QoS一样设置上限？，这是因为分配给虚拟机的内存大小就是其内存上限。</strong></p>
+<h2 id="OpenStack服务间的交互示例"><a href="#OpenStack服务间的交互示例" class="headerlink" title="OpenStack服务间的交互示例"></a><strong>OpenStack服务间的交互示例</strong></h2><p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200301/xRveNTHokG5C.png?imageslim" alt="mark"></p>
+<p>以创建虚拟机为例，各组件的配合工作基本流程为：</p>
+<p>1）用户首先接触到的是界面，即Horizon。通过Horizon上的简单界面操作，一个创建虚拟机的请求被发送到OpenStack系统后端。</p>
+<p>2）既然要启动一个虚拟机，就必须指定虚拟机操作系统是什么类型，同时下载启动镜像以供虚拟机启动使用。这件事情就是由Glance来完成的，而此时Glance所管理的镜像有可能存储在Swift上，所以需要与Swift交互得到需要的镜像文件。</p>
+<p>3）在创建虚拟机的时候，自然而然地需要Cinder提供块服务和Neutron提供网络服务，以便该虚拟机有volume可以使用，能被分配到IP地址与外界网络连接，而且之后该虚拟机资源的访问要经过Keystone的认证之后才可以继续。</p>
+<p>4）至此，OpenStack的所有核心组件都参与了这个创建虚拟机的操作。</p>
+<p><strong>建议多思考总结，从生活中熟悉的例子去理解OpenStack各服务之间的交互关系。</strong></p>
+<h2 id="如何学习OpenStack？"><a href="#如何学习OpenStack？" class="headerlink" title="如何学习OpenStack？"></a><strong>如何学习OpenStack？</strong></h2><p>OpenStack需要很强的动手能力，最好能够准备好带虚拟化设备的物理机或者服务器供学习研究使用，动手是最重要的！此外，还须查阅各种关于OpenStack的资料。首先，OpenStack官网是不容错过的。在OpenStack官方网址上，发布了关于OpenStack各种最新的动态。此外，还提供了极为详细的文档，可以说OpenStack的官方文档是所有开源社区写得最好的，没有之一。在官方网址的博客中，提供了各种关于OpenStack的有趣的活动及技术沙龙。</p>
+<p>学习好OpenStack，首先需要顺利地安装OpenStack的各个组件。在安装成功的基础上，学会使用OpenStack系统创建和管理虚拟机、虚拟网络及存储资源。如果需要再深入地研究，那么就需要阅读OpenStack的源代码了。代码的获得主要有两个来源，较为稳定的发行版位于 https:// launchpad. net/。而OpenStack最新的代码，则位于GitHub（https:// github. com/ openstack）。在学习的时候，建议使用launchpad网站上的稳定版本的代码。对OpenStack有了相当了解之后，在学习的过程中，发现一些Bug需要提交Patch的时候，就需要用到GitHub上面最新的代码了。</p>
+<p>学习好OpenStack之后，也可以基于OpenStack做一些有意思的二次开发，无论是开发公有云或者私有云，都变得比较有意思。了解OpenStack的内部机制之后，添加一些自定义的模块或者驱动都是相当容易。也就真正地能够将OpenStack握在手中，为我所用了。</p>
 
       
     </div>
@@ -686,7 +652,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="https://kkutysllb.cn/2019/05/18/2019-05-18-计算虚拟化之内存虚拟化/" title="2019-05-18-计算虚拟化之内存虚拟化">https://kkutysllb.cn/2019/05/18/2019-05-18-计算虚拟化之内存虚拟化/</a>
+    <a href="https://kkutysllb.cn/2020/03/01/2020-03-01-OpenStack概述/" title="2020-03-01-OpenStack概述">https://kkutysllb.cn/2020/03/01/2020-03-01-OpenStack概述/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -699,7 +665,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/电信云/" rel="tag"><i class="fa fa-tag"></i> 电信云</a>
+            <a href="/tags/云计算/" rel="tag"><i class="fa fa-tag"></i> 云计算</a>
           
         </div>
       
@@ -712,8 +678,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/05/15/2019-05-15-Linux系统命令-第八篇《进程管理命令》/" rel="next" title="2019-05-15-Linux系统命令-第八篇《进程管理命令》">
-                <i class="fa fa-chevron-left"></i> 2019-05-15-Linux系统命令-第八篇《进程管理命令》
+              <a href="/2020/03/01/2020-03-01-CentOS-7手动部署Openstack-Rocky版本笔记（含开源NFVO-VNFM）/" rel="next" title="2020-03-01-CentOS 7手动部署Openstack Rocky版本笔记（含开源NFVO/VNFM）">
+                <i class="fa fa-chevron-left"></i> 2020-03-01-CentOS 7手动部署Openstack Rocky版本笔记（含开源NFVO/VNFM）
               </a>
             
           </div>
@@ -721,10 +687,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/05/25/2019-05-25-计算虚拟化之I-O虚拟化/" rel="prev" title="2019-05-25-计算虚拟化之I/O虚拟化">
-                2019-05-25-计算虚拟化之I/O虚拟化 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -958,7 +920,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#内存虚拟化概述"><span class="nav-number">1.</span> <span class="nav-text">内存虚拟化概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存虚拟化软件解决方案"><span class="nav-number">2.</span> <span class="nav-text">内存虚拟化软件解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MMU半虚拟化（MMU-Paravirtualization）这种方式主要为Xen所用"><span class="nav-number">2.1.</span> <span class="nav-text">MMU半虚拟化（MMU Paravirtualization）这种方式主要为Xen所用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#影子页表"><span class="nav-number">2.2.</span> <span class="nav-text">影子页表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存虚拟化的硬件解决方案"><span class="nav-number">2.3.</span> <span class="nav-text">内存虚拟化的硬件解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存虚拟化管理"><span class="nav-number">3.</span> <span class="nav-text">内存虚拟化管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#零页（透明页）共享技术"><span class="nav-number">3.1.</span> <span class="nav-text">零页（透明页）共享技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存气球回收技术"><span class="nav-number">3.2.</span> <span class="nav-text">内存气球回收技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存置换技术"><span class="nav-number">3.3.</span> <span class="nav-text">内存置换技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存的回收"><span class="nav-number">3.4.</span> <span class="nav-text">内存的回收</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存QoS保障"><span class="nav-number">3.5.</span> <span class="nav-text">内存QoS保障</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenStack是什么？"><span class="nav-number">1.</span> <span class="nav-text">OpenStack是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenStack不是虚拟化"><span class="nav-number">2.</span> <span class="nav-text">OpenStack不是虚拟化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenStack不是云计算"><span class="nav-number">3.</span> <span class="nav-text">OpenStack不是云计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenStack的体系架构"><span class="nav-number">4.</span> <span class="nav-text">OpenStack的体系架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenStack的关键组件介绍"><span class="nav-number">5.</span> <span class="nav-text">OpenStack的关键组件介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenStack服务间的交互示例"><span class="nav-number">6.</span> <span class="nav-text">OpenStack服务间的交互示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何学习OpenStack？"><span class="nav-number">7.</span> <span class="nav-text">如何学习OpenStack？</span></a></li></ol></div>
             
 
           </div>
@@ -1154,7 +1116,7 @@
   
     <script>
   window.livereOptions = {
-    refer: '2019/05/18/2019-05-18-计算虚拟化之内存虚拟化/'
+    refer: '2020/03/01/2020-03-01-OpenStack概述/'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];
