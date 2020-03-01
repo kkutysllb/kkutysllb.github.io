@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="在x86-64架构的处理器中，KVM需要的硬件辅助虚拟化分别为Intel的虚拟化技术（Intel VT）和AMD的AMD-V技术。在前面我们介绍过，CPU不仅要在硬件上支持VT技术，还要在BIOS中将其功能打开，KVM才能使用到。目前，大多数服务器和PC的BIOS都默认已经打开VT。至于如何在VMware Workstations虚拟机和物理服务器上打开，详见本站《KVM到底是个啥？》)一文。">
+<meta name="keywords" content="Hypervisor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020-03-01-KVM实践初步">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/01/2020-03-01-KVM实践初步/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="在x86-64架构的处理器中，KVM需要的硬件辅助虚拟化分别为Intel的虚拟化技术（Intel VT）和AMD的AMD-V技术。在前面我们介绍过，CPU不仅要在硬件上支持VT技术，还要在BIOS中将其功能打开，KVM才能使用到。目前，大多数服务器和PC的BIOS都默认已经打开VT。至于如何在VMware Workstations虚拟机和物理服务器上打开，详见本站《KVM到底是个啥？》)一文。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/clipboard.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301142932.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144136.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144259.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144434.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144605.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144720.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144827.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144908.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145048.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145129.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145211.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145248.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145417.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145502.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145535.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145608.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145737.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145805.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145843.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145921.png">
+<meta property="og:updated_time" content="2020-03-01T07:00:33.960Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2020-03-01-KVM实践初步">
+<meta name="twitter:description" content="在x86-64架构的处理器中，KVM需要的硬件辅助虚拟化分别为Intel的虚拟化技术（Intel VT）和AMD的AMD-V技术。在前面我们介绍过，CPU不仅要在硬件上支持VT技术，还要在BIOS中将其功能打开，KVM才能使用到。目前，大多数服务器和PC的BIOS都默认已经打开VT。至于如何在VMware Workstations虚拟机和物理服务器上打开，详见本站《KVM到底是个啥？》)一文。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/clipboard.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/01/2020-03-01-KVM实践初步/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2020-03-01-KVM实践初步 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/01/2020-03-01-KVM实践初步/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2020-03-01-KVM实践初步
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-01 13:17:00 / 修改时间：15:00:33" itemprop="dateCreated datePublished" datetime="2020-03-01T13:17:00+08:00">2020-03-01</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">5.1k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">5 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在x86-64架构的处理器中，KVM需要的硬件辅助虚拟化分别为Intel的虚拟化技术（Intel VT）和AMD的AMD-V技术。在前面我们介绍过，CPU不仅要在硬件上支持VT技术，还要在BIOS中将其功能打开，KVM才能使用到。目前，大多数服务器和PC的BIOS都默认已经打开VT。至于如何在VMware Workstations虚拟机和物理服务器上打开，详见本站<a href="[https://kkutysllb.cn/2019/06/22/2019-06-21-KVM%E5%88%B0%E5%BA%95%E6%98%AF%E4%B8%AA%E5%95%A5%EF%BC%9F/](https://kkutysllb.cn/2019/06/22/2019-06-21-KVM到底是个啥？/">《KVM到底是个啥？》</a>)一文。<a id="more"></a></p>
+<h2 id="部署和安装KVM"><a href="#部署和安装KVM" class="headerlink" title="部署和安装KVM"></a><strong>部署和安装KVM</strong></h2><p><strong>KVM的部署和安装主要有两种方式：一种源码编译安装，另一种就是通过CentOS的YUM工具安装。</strong>作为学习实验途径，我们这里主要介绍YUM工具安装方式。至于源码编译安装一般属于生产研发人员的操作，这里我们只给一些关键提示，有兴趣的同学可自行研究。</p>
+<p><strong>1）源码编译安装方式。</strong>KVM作为Linux内核的一个module，是从Linux内核版本2.6.20开始的，所以要编译KVM，你的Linux操作系统内核必须在2.6.20版本以上，也就是CentOS 6.x和CentOS 7.x都天生支持，但是CentOS 5.x以下版本需要先升级内核。</p>
+<p><strong>下载KVM源代码，主要通过以下三种方式：</strong></p>
+<ol>
+<li>下载KVM项目开发中的代码仓库kvm.git。</li>
+<li>下载Linux内核的代码仓库linux.git。</li>
+<li>使用git clone命令从github托管网站上下载KVM的源代码。</li>
+</ol>
+<p>根据上面三种途径下载源代码后就可以通过make install的方式编译安装了，编译安装完成后还需要根据KVM官方指导手册进行相关的配置。。。我们这里不展开，大家可自行搜索源码方式安装。<strong>需要注意一点儿的是，除了下载KVM的源码外，还需要同时下载QEMU的源码进行编译安装，因为它俩是一辈子的好基友嘛。。。</strong></p>
+<p><strong>2）YUM工具安装。</strong>首先，需要查看 CPU是否支持VT技术，就可以判断是否支持KVM。然后，再进行相关工具包的安装。最后，加载模块，启动libvirtd守护进程即可。具体步骤如下：</p>
+<p><strong>Step1：</strong>确认服务器是否支持硬件虚拟化技术，如果有返回结果，也就是结果中有vmx（Intel）或svm(AMD)字样，就说明CPU的支持的，否则就是不支持。如下图所示，表示服务器支持Intel的VT-x技术，且有4个CPU。</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/clipboard.png" alt></p>
+<p><strong>Step2：</strong>确认系统关闭SELinux。如下图所示，表示系统已经关闭Linux。</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301142932.png" alt></p>
+<p>如果没有关闭，可以使用如下命令永久关闭：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]<span class="comment"># setenforce 0   # 临时关闭</span></span><br><span class="line"><span class="comment"># 永久关闭</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># sed -i 's/^SELINUXTYPE=.*/SELINUXTYPE=disabled/g' /etc/selinux/config</span></span><br></pre></td></tr></table></figure>
+<p><strong>Step3：</strong>安装rpm软件包。</p>
+<p>由于KVM是嵌入到Linux内核中的一个模块，我们这里首先安装用户安装用户空间QEMU与内核空间KMV交互的软件协议栈QEMU-KVM，代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]<span class="comment"># yum -y install qemu-kvm</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144136.png" alt></p>
+<p>如上图，不仅完成qemu-kvm（红色框部分）安装，还同步安装qemu-img、qemu-kvm-comm两个依赖包的安装（黄色框部分）。注意：由于我已经安装过，上面提示是updated，没有安装的话，应该是installed。</p>
+<p>完成QEMU-KVM软件协议栈的安装后，我们安装libvirt<em>、virt-</em>等管理工具，代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@c7-test01 ~]<span class="comment"># yum install -y libvirt* virt-*</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144259.png" alt></p>
+<p>如上图，将KVM的管理工具libvirt系列软件包和virt-系列软件包（红色框部分）及相关依赖软件包（黄色框部分）进行了安装。</p>
+<p>最后，需要安装一个二层分布式虚拟交换机，用于KVM虚拟机的虚拟接入，可以选择OVS，也可以选择Linux bridge或是其他商用的分布式交换机如VMware、华为FC等。我们这里只出于学习的目的，选择安装Linux bridge即可。代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@c7-test01 ~]<span class="comment"># yum install -y bridge-utils</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144434.png" alt></p>
+<p>如上图，提示我们系统已经安装该软件包且是最新版本（红色框部分），如果你没有安装过，系统会直接安装。</p>
+<p><strong>3）加载KVM模块，使得Linux Kernel变成一个Hypervisor。</strong>首先，加载KVM内核模块，然后查看KVM内核模块的加载情况即可。具体步骤如下：</p>
+<p>首先，通过modprobe指令加载kvm内核模块，如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@c7-test01 ~]<span class="comment"># modprobe kvm</span></span><br></pre></td></tr></table></figure>
+<p>然后，通过lsmod指令查看kvm模块的加载情况，如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@c7-test01 ~]<span class="comment"># lsmod | grep kvm</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144605.png" alt></p>
+<p><strong>4）启动libvirtd守护进程，并设置开机启动。</strong>因为libvirt管理工具，是用于KVM虚机全生命周期的统一管理工具，它由外部统一API接口、守护进程libvirtd和CLI工具virsh三部分组成，其中守护进程libvirtd用于所有虚机的全面管理。同时，其他管理工具virt-*、openstack等都是调用libvirt的外部统一API接口完成KVM的虚机的管理。所以，我们需要启动libvirtd守护进程，并设置开机启动。代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@c7-test01 ~]<span class="comment"># systemctl enable libvirtd &amp;&amp; systemctl start libvirtd &amp;&amp; systemctl status libvirtd</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144720.png" alt></p>
+<p>这里注意一下，一般情况我们单机玩KVM虚拟机时，libvirtd守护进程默认监听的是UNIX domain socket套接字，并没有监听TCP socket套接字。为了同时让libvirtd监听TCP socket套接字，需要修改/etc/libvirt/libvirtd.conf文件中，将tls和tcp，以及tcp监听端口前面的注释取消。然后重新通过libvirtd的原生命令加载配置文件，使其生效。而系统默认的systemctl命令由于不支持–listen选项，所以不能使用。参考代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@c7-test01 ~]<span class="comment"># systemctl stop libvirtd </span></span><br><span class="line"></span><br><span class="line">[root@c7-test01 ~]<span class="comment"># libvirtd -d --listen</span></span><br></pre></td></tr></table></figure>
+<p>通过netstat命令查看libvirtd监听的tcp端口为16509，如下：</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144827.png" alt></p>
+<p>最后，进行tcp链接验证，如果连接成功，表示服务启动正常且tcp监听正常。如下：</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301144908.png" alt></p>
+<h2 id="安装第一个KVM虚拟机"><a href="#安装第一个KVM虚拟机" class="headerlink" title="安装第一个KVM虚拟机"></a><strong>安装第一个KVM虚拟机</strong></h2><p>安装虚拟机之前，我们需要创建一个镜像文件或者磁盘分区等，来存储虚拟机中的系统和文件。首先，我们利用<strong>qemu-img工具</strong>创建一个镜像文件。<strong>这个工具不仅能创建虚拟磁盘，还能用于后续虚拟机镜像管理。</strong>比如，我们要创建一个raw格式的磁盘，具体代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@c7-test01 ~]<span class="comment"># qemu-img create -f raw ubuntu1204.img 20G </span></span><br><span class="line"></span><br><span class="line">Formatting <span class="string">'ubuntu1204.img'</span>, fmt=raw size=21474836480</span><br></pre></td></tr></table></figure>
+<p>如上，表示在当前目录下(/root）创建了一个20G大小的，raw格式的虚拟磁盘，名称为：ubuntu1204.img。虽然，我们看它的大小时20G，实际上并不占用任何存储空间，如下：</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145048.png" alt></p>
+<p>这是因为qemu-img聪明地为你按实际需求分配文件的实际大小，它将随着image实际的使用而增大。如果想一开始就分配实际大小为20G的空间，不仅要使用raw格式磁盘，还需加上-o preallocation=full参数选项，这样创建速度会很慢，但是创建的磁盘实实在在占用20G空间。我们这里用创建一个5G磁盘来演示，如下：</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145129.png" alt></p>
+<p>除raw格式以外，qemu-img还支持创建其他格式的image文件，比如qcow2，甚至是其他虚拟机用到的文件格式，比如VMware的vmdk、vdi、Hyper-v的vhd等，不同的文件格式会有不同的“-o”选项。为了演示我们的第一个虚拟机，我们现在创建一个qcow2格式的虚拟磁盘用作虚拟机的系统磁盘，大小规划40G，如下：</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145211.png" alt></p>
+<p>上面创建的虚拟磁盘实际就是KVM虚拟机后续的系统盘，在创建完虚拟机磁盘后，我们将要安装的系统镜像盘上传到当前目录下或者通过光驱挂载也可。我们这里为了安装速度问题，采用上传到宿主机本地的方式，如下：</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145248.png" alt></p>
+<p><strong>注意：这里的宿主机指的是我们的VMware虚拟机，这里的虚拟机指的是我们在VMware虚拟机中创建的KVM虚拟机，千万别搞混了。</strong></p>
+<p>然后，就是我们的关键一步，通过virt-install命令安装虚拟机，代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@c7-test01 ~]<span class="comment"># virt-install --name ubt1204d \</span></span><br><span class="line">--virt-type kvm \</span><br><span class="line">--ram 2048 --vcpus=2 \</span><br><span class="line">--disk path=/root/ubt1204d.img,format=qcow2,size=40 \</span><br><span class="line">--network network=default,model=virtio \</span><br><span class="line">--graphics vnc,listen=192.168.101.251 --noautoconsole \</span><br><span class="line">--cdrom /root/ubuntu-12.04.5-desktop-amd64.iso </span><br><span class="line"></span><br><span class="line">Starting install...</span><br><span class="line">Domain installation still <span class="keyword">in</span> progress. You can reconnect to </span><br><span class="line">the console to complete the installation process.</span><br></pre></td></tr></table></figure>
+<p>如上，上面的指令表达的意思为：–name指定虚拟机的名称，–virt-type指定虚拟机的类型为kvm，–ram指定给虚拟机分配的虚拟内存大小为2GB，–vcpus指定给虚拟机分配的虚拟cpu为2个，–disk指定虚拟机的系统盘，就是我们刚才创建的虚拟磁盘，–network指定虚拟机使用的虚拟交换机，这里使用系统的默认配置，默认配置文件为/etc/libvirt/qemu/networks/default.xml，其详细信息如下：</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145417.png" alt></p>
+<p>上图中网络模式采用nat方式就表示虚拟机可以通过网桥访问internet或者外部网络。–graphics指定虚拟机的模拟显示器界面，这里采用vnc方式，并监听宿主机地址192.168.101.251。–cdrom选项指定虚拟机的安装镜像配置，也就是系统安装盘iso的位置。</p>
+<p>上面虚拟机正式启动后，可以通过本地机器的vnc客户端连接到KVM虚拟机，作为虚拟机的模拟显示器。为此，首先需要查看VNC连接的端口，代码如下：</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145502.png" alt></p>
+<p>如上图黄色框部分，通过本地机器VNC客户端连接目标机器192.168.101.251的0端口就能模拟虚拟机的显示器，进一步完成图形化安装配置，如下：</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145535.png" alt></p>
+<p>连接成功后，与真实物理机装系统的操作一致，可以使用键盘、鼠标完成各类安装配置操作。虚拟机模拟显示器的界面如下：</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145608.png" alt></p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145737.png" alt></p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145805.png" alt></p>
+<p>由于我们安装的是ubuntu12.04的桌面版系统，所以完成虚拟机的安装后，后续每次使用虚拟机都需要使用VNC客户端进行连接操作。如下：</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145843.png" alt></p>
+<p>同时，我们可以通过virsh命令工具查看本机上所有虚拟机的状态，如下：</p>
+<p><img src="https://raw.githubusercontent.com/kkutysllb/PicGO-Deb/master/img/20200301145921.png" alt></p>
+<p>最后，提醒一下：我们在自动化运维中介绍过通过kicstart或cobbler批量安装宿主机操作系统，这种方式也是可以在KVM虚拟机安装系统中使用，通过在virt-install命令增加–extra-args选项就可实现。但是，一般我们不这么玩，在云计算和虚拟化场景下，均是通过手动安装一台模板虚拟机，将其系统盘转换为模板镜像格式文件，然后通过批量分发虚拟机的方式（就是我们在存储虚拟化中讲的链接克隆和快照方式）完成虚拟机批量部署操作，电信云中通过VNFD描述的多台虚拟机资源部署也是同样的方式完成，只不过里面借助了OpenStack的编排引擎。这种方式我们在后续介绍KVM虚拟镜像格式实操一文中会详细介绍。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2020/03/01/2020-03-01-KVM实践初步/" title="2020-03-01-KVM实践初步">https://kkutysllb.cn/2020/03/01/2020-03-01-KVM实践初步/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hypervisor/" rel="tag"><i class="fa fa-tag"></i> Hypervisor</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/27/2019-06-27-打造文件实时同步架构之sersync篇/" rel="next" title="2019-06-27-打造文件实时同步架构之sersync篇">
+                <i class="fa fa-chevron-left"></i> 2019-06-27-打造文件实时同步架构之sersync篇
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">55</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#部署和安装KVM"><span class="nav-number">1.</span> <span class="nav-text">部署和安装KVM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装第一个KVM虚拟机"><span class="nav-number">2.</span> <span class="nav-text">安装第一个KVM虚拟机</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">648k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">9:49</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2020/03/01/2020-03-01-KVM实践初步/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>
