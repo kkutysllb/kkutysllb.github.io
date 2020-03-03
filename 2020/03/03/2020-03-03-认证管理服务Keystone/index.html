@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="概述Keystone作为OpenStack中的一个独立的提供安全认证的模块，作为OpenStack的身份管理服务（Identity Service）主要负责OpenStack用户的身份认证、令牌管理、提供访问资源的服务目录，以及基于用户角色的访问控制。用户访问系统的用户名及密码是否正确、令牌的颁发、服务端点的注册，以及该用户是否具有访问特定资源的权限等，这些都离不开Keystone服务的参与。无论">
+<meta name="keywords" content="云计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020-03-03-认证管理服务Keystone">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/2020-03-03-认证管理服务Keystone/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="概述Keystone作为OpenStack中的一个独立的提供安全认证的模块，作为OpenStack的身份管理服务（Identity Service）主要负责OpenStack用户的身份认证、令牌管理、提供访问资源的服务目录，以及基于用户角色的访问控制。用户访问系统的用户名及密码是否正确、令牌的颁发、服务端点的注册，以及该用户是否具有访问特定资源的权限等，这些都离不开Keystone服务的参与。无论">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nvJOFgxfrMLJ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pSosOiKw4diQ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/13r3TYX1E1dg.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/7JJjqyQPt78D.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/YkBLatIvmo2w.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/7mEF4DbSHYGc.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/DxQuPR6hUSHT.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Bvgfm9TbYhPJ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/TQWMdYM4Gjzl.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kuvMCI3PHG8r.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Pb1acFCnbrU6.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/WsQhs3fmf5CX.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/L3qGbNTxqchN.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/FGV9IgAfTKI7.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/AX4TU0f9fJuG.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/cU8q6GyP2svT.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/cmxe7xSDRaUg.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ziDE22a3WQfT.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/mGV6W7MOOREH.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/NjnELDXYU2nQ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/QJanlBOwyI9i.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/z5fQJfKVSN2y.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6YUCRjcRuawq.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/TczbUnrISbdh.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/RaL5t0HjPz1i.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Tmw3Hq6hFG4X.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pxKRM5cvagLK.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/CPlJtGATsYQU.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/83zcMzxnGm9p.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/fa6F9P9Xyz46.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jiMlsnjz6ywI.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/MdmI6sh6dabs.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GuIwikpUb6Oz.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Y1VVT6nATWtO.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ebNe7qsf6fbm.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/PmuEbCtoIkhz.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dQka6P2tvGUP.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/y5XP0Qxg9YK5.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/uFnCa3Yeg12u.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ALwtLXVy4LGb.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/lUcNgLUipDas.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/DdJBxHpMRGlR.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/VlQiHGsEow7d.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/CB9H0tABA8zl.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/p89WdumlBs0z.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/yTIzjEwmxUNA.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/IYQw1t6TOvwy.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/bb0TBXG9zq6D.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nhmgVAUzu1UY.png?imageslim">
+<meta property="og:updated_time" content="2020-03-03T09:49:25.913Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2020-03-03-认证管理服务Keystone">
+<meta name="twitter:description" content="概述Keystone作为OpenStack中的一个独立的提供安全认证的模块，作为OpenStack的身份管理服务（Identity Service）主要负责OpenStack用户的身份认证、令牌管理、提供访问资源的服务目录，以及基于用户角色的访问控制。用户访问系统的用户名及密码是否正确、令牌的颁发、服务端点的注册，以及该用户是否具有访问特定资源的权限等，这些都离不开Keystone服务的参与。无论">
+<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nvJOFgxfrMLJ.png?imageslim">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/2020-03-03-认证管理服务Keystone/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2020-03-03-认证管理服务Keystone | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/2020-03-03-认证管理服务Keystone/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2020-03-03-认证管理服务Keystone
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-03 17:24:21 / 修改时间：17:49:25" itemprop="dateCreated datePublished" datetime="2020-03-03T17:24:21+08:00">2020-03-03</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">14k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">13 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h2><p>Keystone作为OpenStack中的一个独立的提供安全认证的模块，作为OpenStack的身份管理服务（Identity Service）主要负责OpenStack用户的身份认证、令牌管理、提供访问资源的服务目录，以及基于用户角色的访问控制。用户访问系统的用户名及密码是否正确、令牌的颁发、服务端点的注册，以及该用户是否具有访问特定资源的权限等，这些都离不开Keystone服务的参与。无论是公有云还是私有云，都会开放接口给众多的用户。为保证系统安全和用户的安全，就需要有完善的安全认证服务，无非包含几个方面：用户认证、服务认证和口令认证。Keystone提供的认证服务是双向的，既对用户进行合法性认证，对用户的权限进行了限制，又对提供给用户的服务进行认证，保证提供给用户的服务是安全可靠的。<a id="more"></a></p>
+<p>在OpenStack的整体框架结构中，Keystone与Horizon类似，相当于一个服务总线与Nova、Glance、Horizon、Swift、Cinder及Neutron等其他核心服务全互联，其他核心服务通过Keystone来注册其服务的入口Endpoint，针对这些服务的任何调用都需要经过Keystone的身份认证，并获得服务的Endpoint来进行访问。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nvJOFgxfrMLJ.png?imageslim" alt="mark"></p>
+<p>Keystone服务作为独立的身份认证模块，首次出现来OpenStack的Essex版本，提供身份认证、服务发现和分布式多用户授权，OpenID Connect，SAML和SQL。它不依赖于其他任何服务，相反其他服务的访问都需要依赖它来提供访问安全机制。</p>
+<h2 id="Keystone的基本概念"><a href="#Keystone的基本概念" class="headerlink" title="Keystone的基本概念"></a><strong>Keystone的基本概念</strong></h2><p>作为 OpenStack 的基础支持服务，Keystone主要完成<strong>身份认证、令牌管理、服务管理、端点注册</strong>和<strong>访问控制</strong>5大功能，如下</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pSosOiKw4diQ.png?imageslim" alt="mark"></p>
+<p>总结起来，Keystone服务主要完成以下三件工作：</p>
+<ul>
+<li>管理用户及其权限（Identity、Policy）；</li>
+<li>维护 OpenStack Services 的 服务目录和入口（catalog、Endpoint）；</li>
+<li>Authentication（认证）和 Authorization（鉴权）（Identity、Token）；</li>
+</ul>
+<p>以上三件工作彼此之间不是相互隔离独立的，反而是有紧密的联系。用户访问云服务时，首先提供用户凭证（Credentials），Keystone完成认证（Identity）后返回给用户一个临时身份凭证（Token），同时根据的用户的权限（Policy）返回用户可以访问的服务和权限（Endpoint、Catalog）。随后，用户就使用Keystone分配的临时身份凭证（Token）按照服务的入口（Endpoint）去访问相关的核心服务并进行相关的资源操作。各核心服务接收到用户的访问请求后，会使用用户的临时身份凭证（Token）去Keystone进行认证（Identity），同时根据权限列表（Policy）对用户的操作进行授权。通过后，才允许用户进行服务访问并进行相关资源操作。</p>
+<p>要想理解Keystone服务的机制，首先要掌握Keystone的服务架构，并根据架构去归类理解Keystone服务的对象模型的各个概念，最后贯穿起来去拉通整个认证服务的流程。Keystone服务的架构如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/13r3TYX1E1dg.png?imageslim" alt="mark"></p>
+<p>从Keystone服务的整体架构来看，整个服务架构分为入口访问模块，核心服务模块、后端存储模块和扩展插件模块，其中：</p>
+<ul>
+<li><strong>入口访问模块：</strong>主要由两个子组件构成，即Keystone API和Middleware。Keystone API接收外部的REST访问请求，而Middleware模块是一个安全认证的中间件，主要用来缓存Token，减轻核心服务模块的认证压力。当用户首次访问时，会通过Keystone API去Middleware模块验证Token的签名，由于此时用户并没有被分配Token，所以Middleware模块会向核心服务模块Keystone Service的Identity子模块进行认证，认证通过后Token子模块会给用户分配一个Token并缓存到Middleware模块中（对Token进行签名），后续用户使用该Token认证时，Middleware模块会代替Identity模块完成认证（Token有效期内），从而减轻Keystone Service核心模块的访问压力。</li>
+<li><strong>核心服务模块：</strong>Keystone Service，由不同的子模块构成，不同子模块提供不同身份认证服务。比如：Identity子模块对用户凭证进行合法性认证，Token子模块用于给用户分配一个临时身份凭证，Assignment子模块用于分配用户的资源配额，Policy子模块用户指定用户访问资源的权限，Catalog子模块用户指定用户可以访问的服务目录等等。</li>
+<li><strong>后端存储模块：</strong>Keystone Backends，主要用来存储实现不同核心服务的数据，不同核心服务数据可以使用不同后端存储来存储。支持的后端存储有：LDAP、SQL、Template、Rules、KVS等。</li>
+<li><strong>扩展插件模块：</strong>Kesytone Plugins，针对不同的身份认证服务提供不同的扩展插件。比如基于密码的认证，通过Password插件完成，基于Token的认证基于Token插件完成等等。</li>
+</ul>
+<p>了解Keystone服务的整体架构后，我们再来看看Keystone服务的对象模型。如下图所示，所谓的对象就是Keystone服务管理的对象，而对象模型就是指Keystone服务管理的几类对象的集合及其子集。其顶层的对象模型就是Service和Policy，而Service对象模型的子集则包括：Identity、Resource、Assignment、Token和Catalog等多个子对象模型。因此，要想彻底掌握Keystone的作用，就需要重点理清这些对象模型的概念及其子集的对应关系，以及对象模型在整个Keystone服务中的作用。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/7JJjqyQPt78D.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>Policy：</strong>安全访问策略，每个OpenStack服务都在相关的策略文件中定义其资源的访问策略（Policy） 。类似于Linux中的权限管理，不同角色的用户或用户组将会拥有不同的操作权限。在OpenStack中也可以针对每种服务（内部或外部）设定不同用户或用户组的访问策略，从而实现不同用户或用户组对访问服务的分权分域管理。各服务的访问策略文件是一个JSON格式的文件，并不是必须的，可以由管理员自行手动创建和配置，配置后无需重启服务即刻生效，一般放在服务配置目录下，即/etc/SERVICE_NAME/policy.json。</li>
+<li><strong>Service：</strong>服务，在一个或多个端点（Endpoint）上公开的一组内部服务。包括：Identity、Resource、Assignment、Token、Catalog等。除内部服务外，Keystone还负责与OpenStack其他服务（ Service ）进行交互，例如计算，存储或镜像，提供一个或多个端点，用户可以通过这些端点访问资源并执行操作。因此，Keystone提供Service对象模型，可以简单理解为Service=内部服务+外部服务。</li>
+<li><strong>Identity：</strong>提供身份凭证数据以及用户和用户组的数据。它有两个子集，分别是User和Group。User就是指单个OpenStack服务的使用者，必须属于某个特定域（Domain），用户名不是全局唯一，但是在其归属域（Domain）内是唯一的。Group是借鉴了Linux操作系统中Group的概念，在M版本之后才引入，作用就是把多个用户作为一个整体进行管理。Group也必须属于某个特定域（Domain），与User一样，在全局范围内Group不是唯一的，但是在其归属域（Domain）内必须唯一。通常情况下，用户和用户组数据由Identity服务管理，允许它处理与这些数据关联的所有CRUD操作。如果使用LDAP进行认证，则Keystone的Identity服务就是LDAP认证的前端，User和Group的管理由权威后端LDAP负责，Keystone的Identity此时只是作为认证的中继。</li>
+<li><strong>Resource：</strong>资源，提供有关项目（Project）和域（Domain）的数据。它也有两个子集，分别是Project和Domain。Project就是以前OpenStack中tenant，也就租户，在N版本以后改为项目Project，是OpenStack中资源拥有者的基本单元，OpenStack中所有的资源都属于特定的项目。Project必须属于某个特定域，如果创建Project时没有指定Domain，则它默认属于Default域。与User和Group一样，Project也并非全局唯一，但是在其归属域（Domain）必须唯一。Domain这个概念也是Keystone v3版本开始引入，可以将其理解为资源的集合，也就是说某一资源必须属于一个特定域。为了将Domain内部的资源进一步细分使用权限和使用者，因此在Domain中可以定义所有归属Project的资源配额，在Project中又可以定义所有归属User和Group的资源配额，在Group中可以集中定义所有归属User的权限、角色和资源配额。Domain只可以通过命令行CLI或API接口创建，无法通过Web UI创建。</li>
+<li><strong>Assignment：</strong>角色分配，提供有关角色（Role）和角色分配（Assignment Role）的数据。Role规定最终用户可以获得的授权级别，角色Role可以在域Domain或项目Project级别授予，也可以在单个用户User或组Group级别分配角色，角色名称在该角色的归属域中必须是唯一的。角色分配Role Assignment是一个三元组，包括：Role、Resource和Identity等服务，也就是说OpenStack通过Identity、Resource和Role三类对象模型决定某个用户User拥有哪些资源，对拥有的资源能够执行哪些操作。</li>
+<li><strong>Catalog：</strong>服务目录，用于提供查询端点（Endpoint）的端点注册表，以便外部访问OpenStack的服务，因此它只有Endpoint一个子集。Endpoint本质上就是一个URL，拥有三种类型，分别是public、admin和internal，分别提供给不同的User，用于其访问OpenStack的服务。比如，提供给普通用户使用的就是public类型的Endpoint，提供给管理员使用的就是admin类型的Endpoint，而提供给OpenStack内部其他服务的就是internal类型的Endpoint。</li>
+<li><strong>Token：</strong>令牌服务，提供用户访问服务的凭证，代表着用户的账户信息。Token一般包含User信息，Scope信息（Project、Domain或者Tenant），Role信息，本质上就是代替用户的一个凭证。用户首次访问OpenStack时，均需要将用户名和密码发给Keystone，Keystone将其转换为有时效性的Token发给用户，用户将其缓存在本地客户端，后续访问其他服务，Token将代替用户进行。因此，Token必须和用户绑定。客户端在调用POST/Tokens后拿到返回结果，如果用户名和密码验证成功，则拿到诸如User、Project、Token、metadata、catalog等数据。从catalog中找到要访问Service的Endpoint，让后在Headers中放入｛X-Auth-Token:token_id｝信息，就向该Service发起访问请求。Service的WSGI APP在收到该Request请求后，首先验证该token_id是否有效，该验证一般都使用一个keystonemiddlerware的中间件来完成，如下图所示：</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/YkBLatIvmo2w.png?imageslim" alt="mark"></p>
+<p>在OpenStack中Token支持的类型有：UUID、PKI、PKIZ和Fernet集中，OpenStack官方社区目前默认采用Fernet类型Token。几种Token类型对比如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Token 类型</strong></th>
+<th><strong>UUID</strong></th>
+<th><strong>PKI</strong></th>
+<th><strong>PKIZ</strong></th>
+<th><strong>Fernet</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>大小</td>
+<td>32 Byte</td>
+<td>KB 级别</td>
+<td>KB 级别</td>
+<td>约 255 Byte</td>
+</tr>
+<tr>
+<td>支持本地认证</td>
+<td>不支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>Keystone 负载</td>
+<td>大</td>
+<td>小</td>
+<td>小</td>
+<td>大</td>
+</tr>
+<tr>
+<td>存储于数据库</td>
+<td>是</td>
+<td>是</td>
+<td>是</td>
+<td>否</td>
+</tr>
+<tr>
+<td>携带信息</td>
+<td>无</td>
+<td>user, catalog 等</td>
+<td>user, catalog 等</td>
+<td>user 等</td>
+</tr>
+<tr>
+<td>涉及加密方式</td>
+<td>无</td>
+<td>非对称加密</td>
+<td>非对称加密</td>
+<td>对称加密(AES)</td>
+</tr>
+<tr>
+<td>是否压缩</td>
+<td>否</td>
+<td>否</td>
+<td>是</td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+<p>UUID类型的令牌，token_id只是一个纯粹的32位十六进制字符串；PKI类型的令牌token_id使用完整性和加密算法对token_data进行加密；PKIZ类型的令牌实际上就是对PKI加密后的令牌再进行压缩，压缩率约50%左右；Fernet类型的令牌是一个JSON格式的字符串，约255字节大小，在我们的实验环境中，通过API方式得到的Fernet类型的Token令牌如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/7mEF4DbSHYGc.png?imageslim" alt="mark"></p>
+<p>上图中，令牌信息部分包含了Token当前的时间，有效截止时间，审计id，验证的方法等内容。在账户部分包含了生成该Token的账户id信息、账户名、域信息等内容。Token令牌类型的选择涉及多个因素，包括Keystone server的负载、region数量、安全因素、维护成本以及令牌本身的成熟度。Region的数量影响PKI/PKIZ令牌的大小。从安全的角度上看，UUID无需维护密钥，PKI需要妥善保管Keystone server上的私钥，Fernet需要周期性的更换密钥。因此，从安全、维护成本和成熟度上看，UUID &gt; PKI/PKIZ &gt; Fernet 。采用何种类型Token，目前华为在自有FusionSphere OpenStack解决方案的建议如下：</p>
+<ul>
+<li><strong>Keystone server 负载低，region少于3个，采用UUID令牌。</strong></li>
+<li><strong>Keystone server 负载高，region少于3个，采用PKI/PKIZ令牌。</strong></li>
+<li><strong>Keystone server 负载低，region大于或等于3个，采用UUID令牌。</strong></li>
+<li><strong>Keystone server 负载高，region大于或等于3个，目前OpenStack新版本默认采用Fernet令牌。</strong></li>
+</ul>
+<p>除了上述对象模型外，OpenStack还有Region、AZ、HA（Host Aggregate）的资源模型概念（这些其实属于计算资源池的概念）。Region是物理位置上划分的资源使用范围，可以简单理解一个数据中心DC就是一个Region，而AZ是Region内部从故障隔离角度划分的一个资源使用范围，其本质上是一组主机构成的资源池，资源池与资源池之间故障隔离（电源、网络、布线等），主要的划分依据还是动力故障隔离。HA（Host Aggregate）主机组是从物理资源的规格角度划分的资源使用范围，比如同是Dell 骁龙处理器的主机可以划分为一个HA，同是万兆网卡的主机可以划分一个HA等等。从资源使用者角度来看，其使用资源的范围从大到小的排序为：Region&gt;AZ&gt;HA&gt;Domain&gt;Project&gt;Group&gt;User，整个Keystone的对象模型的分配关系如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/DxQuPR6hUSHT.png?imageslim" alt="mark"></p>
+<h2 id="Keystone的认证方式"><a href="#Keystone的认证方式" class="headerlink" title="Keystone的认证方式"></a><strong>Keystone的认证方式</strong></h2><p>Keystone的认证方式主要包括三种：<strong>基于令牌的认证方式、基于外部的认证方式</strong>和<strong>基于本地的认证方式</strong>。<strong>生产环境中，最常用的是基于令牌的认证方式</strong>，需要重点学习。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Bvgfm9TbYhPJ.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>基于令牌的认证方式：</strong>最常用的认证方式，认证请求发送时在HTTP/HTTPS头部添加一个X-Auth-Token的头域，Keystone检查该头域中token_id值，并与数据库SQL中的令牌值比对验证。</li>
+<li><strong>基于外部的认证方式：</strong>采用集成第三方的认证系统，客户端在认证请求头中天剑remote_user信息，Keystone的Identity服务作为接收该认证请求的前端，将认证请求转发给后端的外部认证系统进行认证，并将认证结果返回给客户端。在这种认证方式中，Keystone作为认证的中继服务单元。</li>
+<li><strong>基于本地的认证方式：</strong>这是默认的认证方式，即我们采用的用户名和密码认证。</li>
+</ul>
+<h3 id="基于令牌的认证方式—UUID令牌类型"><a href="#基于令牌的认证方式—UUID令牌类型" class="headerlink" title="基于令牌的认证方式—UUID令牌类型"></a><strong>基于令牌的认证方式—UUID令牌类型</strong></h3><p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/TQWMdYM4Gjzl.png?imageslim" alt="mark"></p>
+<p><strong>该方案由于UUID令牌长度为固定32位十六进制字符串，不携带其他信息，OpenStack其他服务API收到该令牌后会向Keystone验证，并获得用户的其他信息，因此Keystone必须实现令牌的存储和认证，所有的验证均由Keystone完成</strong>，故采用这种认证方式的实际生产环境中部署Keystone服务的节点负荷较大。总体上，采用UUID类型的令牌认证共需要5步完成：</p>
+<ul>
+<li><strong>Step1：</strong>客户端发起认证请求，在请求的HTTP/HTTPS的Body体中携带用户名和密码信息；</li>
+<li><strong>Step2：</strong>Keystone通过认证后，给用户返回一个token信息，用于该用户后续访问其他服务的身份凭证，该凭证并非永久有效，而是有一个有效期限，默认为1小时。</li>
+<li><strong>Step3：</strong>客户端后续访问其他OpenStack服务时，比如访问nova-api，会在请求的HTTP/HTTPS的Header部分增加一个key-value格式的头域X-Auth-Token，其值就是Keystone返回给用户token_id。</li>
+<li><strong>Step4：</strong>其他服务接收到用户的访问请求后，会将请求消息头部的token_id发送给Keystone进行验证。</li>
+<li><strong>Step5：</strong>验证通过后，Keystone会返回该用户的三元组信息（User、Project、Role）给其他服务API，其他服务根据本地Policy的设定决定该用户使用其资源的权限。</li>
+</ul>
+<h3 id="基于令牌的认证方式—PKI令牌类型"><a href="#基于令牌的认证方式—PKI令牌类型" class="headerlink" title="基于令牌的认证方式—PKI令牌类型"></a><strong>基于令牌的认证方式—PKI令牌类型</strong></h3><p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kuvMCI3PHG8r.png?imageslim" alt="mark"></p>
+<p><strong>该方案需要部署一台证书服务器（可以由部署Keystone服务的节点兼任），证书服务器将用户的私钥保存在Keystone本地，将用户的公钥分发给OpenStack的其他服务。这种认证方式客户的认证由OpenStack各个服务利用公钥完成，部署Keystone服务节点的负荷较小。</strong>总体上，采用PKI类型令牌认证需要4步完成：</p>
+<ul>
+<li><strong>Step1：</strong>客户端发起认证请求，在请求的HTTP/HTTPS的Body体中携带用户名和密码信息。</li>
+<li><strong>Step2：</strong>Keystone利用本地的私钥对用户认证请求中的用户名和密码进行认证，通过后返回Token给客户端，在Token中携带签名后安全key值。</li>
+<li><strong>Step3：</strong>客户端后续访问其他OpenStack服务时，比如访问nova-api，会在请求的HTTP/HTTPS的Header部分增加一个key-value格式的头域X-Auth-Token，其值就是Keystone返回给用户前面后的安全key值。</li>
+<li><strong>Step4：</strong>其他OpenStack服务利用本地存储的公钥对token进行验证，通过后根据本地Policy的设定决定该用户使用其资源的权限。</li>
+</ul>
+<h3 id="基于令牌的认证方式—PKIZ令牌类型"><a href="#基于令牌的认证方式—PKIZ令牌类型" class="headerlink" title="基于令牌的认证方式—PKIZ令牌类型"></a><strong>基于令牌的认证方式—PKIZ令牌类型</strong></h3><p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Pb1acFCnbrU6.png?imageslim" alt="mark"></p>
+<p><strong>该方案与PKI认证方案的流程类似，主要考虑到PKI认证方式的HTTP/HTTPS header头域过大（达到8K字节），为了减小管理平面带宽压力，故对PKI认证的头部采用压缩机制，而解压缩则在OpenStack的其他服务中进行。即与PKI认证方式相比，在Keystone返回的Token是一个压缩过的携带签名证书的Token-Key，而在OpenStack的其他服务首先需要对该token进行解压缩，然后再通过公钥进行认证。</strong>流程请参考PKI认证方式，这里不再赘述。</p>
+<h3 id="基于令牌的认证方式—Fernet"><a href="#基于令牌的认证方式—Fernet" class="headerlink" title="基于令牌的认证方式—Fernet"></a><strong>基于令牌的认证方式—Fernet</strong></h3><p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/WsQhs3fmf5CX.png?imageslim" alt="mark"></p>
+<p><strong>该方案基于Fernet（一种对称加密算法）的对用户信息进行加密而生成的令牌，与用户相关的所有的认证信息都保存在令牌中，故令牌本身就包含了用户的三元组信息（User、Project、Role），也因此Fernet令牌无需持久化，但是一旦Fernet令牌被攻破，那么就可以做所有该用户能做到的事情，因此采用该令牌类型的认证方式其令牌一般都有一个有效期，默认为1小时，当有效期到期后，需要重新申请令牌。</strong>与UUID、PKI、PKIZ令牌类型认证方式相比，Fernet类型的令牌值无需存储在后端数据库中，只需要放在内存中即可。相比UUID方式，Keystone数据库的眼里不大，无需查表；相比PKI/PKIZ方式，HTTP/HTTPS的header头部较小，占用管理平面带宽较小。采用该令牌类型的认证方式，如果Keystone服务采用高可用集群部署，需要在所有部署Keystone服务的节点共享秘钥用于Token的解密和认证。总体上，该流程也需要5步：</p>
+<ul>
+<li><strong>Step1：</strong>客户端发起认证请求到Keystone服务器，请求HTTP/HTTPS的Body体中携带用户名和密码信息。</li>
+<li><strong>Step2：</strong>Keystone验证通过后，利用对称加密算法AES对返回给客户端的Token进行加密，该加密后的Token中携带用户的三元组信息（User、Project、Role）。</li>
+<li><strong>Step3：</strong>客户端在后续访问其他OpenStack服务的API时，会在HTTP/HTTPS的Header头部携带X-Auth-Token头域，其值就是加密后的token_id，也就是上面Token令牌示意图中的adjust_ids值。</li>
+<li><strong>Step4：</strong>其他OpenStack服务的API将该token_id发送给Keystone进行验证。</li>
+<li><strong>Step5：</strong>Keystone首先完成token_id的解密，验证通过后，将用户的三元组信息（User、Project、Role）发给其他OpenStack服务，其他服务根据本地Policy的设定决定该用户使用其资源的权限。</li>
+</ul>
+<h2 id="基于角色的访问控制—RBAC"><a href="#基于角色的访问控制—RBAC" class="headerlink" title="基于角色的访问控制—RBAC"></a><strong>基于角色的访问控制—RBAC</strong></h2><p>在上面分析过程中，Keystone服务只用于验证Token是否有效，而验证通过后用户资源的操作权限是通过各服务的Policy来决定。至于Policy通过什么设定来决定？首先需要了解下Policy文件的格式，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/L3qGbNTxqchN.png?imageslim" alt="mark"></p>
+<p>上图是Neutron服务的Policy文件的一部分，可以看出该文件采用JSON格式，每一对｛｝内部通过key-value格式的键值对来定义服务的访问规则，每一条规则（Rule）就是一个键值对key-value。比如，上图中创建子网create_subnet这个操作，只有具备admin角色或该子网归属network的属主才能执行，那么可以推理出执行创建的子网的操作只有管理员admin，用户neutron或该子网归属network的租户project才具有权限，不符合上述条件的其他用户执行该命令时都会返回鉴权失败错误码403 Forbidden。而创建带VLAN ID的子网create_subnet:segment_id这个操作，只有具备admin角色的用户（管理员admin或用户neutron）才能执行，其他不符合条件的用户执行该操作都会返回鉴权失败错误码403 Forbidden。因此，通过我们的推理，就可以理解Policy模块在权限检查中所起的作用，以及整个基于角色的访问控制流程RBAC，而policy.json文件就是RBAC流程实现的关键，如下图：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/FGV9IgAfTKI7.png?imageslim" alt="mark"></p>
+<p>上图中，用户发起操作请求Request到OpenStack服务的api进程，OpenStack服务的api进程首先去Keystone的Token模块进行Token有效性验证。验证通过后，返回的Token上下文中携带用户的三元组信息（User、Project、Role），并且Keystone的Policy模块调用OpenStack各服务本地Policy.json文件，根据用户操作请求Request的action结合用户的三元组信息判断用户该操作是否合法？不通过，则直接向客户端返回403 Forbidden；通过，则将验证结果返回给OpenStack的其他相关服务，OpenStack的其他相关服务按照用户的操作请求执行下一步操作Next。</p>
+<p>从上面的分析中，我们可以知道Keystone的Policy模块根据各服务的policy.json文件来检查用户的操作权限，其检测时主要需要三方面的数据：</p>
+<ul>
+<li><strong>各服务的policy.json策略配置文件；</strong></li>
+<li><strong>Auth_token添加到HTTP/HTTPS头部的token数据；</strong></li>
+<li><strong>用户的请求资源数据；</strong></li>
+</ul>
+<p><strong>最后，放上一张Keystone的流程示意图总结Keystone如何实现认证和权限控制，如下：</strong></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/AX4TU0f9fJuG.png?imageslim" alt="mark"></p>
+<h2 id="Keystone服务的实战操作（CLI命令行方式）"><a href="#Keystone服务的实战操作（CLI命令行方式）" class="headerlink" title="Keystone服务的实战操作（CLI命令行方式）"></a><strong>Keystone服务的实战操作（CLI命令行方式）</strong></h2><p>这里只展示Keystone服务的命令CLI操作方式，至于Web UI的操作太过于简单，这里不再赘述。需要注意一点，<strong>Keystone的资源模型Domain只有命令行方式可以操作。</strong></p>
+<h3 id="域Domain的实战操作"><a href="#域Domain的实战操作" class="headerlink" title="域Domain的实战操作"></a>域Domain的实战操作</h3><p><strong>步骤1：</strong>执行以下命令，导入admin-openrc.sh的环境变量，进入管理员视角。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> admin-openrc.sh</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/cU8q6GyP2svT.png?imageslim" alt="mark"></p>
+<p><strong>步骤 2：</strong>执行以下命令，查看OpenStack域相关命令的用法。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack domain -h</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/cmxe7xSDRaUg.png?imageslim" alt="mark"></p>
+<p>各子命令具体用法可通过如下方式进行查看：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ziDE22a3WQfT.png?imageslim" alt="mark"></p>
+<p><strong>步骤 3：</strong>执行以下命令，创建域“Demo_Domain”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack domain create --<span class="built_in">enable</span> --description <span class="string">"This is a temporary test domain"</span> Demo_Domain</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/mGV6W7MOOREH.png?imageslim" alt="mark"></p>
+<p><strong>步骤 4：</strong>执行以下命令，查看OpenStack域列表信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack domain list</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/NjnELDXYU2nQ.png?imageslim" alt="mark"></p>
+<p><strong>步骤 5：</strong>执行以下命令，查看刚刚创建的Demo_Domain域的详细信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack domain show 3c660f1059b94bc3864074200cc12981 <span class="comment">#&lt;===这里我用了域的id信息进行查询，也可以使用域名，因为一个Region中域名唯一</span></span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/QJanlBOwyI9i.png?imageslim" alt="mark"></p>
+<p><strong>步骤6：</strong>执行以下命令，设置刚刚创建的Demo_Domain为非激活态，再次查看刚刚创建的Demo_Domain域的详细信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack domain <span class="built_in">set</span> --<span class="built_in">disable</span> Demo_Domain</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/z5fQJfKVSN2y.png?imageslim" alt="mark"></p>
+<p><strong>步骤7：</strong>执行以下命令，删除刚刚创建的Demo_Domain为非激活态，再次查看域列表信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack domain delete Demo_Domain</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6YUCRjcRuawq.png?imageslim" alt="mark"></p>
+<h3 id="角色role、用户user及用户组group的相关操作实战"><a href="#角色role、用户user及用户组group的相关操作实战" class="headerlink" title="角色role、用户user及用户组group的相关操作实战"></a><strong>角色role、用户user及用户组group的相关操作实战</strong></h3><p><strong>步骤1：</strong>执行以下命令，查看OpenStack角色相关命令的用法（后续其他资源的操作指令使用帮助查询与此类似，不再赘述）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack role -h</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/TczbUnrISbdh.png?imageslim" alt="mark"></p>
+<p>上图列出了角色role的相关操作包括CRUD，角色的分配，角色的移除等等。。。</p>
+<p><strong>步骤2：</strong>执行以下命令，查看OpenStack角色列表信息</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/RaL5t0HjPz1i.png?imageslim" alt="mark"></p>
+<p>上图中展示了当前OpenStack中角色有member、user、heat_stack_owner、admin、heat_stack_user、creator和reader。</p>
+<p><strong>步骤3：</strong>执行以下命令，创建角色”Kk_Role”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack role create --domain kkutysllb Kk_Role &lt;===创建角色时，可以指定角色的归属域，也可以后续通过<span class="built_in">set</span>指令指定，建议在创建时指定</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Tmw3Hq6hFG4X.png?imageslim" alt="mark"></p>
+<p><strong>步骤4：</strong>执行以下命令，查看新创建角色”Kk_Role”的详细信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack role show Kk_Role</span><br></pre></td></tr></table></figure>
+<p>我们会发现刚刚创建的角色Kk_Role不存在，但是刚刚明明是创建成功的。这是为什么？原因是我们在刚刚创建Kk_Role时制定了角色归属域为kkutysllb，而当前我们直接使用openstack role show Kk_Role显示角色Kk_Role详细信息时，由于没有显式制定归属域参数，所以默认显示的是Default域的角色信息，而Kk_Role并不归属Default域，自然就没有相关信息展示。因此，执行如下命令显示角色Kk_Role的详细信息和域kkutysllb的所有角色列表。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack role show --domain kkutysllb Kk_Role</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pxKRM5cvagLK.png?imageslim" alt="mark"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack role list --domain kkutysllb</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/CPlJtGATsYQU.png?imageslim" alt="mark"></p>
+<p><strong>步骤5：</strong>执行以下命令，查看域kkutysllb下用户user列表</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack user list --domain kkutysllb &lt;===可以发现没有任何用户信息</span><br></pre></td></tr></table></figure>
+<p><strong>步骤6：</strong>执行以下命令，创建一个域kkutysllb下的租户project</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack project create --domain kkutysllb kkutysllb</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/83zcMzxnGm9p.png?imageslim" alt="mark"></p>
+<p><strong>步骤7：</strong>执行以下命令，创建一个域kkutysllb下的两个用户kk_user01和kk_user02，密码均为123456</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack user create --domain kkutysllb --project kkutysllb --password-prompt kk_user01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/fa6F9P9Xyz46.png?imageslim" alt="mark"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack user create --domain kkutysllb --project kkutysllb --password-prompt kk_user02</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jiMlsnjz6ywI.png?imageslim" alt="mark"></p>
+<p><strong>步骤8：</strong>执行以下命令，给两个用户kk_user01和kk_user02添加角色Kk_Role</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">openstack role add --domain kkutysllb --project-domain kkutysllb --role-domain kkutysllb --user kk_user01 Kk_Role</span><br><span class="line"></span><br><span class="line">openstack role add --domain kkutysllb --project-domain kkutysllb --role-domain kkutysllb --user kk_user02 Kk_Role</span><br></pre></td></tr></table></figure>
+<p><strong>步骤9：执行以下命令，查看两个用户kk_user01和kk_user02的角色分配情况</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack role assignment list --names | grep kk_user</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/MdmI6sh6dabs.png?imageslim" alt="mark"></p>
+<p><strong>步骤10：</strong>执行以下命令，创建一个用户组Kk_Group，将上面创建的两个用户kk_user01和kk_user02加入该组</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack group create --domain kkutysllb Kk_Group</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GuIwikpUb6Oz.png?imageslim" alt="mark"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack group add user --group-domain kkutysllb --user-domain kkutysllb Kk_Group kk_user01 kk_user02</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Y1VVT6nATWtO.png?imageslim" alt="mark"></p>
+<p><strong>步骤11：</strong>执行以下命令，将kk_user02用户从用户组Kk_Group中移除</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack group remove user Kk_Group kk_user02</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ebNe7qsf6fbm.png?imageslim" alt="mark"></p>
+<p><strong>步骤 12：</strong>执行以下命令，禁用用户“kk_user02”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack user <span class="built_in">set</span> --domain kkutysllb --<span class="built_in">disable</span> kk_user02</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/PmuEbCtoIkhz.png?imageslim" alt="mark"></p>
+<p><strong>步骤13：</strong>执行以下命令，删除用户“kk_user02”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack user delete --domain kkutysllb kk_user02</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dQka6P2tvGUP.png?imageslim" alt="mark"></p>
+<h3 id="项目project相关操作实战"><a href="#项目project相关操作实战" class="headerlink" title="项目project相关操作实战"></a><strong>项目project相关操作实战</strong></h3><p><strong>步骤1：</strong>执行以下命令，查看域kkutysllb下的项目列表，可以查看到所有的项目</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack project list --domain kkutysllb</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/y5XP0Qxg9YK5.png?imageslim" alt="mark"></p>
+<p><strong>步骤2：</strong>执行以下命令，将项目kkutysllb去激活必过查看该项目详情</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack project <span class="built_in">set</span> --<span class="built_in">disable</span> --domain kkutysllb kkutysllb</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/uFnCa3Yeg12u.png?imageslim" alt="mark"></p>
+<p><strong>步骤3：</strong>执行以下命令，将项目kkutysllb删除</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack project delete --domain kkutysllb kkutysllb</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ALwtLXVy4LGb.png?imageslim" alt="mark"></p>
+<p><strong>步骤4：</strong>执行以下命令，在Default域下的创建libing用户，并添加admin的角色</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/lUcNgLUipDas.png?imageslim" alt="mark"></p>
+<p><strong>步骤6：</strong>执行以下命令，查看Default域下的admin项目的资源配额</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack quota show admin</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/DdJBxHpMRGlR.png?imageslim" alt="mark"></p>
+<p><strong>步骤7：</strong>执行以下命令，修改项目“admin”的默认配额，如将实例数量修改为“5”，卷数量修改为“5”，网络修改为“10”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack quota <span class="built_in">set</span> --instance 5 --volumes 5 --network 10 admin</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/VlQiHGsEow7d.png?imageslim" alt="mark"></p>
+<h3 id="服务和服务端点的实战"><a href="#服务和服务端点的实战" class="headerlink" title="服务和服务端点的实战"></a><strong>服务和服务端点的实战</strong></h3><p><strong>步骤 1：</strong>执行以下命令，查看OpenStack服务相关命令的用法和子命令的用法</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/CB9H0tABA8zl.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/p89WdumlBs0z.png?imageslim" alt="mark"></p>
+<p><strong>步骤2：</strong>执行以下命令，创建swift服务，服务类型位object-store</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack service create --name swift --description <span class="string">"OpenStack Object Storage"</span> object-store</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/yTIzjEwmxUNA.png?imageslim" alt="mark"></p>
+<p><strong>步骤3：</strong>执行以下命令，创建服务“swift”的服务端点</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack endpoint create --region RegionOne object-store publick http://rocky-controller:8080/v1/AUTH_%\(tenant_id\)s</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/IYQw1t6TOvwy.png?imageslim" alt="mark"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack endpoint create --region RegionOne object-store admin http://rocky-controller:8080/v1/AUTH_%\(tenant_id\)s</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/bb0TBXG9zq6D.png?imageslim" alt="mark"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack endpoint create --region RegionOne object-store internal http://rocky-controller:8080/v1/AUTH_%\(tenant_id\)s</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nhmgVAUzu1UY.png?imageslim" alt="mark"></p>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a><strong>思考</strong></h2><p><strong>1、为什么不能修改admin帐号域归属信息为kkutysllb后，再来展示域kkutysllb内部的角色信息？</strong></p>
+<p><strong>2、在给用户添加角色时，能否同时指定用户的归属域Domain和项目Project？为什么？通过什么操作实现？</strong></p>
+<p><strong>3、用户通过CLI创建一个VM，Keystone如何验证该用户？如何验证该用户具有创建VM的权限？</strong></p>
+<p><strong>4、用户通过Horizon创建一个VM，Keystone如何验证该用户？如何验证该用户具有创建VM的权限？</strong></p>
+<p><strong>5、上述两种创建VM的方式，Keystone的验证流程有何区别？</strong></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2020/03/03/2020-03-03-认证管理服务Keystone/" title="2020-03-03-认证管理服务Keystone">https://kkutysllb.cn/2020/03/03/2020-03-03-认证管理服务Keystone/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/云计算/" rel="tag"><i class="fa fa-tag"></i> 云计算</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/03/2020-03-03-Web-UI管理服务Horizon/" rel="next" title="2020-03-03-Web UI管理服务Horizon">
+                <i class="fa fa-chevron-left"></i> 2020-03-03-Web UI管理服务Horizon
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">67</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Keystone的基本概念"><span class="nav-number">2.</span> <span class="nav-text">Keystone的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Keystone的认证方式"><span class="nav-number">3.</span> <span class="nav-text">Keystone的认证方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于令牌的认证方式—UUID令牌类型"><span class="nav-number">3.1.</span> <span class="nav-text">基于令牌的认证方式—UUID令牌类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于令牌的认证方式—PKI令牌类型"><span class="nav-number">3.2.</span> <span class="nav-text">基于令牌的认证方式—PKI令牌类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于令牌的认证方式—PKIZ令牌类型"><span class="nav-number">3.3.</span> <span class="nav-text">基于令牌的认证方式—PKIZ令牌类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于令牌的认证方式—Fernet"><span class="nav-number">3.4.</span> <span class="nav-text">基于令牌的认证方式—Fernet</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于角色的访问控制—RBAC"><span class="nav-number">4.</span> <span class="nav-text">基于角色的访问控制—RBAC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Keystone服务的实战操作（CLI命令行方式）"><span class="nav-number">5.</span> <span class="nav-text">Keystone服务的实战操作（CLI命令行方式）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#域Domain的实战操作"><span class="nav-number">5.1.</span> <span class="nav-text">域Domain的实战操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#角色role、用户user及用户组group的相关操作实战"><span class="nav-number">5.2.</span> <span class="nav-text">角色role、用户user及用户组group的相关操作实战</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#项目project相关操作实战"><span class="nav-number">5.3.</span> <span class="nav-text">项目project相关操作实战</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务和服务端点的实战"><span class="nav-number">5.4.</span> <span class="nav-text">服务和服务端点的实战</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考"><span class="nav-number">6.</span> <span class="nav-text">思考</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">797k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">12:05</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2020/03/03/2020-03-03-认证管理服务Keystone/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

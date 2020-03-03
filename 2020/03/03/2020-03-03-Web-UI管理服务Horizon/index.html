@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="概述OpenStack的用户界面由两部分组成：一是Web界面，二是Shell CLI界面。Horizon负责展现Web仪表盘，用户可以通过浏览器直接操作、管理、运维OpenStack的一些功能。由于OpenStack项目队伍不断壮大，Danshboard并不能展现所有的OpenStack功能，因此，最新的功能一般会先开发Shell命令行，也就是将CLI（Command Line Interface">
+<meta name="keywords" content="云计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020-03-03-Web UI管理服务Horizon">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/2020-03-03-Web-UI管理服务Horizon/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="概述OpenStack的用户界面由两部分组成：一是Web界面，二是Shell CLI界面。Horizon负责展现Web仪表盘，用户可以通过浏览器直接操作、管理、运维OpenStack的一些功能。由于OpenStack项目队伍不断壮大，Danshboard并不能展现所有的OpenStack功能，因此，最新的功能一般会先开发Shell命令行，也就是将CLI（Command Line Interface">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/65YVSq76MuHT.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/OpC56bzccRzi.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/BtdCU1gmj1Jv.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/M7Y72gWhRjpi.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Ur5FUimEscnn.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/0yDa9n0Sl4Uy.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rFSLxjMBYOzU.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/yDMvo07AVSew.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6FOfEuvFdIyk.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kXb3VUDuH6nN.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Y5hLGzsY01JK.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/qpUYI9Rf9VHy.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/sOvk3ntEsIuS.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/zMyiklwup9Be.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/FA4LMLf22bUh.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/uu2NNbXOLy5I.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Y7T4WkIbKHUc.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5NE2aPIKMUyW.png?imageslim">
+<meta property="og:updated_time" content="2020-03-03T09:23:50.219Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2020-03-03-Web UI管理服务Horizon">
+<meta name="twitter:description" content="概述OpenStack的用户界面由两部分组成：一是Web界面，二是Shell CLI界面。Horizon负责展现Web仪表盘，用户可以通过浏览器直接操作、管理、运维OpenStack的一些功能。由于OpenStack项目队伍不断壮大，Danshboard并不能展现所有的OpenStack功能，因此，最新的功能一般会先开发Shell命令行，也就是将CLI（Command Line Interface">
+<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/65YVSq76MuHT.png?imageslim">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/2020-03-03-Web-UI管理服务Horizon/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2020-03-03-Web UI管理服务Horizon | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/2020-03-03-Web-UI管理服务Horizon/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2020-03-03-Web UI管理服务Horizon
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-03 17:07:48 / 修改时间：17:23:50" itemprop="dateCreated datePublished" datetime="2020-03-03T17:07:48+08:00">2020-03-03</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">5k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">5 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>OpenStack的用户界面由两部分组成：一是Web界面，二是Shell CLI界面。Horizon负责展现Web仪表盘，用户可以通过浏览器直接操作、管理、运维OpenStack的一些功能。由于OpenStack项目队伍不断壮大，Danshboard并不能展现所有的OpenStack功能，因此，最新的功能一般会先开发Shell命令行，也就是将CLI（Command Line Interface）提供给Linux用户操作。<a id="more"></a></p>
+<p>在OpenStack的7个核心服务中，Horizon服务本质上就是一个Web Server，基于Django框架开发的，与Keystone服务一样，需要与其他提供业务的服务（计算nova、存储cinder、网络neutron等）进行全互联。如下图所示，如果将OpenStack的7个核心服务分为三层，从上到下依次是<strong>入口层、业务层</strong>和<strong>认证层</strong>。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/65YVSq76MuHT.png?imageslim" alt="mark"></p>
+<p>Horizon服务最早出现OpenStack的Essex版本中，提供基于Web的控制界面，使得云管理员和租户/用户能够可视化的管理OpenStack的服务和资源。Horizon唯一依赖的服务就是Keystone认证服务，同时还可以与其他服务结合使用，例如镜像服务、计算服务、网络服务等。并且，Horizon还可以在独立服务（比如对象存储中）的环境中单独使用。</p>
+<h2 id="REST-ful与WSGI介绍"><a href="#REST-ful与WSGI介绍" class="headerlink" title="REST ful与WSGI介绍"></a><strong>REST ful与WSGI介绍</strong></h2><p>OpenStack各个项目都提供了API接口服务，通过endpoint提供访问URL。无论我们通过Horizon访问OpenStack的服务和资源，还是通过命令行CLI访问OpenStack的服务和资源，其本质都是通过各服务/资源的API的endpoint进行访问，即均是基于HTTP/HTTPS协议的Web服务访问。而这些API接口都是基于一种叫做“REST ful”的架构。RESTful是目前流行的一种互联网软件架构，<strong>REST（Representational State Transfer）就是表述状态转移的意思。</strong></p>
+<p>RESTful架构的一个核心概念是<strong>“资源”</strong>（resource）。从RESTful的角度看，网络里的任何东西都是资源，它可以是一段文本、一张图片、一首歌曲、一种服务等，每个资源都对应一个特定的URL（统一资源定位符）并用它进行标示，访问这个URL就可以获得这个资源。资源可以有多种具体表现形式，也就是资源的“表述”（representation），例如，一张图片可以使用JPEG格式，也可以使用PNG格式。URL只是代表了资源的实体，并不能代表它的表现形式。客户端和服务端之间进行互动传递的就只是资源的表述，我们上网的过程就是调用资源的URL，获取它不同表现形式的过程。这个互动只能使用无状态协议HTTP，也就是说，服务端必须保存所有的状态，客户端可以使用HTTP的几个基本操作，包括GET（获取）、POST（创建）、PUT（更新）、DELETE（删除），使服务端上的资源发生状态转化（State Transfer），也就是所谓的“表述性状态转移”。</p>
+<p>OpenStack各个项目都提供了RESTful架构的API作为对外提供的接口，而RESTful架构的核心是资源与资源上的操作，也就是说，OpenStack定义了很多的资源，并实现了针对这些资源的各种操作函数。OpenStack的API服务进程接收到客户端的HTTP请求时，一个所谓的“路由”模块会将请求的URL转换成相应的资源，并路由到合适的操作函数上。这个所谓的路由模块Routes源自于对Rails（Ruby on Rails）路由系统的重新实现，采用MVC（Model-View-Controller）模式，收到浏览器发出的HTTP请求后，路由系统会将这个请求指派到对应的Controller。RESTful只是设计风格而不是标准，Web服务中通常使用基于HTTP的符合RESTful风格的API。而WSGI（Web Server Gateway Interface，Web服务器网关接口）则是Python语言中所定义的Web服务器和Web应用程序或框架之间的通用接口标准。</p>
+<p>WSGI，顾名思义就是Web服务器网关接口。所有客户端访问Web服务，都需要经过该网关接口进行转发。而Web应用的本质就是客户端发送一个HTTP的请求，服务器收到请求生成一个HTML文档，服务器将该HTML文档作为HTTP响应的Body发送给客户端，客户端从HTTP响应的Body体中提取内容并显示出来。像这类生成HTML，接受HTTP请求、解析HTTP请求、发送HTTP响应等代码如果由我们自己来写，则需要耗费大量的时间和精力。正确的做法是底层代码由专门的服务器软件实现，需要一个统一的接口，让程序员专心编写业务层面的代码，这个接口就是WSGI。</p>
+<p><strong>WSGI有两方：服务器方和应用程序方</strong>，如下图所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/OpC56bzccRzi.png?imageslim" alt="mark"></p>
+<p><strong>1）服务器方：</strong>其调用应用程序，给应用程序提供环境信息和回调函数，这个回调函数用来将应用程序设置的HTTP Header和Status等信息传递给服务器方。</p>
+<p><strong>2）应用程序：</strong>用来生成返回的Header、Body和Status，以便返回给服务器方。</p>
+<p>从名称上看，WSGI是一个网关，作用就是在协议之间进行转换。换句话说，WSGI就是一座桥梁，桥梁的一端称为服务端或者网关端，另一端称为应用端或者框架端。当处理一个WSGI请求时，服务端为应用端提供上下文信息和一个回调函数，应用端处理完请求后，使用服务端所提供的回调函数返回相对应请求的响应。</p>
+<p>WSGI的服务方和应用程序之间还可以加入Middleware中间件，从服务端方面看，中间件就是一个WSGI应用；从应用端方面看，中间件则是一个WSGI服务器。这个中间件可以将客户端的HTTP请求，路由给不同的应用对象，然后将应用处理后的结果返回给客户端。如下图示，我们也可以将WSGI中间件理解为服务端和应用端交互的一层包装，经过不同中间件的包装，便具有不同的功能，比如URL路由分发，再比如权限认证。这些不同中间件的组合便形成了WSGI的框架，比如Paste。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/BtdCU1gmj1Jv.png?imageslim" alt="mark"></p>
+<p>OpenStack使用Paste的Deploy组件（<a href="http://pythonpaste.org/deploy/）来完成WSGI服务器和应用的构建，每个项目源码的etc目录下都有一个Paste配置文件，比如Nova中的etc/nova/api-paste.ini，部署时，这些配置文件会被复制到系统/etc/" target="_blank" rel="noopener">http://pythonpaste.org/deploy/）来完成WSGI服务器和应用的构建，每个项目源码的etc目录下都有一个Paste配置文件，比如Nova中的etc/nova/api-paste.ini，部署时，这些配置文件会被复制到系统/etc/</a><project>/目录下。Paste Deploy的工作便是基于这些配置文件。除了Routes与Paste Deploy外，OpenStack中另一个与WSGI密切相关的是WebOb（<a href="http://webob.org/）。WebOb通过对WSGI的请求与响应进行封装，来简化WSGI应用的编写。" target="_blank" rel="noopener">http://webob.org/）。WebOb通过对WSGI的请求与响应进行封装，来简化WSGI应用的编写。</a></project></p>
+<p>WebOb中两个最重要的对象，<strong>一是webob.Request</strong>，对WSGI请求的environ参数进行封装；<strong>一是webob.Response</strong>，包含了标准WSGI响应的所有要素。此外，还有<strong>一个webob.exc对象</strong>，针对HTTP错误代码进行封装。除了这3个对象，<strong>WebOb提供了一个修饰符（decorator），即webob.dec.wsgify</strong>，以便可以不使用原始的WSGI参数和返回格式，而全部使用WebOb替代。</p>
+<p>除了Paste提供的WSGI框架外，为了解决Paste组合框架的Restful API代码过于臃肿，导致项目的可维护性变差的弊端。一些OpenStack的新项目选了Pecan框架来实现Restful API。Pecan是一个轻量级的WSGI网络框架，其设计并不想解决Web世界的所有问题，而是主要集中在对象路由和Restful支持上，并不提供对话（session）和数据库支持，用户可以自由选择其他模块与之组合。</p>
+<h2 id="Horizon服务的实操体验"><a href="#Horizon服务的实操体验" class="headerlink" title="Horizon服务的实操体验"></a><strong>Horizon服务的实操体验</strong></h2><p><strong>Step1：</strong>使用浏览器登录OpenStack Dashboard：<a href="http://rocky-controller/dashboard/，输入**域名，用户名**和**密码**，单击“Sign" target="_blank" rel="noopener">http://rocky-controller/dashboard/，输入**域名，用户名**和**密码**，单击“Sign</a> In”，进入管理员视图Overview主界面。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/M7Y72gWhRjpi.png?imageslim" alt="mark"></p>
+<p><strong>Step2</strong>：登录成功后，默认进入项目概览页面，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Ur5FUimEscnn.png?imageslim" alt="mark"></p>
+<p>后面，将以发放一个简单的cirros虚拟机实例为例，来帮助大家快速熟悉OpenStack Dashboard的基本操作界面。</p>
+<p>首先，要创建一个虚拟机VM实例，需要完成虚拟机规格的定义，在左侧导航栏，选择“Admin &gt; Compute &gt; Flavors”，进入规格列表，单击页面右上角的“Create Flavor”。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/0yDa9n0Sl4Uy.png?imageslim" alt="mark"></p>
+<p>弹出创建规格对话框，输入如下信息：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rFSLxjMBYOzU.png?imageslim" alt="mark"></p>
+<p>然后，需要创建虚拟机VM实例挂载的网络信息，其本质上就是创建虚拟机的虚拟网卡（后面Neutron部分会讲）。在左侧导航栏，选择“Admin &gt; Network &gt; Networks”，进入网络列表，单击页面右上角的“Create Network”。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/yDMvo07AVSew.png?imageslim" alt="mark"></p>
+<p>在Network标签页面，填入如下信息，然后点击Next。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6FOfEuvFdIyk.png?imageslim" alt="mark"></p>
+<p>在Subnet标签页，填写如下信息，然后点击Next。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kXb3VUDuH6nN.png?imageslim" alt="mark"></p>
+<p>在Subnet Details页面，填写如下信息，然后点击Create按钮。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Y5hLGzsY01JK.png?imageslim" alt="mark"></p>
+<p>由于虚拟机VM实例所需要的镜像cirros在安装Glance服务时已经完成上传，因此完成上述虚拟机VM实例所需的最小资源配置后，下面就可以通过页面拉起一个虚拟机VM实例。</p>
+<p><strong>Step1：</strong>在左侧导航栏，选择“Project &gt; Compute &gt; Instances”，进入虚拟机实例列表，单击页面右上角的“Launch Instance”。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/qpUYI9Rf9VHy.png?imageslim" alt="mark"></p>
+<p><strong>Step2</strong>：弹出发放实例对话框，在“Details”页签，输入虚拟机实例的名称“Web_Srv01”，其他保持默认，单击“Next”。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/sOvk3ntEsIuS.png?imageslim" alt="mark"></p>
+<p><strong>Step3</strong>：在“Source”页签，“Create New Volume”下方选择“No”，单击“Available” 下方列表中cirros镜像（环境安装完成后，系统默认创建的测试镜像）的上传箭头，“Allocated”下方列表中将显示选择的镜像，其他保持默认，单击“Next”。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/zMyiklwup9Be.png?imageslim" alt="mark"></p>
+<p><strong>Step4：</strong>在“Flavor”页签，单击“Available”下方列表中刚刚创建的规格“Flavor_web”的上传箭头 ，“Allocated”下方列表中将显示选择的规格，单击“Launch Instance”，完成虚拟机实例的创建。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/FA4LMLf22bUh.png?imageslim" alt="mark"></p>
+<p><strong>Step5：</strong>返回虚拟机实例列表，查看创建的虚拟机实例的状态，等待状态变为“Active”，表示虚拟机VM实例启动成功。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/uu2NNbXOLy5I.png?imageslim" alt="mark"></p>
+<p><strong>Step6：</strong>单击虚拟机实例名称“Web_Srv01”，进入虚拟机实例概览页面，可查看虚拟机实例的详细信息，如下所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Y7T4WkIbKHUc.png?imageslim" alt="mark"></p>
+<p><strong>Step7：</strong>单击“Console”页签，可进入虚拟机实例的终端页面，如下所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5NE2aPIKMUyW.png?imageslim" alt="mark"></p>
+<p>以上，就是通过Horizon服务利用Web页面可视化创建一个虚拟机VM实例的全过程。通过上图中Interface页签，log页签还可以查看虚拟机VM实例的网卡信息及操作日志。同时，Horizon页面不仅用来创建虚机，还可以创建Domain、Project、User、UserGroup、Network、Glance、Volume等资源，在后续各服务的实操环节会有展示。</p>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a><strong>思考</strong></h2><p><strong>1、注销admin用户，通过普通用户登录后，观察Project的Overview视图与admin用户下的Overview视图的区别，并分析之间产生差异的原因？</strong></p>
+<p><strong>2、尝试通过命令行CLI的方式完成上述虚拟机VM实例创建的操作。**</strong>（提示：命令行的用法可以通过openstack &lt;资源类型名&gt; &lt;动作&gt; –help方式查看帮助获得，比如：虚机资源类型名为server，网络资源类型名为network，子网资源类型名为subnet，镜像资源类型名为image，规格资源类型名为flavor等等）**</p>
+<p><strong>3、如果在创建虚拟机VM实例的过程中，选择镜像时要求创建卷，那么所创建的VM实例的系统盘由哪个服务创建？</strong></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2020/03/03/2020-03-03-Web-UI管理服务Horizon/" title="2020-03-03-Web UI管理服务Horizon">https://kkutysllb.cn/2020/03/03/2020-03-03-Web-UI管理服务Horizon/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/云计算/" rel="tag"><i class="fa fa-tag"></i> 云计算</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/" rel="next" title="2020-03-03-中间件分布式换粗Memcache和Redis">
+                <i class="fa fa-chevron-left"></i> 2020-03-03-中间件分布式换粗Memcache和Redis
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/03/2020-03-03-认证管理服务Keystone/" rel="prev" title="2020-03-03-认证管理服务Keystone">
+                2020-03-03-认证管理服务Keystone <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">67</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#REST-ful与WSGI介绍"><span class="nav-number">2.</span> <span class="nav-text">REST ful与WSGI介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Horizon服务的实操体验"><span class="nav-number">3.</span> <span class="nav-text">Horizon服务的实操体验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考"><span class="nav-number">4.</span> <span class="nav-text">思考</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">797k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">12:05</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2020/03/03/2020-03-03-Web-UI管理服务Horizon/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

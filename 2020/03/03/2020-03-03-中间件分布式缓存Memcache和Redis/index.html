@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="概述缓存系统在OpenStack集群部署中有着非常重要的应用，在开源OpenStack的解决方案中一共使用了两种分布式缓存技术，一种是用于前端API服务访问的Memcache缓存，另一种就是用于后端计量和告警信息上报的Redis缓存。无论是Memcache缓存还是Redis缓存，均是一种分布式缓存。所谓分布式缓存，就是指缓存服务可以部署多个相互独立的服务器节点上，可以彼此分散独立存取数据，减少单节">
+<meta name="keywords" content="云计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020-03-03-中间件分布式换粗Memcache和Redis">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="概述缓存系统在OpenStack集群部署中有着非常重要的应用，在开源OpenStack的解决方案中一共使用了两种分布式缓存技术，一种是用于前端API服务访问的Memcache缓存，另一种就是用于后端计量和告警信息上报的Redis缓存。无论是Memcache缓存还是Redis缓存，均是一种分布式缓存。所谓分布式缓存，就是指缓存服务可以部署多个相互独立的服务器节点上，可以彼此分散独立存取数据，减少单节">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/I9ekUo8D42DH.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Idtaxk8yWcu6.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/V9JQA8Gipqj2.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/m6sxxegXy5o3.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/eiMCG194h29S.png?imageslim">
+<meta property="og:updated_time" content="2020-03-03T09:06:13.490Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2020-03-03-中间件分布式换粗Memcache和Redis">
+<meta name="twitter:description" content="概述缓存系统在OpenStack集群部署中有着非常重要的应用，在开源OpenStack的解决方案中一共使用了两种分布式缓存技术，一种是用于前端API服务访问的Memcache缓存，另一种就是用于后端计量和告警信息上报的Redis缓存。无论是Memcache缓存还是Redis缓存，均是一种分布式缓存。所谓分布式缓存，就是指缓存服务可以部署多个相互独立的服务器节点上，可以彼此分散独立存取数据，减少单节">
+<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/I9ekUo8D42DH.png?imageslim">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2020-03-03-中间件分布式换粗Memcache和Redis | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2020-03-03-中间件分布式换粗Memcache和Redis
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-03 17:00:03 / 修改时间：17:06:13" itemprop="dateCreated datePublished" datetime="2020-03-03T17:00:03+08:00">2020-03-03</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">11k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">10 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>缓存系统在OpenStack集群部署中有着非常重要的应用，在开源OpenStack的解决方案中一共使用了两种分布式缓存技术，一种是用于前端API服务访问的Memcache缓存，另一种就是用于后端计量和告警信息上报的Redis缓存。无论是Memcache缓存还是Redis缓存，均是一种分布式缓存。所谓分布式缓存，就是指缓存服务可以部署多个相互独立的服务器节点上，可以彼此分散独立存取数据，减少单节点的数据存取压力，但是各节点之间的数据并非要求一定保持一致性。大多数的OpenStack服务都会使用Memcache或Redis缓存系统存储如Token等临时数据，缓存技术的应用场景一般都是应用在有大并发访问需求的地方，比如使用Web服务的门户网站，淘宝、京东等购物网站等等。<strong>缓存系统可以认为是基于内存的数据库</strong>，相对于后端大型生产数据库MySQL等，基于内存的缓存系统能够提供快速的数据访问操作，从而提高客户端的数据请求访问，并降低后端数据库的访问压力，避免了访问重复数据时数据库查询所带来的频繁磁盘IO和大型关系表查询时的时间开销。<a id="more"></a></p>
+<h2 id="Memcache分布式缓存"><a href="#Memcache分布式缓存" class="headerlink" title="Memcache分布式缓存"></a><strong>Memcache分布式缓存</strong></h2><p>Memcache利用系统内存对客户端经常进行反复读写和访问的数据进行缓存，来减轻后端数据库的访问负载和提高客户端的数据访问效率。Memcache中缓存的数据经过HASH之后被存放到位于内存上的HASH表内，而HASH表中的数据以Key-Value的形式存放。在Memcache集群中，Memcache客户端的API通过32Bit的循环冗余校验码（CRC-32）将存储数据的键值对进行HASH计算后，存储到不同的Memcached节点服务器上，而当Memcached服务器节点的物理内存剩余空间不足时，Memcached将使用最近<strong>最少使用算法（LRU，LeastRecentlyUsed）</strong>对最近不活跃的数据进行清理，从而腾出多余的内存空间供缓存服务使用。在OpenStack的集群部署中，大部分子项目都会用到内存缓存系统进行客户端访问数据的缓存，从而提高访问速率并减轻数据库的负载压力。</p>
+<p>Memcache缓存系统在工作流程的设计上比较简单，其<strong>主要思想就是Memcache的客户端根据用户访问请求中的Key，到Memcached服务器的内存HASH表中获取对应此Key的Value，Memcache客户端取到值之后直接返回给用户，而不用再到数据库中进行数据查询。当然，内存HASH表中不可能预知和存储全部客户端需要的Key-Value值对，因此，如果在Memcache服务器中没有找到与请求中的Key对应的Value，则转向后端数据库进行查询，并将查询到的Value与Key进行HASH后存入Memcached服务器中，从而保证曾经存储过的数据一定能被查询到，并将数据库中查询到的数据缓存到Memcache服务器中，从而提高下一次缓存查询的命中率，</strong>其工作流程如下图所示。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/I9ekUo8D42DH.png?imageslim" alt="mark"></p>
+<p>上述流程中，Memcache的整个工作流程被分为七步实现，但是并非每次查询都需要经历七个步骤，这需要根据是否在缓存中命中请求Key对应的Value来决定。具体流程如下：</p>
+<p><strong>1~2：</strong>用户终端向Web服务器发起请求（Web服务器中部署有Memcache客户端），Web服务器中的Memcache客户端向Memcached服务器发起查询请求，查询目标为用户请求中包含的Key所对应的Value。</p>
+<p><strong>1~2~3~7：</strong>如果Memcache客户端在Memcached服务器中查询到与请求Key对应的Value，则直接返回结果，本次数据查询过程结束，即整个过程不会访问数据库。</p>
+<p><strong>1~2~4~5~7~6：</strong>如果经过步骤1和2没有查询到数据，则表明Memcached服务器没有缓存请求中的Key对应的Value，即本次缓存查询未命中，但是查询到此并不结束，而是转向数据库中继续查询该值，并将查询到的数据返回给客户端，同时将该数据缓存到Memcached服务器的HASH表中，以便客户端再次发起相同请求时，该值在Memcached服务器中能够直接命中，而无需再次查询数据库。</p>
+<p><strong>需要注意的是：</strong>当数据库中存放的永久数据发生更新时，Memcached服务器中缓存的值也需要同时更新。如果Memcached服务器中分配给Memcached使用的内存空间耗尽，则Memcache缓存系统将使用LRU算法和数据的到期失效策略清理非活跃的冷数据，在这个过程中，已达到策略设置中的保存期限的数据将会首先被清除，然后再清除最近最少使用的数据。</p>
+<p><strong>由于Memcache缓存系统中的每个Memcached服务器节点独立存取数据，彼此之间不存在数据的镜像同步机制</strong>，因此，如果某一个Memcached服务节点故障或者重启，则该Memcached节点上缓存在内存中的全部数据均会丢失，丢失缓存数据后，访问将无法在缓存中命中任何Key，所有Key的访问都需要到数据库重新查询一遍，同时将查询的数据再缓存到Memcached服务器的内存缓存中，即Memcached服务器每重启一次，其储存的数据就要被重新缓存一次。同时，Memcache缓存系统以Key-Value为单元进行数据存储，能够存储的数据Key尺寸大小为250字节，能够存储的Value尺寸大小为1MB，超过这个值不允许存储。并且Memcache缓存系统的内存存储单元是按照Chunk来分配的，这意味着不可能所有存储的Value数据大小都正好等于一个Chunk的大小，因此必然会造成内存数据碎片而浪费存储空间。</p>
+<p>Memcache集群的配置极为简单，服务器端只需运行Memcached服务，客户端只需在应用程序的配置文件中指定要访问的Memcached服务器节点IP地址和端口组成的列表。因为Memcache集群无需在Memcached服务器端进行配置，数据的分布存储完全取决于Memcache客户端的节点选取算法。如下图所示，当应用程序向Memcache集群存储数据时，Memcache客户端会根据请求存储数据的Key-Value值对，利用一定算法从Memcached集群存储节点中选取某一个Memcached服务器节点来存储数据，当算法选定该节点后，对应Key的Value就会被存储到该节点中。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Idtaxk8yWcu6.png?imageslim" alt="mark"></p>
+<p>Memcache客户端在选取缓存节点时所采用的算法对数据的最终存储位置有着决定性的作用，而节点选取算法也是Memcache缓存系统中最重要的部分。在通常使用时，Memcache缓存系统中最常使用的两个算法分别是<strong>余数HASH算法</strong>和<strong>一致性HASH算法</strong>。</p>
+<p><strong>余数HASH算法就是将需要存储的Key-Value值对的Key字符通过HASH算法后得到HASH Code，这里的HASH Code是一个数字，而HASH算法的作用就是将一个字符串通过HASH后得到一个数值。通常，相同的字符串经过相同的HASH算法后一定会得到相同的HASH Code，因此，存储和提取相同Key的Memcached目标节点一定是同一个节点。</strong>比如Key经过HASH之后得到的HASH Code为100，Memcache集群缓存系统中有3个Memcached节点，那么余数HASH就是将HASH Code 100除以节点数目3，然后取余得到的结果，这里结果为1，这样选取到的Memcached服务器节点为编号为1，即Memcached1节点。因为不同的Key值得到的HASH Code是不同的，这样取余后得到的结果是比较随机均匀的，数据就会随机存储到不同的Memcached服务器节点上，因此，如果在一个系统架构中，Memcached服务器节点数目比较固定，使用过程中无需扩容节点，则余数HASH算法可以很好地满足Memcache集群中的节点选取过程。然后，当需要扩容节点时，比如当增加3个Memcached节点后，现在Memcached服务器节点数目为6，HASH Code仍然为100，可余数HASH的结果却为2，而不是之前的1，即Memcache客户端在提取这个Key的值Value时，算法将会路由到Memcached2节点去，但是扩容之前该Key的Value是存储在Memcached1节点中的，因此客户端将不能在缓存系统命中此Key。</p>
+<p>为了解决这种扩容引起的缓存命中失效问题，引入一致性HASH算法。其实，引入一致性HASH并不能完全解决缓存命中失效的问题，但是可以大大降低缓存命中失效发生的概率，而且随着缓存节点数量逐渐增多，这种缓存命中失效带来的IO瓶颈问题几乎可以忽略不计。一致性HASH通过将Memcached节点和Key字符串HASH后放到一个HASH环上，然后Key字符串的HASH值再以顺时针的方式找到距其最近的节点HASH值，该节点HASH值对应的节点便是Key的Value存储节点（一致性HASH在分布式存储部分会详细讲解，这里简单提一下）。当集群中增加缓存节点，只有HASH Code靠近增加节点HASH值的数据会受影响，其余节点仍保持原来的缓存映射关系，所以一致性HASH相比余数HASH在节点变化的场景下，缓存命中失效的概率要低很多。对于Memcache缓存系统而言，究竟选择余数HASH还是一致性HASH，需要根据Memcache缓存系统的实际使用情况而定。</p>
+<p>如前所述，Memcache集群只能解决数据访问的瓶颈问题，并不能解决数据的高可用问题。如果要<strong>实现Memcache集群的数据HA，就必须借助第三方工具来实现。Memcache缓存系统最常使用的HA方式是Memcached节点代理，其中最常使用的代理软件为Magent</strong>。通过Magent缓存代理，可以防止缓存系统的单点故障，同时将缓存代理服务器配置为主备模式，即可实现代理服务器的高可用。在配置有Magent代理的Memcache缓存系统中，当客户端发起缓存数据请求时，客户端将首先连接到缓存代理服务器，然后缓存代理服务器再连接到Memcached服务器，Magent缓存代理服务器可以连接多台后端Memcached服务器，进而可以将相同的缓存数据同时存储到多个Memcached服务器，最终实现缓存数据的同步存储。如下图所示，实现Memcache服务的数据HA非常简单，只需在两台同样配置的服务器上分别安装memcache和magent软件，稍做简单配置即可实现Magent代理的高可用缓存系统。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/V9JQA8Gipqj2.png?imageslim" alt="mark"></p>
+<h2 id="Redis分布式缓存"><a href="#Redis分布式缓存" class="headerlink" title="Redis分布式缓存"></a><strong>Redis分布式缓存</strong></h2><p>Redis，俗称远程字典服务器（Remote Dictionary Server，Redis），是一款由ANSI C语言编写、遵守BSD协议、支持网络访问、基于系统内存的开源软件，同时，Redis也是支持日志型和Key-Value键值对类型数据持久化的数据库。由于Redis中存储的Value值类型可以是字符串（String）、哈希（HASH）、列表（List）、集合（Sets）和有序集合（Sorted Sets）等类型，因此<strong>Redis通常也被称为数据结构服务器</strong>。在Redis中，这些数据类型都支持Push/Pop、Add/Remove以及针对集合的交集、并集和差集等丰富的数据操作，并且这些操作都具有保持数据一致性的原子性，而且Redis还支持各种不同的数据排序方式。</p>
+<p>与Memcache缓存系统类似，为了保证高效的数据存取效率，Redis的数据都被缓存在内存中，但是Redis与Memcache在处理数据存储方式上有很大的差异，即Redis默认会周期性地把缓存中更新的数据写入磁盘进行永久保存，并将对缓存数据的修改操作追加到日志文件中，由于Redis本质上就是一个基于内存的数据库，因此Redis具备很多如日志记录等通用数据库的共性。<strong>Redis为了实现数据高可用，其利用已存入磁盘中的数据在不同节点之间进行同步操作，从而实现了Master-Slave模式的主从数据高可用，Redis的数据可以从Master服务器向任意数量的Slave服务器上进行同步。</strong></p>
+<p><strong>在Redis缓存系统中，并非所有通过Redis客户端写入的数据都永久性地存储在物理内存中，这是Redis和Memcache缓存系统最为明显的区别，Redis会定期性地将物理内存中的数据写入磁盘，其原理类似内存虚拟化技术中内存置换技术。Redis实现了用虚拟内存（VM，Virtual Memory）机制来扩充逻辑可用的内存空间，当Redis认为物理内存空间使用量达到某个预设值时，Redis将自动进行内存页的交换（Page Swap）操作，从而将缓存中的数据写入磁盘中。</strong></p>
+<p><strong>Redis的VM机制使得Redis可以存储超过系统本身物理内存大小的数据，但是，这并不意味着可以无限减小物理内存并不断增加虚拟内存以满足Redis的整体内存需求</strong>，主要有以下3点约束：</p>
+<p>1）Redis将全部的Key保存在物理内存中，从而可以快速命中Key，并且由于Redis在读取数据时只在物理内存中进行Key的索引，找到Key之后再到物理内存或者虚拟内存中读取对应的Value，因此为Redis预留的物理内存空间至少要满足Key的存储。</p>
+<p>2）过度地减小为Redis预留的物理内存空间，会使得Redis频繁发生Swap操作，极大降低Redis的数据稳定性，并对Redis的数据访问造成响应缓慢等影响。</p>
+<p>3）在Redis将内存中的数据交换到磁盘的时候，提供访问服务的Redis主线程和进行交换操作的子线程会共享这部分内存空间，所以如果此时有请求要更新这部分内存空间的数据，则Redis将会阻塞这个请求操作，直到子线程完成Swap操作后才可以进行数据的更新修改。</p>
+<p>上述的第三点约束是一种默认情况下的机制，即Redis会使用阻塞方式来使I/O请求等待Swap操作将全部所需的Value数据块读回内存，然后才进行下一步操作。这种机制在小量访问对数据访问的影响可以忽略，但是在大并发场景下，其影响直接造成客户体验变差。因此，在大并发场景下，需要配置Redis的IO线程池来解决，使得Redis并发进行磁盘到物理内存的数据读回操作，减少IO阻塞时间。</p>
+<p>在Redis节点重新启动之后，丢失的缓存数据会从磁盘重新加载或者从日志文件中重新恢复，与Memcache相比，天生具备数据持久化功能。<strong>针对两种不同的缓存数据恢复方式，Redis提供了两种数据持久化的方式，分别是Redis数据库方式（RDB，Redis DataBase）和日志文件方式（AOF，Append Only File）</strong>。RDB持久化方式就是将Redis缓存数据进行周期性的快照，并将其写入磁盘等永久性存储介质中，而AOF采用的是与RDB完全不一样的数据持久化方式，在AOF方式下，Redis会将所有对缓存数据库进行数据更新的指令全部记录到日志文件中，待Redis重新启动时，Redis将会把日志文件中的数据更新指令从头到尾重复执行一遍，这是一个重现数据变更的过程，当执行到日志文件末尾时即可实现缓存数据的恢复，AOF恢复方式与DB2数据库的redo日志回滚恢复方式原理类似。在实际的Redis使用过程中，RDB和AOF这两种数据持久化方式可以同时使用，并且这也是官方推荐的数据持久化方式，在两种方式同时开启的情况下，如果Redis数据库重新启动，则会优先采用AOF方式来进行数据恢复，这是因为AOF方式对数据恢复的完整性要高于RDB方式（RDB因为是周期性存储快照数据，所以数据完整性至少丢失一个快照存取周期）。</p>
+<p>在Redis3.0版本发行之前，Redis自身并不具备集群高可用功能，尽管Redis3.0中增加了Redis的Cluster功能，但是，使用Redis Cluster功能的用户相对还是很少，其可靠性和稳定性相对来说还需要进一步验证。目前，针对Redis的集群高可用功能，更多的是借助第三方负载均衡和集群管理软件（Pacemaker+HAProxy/Keepalived）来实现或者是通过对Redis进行二次开发来实现。在借助第三方负载均衡和集群管理软件的方案中，通过负载均衡软件的VRRP协议创建虚拟IP资源以对外提供高可用的Redis虚拟IP，并通过集群管理软件创建Redis的Master-Slave多状态资源，当Redis的Master节点故障后，通过集群管理软件的资源管理功能，利用Redis的Agent脚本将Slave节点提升为Master，同时虚拟IP迁移到新的Master节点继续对外提供服务。</p>
+<p><strong>Redis主从模式的集群能够实现数据高可用的关键，是Redis提供的数据Replication功能</strong>，即数据能够在Redis的主从节点之间进行复制，从而保证了数据的高可用性。其复制是异步复制，在复制的过程中，Master节点是非阻塞的，不会受到Slave节点数据同步的影响，在Slave进行同步的时候，Master继续提供高效的内存数据查询服务。同时，在复制的过程中，Slave节点也是非阻塞的。在数据同步时，通过配置可以允许Slave节点利用之前的数据集提供查询功能活着此时返回一个错误，并提示数据正在同步中。但是不管怎么设置，在Slave同步完成之后，Slave节点的陈旧数据将会被删除，新同步来的数据将会被加载到内存，而在这个删除与加载的过程中，Slave的访问是暂时被禁止的。Redis的Replication功能除了数据冗余之外，还可以将数据的只读查询分散到多个Slave节点，以让Slave节点来负责这类数据的排序操作。</p>
+<p>在Redis的Master-Slave集群模式下，如果配置了一个或多个Slave节点并将其连接到Master节点，则不管Slave节点是第一次连接Master还是重新连接到Master，当连接完成之后，Slave都会发送一个同步命令给Master，Master接到命令后开始在后台进行内存数据快照，并将在快照期间对当前缓存数据进行更新的命令全部缓存起来。当Master上的数据以RDB方式保存完成后，Master将该RDB数据文件传送给Slave，Slave将数据文件写入本地磁盘，然后再将这些来自Master的RDB数据文件加载到内存中，之后Master将数据快照期间缓存的命令发送给Slave，Slave依次执行这些数据变更命令，使得每次同步操作后都能确保自身数据与Master节点缓存数据的一致性。当Slave与Master的连接因某些原因断开后，Slave会自动与Master重新建立连接。如果Master同时收到多个Slave发送的数据同步请求，则Master仅会对缓存数据做一次快照保存，然后将保存的RDB数据文件发送给多个Slave节点。当同步中的Slave与Master断开又重新连接后，Slave将会重新发送同步全部数据的请求，但是从Redis2.8开始，重新连接的Slave可以通过断点续传功能仅同步上次未完成同步的数据请求，其机制是Master和所有的Slave将同步操作的日志记录到内存文件中，同时还记录了数据同步的偏移量和Master此时的运行标志（Run ID），如果数据同步过程被断开，Slave将会重新连接并请求Master继续同步。此时，如果Master的Run ID还没有改变，并且设置的同步偏移量在同步日志中可用，那么同步操作将会从中断点继续同步，如果不能满足这两个条件，则数据同步操作只能重新开始。此外，如果Master的Run ID没有保存到磁盘上，则无法进行续传同步。如果Master节点的磁盘I/O性能较差，而不同的Slave节点不在同一时间点发生同步请求，则数据同步过程必然增加Master的工作负载。为了解决这个问题，<strong>Redis2.8.18中提出了无盘复制（Diskless Replication）的设计</strong>，在这种模式下，Master直接将RDB文件传送到Slave节点，而无须再在本机上进行I/O操作，无盘复制技术的提出极大提升了Master在数据同步复制过程中的响应效率。</p>
+<h2 id="Redis-Cluster集群技术"><a href="#Redis-Cluster集群技术" class="headerlink" title="Redis Cluster集群技术"></a><strong>Redis Cluster集群技术</strong></h2><p>上面提到Redis Cluster是Redis官方在3.0版本以后推出一种集群技术，作为官方的重点推荐，虽然其可靠性和稳定性还有待验证，但是不影响我们理解其工作原理和机制。Redis Cluster是Redis的分布式实现，RedisCluster在设计之初就考虑到了去中心化的问题，因此集群中不存在任何中心控制节点，每一个节点都是功能对等的集群成员，每个节点除了保存有自己的配置元数据外，还保存着整个集群的状态信息。由于每个集群节点之间彼此互联，并且随时保持活动连接，客户端只需连接到集群中的任一个节点，便可获取到存储在其他节点上的数据。机制示意图如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/m6sxxegXy5o3.png?imageslim" alt="mark"></p>
+<p>Redis Cluster中的各个节点之间保持相互连接，并且彼此之间可以通信，客户端随意连接到任何一个集群节点就能将整个Redis集群作为一个整体来访问，同时客户端也无需知道Redis Cluster将其提交的数据存入哪个Redis节点中，数据存储完全由Redis Cluster根据自己的算法来决定。在Redis Cluster中，数据被分散存储到不同的Redis节点上，Redis Cluster并没有采用一致性HASH来分配数据存放到不同的节点，而是采用了一种称为<strong>哈希槽（HASH Slot）</strong>的技术来分配数据。Redis Cluster默认将存储空间分配为16384 Slots，每个节点承担其中的一部分Slots。如果Redis需要扩充Redis节点数，只需重新分配每个节点的槽位。当客户端通过SET命令来保存一个Key-Value键值的时候，Redis Cluster<strong>会采用CRC16（Key）对16384取模来决定该Key应该被存储到哪个Slots中</strong>，具体的计算公式就为：<strong>slot_num=CRC（’Key_name’）％16384</strong>。假设通过公式计算得到的Slot_num为14201，则数据会被存储在14201槽位对应的节点上。为了保证数据的高可用，Redis Cluster用到了Master-Slave的主从数据复制模式，即为每个Master都设置一个或多个Slave，Master负责数据存取，而Slave负责数据的同步复制，当Master故障时，其中的某个Slave会被提升为Master。假设集群中有A、B、C三个主节点，同时分别为其设置了A1、B1、C1三个Slave节点，此时如果B节点故障，则集群会将B1节点选取为Master节点继续提供服务，当B节点恢复之后，它就变成了B1的Slave节点。当然，如果B和B1同时故障，则集群B就不可用了。</p>
+<h2 id="Redis在OpenStack中的应用"><a href="#Redis在OpenStack中的应用" class="headerlink" title="Redis在OpenStack中的应用"></a><strong>Redis在OpenStack中的应用</strong></h2><p>在OpenStack开源云的计费项目Ceilometer中，当进行规模化集群部署时，通常使用Redis插件来为运行在控制节点集群上的多个Ceilometer Agents提供协调机制，Redis插件使用具有Redis后端的Tooz库来为Agents提供一组轮询使用的资源集。在部署了Redis插件之后，Ceilometer Agents的部署可以分布到每个控制节点上，并且这些分布的Agents将会自动加入协调组（Coordination Group）中，在这种分布式集群部署中，通常使用Pacemaker创建Redis-server资源以监控Redis插件进程的运行状态，同时插件会自动配置Redis-sentinel进程来监控Redis集群状态，而Redis-sentinel的主要作用是当Redis集群的Master节点故障时，通过一定的机制重新选取新的Master节点，同时将Ceilometer的代理重新定向到新的Master节点，并进行Redis集群节点之间的数据同步。</p>
+<p>在OpenStack集群高可用部署中，Redis被用作Ceilometer组件的分布式协调组后端缓存，同时集合集群资源管理软件Pacemaker，将Redis配置为Pacemaker的资源以实现Redis-server的高可用Master-Slave模式。此外，还需要为Redis集群配置一个高可用IP地址，高可用IP可以通过Pacemaker的虚拟IP资源实现。在三节点的OpenStack控制节点集群架构中，将其中一个控制节点作为Redis的Master节点，另外两个控制节点作为Redis的Slave节点，Redis和Ceilometer的Central agent在三个控制节点中的部署拓扑如下所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/eiMCG194h29S.png?imageslim" alt="mark"></p>
+<p>在集成Pacemaker的集群中，Redis服务被配置成为Pacemaker的多状态资源，即Master/Salve资源组。通过Pacemaker配置的Redis高可用Master/Slave集群中，controller01为Redis的Master节点，controller02和controller03为Redis的Slave节点，同时Redis对外提供服务的虚拟IP地址运行在Master节点，这是通过Pacemaker的Colocation约束设置的，即<strong>Redis的VIP只会运行在Master节点上</strong>。如果Redis的Master节点故障，则Pacemaker将会从两个Slave节点中重新选举一个Mastre节点，而VIP也会相应地自动移动。</p>
+<p>总的来说，memcache缓存技术主要用来存储见到key-value格式的数据，如OpenStack各个服务的API交互数据。如果需要缓存数据类型多样、数据可靠性高的场景，如OpenStack的ceilometer服务提供的计量和告警等数据，则采用Redis这种支持数据持久化且支持多种数据结构的缓存技术更加合适。</p>
+<h2 id="思考："><a href="#思考：" class="headerlink" title="思考："></a><strong>思考：</strong></h2><p><strong>1、Memcache技术的服务端口号是多少？在OpenStack的最小系统配置下（keystone、nova、neutron、cinder、glance、horizon），控制节点最少需要开启多少个memcache服务进程？</strong></p>
+<p><strong>2、nova服务至少需要开启多少个memcache服务进程？</strong></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/" title="2020-03-03-中间件分布式换粗Memcache和Redis">https://kkutysllb.cn/2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/云计算/" rel="tag"><i class="fa fa-tag"></i> 云计算</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/" rel="next" title="2020-03-02-中间件消息队列服务RabbitMQ">
+                <i class="fa fa-chevron-left"></i> 2020-03-02-中间件消息队列服务RabbitMQ
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/03/2020-03-03-Web-UI管理服务Horizon/" rel="prev" title="2020-03-03-Web UI管理服务Horizon">
+                2020-03-03-Web UI管理服务Horizon <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">67</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Memcache分布式缓存"><span class="nav-number">2.</span> <span class="nav-text">Memcache分布式缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis分布式缓存"><span class="nav-number">3.</span> <span class="nav-text">Redis分布式缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-Cluster集群技术"><span class="nav-number">4.</span> <span class="nav-text">Redis Cluster集群技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis在OpenStack中的应用"><span class="nav-number">5.</span> <span class="nav-text">Redis在OpenStack中的应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考："><span class="nav-number">6.</span> <span class="nav-text">思考：</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">797k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">12:05</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>
