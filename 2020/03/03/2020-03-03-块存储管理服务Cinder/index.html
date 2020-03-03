@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="概述OpenStack早期版本是使用nova-volume为云平台提供持久性块存储服务器的。从Folsom版本后，就把作为Nova组成部分的nova-volume分离了出来，形成了独立的Cinder组件。Cinder本身并不直接提供块存储设备实际的管理和服务，而是在虚拟机和具体的存储设备之间引入一个抽象的“逻辑存储卷”。Cinder与Neutron类似也是通过Plugins-Agent的方式通过添">
+<meta name="keywords" content="云计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020-03-03-块存储管理服务Cinder">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/2020-03-03-块存储管理服务Cinder/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="概述OpenStack早期版本是使用nova-volume为云平台提供持久性块存储服务器的。从Folsom版本后，就把作为Nova组成部分的nova-volume分离了出来，形成了独立的Cinder组件。Cinder本身并不直接提供块存储设备实际的管理和服务，而是在虚拟机和具体的存储设备之间引入一个抽象的“逻辑存储卷”。Cinder与Neutron类似也是通过Plugins-Agent的方式通过添">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rdbsUqaYc6WV.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/LHLyAXWvBSq1.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/eOFThv3VQROR.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dE9nSkIpfObP.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5a2oHkCNo6vN.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/LGgguzi6SUV3.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/NyWEQGaewpJL.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/7GJSTM2fXmBD.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/iicKI6ANVVyS.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Yxgbt1lca68d.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Dlu4PkwjmlLb.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kmsnJ1Toa8VP.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/0Yoai0g107b1.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/11bi37Xxx8QQ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/2Brk1BB4xuyt.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6NxYGe1Vc7ux.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pBKYTG1jfjUU.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/wmVvJXDo8YwV.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pCcs285eguik.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/tcVPyhE9HC13.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/fcnuBhsQJ4TQ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rcVzUyVydFHa.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/i8wenJsuanm5.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HOlhyxS5mRFS.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pHyy3MCc6JS6.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ap86KNGU12Ue.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HxKpyl9P4Sah.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/MFtW0WIJdFjg.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jEaXohGXcH0H.png?imageslim">
+<meta property="og:updated_time" content="2020-03-03T14:32:51.302Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2020-03-03-块存储管理服务Cinder">
+<meta name="twitter:description" content="概述OpenStack早期版本是使用nova-volume为云平台提供持久性块存储服务器的。从Folsom版本后，就把作为Nova组成部分的nova-volume分离了出来，形成了独立的Cinder组件。Cinder本身并不直接提供块存储设备实际的管理和服务，而是在虚拟机和具体的存储设备之间引入一个抽象的“逻辑存储卷”。Cinder与Neutron类似也是通过Plugins-Agent的方式通过添">
+<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rdbsUqaYc6WV.png?imageslim">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/2020-03-03-块存储管理服务Cinder/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2020-03-03-块存储管理服务Cinder | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/2020-03-03-块存储管理服务Cinder/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2020-03-03-块存储管理服务Cinder
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-03 22:16:40 / 修改时间：22:32:51" itemprop="dateCreated datePublished" datetime="2020-03-03T22:16:40+08:00">2020-03-03</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">11k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">10 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h2><p>OpenStack早期版本是使用nova-volume为云平台提供持久性块存储服务器的。从Folsom版本后，就把作为Nova组成部分的nova-volume分离了出来，形成了独立的Cinder组件。Cinder本身并不直接提供块存储设备实际的管理和服务，而是在虚拟机和具体的存储设备之间引入一个抽象的“逻辑存储卷”。Cinder与Neutron类似也是通过Plugins-Agent的方式通过添加了不同厂家的DRIVE来整合多种厂家的后端存储设备，并通过提供统一的API接口的方式为云平台提供持久性的块设备存储服务，类似于Amazon的EBS（Elastic Block Storage）。Cinder服务的实现在OpenStack众多服务中，只依赖Keystone服务提供认证。可能有些人觉得Cinder提供的Volume作为云主机的云磁盘，因此Cinder与Nova也有依赖关系。其实，这是一种错误的映像，Cinder-Volume创建的“逻辑存储卷”不仅可以用于云主机的云磁盘，也可以用于其他场景，其创建卷的过程与Nova创建的云主机的状态并没有直接关联。或者换个角度来看，Nova创建的云主机也可以不用挂载Cinder创建的Volume而正常运行。<a id="more"></a></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rdbsUqaYc6WV.png?imageslim" alt="mark"></p>
+<p>在OpenStack系统中，共有4中存储类型，分别是：<strong>临时存储、块存储、对象存储</strong>和<strong>文件系统存储</strong>，负责实现其功能服务的也不相同。下表就是OpenStack系统中，各种存储类型在访问方式、客户端、管理服务、生命周期、容量和典型应用场景方面的对比。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/LHLyAXWvBSq1.png?imageslim" alt="mark"></p>
+<p>上面的4种存储类型总体上分为<strong>临时性存储</strong>和<strong>持久性存储</strong>两大类，除了Nova管理的临时存储外，其余都是持久性存储。所谓<strong>临时存储（Ephemeral Storage）</strong>，就是指如果只部署了Nova服务，默认分配给虚拟机实例instance的系统磁盘为计算节点的本地磁盘空间，以文件形式存放在本地磁盘中，随着虚拟机实例instance终止，该存储空间也会被释放，虚拟机实例instance的数据无法持久性保存。而<strong>持久性存储（Persistent Storage）</strong>，是指持久化存储设备的生命周期独立于任何其他系统资源和设备，无论虚拟机实例instance的运行状态如何，是否被终止，其上存储的数据一直可用。</p>
+<p>在OpenStack支持的持久化存储中，块存储操作对象是磁盘或卷（Volume），将其直接挂在到主机，一般用于主机的直接存储空间和数据库应用，DAS和SAN设备都可以提供块存储功能，甚至NFS作为Cinder存储后端时，也可以当做块存储设备来使用（OpenStack的文件存储管理服务是Manila，Manila也可以使用NFS作为存储后端，这时NFS被当做文件系统存储使用，但是NFS挂载为Cinder的后端存储时，只能当做块存储使用）。总结起来而言：<strong>块存储就是通过SAN或iSCSI等存储协议将存储设备端的卷（Volume）挂载到虚拟机上并进行分区和格式化，然后挂载到本地文件系统使用的存储实现方式。</strong></p>
+<h2 id="Cinder的架构"><a href="#Cinder的架构" class="headerlink" title="Cinder的架构"></a><strong>Cinder的架构</strong></h2><p>在OpenStack中，块存储服务Cinder为Nova项目所实现的虚拟机实例提供了数据持久性的存储服务。此外，块存储还提供了Volumes管理的基础架构，同时还负责Volumes的快照和类型管理。从功能层面来看，Cinder以插件架构的形式为各种存储后端提供了统一API访问接口的抽象层实现，使得存储客户端可以通过统一的API访问不同的存储资源，而不用担心底层各式各样的存储驱动。Cinder提供的块存储通常以存储卷的形式挂载到虚拟机后才能使用，目前一个Volume同时只能挂载到一个虚拟机，但是不同的时刻可以挂载到不同的虚拟机，因此Cinder块存储与AWS的EBS不同，不能像EBS一样提供共享存储解决方案。除了挂载到虚拟机作为块存储使用外，用户还可以将系统镜像写入块存储并从加载有镜像的Volume启动系统（SAN BOOT）。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/eOFThv3VQROR.png?imageslim" alt="mark"></p>
+<p>Cinder的逻辑架构上图，除了cinder-client外，其余均是Cinder服务的核心组件，共有4个：<strong>cinder-api、cinder-scheduler、cinder-volume</strong>和<strong>cinder-backup</strong>。而cinder-client其实就是封装了Cinder提供的REST接口的CLI工具。</p>
+<ul>
+<li><strong>cinder-api：</strong>对外提供REST API，对操作需求进行解析，对API进行路由并寻找相应的处理方法，包含卷的CRUD，快照的CRUD、备份、Volume Type的管理、卷的挂载/卸载等操作。Cinder API本质上其实是一个WSGI App，启动Cinder API服务相当于启动一个名为osapi_volume的WSGI服务去监听Client的HTTP请求。OpenStack定义了两种类型的Cinder资源，包括<strong>核心资源（Core Resoure）</strong>和<strong>扩展资源（Extension Resoure）</strong>。而核心资源及其API路由器分为V1及V2两个版本，分别放在V1和V2两个目录下，其中API路由器（目录中的router.py）负责把HTTP请求分发到其管理的核心资源中去；V1的核心资源则包括卷（Volume）、卷类型（Volume Type）、快照（Snapshot）的操作管理，比如创建和删除一个卷，或为某个卷做一个快照等；V2的核心资源增加了Qos、limit及备份的操作管理（H版本以后）。</li>
+<li><strong>cinder-scheduler：</strong>负责收集后端存储Backends上报的容量、能力信息。根据指定的算法完成卷到cinder-volume的映射。在Folsom版本中，cinder-scheduler服务只是实现了<strong>简单调度（Simple Scheduler）算法</strong>和<strong>随机调度（Chancer Scheduler）算法</strong>。简单调度算法就是获取活动的卷服务节点，按剩余容量从小到大排列，选择剩余容量最多的Host节点；随机调度算法就是在满足条件的节点中随机挑选出一个Host节点。在G版本后有了类似nova-scheduler的基于过滤和权重的新调度策略FilterScheduler。</li>
+<li><strong>cinder-volume：</strong>多节点部署，使用不同的配置文件、接入不同的backend设备，由各存储厂商插入driver代码与设备交互完成设备容量和能力信息收集、卷操作。每个存储节点都会运行一个cinder-volume服务，若干个这样的存储节点联合起来可以构成一个存储资源池。</li>
+<li><strong>cinder-backup：</strong>实现卷的数据备份到其他介质。目前支持的有以Ceph、Swift和IBM TSM（Tivoli Storage Manager）为后端存储的备份存储系统，其中默认的是采用Swift备份的存储系统。与Cinder-volume类似，Cinder-backup也通过Driver插件架构的形式与不同的存储备份后端交互。</li>
+<li><strong>cinder-db：</strong>提供存储卷、快照、备份、service等数据，支持Mysql、PG、MSSQL等SQL数据库。</li>
+</ul>
+<p>Cinder服务除了上面的逻辑架构外，还有部署架构。在实际生产中，为了实现数据持久化存储的高可用功能，避免数据丢失风险，往往要对Cider服务的关键组件以及相关数据库、消息队列进行HA。基本思路如下图：<strong>Cinder服务的关键组件可以部署在一个节点也可以分布式部署在多个节点，icinder-api，cinder-scheduler和cinder-volume均采用采用active/1active模式部署。利用HAProxy实现的负载均衡器实现API请求到多个cinder-api的分发，避免单个cinder-api故障影响块存储服务提供；cinder-scheduler利用RabbitMQ实现负载均衡模式，向多个cinder-scheduler节点分发任务，同时利用RabbitMQ收取cinder-volume上报的能力信息，调度时，scheduler通过在DB中预留资源从而保证数据一致性。多个cinder-volumen同时上报同一个backend的容量和能力信息，并同时接受请求进行处理。而数据库DB往往采用主备或集群部署，实现数据库的HA。</strong></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dE9nSkIpfObP.png?imageslim" alt="mark"></p>
+<h2 id="Cinder-Scheduler的过滤和加权机制"><a href="#Cinder-Scheduler的过滤和加权机制" class="headerlink" title="Cinder-Scheduler的过滤和加权机制"></a><strong>Cinder-Scheduler的过滤和加权机制</strong></h2><p>在G版本后cinder-scheduler与nova-scheduler类似，有了基于过滤和权重的新调度策略FilterScheduler，其工作原理如下图所示，首先使用一个指定的过滤器过滤后得到符合条件的cinder-volume节点，然后对列表中cinder-volume的节点计算权重并进行排序，获得最佳的一个Host节点。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5a2oHkCNo6vN.png?imageslim" alt="mark"></p>
+<p>上图中，scheduler负责收集后端上报的容量、能力信息，根据设定的算法完成卷到指定cinder-volume的调度。其中关键环节就是第二步根据后端的能力进行筛选，其筛选的依据主要来自三个方面：</p>
+<ul>
+<li>根据Driver定期上报后端的能力和状态进行筛选；</li>
+<li>根据管理员admin创建的卷类型进行筛选；</li>
+<li>创建卷时，根据用户指定的卷类型进行筛选；</li>
+</ul>
+<p><strong>cinder-scheduler服务提供了调度重试机制，在通过排序挑选出最优的Host节点后，将创建卷的消息发送给该节点，并由该节点的cinder-volume服务来处理。如果该节点的cinder-volume服务在处理过程中由于某些条件不满足而导致返回错误结果，cinder-scheduler将选择次优Host节点重试。最大可重试次数默认是3次，并且可以设置。</strong></p>
+<p>cinder-scheduler实现了多种Filter和Weighter的算法。所有的Filter实现都在cinder/scheduler/filters目录中，所有的Weighter的实现在cinder/scheduler/weighters目录中。主要的过滤器功能如下：</p>
+<ul>
+<li><strong>Availability Zone Filter：</strong>在指定的Zone中选择Host。</li>
+<li><strong>Retry Filter：</strong>在没有重试过的Host中重新进行调度。</li>
+<li><strong>JsonFilter：</strong>允许应用以Json的形式写出比较复杂的查询Host的表达式。</li>
+<li><strong>CapabilitiesFilter：</strong>在一个由各种类型存储组合（LVM、Ceph等）的存储系统中选择某种存储类型。</li>
+<li><strong>CapacityFilter：</strong>容量过滤，只选择那些剩余容量大于要创建的卷的大小的Host。</li>
+</ul>
+<h2 id="Cinder-Volume的插件类型"><a href="#Cinder-Volume的插件类型" class="headerlink" title="Cinder-Volume的插件类型"></a><strong>Cinder-Volume的插件类型</strong></h2><p>Cinder-volume服务通过插件式（Plugins）的Driver与各种后端Volume Providers进行交互，从而屏蔽了后端各种开源或商业的存储实现方式，并对外提供统一的Cinder API接口。Cinder项目在架构上与Neutron类似，均是采用可插拔的插件来兼容各个厂商的存储设备和驱动，从而使得各个存储厂商均可参与Cinder项目并提供自己的存储插件供用户使用，而用户也可以自主选择适合自己的存储产品，并只需在Cinder的配置文件中进行适当的存储Driver设置即可。在Cinder中，Cinder-volume为不同的Volume后端（Volume Providers，通常为不同厂商的存储设备）<strong>提供了统一的Driver接口</strong>，而Volume Provider只需实现这些接口即可。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/LGgguzi6SUV3.png?imageslim" alt="mark"></p>
+<p>从实现上来看，Cinder的插件可以分为<strong>基于软件实现的插件</strong>和<strong>基于硬件的插件</strong>。基于软件实现的插件又可以分为<strong>基于文件系统的插件（开源Gluster FS、NFS、Ceph RBD和IBM的GPFS等插件）和基于块存储的插件（LVM插件）</strong>。<strong>基于硬件实现的插件主要是各个厂商针对自己的存储设备所实现的插件</strong>，这些插件主要是基于FC（Fiber Channel）和iSCSI协议来实现的，如IBM的XIV、V7000、DS8000和System Flash等存储设备插件，以及EMC的VNX、VMAX等存储设备插件，当然还有很多如Dell、Netapp、HPE和华为等存储厂商所提供的插件。对于用户而言，部署Cinder块存储服务的首要步骤便是选择使用哪种Cinder存储后端插件，是采用完全基于开源软件实现的插件还是采用存储设备厂商提供的特定插件，需要根据用户自己的预算和特定的存储环境进行选择。通常LVM插件适用于各种厂商存储设备，但是其I/O性能相对较差，因此比较适合轻负载应用系统。而针对特定厂商存储设备的FC插件通常具有更好的I/O性能和较低的I/O延迟，但是需要采购特定厂商的存储设备，因此比较适合I/O要求较高的生产环境系统。除了基于本地LVM的Cinder插件和Vendors厂商插件外，日立（Hitachi）的Mitsuhiro团队还提出了一种集合LVM和FC的共享LVM插件。在我们的实验环境中，主要使用了LVM和NFS两种后端存储，因此这里主要介绍这两种开源的软件插件，其他插件请参考服务商提供的产品手册。而后续我们会将实验环境的后端块存储改造为ceph-rbd，至于Cinder对接Ceph实战会在OpenStack运维实践中专门介绍，这里不再赘述。</p>
+<h3 id="LVM插件实现"><a href="#LVM插件实现" class="headerlink" title="LVM插件实现"></a><strong>LVM插件实现</strong></h3><p>基于软件实现的Cinder插件主要以开源软件为主，其中使用最为普遍的是LVM插件、NFS插件和Ceph RBD插件。下图中，在LVM插件架构中，Volumes以VG的LV形式被创建，即用户在配置Cinder块存储和创建Volumes之前，需要在存储节点上创建卷组VG，并在配置文件中指定使用此VG进行Volumes创建源。此外，计算节点与存储节点之间的存储网络通过iSCSI协议实现，运行虚拟机的计算节点作为iSCSI的发起端（iSCSI Initiator），而运行Cinder-volume的存储节点作为iSCSI的目标端（iSCSI Target），用户通过Cinder-API创建的每个Volume对应的都是存储节点中VG上的一个逻辑卷LV，当用户发起Attach（或Detach）操作时，存储节点上的Volumes通过iSCSI协议自动挂载到计算节点虚拟机上（或从计算节点虚拟机上卸载）。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/NyWEQGaewpJL.png?imageslim" alt="mark"></p>
+<p>在基于LVM的Cinder创建架构中，Volume操作完全由LVM来实现，此外，全部计算节点虚拟机上的I/O通过软件iSCSI协议集中传输到存储节点，因此采用LVM插件实现的Cinder块存储比较适合轻负载I/O应用场景，而且由于全部虚拟机的读写I/O通过软件iSCSI协议汇聚至存储节点，这很容易造成存储节点的I/O性能瓶颈。不过使用LVM插件的优势在于无须特定存储设备和对应插件的支持，任何存储设备都可以映射到存储节点Linux系统中，并通过LVM插件架构实现Cinder块存储服务。</p>
+<h3 id="NFS插件实现"><a href="#NFS插件实现" class="headerlink" title="NFS插件实现"></a><strong>NFS插件实现</strong></h3><p>Cinder默认使用的存储后端驱动是LVM，而LVM是一种基于块存储实现的Cinder插件，在基于软件实现的插件中，除了LVM外，还有很多基于文件系统的插件，如Gluster FS、GPFS和NFS等插件。其中，NFS是一种开源实现的文件系统，其配置实现和使用非常简单，这里主要介绍基于NFS插件实现的Cinder块存储服务，至于NFS服务端和客户端如何配置，请参见博客《<a href="http://note.youdao.com/noteshare?id=068c1fb7c996dc282bedf724ca2efb24&amp;sub=EB4FF085B9CE4FC4A50B976F80B82D91" target="_blank" rel="noopener">Linux开源网络文件系统NFS</a>》。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/7GJSTM2fXmBD.png?imageslim" alt="mark"></p>
+<p>从本质上而言，<strong>基于NFS的Cinder块存储服务并不允许虚拟机像LVM驱动一样访问块级别的存储设备。相反，NFS驱动在NFS共享目录上创建对应Volume的文件，并通过计算节点将文件映射为块设备供虚拟机使用</strong>。基于文件系统的块存储服务通常采用控制流与数据流分离的设计，即用户通过控制节点对运行Cinder-volume的存储节点进行Volume相关的控制操作，而虚拟机对存储设备的访问并不经过存储节点，而是通过计算节点后直接进入Volume Provider，这里Volume Provider就是NFS服务器。由于Cinder屏蔽了不同存储后端的差异，并对外提供统一的API访问，因此基于NFS驱动的Cinder块存储服务与基于LVM的Cinder块存储服务在Volume操作上并无差异。</p>
+<h3 id="Multi-Backends实现"><a href="#Multi-Backends实现" class="headerlink" title="Multi-Backends实现"></a><strong>Multi-Backends实现</strong></h3><p>对于公有云而言，多后端存储实现的优势在于可为用户提供更灵活的块存储使用选择，而对于私有云建设而言，多后端存储的实现允许采用不同的厂商存储插件，以集成不同的存储设备或存储解决方案，从而节省存储设备上再投资成本。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/iicKI6ANVVyS.png?imageslim" alt="mark"></p>
+<p>在OpenStack中，Cinder项目也实现了多后端存储功能（Storage Multi-Backends），通过并行运行多个存储后端插件和驱动。实际使用时，可以通过指定存储类型的形式来指定Volume应该由哪个运行中的存储后端提供。通过Cinder的Multi-Backends功能，可以配置多个后端存储解决方案以供相同的OpenStack计算资源使用。针对配置的每一个存储后端，Cinder会启动一个对应的Cinder-volume服务（服务名称格式为“hostname@backend_name”）。理论上，可以自由组合不同的存储后端插件，如同时实现LVM后端和Ceph RBD后端，或者IBM存储后端和EMC存储后端。为了简单起见，我们在实验环境中实现LVM和NFS驱动的多后端组合，部署仍然采取控制节点加存储节点模式，存储多后端插件（LVM和NFS Plugins）由存储节点加载，并由控制节点统一管理。<strong>Cinder多后端存储的实现与单独存储后端的实现类似，不同之处在于，前者需要在存储节点的/etc/cinder/cinder.conf配置文件中同时配置多个存储后端的实现部分，并在控制节点中为每个存储后端创建对应的存储类型，在多后端场景中进行Volume操作时，需要通过指定存储类型来使用特定的存储后端。</strong></p>
+<h2 id="Cinder的卷操作流程"><a href="#Cinder的卷操作流程" class="headerlink" title="Cinder的卷操作流程"></a><strong>Cinder的卷操作流程</strong></h2><p>Cinder的核心功能就是对卷的管理，可以对卷、卷的类型、卷的快照、卷备份进行处理。在Cinder提供的卷有关的上述操作中，创建、扩展、删除、Attach和Detach是最核心的功能，也是块存储工作过程中最常使用的功能。其他如快照创建和基于镜像的Volume创建也是比较重要的功能。但是，我们这里主要讨论实际生产中最常使用3个流程：卷的创建、挂载和卸载。理解了这3个流程，卷的其他操作流程的理解也就水到渠成了。</p>
+<h3 id="创卷流程"><a href="#创卷流程" class="headerlink" title="创卷流程"></a><strong>创卷流程</strong></h3><p>在使用Cinder提供的“逻辑磁盘卷”之前，我们首先要完成卷的创建，尤其在使用多后端存储的生产环境下，创建卷时还需要特意指定卷的类型。如下图所示，就是一个典型的生产环境下，多后端存储的创卷流程。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Yxgbt1lca68d.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>Step1：</strong>用户下发创卷请求，请求API中携带创建卷的相关关键字段，如{“name”:”test”,”size”:”100”,”type”:”IPSAN”}；</li>
+<li><strong>Step2：</strong>cinder-api校验用户是否具有权限，以及做一些基本校验，quota预占等操作，并通过消息队列的cast异步返回卷信息（生成卷id）。</li>
+<li><strong>Step3：</strong>cinder-api将创卷消息投递到cinder-scheduler消息队列中；</li>
+<li><strong>Step4：</strong>cinder-scheduler从自己的消息队列中订阅并消费创卷消息，根据各个cinder-volume定期上报的后端存储能力以及卷信息，选择一个主机进行创卷。由于在创卷请求中，指定了后端存储类型type为IPSAN，因此cinder-scheduler通过CapabilitiesFilter过滤器找出所有安装IPSAN插件的后端存储节点，再根据创卷请求中size值，筛选出符合要求的节点。</li>
+<li><strong>Step5：</strong>cinder-scheduler调度到主机后，将消息投递到相应的cinder-volume队列中，上图中表示创卷请求消息被投递到IPSAN后端的cinder-volume队列。</li>
+<li><strong>Step6：</strong>cinder-volume从自己的消息队列中消费创卷消息，调用driver的接口进行创卷，最后更新数据库。</li>
+<li><strong>Step7：</strong>cinder-volume调用相应的driver插件。</li>
+<li><strong>Step8：</strong>Drive插件r将发送相应的创卷命令到实际的存储设备。</li>
+</ul>
+<h3 id="挂载卷的流程"><a href="#挂载卷的流程" class="headerlink" title="挂载卷的流程"></a><strong>挂载卷的流程</strong></h3><p>挂载卷/卸载卷是通过Nova和Cinder的配合最终将远端的卷连接到虚拟机所在的Host节点上，并最终通过虚拟机管理程序映射到内部的虚拟机中。挂载卷的流程如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Dlu4PkwjmlLb.png?imageslim" alt="mark"></p>
+<ul>
+<li><p><strong>Step1：</strong>客户端发起虚拟机实例instance挂载卷的API请求到nova-api，nova-api发起异步调用cast，将挂卷请求通过attach_volume()函数发给nova-compute，nova-compute通过volume_bdm()函数向nova-api返回块设备的映射信息，并通过reserver_block_device_name()函数保存块设备的基础信息，然后通过REST API向cinder-api发起获取卷信息请求，利用get()函数传递主机的信息，如hostname, iSCSI initiator name, FC WWPNs。</p>
+</li>
+<li><p><strong>Step2：</strong>Cinder API根据传递的卷信息，利用db_volume_get()函数去cinder-db中查询该卷归属的volume详细信息，将请求发给cinder-volume。</p>
+</li>
+<li><strong>Step3：</strong>Cinder Volume通过创建卷时保存的host信息找到对应的Cinder Driver。</li>
+<li><p><strong>Step4：</strong>Cinder Driver通知存储允许该主机访问该卷。</p>
+</li>
+<li><p><strong>Step5：</strong>Cinder-Driver返回该存储的连接信息（如iSCSI iqn，portal，FC Target WWPN，NFS path等）到nova-compute。</p>
+</li>
+<li><p><strong>Step6：</strong>Nova-compute调用check_volume()函数针对于不同存储类型进行主机识别磁盘的代码（ Cinder 提供了brick模块用于参考）实现识别磁盘或者文件设备，成功后调用reserve_volume()函数向cinder-api发起更新卷挂载等预占操作信息，cinder-api完成数据库卷的状态更新。</p>
+</li>
+<li><strong>Step7：</strong>Nova-compute向cinder-api通知进行卷的挂载，此操作分两步进行。首先，nova-compute发起卷的初始化连接信息，cinder-api向cinder-volume发起异步调用cast的初始化连接信息，cinder-volume收到请求后向cinder-driver发起初始化连接信息，完成后，cinder-driver返回初始化连接成功响应，并携带相关卷的iqn等信息给nova-compute。</li>
+<li><strong>Step8：</strong>然后，nova-compute将卷的及主机的设备信息传递给hypervisor来实现虚拟机挂载磁盘，成功后nova-compute通知cinder-api完成卷的数据库状态更新。</li>
+</ul>
+<h3 id="卸载卷的流程"><a href="#卸载卷的流程" class="headerlink" title="卸载卷的流程"></a><strong>卸载卷的流程</strong></h3><p>卸载卷的流程与挂在卷类似，区别如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kmsnJ1Toa8VP.png?imageslim" alt="mark"></p>
+<p>1）在nova-compute向cinder-api发起begin_detach_volume()请求后，nova-compute首先向hypervisor发起disconnect_volume()的请求，待hypervisor完成卷的连接删除后，nova-compute向cinder-api发起disconnect_volume()请求。</p>
+<p>2）cinder-api将disconnect_volume()请求发给cinder-volume，cinder-volume根据卷的信息找到cinder-driver完成卷的连接删除，cinder-driver删除成功后返回none信息给nova-compute。</p>
+<p>3）nova-compute收到cinder返回的卸载卷响应None后，nova-compute向cinder-api发起detach()请求，完成卷在cinder-db中的状态更新。</p>
+<h2 id="Cinder的操作实战"><a href="#Cinder的操作实战" class="headerlink" title="Cinder的操作实战"></a><strong>Cinder的操作实战</strong></h2><p><strong>由于我们的实验环境采用LVM和NFS多后端方式，因此在创建卷前需要首先创建存储类型。</strong></p>
+<p><strong>步骤1：</strong>输入以下命令，创建lvm和nfs的存储类型</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cinder <span class="built_in">type</span>-create lvm</span><br><span class="line">cinder <span class="built_in">type</span>-create nfs</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/0Yoai0g107b1.png?imageslim" alt="mark"></p>
+<p><strong>步骤2：</strong>输入以下命令，将存储类型绑定到对应的存储后端</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cinder <span class="built_in">type</span>-key lvm <span class="built_in">set</span> volume_backend_name=kklvm01</span><br><span class="line">cinder <span class="built_in">type</span>-key nfs <span class="built_in">set</span> volume_backend_name=kknfs01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/11bi37Xxx8QQ.png?imageslim" alt="mark"></p>
+<p><strong>步骤3：</strong>输入以下命令，在lvm存储后端创建大小为2GB，名称为lvm-volume1的Volume</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cinder create --volume-type lvm --name lvm-volume1 2</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/2Brk1BB4xuyt.png?imageslim" alt="mark"></p>
+<p><strong>步骤4：</strong>输入以下命令，在nfs存储后端创建大小为2GB，名称为nfs-volume1的Volume</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cinder create --volume-type nfs --name nfs-volume1 2</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6NxYGe1Vc7ux.png?imageslim" alt="mark"></p>
+<p><strong>步骤5：</strong>输入以下命令，查看当前系统的卷列表信息，并在Horizon中查看</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cinder list</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pBKYTG1jfjUU.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/wmVvJXDo8YwV.png?imageslim" alt="mark"></p>
+<p><strong>步骤6：</strong>在NFS后端的挂载目录下，我们可以看见有一个volume-前缀的文件，后面跟的就是Volume的ID</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pCcs285eguik.png?imageslim" alt="mark"></p>
+<p><strong>步骤7：</strong>执行以下命令，在NFS后端创建一个启动卷boot-nfs-vol-cirros，大小1G，可用分区nova，卷类型nfs，卷来源Cirros</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cinder create --volume-type nfs --name boot-nfs-vol-cirros --image Cirros --availability-zone nova 1</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/tcVPyhE9HC13.png?imageslim" alt="mark"></p>
+<p><strong>步骤8：</strong>执行以下命令，利用启动卷boot-nfs-vol-cirros拉起一个虚拟机实例nfs-boot-instance01</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server create --flavor Flavor_Web --volume 3c5432ca-9969-405d-9dad-d416660945f2 nfs-boot-instance01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/fcnuBhsQJ4TQ.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rcVzUyVydFHa.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/i8wenJsuanm5.png?imageslim" alt="mark"></p>
+<p><strong>步骤9：</strong>执行以下命令，将lvm-volume1卷挂载到虚拟机实例nfs-boot-instance01上，作为一个数据盘/dev/vdb</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server add volume nfs-boot-instance01 lvm-volume1</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HOlhyxS5mRFS.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pHyy3MCc6JS6.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ap86KNGU12Ue.png?imageslim" alt="mark"></p>
+<p><strong>步骤10：</strong>执行以下命令，将lvm-volume1卷从虚拟机实例nfs-boot-instance01上卸载掉</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server remove volume nfs-boot-instance01 lvm-volume1</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HxKpyl9P4Sah.png?imageslim" alt="mark"></p>
+<p><strong>步骤11：</strong>执行以下命令，创建卷lvm-volume1的快照snap-lvm-volume1</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cinder snapshot-create --name snap-lvm-volume1 lvm-volume1</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/MFtW0WIJdFjg.png?imageslim" alt="mark"></p>
+<p><strong>步骤12：</strong>执行以下命令，将卷lvm-volume1的扩容到4G</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cinder extend lvm-volume1 4</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jEaXohGXcH0H.png?imageslim" alt="mark"></p>
+<h2 id="思考："><a href="#思考：" class="headerlink" title="思考："></a><strong>思考：</strong></h2><p><strong>1、OpenStack中有哪几种类型的存储？各自的管理服务和应用场景是什么？</strong></p>
+<p><strong>2、块存储服务Cinder主要包含哪些组件？各组件的功能是什么？从创建卷的场景，通过时序图描述各组件的交互过程？</strong></p>
+<p><strong>3、在高可用场景下，cinder-scheduler的消息分发依靠什么组件完成负载均衡功能？cinder-scheduler获取存储节点容量等信息，依靠哪种机制获取？（PUSH或PUT）</strong></p>
+<p><strong>4、块存储服务Cinder实现多后端存储时，首先需要完成什么配置才能使用多后端存储（从LVM和NFS两种类型的后端存储进行阐述），在使用多后端时，必须依赖什么来创建卷？</strong></p>
+<p><strong>5、已挂载的卷是否支持创建快照，若支持，应该使用什么命令？</strong></p>
+<p><strong>6、要想从卷发放虚拟机实例，则卷必须设置哪种卷属性？</strong></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2020/03/03/2020-03-03-块存储管理服务Cinder/" title="2020-03-03-块存储管理服务Cinder">https://kkutysllb.cn/2020/03/03/2020-03-03-块存储管理服务Cinder/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/云计算/" rel="tag"><i class="fa fa-tag"></i> 云计算</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/03/2020-03-03-网络管理服务Neutron/" rel="next" title="2020-03-03-网络管理服务Neutron">
+                <i class="fa fa-chevron-left"></i> 2020-03-03-网络管理服务Neutron
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/03/2020-03-03-对象存储管理服务Swift/" rel="prev" title="2020-03-03-对象存储管理服务Swift">
+                2020-03-03-对象存储管理服务Swift <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cinder的架构"><span class="nav-number">2.</span> <span class="nav-text">Cinder的架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cinder-Scheduler的过滤和加权机制"><span class="nav-number">3.</span> <span class="nav-text">Cinder-Scheduler的过滤和加权机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cinder-Volume的插件类型"><span class="nav-number">4.</span> <span class="nav-text">Cinder-Volume的插件类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LVM插件实现"><span class="nav-number">4.1.</span> <span class="nav-text">LVM插件实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NFS插件实现"><span class="nav-number">4.2.</span> <span class="nav-text">NFS插件实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multi-Backends实现"><span class="nav-number">4.3.</span> <span class="nav-text">Multi-Backends实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cinder的卷操作流程"><span class="nav-number">5.</span> <span class="nav-text">Cinder的卷操作流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创卷流程"><span class="nav-number">5.1.</span> <span class="nav-text">创卷流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#挂载卷的流程"><span class="nav-number">5.2.</span> <span class="nav-text">挂载卷的流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#卸载卷的流程"><span class="nav-number">5.3.</span> <span class="nav-text">卸载卷的流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cinder的操作实战"><span class="nav-number">6.</span> <span class="nav-text">Cinder的操作实战</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考："><span class="nav-number">7.</span> <span class="nav-text">思考：</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">935k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">14:10</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2020/03/03/2020-03-03-块存储管理服务Cinder/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

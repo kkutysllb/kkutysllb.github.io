@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="概述Heat是OpenStack项目中实现资源编排的子项目，它的目的是帮助用户实现在OpenStack云环境下手工资源创建、配置、应用部署、弹性伸缩等过程的自动化，从而提高OpenStack应用的效率，比如华为云Stack6.5.1版本的Deploy就是通过Heat的编排模版完成FusionSphere OpenStack的部署，华为的FusionSphere OpenStack部署和配置的复杂度">
+<meta name="keywords" content="云计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020-03-03-资源编排管理服务Heat">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/2020-03-03-资源编排管理服务Heat/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="概述Heat是OpenStack项目中实现资源编排的子项目，它的目的是帮助用户实现在OpenStack云环境下手工资源创建、配置、应用部署、弹性伸缩等过程的自动化，从而提高OpenStack应用的效率，比如华为云Stack6.5.1版本的Deploy就是通过Heat的编排模版完成FusionSphere OpenStack的部署，华为的FusionSphere OpenStack部署和配置的复杂度">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6WoaqU55Giqv.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/eUbr9RSKjDHw.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/KXaETNnfMEpq.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/0qluqOkqj1r7.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/tfpQYT41z60O.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GyomFBlnD55Y.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HuWch2NCt7rH.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/uV9DwL1834pB.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GIrNNmLVzz7y.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/aCUE2T9ctmhV.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/hJWuOReYw2I1.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/2K6mQH3gp8nW.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/8Mi1ovoPsdNJ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rcWKAszeh17h.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/IhX3evYhCTSR.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/WcYlLzi8L1tb.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/TlUiPC7ww1PA.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6Y7QWcgiP0Bb.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/wBth7vhjCkFa.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/t807DPicYdAv.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/WxKHySEvOhyw.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5E6NT9NMtuo5.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/TqItl3Se9dPI.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/s8s5bAWjAHo9.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rOwzde3IjAmk.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pke1XPVW4aqs.png?imageslim">
+<meta property="og:updated_time" content="2020-03-03T15:13:50.959Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2020-03-03-资源编排管理服务Heat">
+<meta name="twitter:description" content="概述Heat是OpenStack项目中实现资源编排的子项目，它的目的是帮助用户实现在OpenStack云环境下手工资源创建、配置、应用部署、弹性伸缩等过程的自动化，从而提高OpenStack应用的效率，比如华为云Stack6.5.1版本的Deploy就是通过Heat的编排模版完成FusionSphere OpenStack的部署，华为的FusionSphere OpenStack部署和配置的复杂度">
+<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6WoaqU55Giqv.png?imageslim">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/2020-03-03-资源编排管理服务Heat/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2020-03-03-资源编排管理服务Heat | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/2020-03-03-资源编排管理服务Heat/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2020-03-03-资源编排管理服务Heat
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-03 23:00:36 / 修改时间：23:13:50" itemprop="dateCreated datePublished" datetime="2020-03-03T23:00:36+08:00">2020-03-03</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">9.4k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">9 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h2><p>Heat是OpenStack项目中实现资源编排的子项目，它的目的是帮助用户实现在OpenStack云环境下手工资源创建、配置、应用部署、弹性伸缩等过程的自动化，从而提高OpenStack应用的效率，比如华为云Stack6.5.1版本的Deploy就是通过Heat的编排模版完成FusionSphere OpenStack的部署，华为的FusionSphere OpenStack部署和配置的复杂度只要实践过都知道，那么如果不依靠编排去自动部署而是手动部署，那种酸爽可想而知。因此，Heat这种编排类的系统或软件出现，就解决了这种复杂系统重复部署效率低下的问题。由于OpenStack缘起于AWZ Cloud，因此Heat至今仍保留着 AWZ Cloud的编排REST API请求接口，并在功能上继承AWZ的Formation（现在甚至逐渐在超越）。<a id="more"></a></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6WoaqU55Giqv.png?imageslim" alt="mark"></p>
+<p>对于Heat的功能和实现，简单来说就是用户可以预先定义一个规定格式的任务模版，任务模版中定义了一连串的相关任务（例如用什么配置开几台虚拟机，然后在其中一台中安装一个mysql服务，设定相关数据库属性，然后再配置几台虚拟机安装web服务群集等等），然后将模版交由Heat执行，就会按一定的顺序执行heat模版中定义的一连串任务。因此，Heat向开发人员和系统管理员提供了一种简便地创建和管理一批相关资源的方法，并通过有序且可预测的方式对其进行资源配置和更新。我们介绍Heat服务也是重点介绍如何使用Heat的标准示例模板或自己创建模板来设定业务资源以及业务程序运行时所需的所有相关依赖项或运行时参数。</p>
+<h2 id="Heat的架构"><a href="#Heat的架构" class="headerlink" title="Heat的架构"></a><strong>Heat的架构</strong></h2><p>Heat项目总体上可以看作由Heat模板文件和Heat执行引擎两部分。其中Heat模板定义了资源部署流程（资源可以是虚拟机实例，也可以是网络、IP、镜像、用户），而Heat执行引擎通过OpenStack标准的API与其他组件交互协作，不仅实现了云环境中资源依赖关系处理、资源的初始化、资源自动部署等针对资源的基本操作，还能实现弹性伸缩、负载均衡等服务配置操作。下图就是Heat的逻辑架构，Heat的逻辑架构主要由Heat-Client、Heat-API、Heat-Engine以及Service-Client（本质上是Plugin）组成。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/eUbr9RSKjDHw.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>Heat-Client：</strong>是Heat的命令行工具，提供Heat-API的命令行访问模式，安装Heat的Dashboard后，Horizon也可以作为Heat-Client，但是支持的功能较少。</li>
+<li><strong>Heat-api：</strong>为Heat-engine提供OpenStack风格的Rest查询接口，通过消息队列与Heat-engine交互。同时，Heat也支持AWS Cloud的REST API请求，通过Heat-api-cfn接收。</li>
+<li><strong>Heat-engine：</strong>Heat的核心，实现自动化部署的主要工作，包括定义模板、解析模板、资源依赖分析、资源部署调用等，以及提供相应的回调接口。</li>
+<li><strong>Service-Client：</strong>严格来说不属于Heat的组件，主要在Heat-Engine中通过插件方式实现OpenStack的其他服务的Client，来调用其他服务创建资源。</li>
+</ul>
+<p>这里需要重点提一下Heat-api和Heat-Engine两个组件。Heat API包括Heat-api和Heat-api-cfn，Heat-api主要接收OpenStack自身的对HOT（Heat Orchestration Template）模版的API编排请求，为Heat-Engine提供操作OpenStack自身的资源类型的接口，如OS:: XX:: XXXX格式的资源。Heat-api-cfn主要接收AWS对Formation模版的API编排请求，为Heat-Engine提供操作AWS CLoud的资源类型接口，如AWS:XX:XXXX格式的资源。两种云OS的操作类型，在OpenStack的Heat中均支持，且能进行相关查询，如下图示。<strong>Heat API的调用授权管理遵循OpenStack中的标准，采用Keystone进行统一管理。</strong></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/KXaETNnfMEpq.png?imageslim" alt="mark"></p>
+<p>Heat-Engine作为Heat服务的核心，实现模版的定义、解析、资源依赖分析和部署调用，是整个Heat服务的“灵魂”。整体上如下图所示，Heat-Engine分为三层：<strong>模版解析层、资源依赖分析层</strong>和<strong>资源实现层</strong>。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/0qluqOkqj1r7.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>模版解析层：</strong>最上面那层，处理Heat-api层面的请求，就是根据模板和输入参数来创建Stack，这里的Stack其实就是各种模版实现逻辑以及模版之间的嵌套关系，包含计算、存储、网络、镜像、裸机等包含各种资源的集合和约束关系。Heat-Engine首要工作就是是完成模板格式校验，此功能由Heat-Engine的cfn和hot组件完成，分别对应AWS和HOT类型的两种模板格式。</li>
+<li><strong>资源依赖分析层：</strong>解析Stack里各种资源的依赖关系以及模版和嵌套模版的关系，通过Heat-Engine的Resource模块中的stack组件完成的，具体为检测模板定义的ref和deponds_on属性的有效性和关系型，将所有资源形成一个有效的资源关系图。</li>
+<li><strong>资源实现层：</strong>根据解析出来的资源的依赖关系，依次调用各种服务客户端来创建各种资源。Heat模板中的每一种资源都会对应一个有效的资源类型，引擎通过一个唯一的资源类型名称找到对应的资源实现，这个映射关系由资源的接入机制实现，具体为：<strong>扫描指定目录下的所有类，如果发现其中包含了资源类型实现映射函数resource_mapping（），并且指向一个有效的实现，则建立相应的映射关系，为后续的栈调度执行打下基础。</strong></li>
+</ul>
+<p>Heat-Engine除了上面分析的三层逻辑，还有内部重要的功能子组件，那就是<strong>调度引擎</strong>。它为模板的执行建立了一套完整的流程引擎，包括资源创建状态监听，资源创建状态回调通知等。采用Stack的方式存储流程定义，提供与其他组件的同异步交互控制机制，并负责Stack生命周期状态的管理，在出现异常时，还能进行相应的回滚操作，并控制资源的依赖关系，保证回滚操作的完成。那么既然调度引擎负责各种资源调度，必然少不了与OpenStack的其他服务进行交互，它们之间就是通过Service-Client进行交互。但是，一个服务或业务的编排各类资源的实现并不简单的串行流程，资源实现根据模版中的定义不仅有依赖关系，甚至可以并行完成。比如，A资源的实现需要依赖B资源创建完成（虚拟机实例的拉起需要网络资源首先完成虚拟交换机创建），或者A资源和B资源可以同步进行（某虚拟机实例需要两个网卡，那么网络资源编排时可以同时拉起两个虚拟交换机），而这些工作就是由调度引擎利用内部的OpenStack其他服务模拟Client通过消息队列AMQP向Nova、Cinder、Neutron等各个服务发起的，他们之间是一种RPC.CAST调用机制。既然是异步调用，那么Heat-Engine内部还需要有接收这些异步回调结果的模块来确认结果，并根据资源创建结果以及模版的定义决定下一步操作流程。</p>
+<h2 id="Heat中的Stack"><a href="#Heat中的Stack" class="headerlink" title="Heat中的Stack"></a><strong>Heat中的Stack</strong></h2><p>资源编排项目Heat的主要目标，就是充分利用OpenStack中强大的自动化资源使用功能。通过Stack这一概念的引入，终端用户通过很简单的方式就可简单明了地组织自己的应用，而无须经历痛苦折磨的学习过程和各种“救火”经历。无论使用哪种格式的模板栈，终端用户所关心的，只是如何部署应用，并将整个部署过程看成一个独立单元。Heat使用的是由YAML语言定义的HOT（Heat Orchestration Template）格式模板，允许用户使用代码对OpenStack资源进行自动分配。HOT文件中的文本化描述语言充当了用户与应用环境之间的桥梁，OpenStack中资源栈的构建过程，就是从HOT文件中置备完整应用环境的过程。典型的HOT文件代码结构如下所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/tfpQYT41z60O.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>heat_template_version：</strong>这里指定了HOT文件所使用的模板语法版本，HOT模版起始标准版本是2013-05-23，也就是说HOT模版诞生在2013-05-23这个时间点，在这前都是AWS的版本编号。通过Heat的命令行工具或Dashboad可以查看当前Heat支持的版本类型，如下图为Dashboard上的查询结果，不同版本的模版虽然语法上保持向前兼容，但是功能上有些许变化，各版本支持的具体功能可以查看官网<a href="https://docs.openstack.org/heat/latest/template_guide/hot_spec.html#hot-spec。" target="_blank" rel="noopener">https://docs.openstack.org/heat/latest/template_guide/hot_spec.html#hot-spec。</a></li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GyomFBlnD55Y.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>description：</strong>此处是关于该模板的详细描述，可选参数，可以不填写任何值，但是必须保留该字段，并且字段最后冒号”: “后面有一个空格（YAML语言格式）。</li>
+<li><strong>parameters：</strong>此处声明输入列表，每一个参数都有给定的名称、类型、描述和默认值，且默认值是可选的。参数部分可以包括任何信息，例如一个特定的镜像或者用户指定的网络ID。parameters的使用示例如下，定义两个参数image_id和flavor，都是String类型，各自的标签（label）分别为Image ID和Instance Type，这里的标签（label）在resources模块中，可以通过内部函数get_param()直接引用。</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HuWch2NCt7rH.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>resources：</strong>这里的资源可以看成是Heat需要创建或者在其操作中需要修改的对象，HOT文件中的resources代码段就是定义不同组件的地方，例如，resource_name为virtual_web的资源具有OS::Nova::Server的属性，这就指定了资源类型为Nova计算实例。资源还可被子属性列表扩展限定，例如，可以为virtual_web实例资源指定所使用的镜像、资源模板和私有网络等资源。resources的使用示例如下，资源名称为my_instance，资源类型为OS: :Nova: :Server，资源使用的道具有镜像image和虚拟机实例类型flavor。</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/uV9DwL1834pB.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>outputs：</strong>在将资源栈部署到Heat engine后，可以将其属性全部导出。outputs的使用示例如下，输出虚拟机实例的ip地址instance_ip，输出值为通过内置函数get_attr()获取虚拟机实例的第一个IP地址。</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GIrNNmLVzz7y.png?imageslim" alt="mark"></p>
+<p>经过以上的分析，我们可以写出如下的批量拉起虚拟机实例的简单模板。该模板用于批量拉起三个虚拟机实例instance，定义了三个输入参数，分别是：image、flavor和internal_network，在create stack时通过–parameter Image ID=XXX，–parameter Instance Type=XXX和– parameter Internal_net=XXX指定。同时，定义了三个输出参数，分别输出三个虚拟机实例的首个网卡地址（在我们的模板中就定义一个虚拟机网卡，也可以定义多个），资源类型只使用了OS: :Nova: :Server。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">heat_template_version:</span> <span class="number">2018</span><span class="bullet">-08</span><span class="bullet">-31</span></span><br><span class="line"></span><br><span class="line"><span class="attr">description:</span> <span class="string">Simple</span> <span class="string">template</span> <span class="string">to</span> <span class="string">deploy</span> <span class="string">multiple</span> <span class="string">compute</span> <span class="string">instance</span></span><br><span class="line"></span><br><span class="line"><span class="attr">parameters:</span></span><br><span class="line"></span><br><span class="line"><span class="attr"> image_id:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  type:</span> <span class="string">string</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  label:</span> <span class="string">Image</span> <span class="string">ID</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  description:</span> <span class="string">Image</span> <span class="string">to</span> <span class="string">be</span> <span class="string">used</span> <span class="string">for</span> <span class="string">compute</span> <span class="string">instance</span></span><br><span class="line"></span><br><span class="line"><span class="attr"> flavor:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  type:</span> <span class="string">string</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  label:</span> <span class="string">Instance</span> <span class="string">Type</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  description:</span> <span class="string">Type</span> <span class="string">of</span> <span class="string">instance</span> <span class="string">(flavor)</span> <span class="string">to</span> <span class="string">be</span> <span class="string">used</span></span><br><span class="line"></span><br><span class="line"><span class="attr"> in_net:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  type:</span> <span class="string">string</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  label:</span> <span class="string">Internal_net</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  description:</span> <span class="string">IP</span> <span class="string">address</span> <span class="string">of</span> <span class="string">instance</span> <span class="string">(Internal_net)</span> <span class="string">to</span> <span class="string">be</span> <span class="string">used</span></span><br><span class="line"></span><br><span class="line"><span class="attr">resources:</span> </span><br><span class="line"></span><br><span class="line"><span class="attr"> instance01:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  type:</span> <span class="attr">OS::Nova::Server</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  properties:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">   image:</span> <span class="string">&#123;</span> <span class="attr">get_param:</span> <span class="string">image_id</span> <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">   flavor:</span> <span class="string">&#123;</span> <span class="attr">get_param:</span> <span class="string">flavor</span> <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">   networks:</span> <span class="string">&#123;</span> <span class="attr">get_param:</span> <span class="string">in_net</span> <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr"> instance02:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  type:</span> <span class="attr">OS::Nova::Server</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  properties:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">   image:</span> <span class="string">&#123;</span> <span class="attr">get_param:</span> <span class="string">image_id</span> <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">   flavor:</span> <span class="string">&#123;</span> <span class="attr">get_param:</span> <span class="string">flavor</span> <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">   networks:</span> <span class="string">&#123;</span> <span class="attr">get_param:</span> <span class="string">in_net</span> <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr"> instance03:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  type:</span> <span class="attr">OS::Nova::Server</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  properties:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">   image:</span> <span class="string">&#123;</span> <span class="attr">get_param:</span> <span class="string">image_id</span> <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">   flavor:</span> <span class="string">&#123;</span> <span class="attr">get_param:</span> <span class="string">flavor</span> <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">   networks:</span> <span class="string">&#123;</span> <span class="attr">get_param:</span> <span class="string">in_net</span> <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">outputs:</span></span><br><span class="line"></span><br><span class="line"><span class="attr"> instance01_ip:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  description:</span> <span class="string">The</span> <span class="string">IP</span> <span class="string">address</span> <span class="string">of</span> <span class="string">the</span> <span class="string">deployed</span> <span class="string">instance</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  value:</span> <span class="string">&#123;</span> <span class="attr">get_attr:</span> <span class="string">[instance01,</span> <span class="string">first_address]</span> <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr"> instance02_ip:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  description:</span> <span class="string">The</span> <span class="string">IP</span> <span class="string">address</span> <span class="string">of</span> <span class="string">the</span> <span class="string">deployed</span> <span class="string">instance</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  value:</span> <span class="string">&#123;</span> <span class="attr">get_attr:</span> <span class="string">[instance02,</span> <span class="string">first_address]</span> <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr"> instance03_ip:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  description:</span> <span class="string">The</span> <span class="string">IP</span> <span class="string">address</span> <span class="string">of</span> <span class="string">the</span> <span class="string">deployed</span> <span class="string">instance</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  value:</span> <span class="string">&#123;</span> <span class="attr">get_attr:</span> <span class="string">[instance03,</span> <span class="string">first_address]</span> <span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>除了上面单一模版自动化编排的示例外，在复杂编排的场景下，模板也可以实现嵌套，类似软件模块化开发的思想。可以先定义一个父模版Stack，作为进入其余子模板Stack的入口文件。应用部署所需的全部资源均在子模板Stack文件中描述，子栈之间的参数传递可由父栈进行管理，父栈将某个子栈创建后的输出作为另一个子栈的输入，例如将网络栈创建后的输出作为应用栈的输入。</p>
+<h2 id="Heat的编排场景"><a href="#Heat的编排场景" class="headerlink" title="Heat的编排场景"></a><strong>Heat的编排场景</strong></h2><p>Heat 采用了业界流行使用的模板方式来设计或者定义编排，用户只需要打开文本编辑器，编写一段基于 Key-Value 的模板，就能够方便地得到想要的编排。为了方便用户的使用，Heat 提供了大量的模板例子，可以参考<a href="https://docs.openstack.org/heat/latest/template_guide/hot_guide.html。大多数时候用户只需要选择想要的编排，通过拷贝-粘贴的方式来完成模板的编写。" target="_blank" rel="noopener">https://docs.openstack.org/heat/latest/template_guide/hot_guide.html。大多数时候用户只需要选择想要的编排，通过拷贝-粘贴的方式来完成模板的编写。</a></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/aCUE2T9ctmhV.png?imageslim" alt="mark"></p>
+<p>如上图，Heat 从四个方面来支持编排。</p>
+<h3 id="基础架构资源编排"><a href="#基础架构资源编排" class="headerlink" title="基础架构资源编排"></a><strong>基础架构资源编排</strong></h3><p>也就是OpenStack自己提供的基础架构资源，包括计算，网络和存储等资源。通过编排这些资源，用户就可以得到最基本的VM。在编排VM的过程中，用户可以提供一些简单的脚本，以便对VM做一些简单的配置，如下示例图中红框部分。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/hJWuOReYw2I1.png?imageslim" alt="mark"></p>
+<h3 id="应用资源的编排"><a href="#应用资源的编排" class="headerlink" title="应用资源的编排"></a><strong>应用资源的编排</strong></h3><p>也就是用户可以通过Heat提供的Software Configuration和Software Deployment等对VM进行复杂的配置，比如安装软件、配置软件。Heat 提供了多种资源类型来支持对于软件配置和部署的编排，如下所列：</p>
+<ul>
+<li>OS::Heat::CloudConfig： VM引导程序启动时的配置，由 OS::Nova::Server 引用</li>
+<li>OS::Heat::SoftwareConfig：描述软件配置</li>
+<li>OS::Heat::SoftwareDeployment：执行软件部署</li>
+<li>OS::Heat::SoftwareDeploymentGroup：对一组VM执行软件部署</li>
+<li>OS::Heat::SoftwareComponent：针对软件的不同生命周期部分，对应描述软件配置</li>
+<li>OS::Heat::StructuredConfig：和OS::Heat::SoftwareConfig类似，但是用Map来表述配置</li>
+<li>OS::Heat::StructuredDeployment：执行OS::Heat::StructuredConfig对应的配置</li>
+<li>OS::Heat::StructuredDeploymentsGroup：对一组VM执行 OS::Heat::StructuredConfig对应的配置</li>
+</ul>
+<p>其中最常用的是<strong>OS::Heat::SoftwareConfig</strong>和<strong>OS::Heat::SoftwareDeployment</strong>，编排流程如下图所示。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/2K6mQH3gp8nW.png?imageslim" alt="mark"></p>
+<h3 id="高级功能编排"><a href="#高级功能编排" class="headerlink" title="高级功能编排"></a><strong>高级功能编排</strong></h3><p>也就是如果用户有一些高级的功能需求，比如需要一组能够根据负荷自动伸缩的VM组，或者需要一组负载均衡的VM，Heat提供了AutoScaling 和Load Balance等进行支持。如果要用户自己单独编程来完成这些功能，所花费的时间和编写的代码都是不菲的。现在通过Heat，只需要一段长度的Template，就可以实现这些复杂的应用。Heat提供自动伸缩组OS::Heat::AutoScalingGroup和伸缩策略OS::Heat::ScalingPolicy，结合基于Ceilometer的OS::Ceilometer::Alarm实现了可以根据各种条件，比如负载，进行资源自动伸缩的功能。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/8Mi1ovoPsdNJ.png?imageslim" alt="mark"></p>
+<p>Heat对负载均衡的编排是由一组不同的资源类型来实现的。资源类型包括：</p>
+<ul>
+<li>OS::Neutron::Pool：定义资源池，一般可以由VM组成。</li>
+<li>OS::Neutron::PoolMember：定义资源池的成员。</li>
+<li>OS::Neutron::HealthMonitor：定义健康监视器，根据自定的协议，比如TCP来监控资源的状态，并提供给OS::Neutron::Pool来调整请求分发等。</li>
+<li>OS::Neutron::LoadBalancer：关联资源池以定义整个负载均衡。</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rcWKAszeh17h.png?imageslim" alt="mark"></p>
+<h3 id="第三方工具继承编排"><a href="#第三方工具继承编排" class="headerlink" title="第三方工具继承编排"></a><strong>第三方工具继承编排</strong></h3><p>也就是如果用户的应用足够复杂，或者说用户的应用已经有了一些基于流行配置管理工具的部署，比如说已经基于Chef有了Cookbook，那么可以通过集成Chef来复用这些Cookbook，这样就能够节省大量的开发时间或者是迁移时间。Heat在基OS::Heat::SoftwareConfig和OS::Heat::SoftwareDeployment的协同使用上，提供了对Chef、Puppet、Ansible等流行配置管理工具的支持。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/IhX3evYhCTSR.png?imageslim" alt="mark"></p>
+<h2 id="Heat的编排实战"><a href="#Heat的编排实战" class="headerlink" title="Heat的编排实战"></a><strong>Heat的编排实战</strong></h2><p>Heat的编排实战涉及面较广，由于篇幅所限且也无法大量凭空臆造业务场景举例，因此这里着重从不同种类HOT模版编写入手通过一些简单实例熟悉Heat的基础功能用法和编排效果验证。Heat要想用好，必须有一定编程基础，建议大家首先熟悉HOT模板的语法格式和内置函数，可以参考OpenStack官方网站手册，里面有大量的模版实例可供参考。</p>
+<p><strong>步骤1：</strong>执行以下命令，安装python-heatclient，等待安装完成</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install python-heatclient</span><br></pre></td></tr></table></figure>
+<p><strong>步骤2：</strong>执行以下命令，查看当前可用的镜像。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image list</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/WcYlLzi8L1tb.png?imageslim" alt="mark"></p>
+<p><strong>步骤3：</strong>执行以下命令，查看当前可用的规格</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack flavor list</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/TlUiPC7ww1PA.png?imageslim" alt="mark"></p>
+<p><strong>步骤4：</strong>执行以下命令，查看当前可用的密钥对</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack keypair list</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6Y7QWcgiP0Bb.png?imageslim" alt="mark"></p>
+<p><strong>步骤5：</strong>执行以下命令，创建“demo-template.yaml”，作为HOT模板。（注：每个“：”后都要有空格，即使“：”后没有字符也要有空格）</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/wBth7vhjCkFa.png?imageslim" alt="mark"></p>
+<p>其中，resources.server中的image、flavor、key_name为环境中可用的镜像、规格和密钥对。</p>
+<p><strong>步骤9：</strong>执行以下命令，查看当前可用网络</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack network list</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/t807DPicYdAv.png?imageslim" alt="mark"></p>
+<p><strong>步骤10：</strong>执行以下命令，使用HOT模板“demo-template.yaml”，创建堆栈“Stack_demo”，网络即为上面的网络ID，过几秒后有如下输出</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack stack create -t demo-template.yaml --parameter <span class="string">"NetID=ce3368e7-cd00-4395-91f6-b83b6f38bc9f"</span> Stack-Demo</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/WxKHySEvOhyw.png?imageslim" alt="mark"></p>
+<p><strong>步骤11：</strong>等待几分钟后，执行以下命令，查看堆栈的创建过程。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack stack event list Stack-Demo</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5E6NT9NMtuo5.png?imageslim" alt="mark"></p>
+<p><strong>步骤12：</strong>执行以下命令，查看堆栈列表，堆栈“Stack_demo”的状态变为“CREATE_COMPLETE”表示堆栈创建完成。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/TqItl3Se9dPI.png?imageslim" alt="mark"></p>
+<p><strong>步骤13：</strong>执行以下命令，查看堆栈的详细信息，图中表明已创建一个虚拟机实例，虚拟机server_name=Stack-Demo-server-o2fur3jgvsis，ip=10.0.11.105</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/s8s5bAWjAHo9.png?imageslim" alt="mark"></p>
+<p>也可以执行以下命令，查看堆栈创建完成后输出的虚拟机实例名称和IP地址。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rOwzde3IjAmk.png?imageslim" alt="mark"></p>
+<p><strong>步骤14：</strong>执行以下命令，查看虚拟机实例列表进行确认，并查看虚拟机实例的状态是否为“Active”</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pke1XPVW4aqs.png?imageslim" alt="mark"></p>
+<h2 id="思考："><a href="#思考：" class="headerlink" title="思考："></a><strong>思考：</strong></h2><p><strong>1、Heat能解决什么问题？</strong></p>
+<p><strong>2、Heat中有哪些常用概念？</strong></p>
+<p><strong>3、如何查看Heat中的支持的版本号，内置函数以及资源类型？</strong></p>
+<p><strong>4、Heat能应用到哪些场景？每一种场景需要的资源类型有哪些？</strong></p>
+<p><strong>5、HOT模版中parameter的参数用于什么场景？在创建Stack时，通过什么方式导入？</strong></p>
+<p><strong>6、当前OpenStack Rocky版本中HOT模版中resources模块共有多少种？请列举出常用的resources模块（不少于5种），并说明其资源类型。</strong></p>
+<p><strong>7、Heat中的stack本质是什么？起什么作用？</strong></p>
+<p><strong>8、删除stack后，所创建的虚拟机实例是否会被删除？</strong></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2020/03/03/2020-03-03-资源编排管理服务Heat/" title="2020-03-03-资源编排管理服务Heat">https://kkutysllb.cn/2020/03/03/2020-03-03-资源编排管理服务Heat/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/云计算/" rel="tag"><i class="fa fa-tag"></i> 云计算</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/03/2020-03-03-对象存储管理服务Swift/" rel="next" title="2020-03-03-对象存储管理服务Swift">
+                <i class="fa fa-chevron-left"></i> 2020-03-03-对象存储管理服务Swift
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/03/2020-03-03-计量和监控管理服务Telemetry/" rel="prev" title="2020-03-03-计量和监控管理服务Telemetry">
+                2020-03-03-计量和监控管理服务Telemetry <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Heat的架构"><span class="nav-number">2.</span> <span class="nav-text">Heat的架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Heat中的Stack"><span class="nav-number">3.</span> <span class="nav-text">Heat中的Stack</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Heat的编排场景"><span class="nav-number">4.</span> <span class="nav-text">Heat的编排场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基础架构资源编排"><span class="nav-number">4.1.</span> <span class="nav-text">基础架构资源编排</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应用资源的编排"><span class="nav-number">4.2.</span> <span class="nav-text">应用资源的编排</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高级功能编排"><span class="nav-number">4.3.</span> <span class="nav-text">高级功能编排</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三方工具继承编排"><span class="nav-number">4.4.</span> <span class="nav-text">第三方工具继承编排</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Heat的编排实战"><span class="nav-number">5.</span> <span class="nav-text">Heat的编排实战</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考："><span class="nav-number">6.</span> <span class="nav-text">思考：</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">935k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">14:10</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2020/03/03/2020-03-03-资源编排管理服务Heat/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

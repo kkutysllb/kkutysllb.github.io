@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="概述Telemetry是OpenStack的计量与监控服务，用来获取和保存计量与监控的各种测量值，并根据测量值进行报警。同时这些保存下来的测量值也可以被第三方系统获取，用来做更进一步的分析、处理或展示。早期OpenStack的计量和监控服务由Ceilometer独自完成，将原始计量数据存储在MongoDB中，性能方面可以说是极烂，社区的活跃度也低，基本到了快被放弃的边缘。随着Gnocchi的出现，">
+<meta name="keywords" content="云计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020-03-03-计量和监控管理服务Telemetry">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/2020-03-03-计量和监控管理服务Telemetry/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="概述Telemetry是OpenStack的计量与监控服务，用来获取和保存计量与监控的各种测量值，并根据测量值进行报警。同时这些保存下来的测量值也可以被第三方系统获取，用来做更进一步的分析、处理或展示。早期OpenStack的计量和监控服务由Ceilometer独自完成，将原始计量数据存储在MongoDB中，性能方面可以说是极烂，社区的活跃度也低，基本到了快被放弃的边缘。随着Gnocchi的出现，">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ExSJFEjaLoCi.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jWEFdXpeTBnU.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/v7PgO9DgRgeP.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/c8nGYYMQ1Fez.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/FG6h2hBRB0sl.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/PcS51xRBiQVB.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/NjWsVRQjxbko.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HcPBilyMX68F.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/L6FTRP7nM3Jd.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5ievLhgX3Yzo.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/VRC3MQoxq4sc.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/o9KswPsjLACk.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5nskViw0CuuB.png?imageslim">
+<meta property="og:updated_time" content="2020-03-03T15:22:31.153Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2020-03-03-计量和监控管理服务Telemetry">
+<meta name="twitter:description" content="概述Telemetry是OpenStack的计量与监控服务，用来获取和保存计量与监控的各种测量值，并根据测量值进行报警。同时这些保存下来的测量值也可以被第三方系统获取，用来做更进一步的分析、处理或展示。早期OpenStack的计量和监控服务由Ceilometer独自完成，将原始计量数据存储在MongoDB中，性能方面可以说是极烂，社区的活跃度也低，基本到了快被放弃的边缘。随着Gnocchi的出现，">
+<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ExSJFEjaLoCi.png?imageslim">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/2020-03-03-计量和监控管理服务Telemetry/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2020-03-03-计量和监控管理服务Telemetry | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/2020-03-03-计量和监控管理服务Telemetry/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2020-03-03-计量和监控管理服务Telemetry
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-03 23:14:16 / 修改时间：23:22:31" itemprop="dateCreated datePublished" datetime="2020-03-03T23:14:16+08:00">2020-03-03</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">7.6k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">7 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h2><p>Telemetry是OpenStack的计量与监控服务，用来获取和保存计量与监控的各种测量值，并根据测量值进行报警。同时这些保存下来的测量值也可以被第三方系统获取，用来做更进一步的分析、处理或展示。早期OpenStack的计量和监控服务由Ceilometer独自完成，将原始计量数据存储在MongoDB中，性能方面可以说是极烂，社区的活跃度也低，基本到了快被放弃的边缘。随着Gnocchi的出现，Gnocchi的出现使计量服务不论是在性能还是空间消耗上都有了质的飞跃，功不可没，从而挽救了Ceilometer这个项目。后续，OpenStack社区受自身架构的启发，针对计量和监控这块对Ceilometer项目做了拆分，Ceilometer专门为为OpenStack环境提供一个获取和保存各种测量值的统一框架，明确目标，同时将其告警功能拆分到aodh项目，采集数据存储到gnocchi时间序列数据库，事件相关的服务拆分到panko项目，相关数据仍存储在MongoDB中。因此，现在OpenStack的计量和监控项目就是一个“小帐篷”（“大帐篷”就是OpenStack自身），包括了：Ceilometer、Aodh、Gnocchi和Panko，统称为Telemetry。<a id="more"></a></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ExSJFEjaLoCi.png?imageslim" alt="mark"></p>
+<p>Gnocchi是Telemetry项目的中的“灵魂”，是一个多租户时间序列，计量和资源数据库。提供了REST API接口来创建和操作数据，用于超大规模计量数据的存储，同时向操作者和用户提供对度量和资源信息的访问。Gnocchi需要与Ceilometer对接传递计量数据，而Ceilometer作为一个框架，处于核心位置，它像一个漏斗一样，能把OpenStack内部发生的几乎所有的事件都收集起来，为计费和监控以及其它服务提供数据支撑。Ceilometer服务及其剥离出来的服务由四个组件构成，四个组件分工明确，各司其职，使得计量系统结构清晰明了。</p>
+<ul>
+<li><strong>Gnocchi：</strong>时间序列数据库，保存计量数据。</li>
+<li><strong>Panko：</strong>事件数据库，保存事件数据。</li>
+<li><strong>Ceilometer：</strong>数据采集服务，采集资源使用量相关数据，并推送到Gnocchi，采集操作事件数据，并推送到Panko。</li>
+<li><strong>Aodh：</strong>告警服务，基于计量和事件数据提供告警通知功能。</li>
+</ul>
+<h2 id="Ceilometer架构"><a href="#Ceilometer架构" class="headerlink" title="Ceilometer架构"></a><strong>Ceilometer架构</strong></h2><p>Ceilometer框架整体采用了高度可扩展性的设计思想，其逻辑架构如下图所示，Ceilometer通过通知代理和轮询代理获取测量值，经流水线的发布者发布给收集器或外部系统。收集器继而将收到的测量值保存到数据库中，同时，外部系统也可以通过Ceilometer API将测量值送达Ceilometer数据库。Ceilometer告警由告警评估器触发，发送给告警通知器，同时调用Ceilometer API，最终将告警保存到Ceilometer数据库中。此外，告警通知器可以将告警发送给外部系统，外部系统也可以通过Ceilometer API新建告警发送给Ceilometer。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jWEFdXpeTBnU.png?imageslim" alt="mark"></p>
+<p>Ceilometer可以通过以下3种方式获取测量值数据，其数据采集机制有通知、轮询和REST ful API方式3种：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/v7PgO9DgRgeP.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>通知：</strong>所有的OpenStack服务都会在执行了某种操作或者状态变化时发送通知消息到oslo-messaging（OpenStack整体的消息队列框架），一些消息中包含了计量所需要的数据，这部分消息会被Ceilometer的ceilometer-agent-notification服务组件处理，并转化为samples。通知数据采集方式是被动地采集计量数据。</li>
+<li><strong>轮询：</strong>Ceilometer中的服务组件根据配置定期主动地通过OpenStack服务的API或者其他辅助工具（如Hypervisors）去远端或本地的不同服务实体中获取所需要的计量数据；Ceilometer的轮询机制通过3种类型的代理实现，即ceilometer-agent-central、ceilometer-agent-compute和ceilometer-agent-ipmi服务组件。每种代理使用不同的轮询插件（pollster）从不同的命名空间来收集数据。</li>
+<li><strong>REST ful API：</strong>用户可以通过调用RESTful API直接把利用其他方式获取的任意测量数据送达给Ceilometer。</li>
+</ul>
+<p>Ceilometer通过以上3种方法获取到测量值数据后，会把它转化为符合某种标准格式的数据采样（Sample）通过内部总线发送给Notification agent。然后Notification Agent根据用户定义的Pipeline来对数据采样进行转换（Transform）和发布（Publish）。如果根据Pipeline的定义，这个数据采样（Sample）最后被发布给Collector的话，Collector会把这个数据采样保存在数据库中。Ceilometer的计量数据经过数据采集（agent）、数据处理（流水线数据转换及发布）、数据存储（collector）几个步骤，各个步骤有着各自的处理流程。</p>
+<h2 id="Ceilometer计量数据采集和转换发布机制"><a href="#Ceilometer计量数据采集和转换发布机制" class="headerlink" title="Ceilometer计量数据采集和转换发布机制"></a><strong>Ceilometer计量数据采集和转换发布机制</strong></h2><p>Ceilometer的各个服务中，负责计量数据采集的服务组件有4个，分别是agent-notification、agent-central、agent-compute、agent-ipmi。其采集数据的方式各有不同，主要分为Poll和Push两种方式，如下图所示，Poll即轮询方式，主动采集数据，Push即通知方式，被动获取数据。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/c8nGYYMQ1Fez.png?imageslim" alt="mark"></p>
+<ul>
+<li><p><strong>agent-notification</strong>服务采用Push方式被动获取数据，即通过监听OpenStack通知总线（Notification Bus）上的通知消息来获取数据。OpenStack中各个模块在执行了某种操作或者状态变化时都会推送通知信息到oslo-messaging消息框架。agent-notification通过访问这个消息队列服务框架，获取相关通知信息，并进一步转化为采样数据的格式。agent-notification服务的运行流程如下：</p>
+<p><strong>Step1：</strong>解析Pipeline配置文件得到Pipeline定义。</p>
+<p><strong>Step2：</strong>调用stevedore库，载入所有的notification listener插件。</p>
+<p><strong>Step3：</strong>对每一个notification listener插件通过oslo.messaging库构造其对应的oslo.messaging库的notification listener对象，并且启动此对象监听通知消息。</p>
+<p><strong>Step4：</strong>当通知总线上有某个notification listener插件所感兴趣的通知到达时，所对应的notification listener插件就会被agent-notification调用，根据此通知消息构造出采样值Sample，然后根据Pipeline中的定义将此采样值转换和发布出去。</p>
+</li>
+<li><p><strong>agent-central</strong>服务可以部署在任何节点上，通常部署在控制节点上，它用来和远程的各种不同的实体和服务进行通信，获取不同的测量值。agent-central主要通过调用各OpenStack服务的REST API来获取OpenStack服务的各种信息，以及通过SNMP来获取Hardware资源的信息，通过kwapi来收集设备能耗数据。</p>
+</li>
+<li><p><strong>agent-compute</strong>服务需要部署在运行nova-compute服务的计算节点上，主要用来收集计算节点上的虚拟机实例的计量数据，在每一个计算节点上都要运行这个服务组件。agent-compute主要是用来和Hypervisor进行通信，通过调用Hypervisor的API来获取相关测量值，需要定期Poll轮询收集信息。</p>
+</li>
+<li><p><strong>agent-ipmi</strong>服务需要部署在支持IPMI的计算节点上，该计算节点需要安装ipmitool工具。agent-ipmi服务通过ipmitool收集本机IPMI传感器（Sensor）的数据，以及Intel Node Manager的数据。</p>
+</li>
+<li><p>agent-central、agent-compute、agent-ipmi都属于Polling代理，Polling代理的作用是根据Pipeline的定义，周期性地调用不同的Pollster插件去轮询获得Pipeline中定义的测量值，再根据Pipeline的定义，对这些采样值进行转换和发布。各种不同的Polling代理的运行流程基本类似，如下：</p>
+<p><strong>Step1：</strong>调用stevedore库，获取属于本Agent的所有Pollster插件。</p>
+<p><strong>Step2：</strong>创建PartitionCoordinator类实例对象，加入一个partition group，并创建一个定时器用来周期性地发送心跳消息。</p>
+<p><strong>Step3：</strong>解析Pipeline配置文件得到Pipeline的定义，并根据解析的结果创建一个或多个不同的PollingTask和所对应的定时器。由于所有采样频率相同的Pipeline都会在同一个PollingTask里处理，所以每个PollingTask都由某个特定频率的定时器驱动，在某一个线程中被执行。</p>
+<p><strong>Step4：</strong>由定时器驱动的PollingTask会周期性地调用其所包含的各种Pollster，由这些Pollster获取测量数据，然后根据Pipeline的定义，把获取的测量取样值交给Transformer转换后，再由Publisher发布。</p>
+</li>
+</ul>
+<p>Ceilometer的计量数据处理采用了Pipeline机制。Ceilometer适用于不同应用场景下的测量数据，采样频率可能有不同的要求，例如：用于计费的数据采用频率比较低，一般为10~30min，而用来监控的数据采用的频率就会比较高，一般会达到1~10s。除此之外，对于测量数据的发布方式，不同应用场景也有不同的要求，对于计费数据要求数据采样值不能丢失，而对于用来监控的数据则要求不那么严格。为此，Ceilometer引入了Pipeline的概念来解决采样频率和发布方式的问题。Pipeline由源（Source）和目标（Sink）两部分组成。源中定义了需要测量哪些数据、数据的采样频率、在哪些端点上进行数据采样，以及这些数据的目标。目标中定义了获得的数据要经过哪些Transformer进行数据转换，并且最终交由哪些Publisher发布。Ceilometer中同时允许有多个Pipeline，每个Pipeline都有自己的源和目标，这就解决了不同采样频率、不同发布方式的问题。Ceilometer的数据处理流程如下图所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/FG6h2hBRB0sl.png?imageslim" alt="mark"></p>
+<p>Transformer可以针对一个或者多个同一种类的数据采样值进行各种不同的操作，例如改变单位、聚合计算等，最终转换成一个或者多个其他不同种类的测量数据。通过Transformer转换后的数据最终会交由Pipeline定义中的Publisher进行数据发布，不同的Publisher发布的数据可以有不同的数据接收者，可以是Ceilometer的collector服务，也可以是外部系统。</p>
+<p>Ceilometer获得的测量数据通过Pipeline发布后，需要有一个数据接收者获得这些数据并且保存下来，以便对数据进行进一步的处理。Ceilometer的collector服务就是用来接收这些测量数据的，并最终持久化到存储介质中。collector服务可以配置一个或多个dispatcher，对于每一个collector所接收到的采样数据，collector会调用所有配置的dispatcher，由这些dispatcher来决定如何处理数据。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/PcS51xRBiQVB.png?imageslim" alt="mark"></p>
+<p>Ceilometer支持4种不同的数据库后台：MongoDB、MySQL、PostgreSQL和Hbase。不同的数据库后台，所支持的功能和性能有所不同，比如采用MongoDB作为后台数据库，除了一般的最大值、最小值、平均值、累加总和、总数之外，还支持求标准方差和求基数两个操作。虽然Ceilometer的默认后台数据库是MySQL，但是历史上一般建议在实际生产环境中采用MongoDB为后台数据库。由于性能等方面的原因，目前Telemetry社区建议使用Gnocchi代替上面所说的数据库来保存采样数据。</p>
+<h2 id="aodh、panko和gnocchi"><a href="#aodh、panko和gnocchi" class="headerlink" title="aodh、panko和gnocchi"></a><strong>aodh、panko和gnocchi</strong></h2><p>在OpenStack Liberty版本中，为了适应更灵活的部署方案，Telemetry社区把Ceilometer项目中和报警相关的功能剥离出来，成立了一个新的项目Aodh，主要是提供基于Ceilometer所获取的测量值或者Event事件进行报警的功能。Aodh的基本体系结构主要由以下几种服务构成，每种服务都是可水平扩展（scale out）的。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/NjWsVRQjxbko.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>API：</strong>主要提供面向用户的RESTful API接口服务。</li>
+<li><strong>Alarm Evaluator：</strong>用来周期性的检查除了event类型之外其他警告器（Alarm）相关的告警条件是否满足。</li>
+<li><strong>Alarm Listener：</strong>根据消息总线（Notification Bus）上面的Event事件消息，来检查相对应的event类型的警告器（Alarm）告警条件是否满足。</li>
+<li><strong>Alarm Notifier：</strong>当警告器的告警条件满足时，执行用户定义的动作。</li>
+</ul>
+<p>对于每一种警告器的状态，在新建或者修改警告器的时候，都可以为其设置不同的报警动作。当Alarm Evaluator周期性检查警告器状态时，或者当Alarm Listener接收到相关的Event事件并进行检查后，如果发现当前警告器状态有对应的报警动作，那么它会通过Alarm Notifier服务来调用相应的报警动作。</p>
+<p>在OpenStack Newton版本中，Telemetry社区把Ceilometer关于Event事件部分的API移到了Panko项目中。目前，Event事件的产生和保存仍旧是由Ceilometer负责，但是对于从后台数据库中读取Event事件的API service 被移到了Panko项目中（Ceilometer API中与Event相关的API目前还保留着）。Panko主要接收来自Ceilometer的事件数据，并提供查询接口。其主要组件只有一个：panko-api:，用于提供事件数据的插入和查询接口。</p>
+<p>Gnocchi接收来自Ceilometer的原始计量数据，进行聚合运算后保存到持久化后端。Gnocchi中保存与资源使用量相关的计量数据，为了提高检索效率，额外将计量数据的元数据信息单独存储。另外由于从原始输入数据到最终存储的聚合数据，需要进行大量计算，为了缓冲输入与处理间的速率，引入缓存后端。因此Gnocchi中涉及三种存储后端：</p>
+<ul>
+<li><strong>索引后端：</strong>存储计量对象和采集项的基础属性，比如对象类型（虚拟机、硬盘、网络）、原始资源uuid等。索引数据量不大，一半用MySQL。</li>
+<li><strong>聚合数据后端：</strong>存储经过聚合计算的计量数据，比如cpu使用率的平均值、最大值、最小值等。推荐用Ceph，可以支持多实例共享数据。</li>
+<li><strong>传入数据后端：</strong>保存来自Ceilometer的原始计量数据。默认与聚合后端一致，推荐使用Redis。</li>
+</ul>
+<p>gnocchi的主要组件如下：</p>
+<ul>
+<li><strong>gnocchi-api：</strong>提供数据传入接口，接收原始计量数据，并将它们保存到传入数据后端。同时提供聚合计量数据的查询接口，从聚合数据后端读取计量数据返回给用户。</li>
+<li><strong>gnocchi-metricd：</strong>从传入数据后端读取原始计量数据，进行聚合计算，然后将聚合数据保存到聚合数据后端。</li>
+</ul>
+<h2 id="Telemetry操作实战"><a href="#Telemetry操作实战" class="headerlink" title="Telemetry操作实战"></a><strong>Telemetry操作实战</strong></h2><p><strong>步骤1：</strong>执行以下指令，查看归档策略</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack metric archive-policy list</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HcPBilyMX68F.png?imageslim" alt="mark"></p>
+<p>归档策略指定计量数据的聚合计算方式，包括聚合方法（mean、min、max、sum、std、count），和计量数据的统计时间粒度、数据点数。根据时间粒度和统计点数可以确定计量的时间跨度，根据一个数据点的大小在0.05 bytes~8.04 bytes，就可以确定一个metric需要使用的存储空间大小。Gnocchi内置了bool、low、medium、high四种归档策略。</p>
+<p><strong>步骤2：</strong>执行以下指令，查看归档策略规则：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack metric archive-policy-rule list</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/L6FTRP7nM3Jd.png?imageslim" alt="mark"></p>
+<p>归档策略的作用单位是计量项（metric），上述默认规则将所有metric关联到low策略，metric使用通配符匹配。</p>
+<p><strong>步骤3：</strong>执行以下指令，查看资源列表：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack metric resource list --<span class="built_in">limit</span> 10</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5ievLhgX3Yzo.png?imageslim" alt="mark"></p>
+<p>资源就是对于OpenStack各个项目中的逻辑资源，比如实例、端口、镜像、卷等。</p>
+<p><strong>步骤4：</strong>执行以下指令，查看metric列表：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack metric metric list --<span class="built_in">limit</span> 10</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/VRC3MQoxq4sc.png?imageslim" alt="mark"></p>
+<p>Metric是资源统计的基本单位，一个资源会有多个metrics，比如实例资源有cpu_util、memory.usage、disk.root.size等。</p>
+<p><strong>步骤5：</strong>执行以下指令，查看metric列表：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack metric measures show 00b09a5c-3c7f-445e-b885-872db5d80b2b</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/o9KswPsjLACk.png?imageslim" alt="mark"></p>
+<p>Measures就是Gnocchi中最终保存的计量数据，即每个metric的数据点。</p>
+<p><strong>步骤6：</strong>执行以下指令，创建告警：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack alarm create --name cpu_high --<span class="built_in">type</span> gnocchi_resources_threshold --description <span class="string">'Instance Running HOT'</span> --metric cpu_util --threshold 65 --comparison-operator ge --aggregation-method mean --granularity 300 --resource-id 07b49533-64fd-4e53-a6c7-9824c03e043a --resource-type instance --alarm-action <span class="string">'log://'</span> --ok-action <span class="string">'log://'</span></span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5nskViw0CuuB.png?imageslim" alt="mark"></p>
+<p>这里设置触发器状态变为alarm和ok时都执行log动作，即记录到aodh-notifier日志中。可以将log://替换为外部告警接口，触发邮件、短信等通知，或者heat的扩容接口，实现服务自动扩容。</p>
+<p>—————————————————————– 结束 ——————————————————————————</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2020/03/03/2020-03-03-计量和监控管理服务Telemetry/" title="2020-03-03-计量和监控管理服务Telemetry">https://kkutysllb.cn/2020/03/03/2020-03-03-计量和监控管理服务Telemetry/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/云计算/" rel="tag"><i class="fa fa-tag"></i> 云计算</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/03/2020-03-03-资源编排管理服务Heat/" rel="next" title="2020-03-03-资源编排管理服务Heat">
+                <i class="fa fa-chevron-left"></i> 2020-03-03-资源编排管理服务Heat
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ceilometer架构"><span class="nav-number">2.</span> <span class="nav-text">Ceilometer架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ceilometer计量数据采集和转换发布机制"><span class="nav-number">3.</span> <span class="nav-text">Ceilometer计量数据采集和转换发布机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#aodh、panko和gnocchi"><span class="nav-number">4.</span> <span class="nav-text">aodh、panko和gnocchi</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Telemetry操作实战"><span class="nav-number">5.</span> <span class="nav-text">Telemetry操作实战</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">935k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">14:10</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2020/03/03/2020-03-03-计量和监控管理服务Telemetry/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>
