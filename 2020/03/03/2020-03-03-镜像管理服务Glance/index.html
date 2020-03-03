@@ -103,26 +103,37 @@
 
 
 
-  <meta name="description" content="KVM的现状KVM最初是由Qumranet公司的Avi Kivity开发的，作为他们的VDI产品的后台虚拟化解决方案。为了简化开发，Avi Kivity并没有选择从底层开始新写一个Hypervisor，而是选择了基于Linux kernel，通过加载模块使Linux kernel本身变成一个Hypervisor。2006年10月，在先后完成了基本功能、动态迁移以及主要的性能优化之后，Qumrane">
-<meta name="keywords" content="Hypervisor">
+  <meta name="description" content="概述Glance在OpenStack中主要为实例提供公共镜像服务能力以及镜像/虚拟机快照管理功能，属于OpenStack的核心组件之一，与Swift、Cinder并列OpenStack存储的三驾马车。在实际生产中，Glance本身并不负责大量数据的存储，对镜像的存储主要依赖于后端Swift，一般都是采用对象存储方式。如果后端对象存储采用Swift，则镜像存在Swift中；如果后端存储采用分布式存储">
+<meta name="keywords" content="云计算">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2019-06-21-KVM到底是个啥？">
-<meta property="og:url" content="https://kkutysllb.cn/2019/06/22/2019-06-21-KVM到底是个啥？/index.html">
+<meta property="og:title" content="2020-03-03-镜像管理服务Glance">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/2020-03-03-镜像管理服务Glance/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
-<meta property="og:description" content="KVM的现状KVM最初是由Qumranet公司的Avi Kivity开发的，作为他们的VDI产品的后台虚拟化解决方案。为了简化开发，Avi Kivity并没有选择从底层开始新写一个Hypervisor，而是选择了基于Linux kernel，通过加载模块使Linux kernel本身变成一个Hypervisor。2006年10月，在先后完成了基本功能、动态迁移以及主要的性能优化之后，Qumrane">
+<meta property="og:description" content="概述Glance在OpenStack中主要为实例提供公共镜像服务能力以及镜像/虚拟机快照管理功能，属于OpenStack的核心组件之一，与Swift、Cinder并列OpenStack存储的三驾马车。在实际生产中，Glance本身并不负责大量数据的存储，对镜像的存储主要依赖于后端Swift，一般都是采用对象存储方式。如果后端对象存储采用Swift，则镜像存在Swift中；如果后端存储采用分布式存储">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db4f46083634024.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db52ae861d10143.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db5521d6ee20494.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db571ed3c212430.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db59ae145834533.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db5f94cc3658528.jpg">
-<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db616cb5c237088.jpg">
-<meta property="og:updated_time" content="2019-06-22T05:02:04.774Z">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pNHLTzUVWUlw.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/A7pseeuR9zuz.jpeg?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/l9F9eGQJqQXN.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dLgyMzO330r2.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/g8G6KYPTM27F.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5vsUT0RAtvGi.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/3yPeTN1l6PxB.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/zXrdBICzEfdD.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/4xi5WziBH2zo.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/9oUqnxH9YhIT.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/oHlHVi3cW5eA.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/PtCqi7R9A12U.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jto1zWoSr9kK.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/0MpYLq6POj9i.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/RAA99yW2vwYV.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/UfUmERlXQTGB.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/4UDSA9XDJ0R1.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5osdG6c67Qes.png?imageslim">
+<meta property="og:updated_time" content="2020-03-03T10:31:46.977Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2019-06-21-KVM到底是个啥？">
-<meta name="twitter:description" content="KVM的现状KVM最初是由Qumranet公司的Avi Kivity开发的，作为他们的VDI产品的后台虚拟化解决方案。为了简化开发，Avi Kivity并没有选择从底层开始新写一个Hypervisor，而是选择了基于Linux kernel，通过加载模块使Linux kernel本身变成一个Hypervisor。2006年10月，在先后完成了基本功能、动态迁移以及主要的性能优化之后，Qumrane">
-<meta name="twitter:image" content="https://i.loli.net/2019/06/22/5d0db4f46083634024.jpg">
+<meta name="twitter:title" content="2020-03-03-镜像管理服务Glance">
+<meta name="twitter:description" content="概述Glance在OpenStack中主要为实例提供公共镜像服务能力以及镜像/虚拟机快照管理功能，属于OpenStack的核心组件之一，与Swift、Cinder并列OpenStack存储的三驾马车。在实际生产中，Glance本身并不负责大量数据的存储，对镜像的存储主要依赖于后端Swift，一般都是采用对象存储方式。如果后端对象存储采用Swift，则镜像存在Swift中；如果后端存储采用分布式存储">
+<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pNHLTzUVWUlw.png?imageslim">
 
 
 
@@ -131,7 +142,7 @@
 
 
 
-  <link rel="canonical" href="https://kkutysllb.cn/2019/06/22/2019-06-21-KVM到底是个啥？/">
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/2020-03-03-镜像管理服务Glance/">
 
 
 
@@ -141,7 +152,7 @@
   };
 </script>
 
-  <title>2019-06-21-KVM到底是个啥？ | 一花一菩提，一云一世界</title>
+  <title>2020-03-03-镜像管理服务Glance | 一花一菩提，一云一世界</title>
   
 
 
@@ -400,7 +411,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/06/22/2019-06-21-KVM到底是个啥？/">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/2020-03-03-镜像管理服务Glance/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kkutysllb">
@@ -417,7 +428,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2019-06-21-KVM到底是个啥？
+          <h1 class="post-title" itemprop="name headline">2020-03-03-镜像管理服务Glance
 
               
             
@@ -443,7 +454,7 @@
                 
               
 
-              <time title="创建时间：2019-06-22 11:52:01 / 修改时间：13:02:04" itemprop="dateCreated datePublished" datetime="2019-06-22T11:52:01+08:00">2019-06-22</time>
+              <time title="创建时间：2020-03-03 18:16:18 / 修改时间：18:31:46" itemprop="dateCreated datePublished" datetime="2020-03-03T18:16:18+08:00">2020-03-03</time>
             
 
             
@@ -465,7 +476,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
 
                 
                 
@@ -501,7 +512,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">7.1k</span>
+                <span title="本文字数">9.4k</span>
               
 
               
@@ -515,7 +526,7 @@
                 
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
-                <span title="阅读时长">6 分钟</span>
+                <span title="阅读时长">9 分钟</span>
               
             </div>
           
@@ -535,57 +546,221 @@
       
 
       
-        <h2 id="KVM的现状"><a href="#KVM的现状" class="headerlink" title="KVM的现状"></a><strong>KVM的现状</strong></h2><p>KVM最初是由Qumranet公司的Avi Kivity开发的，作为他们的VDI产品的后台虚拟化解决方案。为了简化开发，Avi Kivity并没有选择从底层开始新写一个Hypervisor，而是选择了<strong>基于Linux kernel，通过加载模块使Linux kernel本身变成一个Hypervisor。</strong>2006年10月，在先后完成了基本功能、动态迁移以及主要的性能优化之后，Qumranet正式对外宣布了KVM的诞生。同月，<strong>KVM模块的源代码被正式纳入Linux kernel，成为内核源代码的一部分。</strong>2008年9月4日，Redhat公司以1.07亿美元收购了Qumranet公司，包括它的KVM开源项目和开发人员。自此，Redhat开始在其RHEL发行版中集成KVM，逐步取代Xen，并从RHEL7开始，正式不支持Xen。<a id="more"></a></p>
-<p>在KVM出现之前，Xen虚拟化解决方案已经业界比较成熟的一款开源VMM，但是KVM出现之后，很快被Linux内核社区接受，就是因为Xen不是通过Linux内核去管理系统资源（硬件/软件），而是通过自身的管理系统去完成，仅这一点就让Linux内核社区很不爽。同时，Xen在当时设计上采用半虚方式，需要修改Guest OS的内核来满足I/O驱动性能要求，从而不支持商用OS（Windows、Mac OS）的虚拟化，使得Xen相比KVM来说，在硬件辅助虚拟化的支撑上包袱更重，转型困难重重。</p>
-<p>目前，<strong>KVM已经成为OpenStack用户选择的事实上的Hypervisor标准。</strong>OpenStack自身调查数据显示，KVM占87%以上的部署份额，详细参见<a href="http://superuser.openstack.org/articles/openstack-user-survey-insights-november-2014/。可以说，KVM已经主导公有云部署的Hypervisor市场，同时在电信云部署方面也是一枝独秀。" target="_blank" rel="noopener">http://superuser.openstack.org/articles/openstack-user-survey-insights-november-2014/。可以说，KVM已经主导公有云部署的Hypervisor市场，同时在电信云部署方面也是一枝独秀。</a></p>
-<p>功能上，虚拟化发展到今天，各个Hypervisor的主要功能都差不多。KVM由于其开源性，反而商业上的限制较少。性能上，KVM和Xen都能达到原生系统95%以上的效率（CPU、内存、网络、磁盘等benchmark衡量），KVM甚至还略微好过Xen一点点。微软虽然宣布其Hype-V的性能更好，但这只是微软一家之言，并没有公开的数据支撑。</p>
-<p>在电信云NFV领域来说，由于通信网络设备的实时性要求很高，且NFV的开源平台OPNFV选择了OpenStack。为了更好实现网络功能虚拟化的愿景，其实时性要求责无旁贷的落到了KVM头上，NFV-KVM项目也就顺理成章地诞生了，它作为OPNFV的子项目主要解决KVM在实时性方面受到的挑战。详情请参见<a href="https://wiki.opnfv.org/display/kvm/Nfv-kvm。" target="_blank" rel="noopener">https://wiki.opnfv.org/display/kvm/Nfv-kvm。</a></p>
-<p><strong>总的来说，虚拟化技术发展到今天已经非常成熟，再加上DPDK代码的开源化、KVM也好、其他Hypervisor也好，在转发性能的优化和硬件辅助虚拟化的支撑上都半斤八两，但由于KVM的开源性特性以及社区的热度，使得其在云计算领域解决方案一枝独秀。甚至，华为在其FusionSphere6.3版本也开始拥抱KVM而抛弃了Xen。要知道，华为在剑桥大学可是专门有一支团队在研究Xen虚拟化。</strong></p>
-<h2 id="KVM虚拟化实现"><a href="#KVM虚拟化实现" class="headerlink" title="KVM虚拟化实现"></a><strong>KVM虚拟化实现</strong></h2><p><strong>KVM全称是Kernel-based Virtual Machine，即基于内核的虚拟机</strong>，是采用硬件辅助虚拟化技术的全虚拟化解决方案。对于I/O设备（如硬盘、网卡等），KVM即支持QEMU仿真的全虚，也支持virtio方式的半虚。<strong>KVM从诞生开始就定位于基于硬件虚拟化支持的全虚实现</strong>，由于其在Linux内核2.6版本后被集成，<strong>通过内核加载模式使得Linux内核变成一个事实上的Hypervisor</strong>，但是硬件管理还是由Linux Kernel来完成。因此，<strong>它是一个典型Type 2型虚拟化</strong>，如下图所示。</p>
-<p><img src="https://i.loli.net/2019/06/22/5d0db4f46083634024.jpg"></p>
-<p>如上图，<strong>一个KVM客户机就对应一个Linux进程，每个vCPU对应这个进程下的一个线程，还有单独处理I/O的线程，属于同一个进程组（忘了的，请回顾本站CPU虚拟化系列文章）。</strong>所以，宿主机上Linux Kernel可以像调度普通Linux进程一样调度KVM虚拟机，<strong>这种机制使得Linux Kernel的进程优化和调度功能优化等策略，都能用于KVM虚拟机。</strong>比如：通过进程权限限定功能可以限制KVM客户机的权限和优先级等。</p>
-<p><strong>由于KVM嵌入Linux内核中，除了硬件辅助虚拟化（如VT-d）透传的硬件设备能被虚拟机看见外，其他的I/O设备都是QEMU模拟出来的，所以QEMU是KVM的天生好基友。而在内存管理方面，由于KVM本身就是Linux Kernel中一个模块，所以其内存管理完全依赖于Linux内核。</strong>Linux系统的所有内存管理机制，如大页、零页（重复页）共享KSM、NUMA、mmap共享内存等，都可以用于KVM虚拟机的内存管理上。</p>
-<p><strong>在数据存储方面，由于KVM是Linux Kernel的一部分，它可以利用所有存储厂商的存储架构，支持Linux支持的任何存储和文件系统来存储数据。同时，还支持全局文件系统GFS2等共享文件系统上的虚拟机镜像</strong>，允许虚拟机在多个Host之间共享存储或使用逻辑卷共享存储。KVM虚拟机的原生磁盘格式为QCOW2，支持磁盘镜像、快照、多级快照和压缩加密等虚拟化特性。但是，有一点需要注意：<strong>基于KVM的镜像盘必须使用RAW格式（一种非精简格式盘，在华为FC解决方案中称为普通盘。它就像我们的物理硬盘一样，分配多大空间就是多大空间），否则利用镜像发布虚机会不成功。</strong></p>
-<p><strong>在实时迁移方面，KVM虚拟机支持在多个Host之间热迁移，无论是OVS分布式虚拟交换机，还是Linux Bridge分布式虚拟交换机，KVM虚拟机都能完美兼容实现虚拟接入，且对用户（实际用户，APP等，也就是我们常说的租户这个概念）是透明的。同时，还支持将客户机当前状态，也就是快照保存到磁盘，并在以后恢复。</strong></p>
-<p><strong>在设备驱动方面，KVM支持混合虚拟化，</strong>其中半虚拟化的驱动程序安装在虚拟机的OS中，允许虚拟机使用优化I/O接口而不用模拟设备。KVM使用的半虚拟化驱动程序是IBM和RedHat联合Linux社区开发的virtio标准，它是一个与Hypervisor独立的，构建设备驱动程序的接口，是KVM内核的另一个好基友，不仅支持KVM对其调用，还支持VMware、Hyper-V对其调用。同时，就像前面提到的，KVM也支持VT-d技术，两者如胶似漆，完美契合，通过将Host上PCI总线上的设备透传给虚拟机，让虚拟机可以直接使用原生的驱动程序来驱动这些物理设备。忘了啥是VT-d的，请回顾本站I/O虚拟化一文。同时，就像前面开篇提到的KVM在<strong>在性能方面能达到原生的95%以上，不差于Xen虚拟化，但在伸缩性方面支持拥有多达288个vCPU和4TB RAM的虚拟机，远超于Xen（Xen因为DM0的存在，其伸缩性受限，单机最大支持32个vCPU，1.5TB RAM）。</strong></p>
-<p><strong>通过上面大致了解，可以说KVM就是在硬件辅助虚拟化技术之上构建起来的VMM。</strong>但并非要求所有硬件虚拟化技术都支持才能运行KVM虚拟化，<strong>KVM对硬件最低的依赖是CPU的硬件虚拟化支持</strong>（比如：Intel的VT-x技术和AMD的AMD-V技术），而其他的内存和I/O的硬件虚拟化支持，会让整个KVM虚拟化下的性能得到更多的提升。所以，我们在虚拟机部署KVM功能时，首先就是要查看宿主机Host（也就是我们实验环境的虚拟机，一般是在VMware Workstations的虚拟机打开CPU虚拟化功能。如果是真实环境，则需要物理服务器的BIOS中要开启VT-x功能，如下图所示。</p>
-<p><img src="https://i.loli.net/2019/06/22/5d0db52ae861d10143.jpg"></p>
-<p>然后，进入服务器后通过如下指令确认VT-x功能支持，如下图所示。</p>
-<p><img src="https://i.loli.net/2019/06/22/5d0db5521d6ee20494.jpg"></p>
-<p>如果什么输出都没有，那说明你的系统并没有支持虚拟化的处理 ，不能使用KVM。<strong>另外Linux发行版本必须在64bit环境中才能使用KVM。</strong></p>
-<h2 id="KVM软件架构拆解"><a href="#KVM软件架构拆解" class="headerlink" title="KVM软件架构拆解"></a><strong>KVM软件架构拆解</strong></h2><p>KVM是在硬件虚拟化支持下的全虚拟化技术，所以它能在相应硬件上运行几乎所有的操作系统，如：Linux、Windows、FreeBSD、MacOS等。KVM虚拟化的核心主要由以下两个模块组成：</p>
-<p><strong>1）KVM内核模块，它属于标准Linux内核的一部分，是一个专门提供虚拟化功能的模块，主要负责CPU和内存的虚拟化，</strong>包括：客户机的创建、虚拟内存的分配、CPU执行模式的切换、vCPU寄存器的访问、vCPU的执行。</p>
-<p><strong>2）QEMU用户态工具，它是一个普通的Linux进程，为客户机提供设备模拟的功能，</strong>包括模拟BIOS、PCI/PCIE总线、磁盘、网卡、显卡、声卡、键盘、鼠标等。<strong>同时它通过ioctl系统调用与内核态的KVM模块进行交互。</strong></p>
-<p><img src="https://i.loli.net/2019/06/22/5d0db571ed3c212430.jpg"></p>
-<p>上图中，<strong>在KVM虚拟化架构下，每个客户机就是一个QEMU进程</strong>，在一个宿主机上有多少个虚拟机就会有多少个QEMU进程。客户机中的每一个虚拟CPU对应QEMU进程中的一个执行线程，一个宿主机Host中只有一个KVM内核模块，所有虚拟机都与这个内核模块进行交互。</p>
-<h3 id="KVM内核模块"><a href="#KVM内核模块" class="headerlink" title="KVM内核模块"></a><strong>KVM内核模块</strong></h3><p>KVM内核模块是KVM虚拟化的核心模块，它在内核中由两部分组成：<strong>一个是处理器架构无关的部分，用lsmod命令中可以看到，叫作kvm模块</strong>；<strong>另一个是处理器架构相关的部分，在Intel平台上就是kvm_intel这个内核模块。</strong>如下图所示，KVM的主要功能是<strong>初始化CPU硬件，打开虚拟化模式，然后将虚拟机运行在虚拟环境下，并对虚拟机的运行提供一定的支持。</strong></p>
-<p><img src="https://i.loli.net/2019/06/22/5d0db59ae145834533.jpg"></p>
-<p>KVM仅支持硬件辅助的虚拟化，所以，“<strong>打开并初始化系统硬件以支持虚拟机的运行”</strong>是KVM模块本职工作。以Intel CPU架构服务器为例，KVM打开并初始化硬件以支持虚拟机运行的过程如下：</p>
-<p><strong>Step1：</strong>在被内核加载的时候，KVM模块会先初始化内部的数据结构。</p>
-<p><strong>Step2：</strong>做好准备之后，KVM模块检测系统当前的CPU，然后打开CPU控制寄存器CR4中的虚拟化模式开关，并通过执行<strong>VMXON指令</strong>将宿主操作系统（包括KVM模块本身）置于CPU虚拟化模式中的<strong>根模式root operation</strong>，详细参见本站计算虚拟化之CPU虚拟化一文。</p>
-<p><strong>Step3：</strong>KVM模块创建特殊设备文件/dev/kvm并等待来自用户空间的命令。</p>
-<p><strong>Step4：</strong>后续虚拟机的创建和运行，其本质上就是是一个用户空间的QEMU和内核空间的KVM模块相互配合的过程。</p>
-<p><strong>这里面的/dev/kvm这个设备比较关键，它可以被当作一个标准的字符设备，用来缓存用户空间与内核空间切换的上下文，也就是ioctl调用上下文，是KVM模块与用户空间QEMU的通信接口。</strong></p>
-<p>针对/dev/kvm文件的最重要的loctl调用就是“<strong>创建虚拟机</strong>”。这里的创建虚拟机，<strong>简单理解就是KVM为了某个虚拟机创建对应的内核数据结构，并且返回一个文件句柄来代表所创建的虚拟机。</strong>针对该文件句柄的loctl调用可以对虚拟机做相应的管理，比如创建用户空间虚拟地址和客户机物理地址及真实内存物理地址的映射关系，再比如创建多个可供运行的vCPU。KVM模块同样会为每一个创建出来的vCPU生成对应的文件句柄，对其文件句柄进行相应的loctl调用，就可以对vCPU进行调度管理。</p>
-<p>而针对vCPU的最重要的loctl调用就是“<strong>运行虚拟处理器</strong>”。通过它，虚拟机就可以在非根模式下运行，一旦执行敏感指令，就通过<strong>VMX Exit</strong>切入根模式，由KVM决定后续的操作并返回执行结果给虚拟机。</p>
-<p>除了处理器虚拟化，<strong>内存虚拟化的实现也是由KVM内核模块完成，包括影子页表和EPT硬件辅助，均由KVM内核模块负责完成GVA—&gt;HPA的两级转换。</strong>处理器对设备的访问主要是通过<strong>I/O指令</strong>和<strong>MMIO</strong>，其中<strong>I/O指令会被处理器直接截获，MMIO会通过配置内存虚拟化来捕捉。一般情况下，除非对外设有极高性能要求，比如虚拟中断和虚拟时钟，外设均是由QEMU这个用户空间的进程来模拟实现。</strong></p>
-<h3 id="QEMU用户态设备模拟"><a href="#QEMU用户态设备模拟" class="headerlink" title="QEMU用户态设备模拟"></a><strong>QEMU用户态设备模拟</strong></h3><p>QEMU原本就是一个著名的开源虚拟机软件项目，既是一个功能完整的虚拟机监控器，也在QEMU-KVM的软件栈中承担设备模拟的工作。它是由一个法国工程师独立编写的代码实现，<strong>并不是KVM虚拟化软件的一部分</strong>，但是从名字就能知道它和KVM是一辈子的好基友。</p>
-<p>QEMU最初实现的虚拟机是一个纯软件的实现，也就是我们常说的通过二进制翻译来实现虚拟机的CPU指令模拟，所以性能比较低。但是，其优点是跨平台，甚至可以支持客户机与宿主机并不是同一个架构，比如在x86平台上运行ARM客户机。同时，QEMU能与主流的Hypervisor完美契合，包括：Xen、KVM、Hyper-v，以及VMware各种Hypervisor等，为上述这些Hypervisor提供虚拟化I/O设备。</p>
-<p><strong>而QEMU与KVM密不可分的原因，就是我们常说的QEMU-KVM软件协议栈。</strong>虚拟机运行期间，QEMU会通过KVM内核模块提供的系统调用ioctl进入内核，由KVM内核模块负责将虚拟机置于处理器的特殊模式下运行。一旦遇到虚拟机进行I/O操作时，KVM内核模块会从上次的系统调用ioctl的出口处返回QEMU，由QEMU来负责解析和模拟这些设备。除此之外，虚拟机的配置和创建，虚拟机运行依赖的虚拟设备，虚拟机运行时的用户操作环境和交互，以及一些针对虚拟机的特殊技术，比如动态迁移，都是由QEMU自己实现的。</p>
-<p><strong>QEMU除了提供完全模拟的设备以外，还支持virtio协议的设备模拟。</strong>在前端虚拟机中需要安装相应的virtio-blk、virtio-scsi、virtio-net等驱动，就能连接到QEMU实现的virtio的虚拟化后端。除此之外，QEMU还提供了virtio-blk-data-plane的高性能的块设备I/O方式，与传统virtio-blk相比，它为每个块设备单独分配一个线程用于I/O处理，不需要与原QEMU执行线程同步和竞争锁，而且使用ioeventfd/irqfd机制，利用宿主机Linux上的AIO（异步I/O）来处理客户机的I/O请求，使得块设备I/O效率进一步提高。</p>
-<p><strong><em>总之，在KVM虚拟化的软件架构中，KVM内核模块与QEMU用户态程序是处于最核心的位置，有了它们就可通过qemu命令行操作实现完整的虚拟机功能。</em></strong></p>
-<h2 id="KVM的各类上层管理APP"><a href="#KVM的各类上层管理APP" class="headerlink" title="KVM的各类上层管理APP"></a><strong>KVM的各类上层管理APP</strong></h2><p>KVM目前已经有libvirt API、virsh命令行工具、OpenStack云管理平台等一整套管理工具，与VMware提供的商业化管理工具相比虽然有所差距，但KVM这一整套管理工具都是API化的、开源的，可以灵活使用，且能二次定制开发。</p>
-<p><img src="https://i.loli.net/2019/06/22/5d0db5f94cc3658528.jpg"></p>
-<p><strong>1）libvirt</strong></p>
-<p>libvirt是使用最广泛的对KVM虚拟化进行管理的工具和应用程序接口，已经是事实上的虚拟化接口标准。作为通用的虚拟化API，<strong>libvirt不但能管理KVM，还能管理VMware、Hyper-V、Xen、VirtualBox等其他虚拟化方案。但是，在通过Docker或Kolla部署OpenStack时，由于容器镜像中集成了libvirt功能，需要关闭Host的libvirt服务，否则会发生PID调用错误。</strong></p>
-<p><strong>2）virsh</strong></p>
-<p>virsh是一个常用的管理KVM虚拟化的命令行工具，用于在单个宿主机上进行运维操作。virsh是用C语言编写的一个调用libvirt API的虚拟化管理工具，其源代码也是同步公布在libvirt这个开源项目中的。我们常用的KVM虚拟机查看指令就是virsh list –all，如下图：</p>
-<p><img src="https://i.loli.net/2019/06/22/5d0db616cb5c237088.jpg"></p>
-<p><strong>3）virt-manager</strong></p>
-<p>virt-manager是专门针对虚拟机的图形化管理软件，底层与虚拟化交互的部分仍然是调用libvirt API来操作的。virt-manager除了提供虚拟机生命周期管理的基本功能，还提供性能和资源使用率的监控，同时内置了VNC和SPICE客户端，方便图形化连接到虚拟客户机中。virt-manager在RHEL、CentOS、Fedora等操作系统上都非常流行，因其图形化操作的易用性，成为新手入门学习虚拟化操作的首选管理软件。但是，在真实服务器端由于需要安装图形化界面，所以并不常用（服务器环境实现可视化一般是通过VNC功能实现）。</p>
-<p><strong>4）OpenStack</strong></p>
-<p>OpenStack是目前业界使用最广泛的功能最强大的云管理平台，它不仅提供了管理虚拟机的丰富功能，还有非常多其他重要管理功能，如：对象存储、块存储、网络、镜像、身份验证、编排服务、控制面板等。OpenStack的Nova、Cinder和Neutron，也就是计算、存储和网络管理组件仍然使用libvirt API来完成对底层虚拟化的管理，其计算、存储和网络服务组件的配置文件conf中，均有[libvirt]分类引用配置项。</p>
-<p>以上，就是KVM这个耳熟能详的Hypervisor的全貌，作为运维人员掌握以上知识点即可，也就是理解KVM虚拟机的真正工作原理即可。如果工作层面涉及性能或管理的二次开发，必须进一步了解并掌握其官方社区的源码以及各种热点技术或BUG解决方案，这就需要自己钻研了。后面，我们会从实战的角度来介绍如何用熟KVM虚拟机的各类操作。</p>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h2><p>Glance在OpenStack中主要为实例提供公共镜像服务能力以及镜像/虚拟机快照管理功能，属于OpenStack的核心组件之一，与Swift、Cinder并列OpenStack存储的三驾马车。在实际生产中，Glance本身并不负责大量数据的存储，对镜像的存储主要依赖于后端Swift，一般都是采用对象存储方式。如果后端对象存储采用Swift，则镜像存在Swift中；如果后端存储采用分布式存储ceph，则主要存储在ceph的对象存储rgw模块中。而在我们的实验环境中（考虑大家PC的配置问题），没有部署swift对象存储，因此镜像采用部署Glance服务的节点本地磁盘进行存储。<a id="more"></a></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pNHLTzUVWUlw.png?imageslim" alt="mark"></p>
+<p>Glance首次出现在OpenStack的Bexar版本中，提供发现、注册和检索虚拟机镜像的功能，只依赖于OpenStack的Keystone服务，属于OpenStack八大核心组件之一，为OpenStack的核心项目之一。</p>
+<h2 id="Image的概念"><a href="#Image的概念" class="headerlink" title="Image的概念"></a><strong>Image的概念</strong></h2><p>OpenStack 由 Glance 提供 Image 服务。要理解 Image Service 先得搞清楚什么是 Image 以及为什么要用 Image？在传统 IT 环境下，安装一个系统是要么从安装 CD 从头安装，要么用 Ghost 等克隆工具恢复。这两种方式有如下几个问题：</p>
+<ul>
+<li>如果要安装的系统多了效率就很低、时间长，工作量大。</li>
+<li>安装完还要进行手工配置，比如安装其他的软件，设置 IP 等</li>
+<li>备份和恢复系统不灵活。</li>
+</ul>
+<p>云环境下需要更高效的解决方案，这就是 Image。Image 是一个模板，里面包含了基本的操作系统和其他的软件。举例来说，有家公司需要为每位员工配置一套办公用的系统，一般需要一个 Win7 系统再加 MS office 软件。OpenStack 是这么玩的：先手工安装好这么一个虚机、然后对虚机执行 snapshot，这样就得到了一个 image。当有新员工入职需要办公环境时，立马启动一个或多个该 image 的 instance（虚机）就可以了。在这个过程中，第 1 步跟传统方式类似，需要手工操作和一定时间。但第 2、3 步非常快，全自动化，一般都是秒级别。而且 2、3 步可以循环做。比如公司新上了一套 OA 系统，每个员工的 PC 上都得有客户端软件。那么可以在某个员工的虚机中手工安装好 OA 客户端，然后执行 snapshot ，得到新的 image，以后就直接使用新 image 创建虚机就可以了。另外，snapshot 还有备份的作用，能够非常方便的恢复系统。各位在安装OpenStack时可以通过VMWare的快照（snapshot）来进行备份，每安装完一个服务就备份一次，这样即使后面服务安装出现失误等，且无法调整，就可以通过恢复快照的方式来解决，但是这样也存在一个占用本地磁盘较大的问题。就如下图所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/A7pseeuR9zuz.jpeg?imageslim" alt="mark"></p>
+<p><strong>镜像、实例和规格的关系：</strong></p>
+<ul>
+<li>用户可以从同一个镜像启动任意数量的实例。</li>
+<li>每个启动的实例都是基于镜像的一个副本，实例上的任何修改都不会影响到镜像。</li>
+<li>启动实例时，必须指定一个规格，实例按照规格使用资源。</li>
+</ul>
+<p>在创建Glance服务管理的Image时，需要指定Image的容器格式container format和磁盘格式disk format，其含义具体如下：</p>
+<ul>
+<li><strong>disk format：</strong>是虚拟机镜像文件的磁盘格式，不同的虚拟化厂商有不同的格式，用来标明虚拟机磁盘镜像包含的信息，可以设置的镜像磁盘格式有：raw，vhd ，vmdk，vdi， iso ，qcow2 ，aki ，ami ，ari等。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><strong>镜像磁盘格式</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>raw</td>
+<td>一种非结构化的镜像磁盘格式</td>
+</tr>
+<tr>
+<td>vhd</td>
+<td>VMware，Xen，Microsoft，VirtualBox等使用的常见磁盘格式</td>
+</tr>
+<tr>
+<td>vhdx</td>
+<td>vhd格式的增强版本，支持更大的磁盘容量和其他功能</td>
+</tr>
+<tr>
+<td>vmdk</td>
+<td>常见的磁盘镜像格式</td>
+</tr>
+<tr>
+<td>vdi</td>
+<td>Virtual Box和QEMU支持的磁盘格式</td>
+</tr>
+<tr>
+<td>iso</td>
+<td>光盘（例如CDROM）的存档格式</td>
+</tr>
+<tr>
+<td>qcow2</td>
+<td>QEMU支持的磁盘格式，支持动态扩展和写时复制</td>
+</tr>
+<tr>
+<td>aki</td>
+<td>Amazon Kernel Image</td>
+</tr>
+<tr>
+<td>ari</td>
+<td>Amazon Ramdisk Image</td>
+</tr>
+<tr>
+<td>ami</td>
+<td>Amazon Machine Image</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>container format：</strong>是指虚拟机镜像是以一种什么样的文件格式存放，同时包含实际虚拟机有关的metadata格式。container format有以下几种：bare，ovf ，aki， ari ，ami等。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><strong>镜像容器格式</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ovf</td>
+<td>开放式虚拟机磁盘格式， 由Vmware发起， 目前已被多种虚拟化设备支持。</td>
+</tr>
+<tr>
+<td>bare</td>
+<td>这表示镜像没有container或者元数据。</td>
+</tr>
+<tr>
+<td>aki</td>
+<td>Amazon Kernel Image</td>
+</tr>
+<tr>
+<td>ari</td>
+<td>Amazon Ramdisk Image</td>
+</tr>
+<tr>
+<td>ami</td>
+<td>Amazon Machine Image</td>
+</tr>
+</tbody>
+</table>
+<p>镜像不仅有存储的磁盘格式和容器格式，同时还有访问权限，主要有四种：</p>
+<ul>
+<li><strong>public：</strong>公共的，可以被所有的tenant使用；</li>
+<li><strong>private：</strong>私有的，只能被owner的tenant使用；</li>
+<li><strong>shared：</strong>共享的，一种非公有的Image，可以被其owner共享给其他tenant使用；</li>
+<li><strong>protected：</strong>受保护的，不能被非管理员以外的用户删除；</li>
+</ul>
+<h2 id="Glance的架构"><a href="#Glance的架构" class="headerlink" title="Glance的架构"></a><strong>Glance的架构</strong></h2><p>Glance 使用C/S架构，提供REST API，用户可以通过API执行对服务的请求，其架构在OpenStack版本的演进中发生了一定的变化，主要有V1和V2两个版本。在老版本（V1）的Glance架构中，主要通过glance-api、glance-registry、glance-DB、image-store四个组件构成，glance-api和glance-registry同时提供WSGI接口，只是glance-api对外，glance-registry只能被内部调用。如下图所示，各个组件的功能如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/l9F9eGQJqQXN.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>glance-api：</strong>接收REST ful的API请求，通过其他组件（glance-registry和image-store）来完成镜像的CRUD操作。</li>
+<li><strong>glance-registry：</strong>负责镜像的元数据管理，与glance-DB交互，完成存储或获取镜像的元数据。</li>
+<li><strong>glance-DB：</strong>通过关系型数据库组件提供镜像管理、控制数据及元数据的存储功能，在开源解决方案中采用MySQL数据库实现glance-DB，在华为的解决方案中采用GuassDB实现glance-DB。</li>
+<li><strong>image-store：</strong>本质上是一个存储接口层，可以异构对接不同的后端存储，将镜像数据通过该接口层持久化存储在后端存储中。</li>
+</ul>
+<p>而在新版本（V2）中，Glance的架构发生了一定的变化，在源代码中仍然保留glance-registry函数的入口点（这也是为什么我们在配置glance的服务时，仍需配置glance-registry.conf的原因），但是实际实现时将glance-registry的功能整合到了glance-api中，通过在glance-api中提供一个registry共享层来实现镜像元数据的数据库存取。新版本OpenStack的Glance镜像管理服务的架构如下，<strong>镜像的元数据主要包括：镜像资源的访问策略Policy，镜像资源的规格、镜像资源的存储位置等信息。</strong></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dLgyMzO330r2.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>glance-client：</strong>任何使用glance服务的应用程序，接收API请求，发起操作认证并调用glance-api。</li>
+<li><strong>glance-api：</strong>通过REST ful对外开放API接口提供镜像管理功能，并接收镜像管理的相关API操作请求。</li>
+<li><strong>glance-domain-controller：</strong>管理Glance的内部服务组件，分层实现特定的任务，如认证（Auth）、事件通知（Notifier）、策略控制（Policy）和数据库连接等。</li>
+<li><strong>registry-layer：</strong>实现glance-domain-controller与DAL之间的安全访问控制。</li>
+<li><strong>DAL（DataBase-Abstraction-Layer）：</strong>提供glance-domain-controller、registry-layer与glance-DB之间的统一API接口，实现glance-domain-controller、registry-layer对glance-DB的安全访问。</li>
+<li><strong>glance-DB：</strong>在所有组件之间共享，存放镜像的管理、配置数据及元数据。</li>
+<li><strong>Glance Store Drivers：</strong>就是image store，本质上是一个存储接口层，负责与外部异构存储后端或本地文件系统的交互，持久化存储镜像文件。</li>
+</ul>
+<p>了解了V1和V2版本的glance架构，这里需要重点了解下Glance服务的缓存机制。Glance服务提供缓存机制主要是为了解决节点扩容后带来多个节点同时提供镜像管理服务带来的镜像服务性能问题。其原理就是通过glance-api提供缓存机制，就是在glance-api服务节点存放一份原始镜像的拷贝，本质上是为了实现api服务器的数量扩展，提高为同一个镜像提供服务的效率。<strong>这里需要说明一下，网上针对glance服务提供缓存的位置有两种说法：一是将镜像缓存到计算节点；二是将镜像缓存到glance-api节点。从官网的如下描述我理解是第二种方式-</strong>—This local image cache is transparent to the end user – in other words, the end user doesn’t know that the Glance API is streaming an image file from its local cache or from the actual backend storage system。但是，在创建虚拟机时，nova-compute会将镜像缓存拷贝一份到计算节点，便于后续再次创建同样镜像的虚拟机时可以利用本地存储的镜像完成（通过镜像ID识别是否同一镜像的虚拟机）。上述镜像的缓存对用户是不可见的，用户并不知道使用的是本地缓存的镜像还是后端存储的镜像。镜像的缓存服务开关、缓存大小和缓存周期可通过命令行配置，命令行操作缓存的指令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">glance-cache-pruner --image_cache_max_size= * &lt;===控制cache总量的大小，周期性的运行</span><br><span class="line"></span><br><span class="line">glance-cache-cleaner &lt;===清理状态异常的cache文件</span><br><span class="line"></span><br><span class="line">glance-cache-manage --host=&lt;HOST&gt; queue-image &lt;IMAGE_ID&gt; &lt;===预取某些热门镜像到新增的api节点中</span><br><span class="line"></span><br><span class="line">glance-cache-manage --host=&lt;HOST&gt; delete-cached-image &lt;IMAGE_ID&gt; &lt;===手动删除image cache来释放空间</span><br></pre></td></tr></table></figure>
+<h2 id="Glance的状态机"><a href="#Glance的状态机" class="headerlink" title="Glance的状态机"></a><strong>Glance的状态机</strong></h2><p>镜像Image在虚拟机实例的全生命周期管理中，也是有各种不同的状态的。类似Nova服务管理虚拟机的各种状态，Cinder负责管理Volume的各种状态，Glance负责管理Image的各种状态。下图就是创建镜像时，Image的不同状态之间的转换图。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/g8G6KYPTM27F.png?imageslim" alt="mark"></p>
+<p>在Glance中有两种状态机，一种是镜像状态，另一种是任务状态。镜像状态表示镜像在数据库中的各种状态，任务状态表示操作镜像的各种任务的状态，两种状态结合的上图状态机流程图表示了镜像在不同任务的不同时期的一种状态形式，只有任务执行成功success时的active状态的镜像才能被正常使用。</p>
+<p><strong>任务状态包括pending、processor、success、failure</strong>四种，其具体含义如下：</p>
+<ul>
+<li><strong>pending：</strong>表示任务被挂起</li>
+<li><strong>processor：</strong>表示任务正在执行中</li>
+<li><strong>success：</strong>表示任务执行成功</li>
+<li><strong>failure：</strong>表示任务失败</li>
+</ul>
+<p><strong>镜像状态包括queued、saving、uploadding、importing、active、deactive、killed、deleted、pending_delete</strong>九种，其具体含义如下：</p>
+<ul>
+<li><strong>queued：</strong>已在glance-registry中保留镜像的标识符，但镜像数据未上传，镜像大小未初始化。</li>
+<li><strong>saving：</strong>镜像的原始数据正在上传到glance中。</li>
+<li><strong>uploading：</strong>对镜像调用了import data-put请求。</li>
+<li><strong>importing：</strong>导入镜像过程中，但镜像尚未就绪。</li>
+<li><strong>active：</strong>镜像创建完成，可以使用。</li>
+<li><strong>deactived：</strong>禁止任务非管理员用户访问镜像，即镜像去激活。</li>
+<li><strong>killed：</strong>镜像上传时出错，镜像不可用。</li>
+<li><strong>deleted：</strong>glance保留了镜像的信息，但不能被使用，一定时间后自动清理镜像信息。</li>
+<li><strong>pending_delete：</strong>类似deleted，此时glance尚未删除镜像的数据，处于该状态的镜像可以恢复。</li>
+</ul>
+<p>例如上图中，当发起创建一个镜像任务Create image时，首先在glance-registry中保存镜像的标识符，但此时镜像文件还未上传，镜像大小还未初始化（Queued），此时任务状态为processor。下一步将初始化镜像的元数据并保存到数据库中，并开始上传镜像（saving），此时任务状态仍为processor。镜像上传如果成功，此时镜像状态转换为active，任务状态为success，镜像可以正常使用；镜像上传如果失败，此时镜像状态为killed，任务状态为failure。同时根据用户的操作镜像的状态和任务状态有不同的表现形式：用户如果选择重新上传，则镜像状态转为queued，任务状态转为processor，即重新开始上传；用户如果选择删除镜像，则镜像状态变为deleted，任务状态为success，表示镜像删除成功。同时，在镜像上传过程中，即saving态时，也可以选择删除镜像，此时镜像状态直接变为deleted，任务状态变为success时，表示镜像删除成功。同理，镜像的导入过程与创建过程类似，只是镜像状态不包含saving态，只有importing态，这里不再赘述。</p>
+<h3 id="OpenStack不同操作系统类型镜像的制作"><a href="#OpenStack不同操作系统类型镜像的制作" class="headerlink" title="OpenStack不同操作系统类型镜像的制作"></a><strong>OpenStack不同操作系统类型镜像的制作</strong></h3><p>OpenStack中虚拟机使用的镜像并不是我们平时装系统使用的iso光盘文件，而是经过裁剪后的适合各个云主机使用公共模板img，且支持加入个性化化定制任务和软件。获取与OpenStack兼容的虚拟机映像的最简单方法是下载别人已经创建的虚拟机映像，最简单的Glance镜像制作方法是下载系统供应商官方发布的OpenStack镜像文件，官方发布的OpenStack大多数镜像预安装了cloud-init包，支持SSH密钥对登录和用户数据注入功能，下图表示了OpenStack官方镜像支持的主流操作系统类型。镜像的具体下载链接，请参考OpenStack社区网站：<a href="https://docs.openstack.org/image-guide/obtain-images.html。" target="_blank" rel="noopener">https://docs.openstack.org/image-guide/obtain-images.html。</a></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5vsUT0RAtvGi.png?imageslim" alt="mark"></p>
+<p>但是，有时候官方下载的镜像的并不符合我们的实际需要，比如我们想要安装一些预置软件或脚本。一种简单的方法是将官方镜像进行改造，然后再生成新的模板文件，这种方法虽然简单，但是我们无法完全掌握镜像具体包含哪些工具和软件，存在一定的安全风险。另一种方法就是我们自己手动创建镜像，这样我们自己可以定义安装哪些软件和定制哪些脚本，并自行设定镜像生成的云主机的访问权限等等。下面就以创建一个ubuntu18.04镜像为例，简单说明一下手动创建镜像的流程，并介绍几种常用镜像制作工具。</p>
+<ul>
+<li><strong>Step1：</strong>使用virt-manager创建一个Ubuntu 18.04虚拟机并安装系统</li>
+<li><strong>Step2：</strong>登录虚拟机并安装cloud-init，sudo apt install cloud-init</li>
+<li><strong>Step3：</strong>在虚拟机内部，停止虚拟机，sudo shutdown -h now（或init 0）</li>
+<li><strong>Step4：</strong>预清理虚拟机，在KVM宿主机上执行virt-sysprep -d VM_ID</li>
+<li><strong>Step5：</strong>释放虚拟机定义，在KVM宿主机上执行virsh undefine VM_ID</li>
+<li><strong>Step6：</strong>制作镜像，在KVM宿主机上执行qemu-img create or qemu-img convert</li>
+<li><strong>Step7：</strong>上传镜像，在OpenStack控制节点上执行 openstack image create</li>
+</ul>
+<p>按照上面的步骤，就可以创建各种操作类型各类虚拟机，具体指令的差异由安装的镜像操作系统决定。需要注意一点，在制作windows操作系统类型虚拟机时，需要额外安装virtio驱动，但这不是OpenStack的原因引起的，而是KVM虚拟化解决方案要求的。virtio是一种IO的半虚拟化解决方案，在KVM虚拟机中一般要求磁盘IO使用virtio的半虚拟化驱动，有时网卡的IO也要求使用virtio的半虚拟化驱动，目的就是提高IO虚拟化后的性能。而windows操作系统自身并不支持virtio驱动，因此需要额外安装第三方驱动。</p>
+<p>除了上面手工制作OpenStack的镜像外，开源社区还提供了一些镜像制作工具，用于快速批量制作镜像。常见的工具有以下几种：</p>
+<ul>
+<li><strong>Diskimage-builder：</strong>自动化磁盘映像创建工具，可以制作Fedora，Red Hat Enterprise Linux，Ubuntu，Debian，CentOS和openSUSE镜像，示例：disk-image-create ubuntu VM</li>
+<li><strong>Packer：</strong>使用Packer制作的镜像，可以适配到不同云平台，适合使用多个云平台的用户，一种兼具图形化和指令集的制作工具。</li>
+<li><strong>virt-builder：</strong>快速创建新虚拟机的工具，可以在几分钟或更短的时间内创建各种用于本地或云用途的虚拟机镜像，其本质上是利用一个已存在的虚拟机作为模板，快速创建一个新的虚拟机。</li>
+</ul>
+<h2 id="Glance镜像管理实战"><a href="#Glance镜像管理实战" class="headerlink" title="Glance镜像管理实战"></a><strong>Glance镜像管理实战</strong></h2><p><strong>步骤1：</strong>执行以下命令，查看已上传的镜像列表，OpenStack上传镜像的默认保存位置在/var/lib/glance/images目录下，上传后保存的镜像文件名为镜像的id值</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ll /var/lib/glance/images/</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/3yPeTN1l6PxB.png?imageslim" alt="mark"></p>
+<p><strong>步骤2：</strong>执行以下命令，查看上传镜像的详细信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qemu-img info /var/lib/glance/images/3d1a7c9b-d954-4a52-bb80-bd2682972de3</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/zXrdBICzEfdD.png?imageslim" alt="mark"></p>
+<p><strong>步骤3：</strong>执行以下命令，创建镜像“kk_img”，镜像格式为“QCOW2”，镜像设置为“Private”和“Protected”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image create --disk-format qcow2 --container-format bare --min-disk 1 --min-ram 128 --private --protected --file ~/cirros-0.4.0-x86_64-disk.img kk_img</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/4xi5WziBH2zo.png?imageslim" alt="mark"></p>
+<p><strong>步骤4：</strong>执行以下命令，查看刚创建镜像“kk_img”的详细信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image show kk_img</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/9oUqnxH9YhIT.png?imageslim" alt="mark"></p>
+<p><strong>步骤5：</strong>执行以下命令，将镜像“kk_img”设置为public和unprotected状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image <span class="built_in">set</span> --public --unprotected kk_img</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/oHlHVi3cW5eA.png?imageslim" alt="mark"></p>
+<p><strong>步骤6：</strong>执行以下命令，将镜像“kk_img”设置为共享状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image <span class="built_in">set</span> --shared kk_img</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/PtCqi7R9A12U.png?imageslim" alt="mark"></p>
+<p><strong>步骤7：</strong>执行以下命令，将镜像“kk_img”加入项目kkproject中，并查看镜像的状态信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image add project cfa6d427-f6e2-48c0-91da-0365101da223 fa23a9822e8449239d8f9d7befbabc75</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jto1zWoSr9kK.png?imageslim" alt="mark"></p>
+<p><strong>步骤9：</strong>执行以下命令，在普通用户kkutysllb登录情况，接收共享镜像“kk_img”，再次观察权限上的变化</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image <span class="built_in">set</span> --accept cfa6d427-f6e2-48c0-91da-0365101da223</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/0MpYLq6POj9i.png?imageslim" alt="mark"></p>
+<p><strong>步骤10：</strong>执行以下命令，查看vmdk格式的Ubuntu18.04镜像详细信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qemu-img info bionic-server-cloudimg-amd64.vmdk</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/RAA99yW2vwYV.png?imageslim" alt="mark"></p>
+<p><strong>步骤11：</strong>执行以下命令，将vmdk格式的Ubuntu18.04镜像转换为qcow2格式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qemu-img convert -f vmdk -O qcow2 -c -p bionic-server-cloudimg-amd64.vmdk bionic-server-cloudimg-amd64.qcow2</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/UfUmERlXQTGB.png?imageslim" alt="mark"></p>
+<p><strong>步骤12：</strong>执行以下命令，上传bionic-server-cloudimg-amd64.qcow2镜像，命名为ubuntu-18.04-s，镜像状态设为public和unprotected</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image create --disk-format qcow2 --container-format bare --min-disk 1 --min-ram 128 --public --unprotected --file ~/bionic-server-cloudimg-amd64.qcow2 ubuntu-18.04<span class="_">-s</span></span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/4UDSA9XDJ0R1.png?imageslim" alt="mark"></p>
+<p><strong>步骤13：</strong>执行以下命令，将镜像ubuntu-18.04-s导出保存到本地磁盘</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image save --file ubuntu-18.04-s.qcow2 ubuntu-18.04<span class="_">-s</span></span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5osdG6c67Qes.png?imageslim" alt="mark"></p>
+<h2 id="思考："><a href="#思考：" class="headerlink" title="思考："></a><strong>思考：</strong></h2><p><strong>1、请分析镜像导入任务过程中，镜像状态变化过程及任务状态的变化过程？</strong></p>
+<p><strong>2、将激活状态的镜像去激活再次激活时，请分析镜像状态的变化过程及任务状态变化过程。那么将激活态的镜像直接删除，此时镜像状态和任务状态的变化流程如何？</strong></p>
+<p><strong>3、将镜像设置为private和protected时 ，有哪些限制？将镜像改为public和unprotected后，限制上有哪些变化？将镜像改为shared后，限制上有哪些变化？</strong></p>
+<p><strong>4、普通用户是否可以创建public状态的镜像？为什么？shared状态的镜像呢？又为什么？</strong></p>
+<p><strong>5、创建一个虚拟机实例时，实例是如何从镜像启动的（多磁盘场景下，即实例有vda、vdb、vdc三块虚拟磁盘，其中vda是系统盘，vdb是临时盘、vdc是数据盘）？删除虚拟机实例时，实例关联的惊险会怎么样？（答出glance、nova、cinder的大致交互流程即可）</strong></p>
 
       
     </div>
@@ -659,7 +834,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="https://kkutysllb.cn/2019/06/22/2019-06-21-KVM到底是个啥？/" title="2019-06-21-KVM到底是个啥？">https://kkutysllb.cn/2019/06/22/2019-06-21-KVM到底是个啥？/</a>
+    <a href="https://kkutysllb.cn/2020/03/03/2020-03-03-镜像管理服务Glance/" title="2020-03-03-镜像管理服务Glance">https://kkutysllb.cn/2020/03/03/2020-03-03-镜像管理服务Glance/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -672,7 +847,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Hypervisor/" rel="tag"><i class="fa fa-tag"></i> Hypervisor</a>
+            <a href="/tags/云计算/" rel="tag"><i class="fa fa-tag"></i> 云计算</a>
           
         </div>
       
@@ -685,8 +860,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/06/20/2019-06-20-SBA架构下的核心网大一统/" rel="next" title="2019-06-20-SBA架构下的核心网大一统">
-                <i class="fa fa-chevron-left"></i> 2019-06-20-SBA架构下的核心网大一统
+              <a href="/2020/03/03/2020-03-03-认证管理服务Keystone/" rel="next" title="2020-03-03-认证管理服务Keystone">
+                <i class="fa fa-chevron-left"></i> 2020-03-03-认证管理服务Keystone
               </a>
             
           </div>
@@ -695,8 +870,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/06/22/2019-06-21-服务器外部交换网络虚拟化/" rel="prev" title="2019-06-21-服务器外部交换网络虚拟化">
-                2019-06-21-服务器外部交换网络虚拟化 <i class="fa fa-chevron-right"></i>
+              <a href="/2020/03/03/2020-03-03-计算管理服务Nova/" rel="prev" title="2020-03-03-计算管理服务Nova">
+                2020-03-03-计算管理服务Nova <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -931,7 +1106,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#KVM的现状"><span class="nav-number">1.</span> <span class="nav-text">KVM的现状</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVM虚拟化实现"><span class="nav-number">2.</span> <span class="nav-text">KVM虚拟化实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVM软件架构拆解"><span class="nav-number">3.</span> <span class="nav-text">KVM软件架构拆解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#KVM内核模块"><span class="nav-number">3.1.</span> <span class="nav-text">KVM内核模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QEMU用户态设备模拟"><span class="nav-number">3.2.</span> <span class="nav-text">QEMU用户态设备模拟</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVM的各类上层管理APP"><span class="nav-number">4.</span> <span class="nav-text">KVM的各类上层管理APP</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Image的概念"><span class="nav-number">2.</span> <span class="nav-text">Image的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Glance的架构"><span class="nav-number">3.</span> <span class="nav-text">Glance的架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Glance的状态机"><span class="nav-number">4.</span> <span class="nav-text">Glance的状态机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OpenStack不同操作系统类型镜像的制作"><span class="nav-number">4.1.</span> <span class="nav-text">OpenStack不同操作系统类型镜像的制作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Glance镜像管理实战"><span class="nav-number">5.</span> <span class="nav-text">Glance镜像管理实战</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考："><span class="nav-number">6.</span> <span class="nav-text">思考：</span></a></li></ol></div>
             
 
           </div>
@@ -1127,7 +1302,7 @@
   
     <script>
   window.livereOptions = {
-    refer: '2019/06/22/2019-06-21-KVM到底是个啥？/'
+    refer: '2020/03/03/2020-03-03-镜像管理服务Glance/'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];

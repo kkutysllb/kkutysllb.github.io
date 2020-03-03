@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="概述Compute Service Nova是OpenStack最核心的服务，负责维护和管理云环境的计算资源。OpenStack作为IaaS的云操作系统，虚拟机生命周期管理就是通过Nova来实现的。因此，Nova是OpenStack云中的计算组织控制器，首次出现在OpenStack的Austin版本，也就是伴随着OpenStack的诞生就存在。提供大规模、可扩展、按需自助的计算资源服务，现在的版本">
+<meta name="keywords" content="云计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020-03-03-计算管理服务Nova">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/2020-03-03-计算管理服务Nova/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="概述Compute Service Nova是OpenStack最核心的服务，负责维护和管理云环境的计算资源。OpenStack作为IaaS的云操作系统，虚拟机生命周期管理就是通过Nova来实现的。因此，Nova是OpenStack云中的计算组织控制器，首次出现在OpenStack的Austin版本，也就是伴随着OpenStack的诞生就存在。提供大规模、可扩展、按需自助的计算资源服务，现在的版本">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/H2xnEoJVfrkR.jpeg?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/byNv0abzFGQz.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/htkaFFnbc5m8.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/4SMAjRSJKNyT.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/LPrMMu3oIrzD.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/XeAJwewzR8Ti.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/9XB1B0IFlCtt.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/400gol6sp6X7.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/cw6dohWHHN8L.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/U2UHbEJgD0EI.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/9catXexARw0T.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/EPfItN8FDnVv.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/77jiL46n7oLK.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/h3dSRYfHNTQ2.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/u6pygFmDz1Ud.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Xg19OYtaAABx.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/g19meGHDTnts.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/S1T1AjXa1VUz.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/q5e1qob1Qy00.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/BVFyxsmAcd9D.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/WdylG8lamgFL.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GKlHPOJazK2B.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/fOz6YailId45.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kcq8SRsJnxdd.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pKS8YjuJE5yO.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/X0VQF184hxWu.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/99MPrRa6NBQ1.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Yvh9vxplnkas.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ee4uL8W29L7O.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/utft3njJwDvK.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/plErMynznnr9.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/7yMVJkj95nXg.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/xVKjy5lMLBbA.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/yOLBU3znjpxn.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/J97HRphYELqH.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/riIYsu6E8TpM.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/KQis72N3N6Ry.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dDn4EArgPnHW.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kX4E4l3fucCt.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5xEETw84c3mQ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5AXjpY1tviJR.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/oOEpfiQtBIiy.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/fJOlrLeXcv0g.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/YgndsCag3qxY.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HSnoXAoUSYPe.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/L97I2wL7jyPy.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/se6ex0GCdW8G.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/LOwDdBaCpjPd.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GRvOdaLnk8vN.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/lF7lXJnP29Yl.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/yy06Y22k9StB.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/N25QqkOLh9z2.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/KyPvbhyYi9vm.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jL4MLIt8nhJt.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/NUMSH53bmc9n.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/RPasYqaKJK8d.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HUzlta1t86DJ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pF0nkwPK9CYd.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Qdq86DkTgsYs.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/7LvQr0Ranwrw.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/PuADnYJi11nU.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Vf2D8Eo68NOK.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5zKXSc7jKdPP.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/1ipDMkPNsoek.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Leh7FmOfzKQ2.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/xdlaGADR8WJo.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/a9d4dJ8q82tu.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/QdKohImGAXUd.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/9NLIf91aC7NV.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dEsn0lBBxYxw.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/srKJMDh0cVll.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/J23NNI8L0sSS.png?imageslim">
+<meta property="og:updated_time" content="2020-03-03T12:39:21.314Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2020-03-03-计算管理服务Nova">
+<meta name="twitter:description" content="概述Compute Service Nova是OpenStack最核心的服务，负责维护和管理云环境的计算资源。OpenStack作为IaaS的云操作系统，虚拟机生命周期管理就是通过Nova来实现的。因此，Nova是OpenStack云中的计算组织控制器，首次出现在OpenStack的Austin版本，也就是伴随着OpenStack的诞生就存在。提供大规模、可扩展、按需自助的计算资源服务，现在的版本">
+<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/H2xnEoJVfrkR.jpeg?imageslim">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/2020-03-03-计算管理服务Nova/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2020-03-03-计算管理服务Nova | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/2020-03-03-计算管理服务Nova/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2020-03-03-计算管理服务Nova
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-03 20:05:12 / 修改时间：20:39:21" itemprop="dateCreated datePublished" datetime="2020-03-03T20:05:12+08:00">2020-03-03</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">37k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">33 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h2><p>Compute Service Nova是OpenStack最核心的服务，负责维护和管理云环境的计算资源。OpenStack作为IaaS的云操作系统，虚拟机生命周期管理就是通过Nova来实现的。因此，Nova是OpenStack云中的计算组织控制器，首次出现在OpenStack的Austin版本，也就是伴随着OpenStack的诞生就存在。提供大规模、可扩展、按需自助的计算资源服务，现在的版本同时支持管理裸机、虚拟机和容器。而在OpenStack早期的几个版本中计算、存储和网络均由Nova来提供，也就说不仅存在nova-compute组件，同时也有nova-volume和nova-network组件，后续随着项目拆分，nova-volume演变为现在Cinder服务，nova-network演变为现在Nuetron服务，而Nova自身则专注于计算服务，主要依赖Keystone提供认证服务，Glance提供镜像服务，Cinder提供块存储服务和Nuetron提供网络服务，其在OpenStack整个系统中位置如下，处于系统整体的核心地位。<a id="more"></a></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/H2xnEoJVfrkR.jpeg?imageslim" alt="mark"></p>
+<p>Nova计算管理服务的具体作用主要包括以下几个方面：</p>
+<ul>
+<li>支持OpenStack云中实例（VM Instances）生命周期的所有活动。</li>
+<li>负责管理计算资源、网络、认证、所需可扩展性的平台。</li>
+<li>Nova自身并没有提供任何虚拟化能力，它通过调用诸如libvirt之类的API和下层Hypervisors实现交互。</li>
+<li>Nova 通过一个与Amazon Web Services（AWS）EC2 API兼容的web services API来对外提供服务。</li>
+<li>Horizon或者其他系统可以通过调用Nova-API实现和计算服务的交互。</li>
+<li>存在多个各司其职的服务（即守护进程）。</li>
+</ul>
+<h2 id="Nova的架构"><a href="#Nova的架构" class="headerlink" title="Nova的架构"></a><strong>Nova的架构</strong></h2><p>Nova项目最初的源代码由美国国家航空航天局（NASA）贡献，截至Ocata版本，Nova项目已发行了15个版本，也是社区所有项目中最为成熟和用户生产环境部署率最高的项目。在2010年OpenStack项目成立之初，Nova项目主要分为Nova-Compute、Nova-volume和Nova-network三大功能模块。在2012年9月OpenStack的Folsom版本发行时，社区才将Nova-volume和Nova-network独立出来分别构建了Cinder和Quantum项目（后因商标原因更名为Neutron项目）。在OpenStack的A至E版本中，OpenStack Nova项目的逻辑架构如下图所示，其中，除了Nova-Compute、Nova-volume和Nova-network三大功能模块之外，还有处理RESTful API请求的Nova-API模块、调度Nova-Compute的Nova-scheduler模块、用以模块信息交互的消息队列系统和配置及状态数据存储的数据库。而在早期的OpenStack版本中，仅有Nova、Swift和Glance三大项目，如果用户不准备使用对象存储Swift，则Nova和Glance项目即构成了早期的OpenStack云平台。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/byNv0abzFGQz.png?imageslim" alt="mark"></p>
+<p>在OpenStack的Folsom版本发行后，Nova-volume和Nova-network被独立成为块存储Cinder项目和网络Neutron项目，而Nova自身的功能模块也被不断细分，除了Nova-Compute和Nova-API功能模块，以及消息队列和数据库之外，Nova项目还构建了Nova-cert、Nova-Conductor、Nova-consoleauth和nova-console等模块。块存储Cinder项目和网络服务Neutron独立后，OpenStack中三大核心功能计算、存储和网络项目之间的逻辑架构如下图所示，</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/htkaFFnbc5m8.png?imageslim" alt="mark"></p>
+<p>Nova由负责不同功能的服务进程所构成，其对外提供的服务接口为REST API，而各个内部组件之间通过RPC消息传递机制进行通信。Nova中提供API请求处理功能的模块是Nova-API，由API服务进程来处理数据库读写请求、向其他服务组件发送RPC消息的请求和生成RPC调用应答的请求等。在Nova中，RPC消息机制通过oslo.messaging库实现，这里的oslo.messaging库是对消息队列系统的顶层抽象。Nova中的大部分服务组件，除了Nova-Compute，都能以分布式的方式运行在多台服务器上，并且各服务组件之间会使用一个Manager进程来监听RPC消息。<strong>Nova-Compute组件的特别之处在于其作为一个独立进程运行在某个Nova-Compute管理下的Hypervisor上，从RPC消息机制而言，Nova-Compute进程通过专有队列进行消息订阅，而其他Nova组件则可以通过共享队列订阅消息。</strong>关于Nova与RPC消息机制之间的更多细节，可以参考前面《2、中间件服务—消息队列RabbitMQ》的介绍。</p>
+<p>Nova在设计过程中使用了中心化数据库思想，即各个服务组件共同使用相同的数据库。不过，为了便于用户快速升级OpenStack版本，服务组件对数据库的访问经过了一个对象层，其主要作用在于解耦数据库与Nova组件之间的强关联，使得已经升级完成的服务组件仍然可以与运行在老版本下的Nova-Compute服务通信。为了实现这一功能，<strong>Nova采用了中心化的管理组件Nova-Conductor来代理Nova-Compute对数据库的RPC请求**</strong>。**在大规模Nova-Compute部署过程中，RPC消息机制是最可能的集群瓶颈。为了解决这一问题，Nova在水平扩展时采用了一种称为Cell的部署方式。Cell有父Cell和子Cell之分，并且不同的Cell内部使用不同的消息队列系统。</p>
+<p>在实际的OpenStack系统运行过程中，计算服务Nova通过与认证授权服务Keystone交互从而实现身份权限的识别认证过程，并通过OpenStack的镜像服务Glance为实例提供系统镜像，而用户和云管理员则通过OpenStack的控制面板服务Horizon与Nova进行交互。此外，<strong>Nova计算资源的使用限额（Qoutas）以项目（Project）为单位进行限制，而镜像资源的访问则通过项目和用户来限制。</strong>OpenStack的计算服务Nova有如下组件构成：</p>
+<ul>
+<li><strong>nova-api：</strong>Nova核心组件。负责接收和响应终端用户对计算资源发起的API调用请求，如WSGI APP的路由请求和授权相关请求。nova-api接收到请求后，通常将请求转发给Nova服务的其他组件，如nova-scheduler。nova-api除了支持OpenStack的API请求外，还支持Amazon的EC2 API请求，nova-api的内部逻辑如下图所示。</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/4SMAjRSJKNyT.png?imageslim" alt="mark"></p>
+<p>如上图，nova-api层提供了三种服务：支持OpenStack API调用的osapi_compute，支持Amazon API调用的ec2以及metadata元数据服务（主要提供虚拟机相关信息的获取，比如虚拟机内置了cloud-init组件后，启动时会从metadata服务获取虚拟机的名称等信息设置到虚拟机内部）。整个nova-api的架构类似洋葱结构一样，从外部到内核一层一层包裹着，中间的每层是一个filter对象，用于对消息的处理再加工（比如增加request_id）或者在消息真正被处理前做一些其他事情（比如记录access日志），最终内核就是app，真正消息的处理者。App会根据消息请求的资源和action等信息route到注册的controller执行，每个controller都处理一个资源的action，如创建，删除，更新，查询等。也可以定位其他的action，如对虚拟机的迁移等，即承担虚拟机生命周期管理的入口。</p>
+<ul>
+<li><strong>nova-conductor：</strong>Nova核心组件。nova-conductor主要起到nova-compute服务与数据库之间的交互承接作用，其在nova-compute的顶层实现了一个新的对象层以防止Nova-Compute直接访问数据库带来的安全风险。nova-conductor的内部逻辑如下图所示。</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/LPrMMu3oIrzD.png?imageslim" alt="mark"></p>
+<p>在实际运行中，nova-compute并不直接读写访问数据库，而是通过nova-conductor实现数据库访问。nova-conductor组件可以水平扩展到多个节点上同时运行，但是nova-conductor不能部署到运行nova-compute的计算节点上，否则将不能隔离nova-Compute对数据库的直接访问，从而不能真正起到降低数据安全风险的作用。除此之外，nova-conductor还负责Nova服务的复杂流程控制，比如创建、冷迁移、热迁移、虚拟机规格调整和虚拟机重建等，以及与其他组件心跳信息定时写入等功能。需要注意一点，nova-compute组件只有在nova-conductor组件正常启动之后才能启动，即nova-compute组件的启动依赖nova-conductor。</p>
+<ul>
+<li><strong>nova-scheduler：</strong>Nova核心组件。主要负责从队列中截取虚拟机实例创建请求，依据默认或者用户自定义设置的过滤算法（根据计算节点的CPU、内存和磁盘等参数过滤）从计算节点集群中选取某个节点，并将虚拟机实例创建请求转发到该计算节点上执行，即最终的虚拟机将运行在该计算节点上。采用的过滤算法也可以根据需求自定义并在nova.conf配置文件中指定，如在配置Host Aggregate功能时，通常就需要更改默认的Scheduler规则。nova-scheduler的内部逻辑如下图所示。</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/XeAJwewzR8Ti.png?imageslim" alt="mark"></p>
+<p>上图中，nova-scheduler选择计算节点主要采用过滤和权重两步进行。过滤就是通过过滤器选择符合条件的节点，权重就是通过权重对比选择最优的节点，默认的权重取计算节点的剩余内存大小，也可以自定义其他通用参数，比如CPU和磁盘空间等。如果在创建虚拟机时，指定主机或主机组创建，则权重这一步骤就会失效，根据过滤器中主机或主机组过滤规则直接选定某个主机进行创建。</p>
+<ul>
+<li><strong>nova-compute：</strong>Nova核心组件。主要功能是接收来自队列的请求，并执行一系列系统命令，如创建一个KVM虚拟机实例并在数据库中更新对应实例的状态等。nova-compute的内部逻辑如下图所示。</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/9XB1B0IFlCtt.png?imageslim" alt="mark"></p>
+<p>上图中，nova-compute组件实际上运行在计算节点上一个进程，其内部逻辑分为两个部分：Manager和Driver。Manager主要负责各类操作指令接收，并下发给Hypervisor去执行，同时通过resource_tracker进程从Hypervisor收取各节点的资源信息，并通过AMQP与OpenStack的其他服务进行交互，比如与Glance交互获取创建虚拟机时需要的镜像Image，与Cinder交互获取创建虚拟机时需要的虚拟磁盘Volume，与Neutron交互获取创建虚拟机时需要的IP和Port信息等等。Driver组件用于对接底层异构的Hypervisor，常见的Hypervisor API有支持KVM/QEMU虚拟化引擎的Libvirt API、支持XenServer/XCP虚拟化引擎的XenAPI和支持VMware虚拟化引擎的VMware API。OpenStack默认使用的是KVM虚拟化引擎，因此在OpenStack nova-compute中最常使用的还是Libvirt API。因此，nova-compute组件内部工作流程比较复杂，主要完成以下功能：</p>
+<ol>
+<li><strong>虚拟机生命周期操作的真正执行者worker，通过调用不同Hypervisor的Driver实现虚拟机的生命周期管理指令执行；</strong></li>
+<li><strong>底层可以对接不同虚拟化平台，实现不同虚拟化解决方案的异构，不仅支持虚拟机，还支持裸机和容器；</strong></li>
+<li><strong>内置周期性的任务调度，完成计算节点资源的刷新，并通过nova-conductor将计算节点资源状态写入nova-db，便于nova-scheduler在调度时查询nova-db获取最新的节点资源状态。</strong></li>
+<li><strong>在各Hypervisor上以插件的方式植入resource_tracker资源管理模块，配合周期性的任务调度完成资源状态的统计；</strong></li>
+</ol>
+<p><strong>Nova服务的核心组件除了上述组件之外，还有一个nova-cert组件，该组件主要用于与Amazon EC2 API对接时启用，是一个服务器的守护进程，负责为基于X509认证的Nova Cert提供服务，通常用于对euca-bundle-image镜像生成X509证书。</strong>除此之外，还有其他一些便于虚拟机维护的支撑组件—<strong>虚拟机控制台服务</strong>，包括：nova-consoleauth、nova-novncproxy、nova-xvpvncproxy等，其主要功能如下：</p>
+<ul>
+<li><strong>nova-consoleauth：</strong>虚拟机控制台服务。nova-consoleauth主要为虚拟机控制台连接提供认证授权服务。在运行VNC代理服务的OpenStack集群中，必须运行nova-consoleauth服务。一个nova-consoleauth实例可为多种类型的代理服务提供认证授权服务。需要注意的是，不要混淆nova-consoleauth与nova-console，后者是XenAPI风格的控制台服务，而目前多数VNC代理软件都已经不再使用nova-console。</li>
+<li><strong>nova-novncproxy：</strong>虚拟机控制台服务。nova-novncproxy主要提供对运行状态中的实例进行VNC连接访问的代理。其直接基于网页的novnc客户端连接，即支持基于Web网页的实例访问，是个非常方便的功能。</li>
+<li><strong>nova-xvpvncproxy：</strong>虚拟机控制台服务。nova-xvpvncproxy主要提供对运行状态中的实例进行VNC连接访问的代理，其仅支持特定于OpenStack的Java客户端发起的VNC连接。</li>
+</ul>
+<h2 id="Nova中的几个重要概念"><a href="#Nova中的几个重要概念" class="headerlink" title="Nova中的几个重要概念"></a><strong>Nova中的几个重要概念</strong></h2><p>Nova服务是OpenStack所有服务中最复杂的一个组件，没有之一。不仅涉及虚拟机的一些重要概念，比如server、flavor，还包括主机服务器的一些概念，比如host、hypervisor，甚至还有一些数据中心DC规划方面的概念，比如Region、cell等等。因此，弄清楚这些概念是理解Nova服务的关键。</p>
+<p><strong>1）虚拟机实例方面的概念包括：server/instance、server metadata、flavor、quota、server group、bdm</strong>，具体如下：</p>
+<ul>
+<li><strong>server/instance：</strong>Nova中最重要的数据对象，本质上就是虚拟机实例，是Nova管理提供的云服务资源。</li>
+<li><strong>server metadata：</strong>虚拟机实例的元数据信息，key-value格式，用于对虚拟机附加必要的描述等信息，比如虚拟机实例名、当前状态、部署位置等等。</li>
+<li><strong>flavor：</strong>虚拟机实例规格模版，用于定义一类虚拟机实例所占用的资源要求，比如2C8G40G，表示使用该flavor创建的虚拟机实例需要2vCPU，8G RAM，40G根磁盘。flavor只能由系统管理员admin创建，供普通用户/租户在创建虚拟机时调用。</li>
+<li><strong>quota：</strong>资源配额，用于指定租户最多能够使用的资源上限。</li>
+<li><strong>server group：</strong>虚拟机实例的亲和性/反亲和性组。同一个亲和性组的虚拟机在创建时会被调度到相同的物理主机上，而反亲和性组，顾名思义，在创建时，同一个反亲和性组的虚拟机实例会被调度不同的主机上。</li>
+<li><strong>bdm：</strong>Block Device Mapping，块存储设备映射，用于描述虚拟机实例拥有的存储设备信息。</li>
+</ul>
+<p>2）主机服务器方面的概念包括：hypervisor/node、host**，具体如下：</p>
+<ul>
+<li><strong>hypervisor/node：</strong>即安装虚拟化组件的物理主机，对于KVM、Xen等虚拟化解决方案，一个node即对应一个物理主机；对于VMware虚拟化解决方案，一个node对应同一个vCenter下的一个CLuster。</li>
+<li><strong>host：</strong>物理主机。对于KVM、Xen等虚拟化解决方案，一个host对应一个物理主机，同时对应一个node；对于VMWare的虚拟化解决方案，一个host对应一套vCenter，至少包含一个Cluster，一个Cluster至少包括一个物理主机。</li>
+</ul>
+<p><strong>3）数据中心DC规划方面的概念包括：Region、Cell、AZ和HA（Host Aggregate）</strong>，具体如下：</p>
+<ul>
+<li><strong>Region：</strong>是地理位置上隔离的数据中心区域，可以简单理解一个Region就代表一个数据中心DC。不同的Region是彼此独立的，即某个Region范围的人为或自然灾害并不会影响其他Region。Region的概念通常在公有云中出现，因为Region的多少是衡量一个公有云服务提供商运营能力的关键指标。而对于我们云化网络来说，要想实现自身业务的容灾和高可用设计，通常需要将同一个业务系统部署到不同的Region中，比如西安和汉中不同的DC中各部署一套，同时要借助负载均衡器才能实现容灾双活的功能。Region在实际部署中示意图如下所示：</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/400gol6sp6X7.png?imageslim" alt="mark"></p>
+<p>在具体的实现过程中，不同Region通常共用相同的认证服务和控制面板服务，可以通过共享存储池进行数据复制同步来实现高可用。下图就是OpenStack官方推荐的私有云多区域部署架构，Region1和Region2共享Horizon、Keystone和Swift服务，其他OpenStack服务在各自Region中独立部署。所以，不同Region内部相同服务就会有不同的endpoint API，对不同Region内部服务的访问就需制定不同的API，在实际生产中，一般是通过负责均衡器实现。需要注意一点：<strong>在OpenStack的众多服务中，并不是所有服务都支持跨Region部署，除了Horizon、Keystone和Swift外，其余服务都被设计为在同一个Region运行。</strong>如对于计算资源的分区，OpenStack仅支持Cell部署、AZ和Host Aggregate划分，并不能跨Region；网络管理服务仅能管理相同广播域或者互联集中的网络资源；块存储管理服务也只能管理单个Region内相同存储网络内的存储资源。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/cw6dohWHHN8L.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>Cell：</strong>Nova服务中的Cell功能模块在OpenStack的G版本提出，主要为了解决大规模Nova计算节点部署过程中可能带来的集群瓶颈问题。原来社区中有过大范围讨论，一致认为在计算节点数目超过500个时，便会遇到共享消息队列系统的性能问题。在早期的OpenStack版本中，nova cell的架构为V1版本，以树型结构为基础，由一个API-Cell（父Cell）与多个Child-Cell构成。其中，API-Cell只运行Nova-API服务，而每个Child-Cell运行除nova-api以外的全部Nova服务，且每个Child-Cell运行自己的消息队列、数据库及Nova-Cells服务。这种架构，用户请求需要经历两层调度实现，即顶层的API-Cell在多个Compute Cell之间调度和各个Compute Cell内部的主机调度，不同的Cell之间通过nova-Cells服务进行消息传递。有很多bug，且社区维护人员基本为0，属于冷门。如下图所示，其基本流程就是：在启用nova-cell v1的OpenStack集群中，用户创建虚机的请求首先到达顶层API Cell，然后通过API Cell的调度算法决定虚机由哪个Cell负责创建，当某个Compute Cell接收到来自API Cell的请求后，Compute Cell将把这个请求通过Nova-Cells服务传递到Cell中的nova-scheduler服务进行主机调度，Compute Cell中的nova-scheduler服务接收到请求后，再根据主机资源统计信息将虚机创建某一台服务器上。</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/U2UHbEJgD0EI.png?imageslim" alt="mark"></p>
+<p>在2016年上半年的Austin峰会上，Nova核心领导成员发布了Nova Cell v2版本，并在OpenStack的N版本及后续版本中默认启动。与V1版本不同，V2版本采用单层调度的思想。即用户请求只需要通过一层调度即可抵达最终的物理服务器。也就是说API Cell不仅在Compute Cell之间进行调度，还同时对选定的Compute Cell内部的主机进行调度。在每一个Compute Cell中，消息队列和数据库独立实现，同时Cell v2版本将数据库进行分离实现，即将整个OpenStack的全局信息保存在API Cell的数据库中，而虚机的相关资源数据保存在各个独立的Cell的数据库中。同时，在设计上还新增了Cell0模块，一旦API Cell对全部Compute Cell调度失败，则用户请求暂时被放在Cell0中。其基本原理和流程如下，api和cell有了明显的边界 ，api层面只需要数据库，不需要Message Queue，nova-api只创建和依赖 nova_api和nova_cell0两个数据库，nova-scheduler服务只需要在api层面上安装 ，cell不需要参数调度 。这样实现了一次调度就可以确定到具体在哪个cell的哪台机器上启动。各个cell中里面只需要安装nova-compute和nova-conductor服务以及其依赖的DB和MQ，nova-api根据nova-scheduler的调度结果会直接连接相关cell的MQ和DB,，所以不需要类似nova-cell 这样的额外子服务存在，性能上也会有及大的提升。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/9catXexARw0T.png?imageslim" alt="mark"></p>
+<p>上面的nova-scheduler调度各个cell本质上是依赖placement 服务获取各个cell的资源使用情况从而实现调度。placement一个比较独立的REST API栈，主要为了追踪记录resources provider目录和resource使用情况。例如，resource provider可以是一个计算节点、共享存储池或是IP地址池。placement 服务追踪每种resource provider的服务目录，使用情况。这样就可以从placement API获取resource provider目录，并获取resource provider的资源使用情况。这里需要重点提一下nova_cell0数据库，从nova_cell0数据库与nova数据库的数据表对比发现（如下图），nova_cell0数据库的schema和nova是一样的，其存在的主要用途为：<strong>当VM调度失败时，VM的信息不属于任何一个cell时， 可以放到cell0上面 。因此，nova_cell0这里面的数据并不是太重要 。</strong></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/EPfItN8FDnVv.png?imageslim" alt="mark"></p>
+<p>Cell相关的数据库表都在nova_api里面，包括cell_mappings, host_mappings, instance_mappings。其表结构如下 ，cell_mappings表包含了cell的Database和Mesage Queue连接信息（transport_url和database_connection），用于和子cell 通讯。host_mappings是用于存储nova-scheduler可以调度的主机物理节点的信息。instance_mapping表里有所有instance id，这样在查询instance时，就可以从这个表里查到他所在的cell_id， 然后通过cell_mappings表就可以查询到对应cell的具体信息 。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/77jiL46n7oLK.png?imageslim" alt="mark"></p>
+<p>这里其实也有一个坑，之前 nova-compute 启动起来，就可以直接使用了，但是cell v2之后就需要手动运行nova-manage cell_v2 discover_host，把host mapping映射到cell_mappings表里面 ，那台计算节点才会加入到调度中 。因此，在小型一些的环境上，推荐打开自动发现功能 ，就不用手动跑命令了。比如，我们在配置控制节点的nova.conf文件中，设置Scheduler的会话的discover_hosts_in_cells_interval = 300，表示每5分钟就进行计算节点扫描，同步cell_mappings数据库表。如下图，我们当前的环境规划了一个cell1，该cell下包含两个计算主机：rocky-controller和rocky-compute，host_mappings表与cell_mappings表的关联就是通过cell_id主键进行关联。同理，我们也可以通过虚拟机实例instance_id，查询到关联的cell_id，通过cell_id查询到cell的具体信息及内部主机节点的信息。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/h3dSRYfHNTQ2.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>AZ：</strong>可用域（Availability Zone，AZ）是对计算资源的额另一种划分，在AWS的区域划分设计中，AZ是对Region的再次划分。按照AWS解释，划分AZ的主要目的是为了提高容灾和提供廉价的故障隔离服务。在OpenStack中，我们会启动nova cell功能，一般是将单个Region部署为compute cell，然后再到cell中去划分AZ。<strong>注意：AZ与cell不同，AZ中没有独立的数据库和消息队列，是一种物理资源的划分。多个AZ共享cell内部的消息队列和数据库服务。</strong>因此，OpenStack中的AZ主要起到故障隔离的作用，一般在数据中心规划时，按照动力、网络、存储等物理资源故障隔离的角度将多个物理主机划分为一个AZ，在部署OpenStack时，可以将一个AZ对应一个Cell，然后在数据库中创建虚拟资源与物理资源的映射关系。下面就是AZ的逻辑架构图。</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/u6pygFmDz1Ud.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>HA：主机聚合（Host Aggregate）</strong>，是OpenStack平台管理员用户进行主机划分的另一种方法，即管理员可以根据硬件资源的某一属性，将具有相同硬件属性的服务器归类划分的方式。其对普通用户是不可见的。这里举个例子说明下。比如运营商的DC中部署了不同类型的服务器，有些服务器具有强大的计算能力，有些服务器不仅有强大的计算能力其IO能力也很强大，而另一些服务器配置高速网卡具有强大的网络吞吐能力。这时，作为运营商的云平台管理员就可以对这些服务器进行主机聚合划分，比如将具有强大计算能力的服务器放在主机聚合A中，将既有强大计算能力同时具备强大IO能力的服务器放在主机聚合B中，将具备高速网卡的服务器放在主句聚合C中。此时，如果某企业用户想要建设一套高性能、高可用集群的私有云业务，而高性能、高可用集群通常有“胖节点”和“瘦节点”之分（“胖节点”既充当计算也充当IO转发的角色，“瘦节点”只充当计算的角色），这样运营商就可以从主机聚合A中选择创建虚机提供“胖节点”，从主机聚合B中选择创建虚机提供“瘦节点”，同时进行差异性的服务收费。除了上述计算能力、IO能力、网路吞吐能力可以用来做聚合参考外，服务器硬盘类型、内存大小等都可用来主机聚合的参考。<strong>同一个Host可以规划在多个HA中，但是必须属于同一个AZ。</strong></li>
+</ul>
+<p>在OpenStack的解决方案，上述数据中心规划方面的概念，对资源的使用范围从大到小的排序为：<strong>Region&gt;Cell&gt;AZ&gt;HA。</strong></p>
+<h2 id="Nova中的主机调度策略"><a href="#Nova中的主机调度策略" class="headerlink" title="Nova中的主机调度策略"></a><strong>Nova中的主机调度策略</strong></h2><p>在Nova的各个服务组件中，Nova-scheduler是个非常关键的组件，其主要作用便是为Nova的主机选取提供智能决策功能。当Nova客户端发起创建实例请求时，Nova-API会将请求转发到Nova-scheduler，由Nova-scheduler在运行Nova-compute的计算节点中选取用于创建符合请求虚拟机资源条件的宿主机。Nova-scheduler对宿主机的选取分为两个步骤：第一步从计算节点集群中选取符合请求虚拟机资源条件的全部节点，这一过程称为过滤（Filter）；第二步从符合创建请求虚拟机的计算节点中选取唯一最佳的计算节点，作为本次请求虚拟机的宿主机，这一过程称为加权（Weigh）。在Nova-scheduler的过滤阶段，Nova的Filter Scheduler根据配置文件nova.conf中设置的策略集合对OpenStack集群中全部计算节点进行过滤迭代，通过三个参数来配置，即<strong>scheduler_driver</strong>、<strong>scheduler_available_filters</strong>和<strong>scheduler_default_filters，这三个参数都在/etc/nova/nova.conf文件的DEFAULT段配置，其配置项默认值如下：</strong></p>
+<ul>
+<li><strong>scheduler_driver=nova.scheduler.filter_scheduler.FilterScheduler ,这里表示使用默认FilterScheduler驱动，使用/usr/lib/python2.7/site-packages/nova/scheduler/filter_scheduler.py文件中的FilterScheduler类，如下图所示。</strong></li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Xg19OYtaAABx.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>scheduler_available_filters = nova.scheduler.filters.all_filters，这里表示可以使用的Filter，默认使用全部filter，所支持的filter在/usr/lib/python2.7/site-packages/nova/scheduler/filters/目录下，选择all_filters表示全部。该目录下的文件列表如下：</strong></li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/g19meGHDTnts.png?imageslim" alt="mark"></p>
+<ul>
+<li><p><strong>scheduler_default_filters = RetryFilter, AvailabilityZoneFilter，这里显式制定要使用的过滤器filter，多个过滤器之间用逗号“,”隔开。</strong></p>
+<p>在上面的是三个配置项中，配置参数scheduler_driver用于设置使用的Scheduler，FilterScheduler是Nova-scheduler默认使用的Scheduler，此外，Nova-scheduler允许使用第三方的Sched-uler，只需设置scheduler_driver即可。配置参数scheduler_available_filters用于指定可以使用的过滤器，默认情况下Nova自带的全部过滤器均可被使用（nova.scheduler.filters.all_filters）。可用过滤器参数可以重复指定，如用户自己实现了一个过滤器myfilter.WarriorFilter，然后用户既想使用Nova自带的过滤器又想使用自建的过滤器，可以配置多行scheduler_available_filters实现。配置参数scheduler_default_filters用于指定使用的过滤器列表。在进行主机过滤时，主机会被此参数指定的列表过滤器顺序过滤一遍。在主机进入每个过滤器时，如果主机条件满足请求中的实例需求，则返回True，否则返回False。当返回False后，该主机的过滤流也就结束，不再进入后续过滤器继续过滤。Nova-Scheduler内建自带的过滤器主要包括以下几种：</p>
+</li>
+<li><p><strong>AggregateCoreFilter：</strong>以Aggregate为前缀的过滤器通常只在创建了Host Aggregate的情况下才会使用到。AggregateCoreFilter表示通过主机CPU核数来过滤每个Aggregate中的主机。主机可用CPU核心数通过每个主机集配置文件中的cpu_allocation_ratio值（默认为16）来计算。如果主机CPU核心数满足请求创建实例的vCPUS需求，则返回True。如果当前主机属于多个Host Aggregate，并且有多个cpu_allocation_ratio值，则使用cpu_allocation_ratio的最小值。cpu_allocation_ratio参数主要用于设置主机CPU的overcommit，如cpu_allocation_ratio=16，而主机vCPUs为8，则调度时Scheduler认为主机可用vCPU为128。</p>
+</li>
+<li><strong>AggregateDiskFilter：</strong>表示通过主机磁盘使用率来过滤每个Aggregate中的主机。主机磁盘使用率会根据每个主机集配置文件中的disk_allocation_ratio（默认值为1，即按实际磁盘容量来调度）参数来计算，如果OpenStack集群中没有创建主机集，则disk_allocation_ratio便会成为全局性的参数。如果主机集中主机上的可用磁盘容量（单位为GB）满足请求虚拟机中的磁盘需求（镜像系统盘大小+临时磁盘大小），则返回True。</li>
+<li><strong>AggregateImagePropertiesIsolation：</strong>表示根据实例创建请求中的镜像属性来过滤主机集中的主机，通常用于将基于特定镜像的实例创建到与镜像匹配的特定主机上。镜像属性与主机匹配与否根据如下规则来判断：如果当前主机属于某个主机集，并且此主机集定义了相应的元数据来匹配某个镜像的属性，则认为该主机与镜像属性匹配，并且该主机将成为启动这个匹配镜像的候选主机；如果当前主机不属于任何主机集，则该主机可以启动任何镜像。</li>
+<li><strong>AggregateInstanceExtraSpecsFilter：</strong>表示匹配的是Nova中Flavor与主机集的元数据，通常需要为Flavor的属性aggregate_instance_extra_specs设置一个属性值。过滤器将会根据主机集的元数据与实例创建请求中Flavor的aggregate_instance_extra_specs属性值来判断主机是否符合要求。</li>
+<li><strong>AggregateIoOpsFilter：</strong>表示根据主机的IO负载来过滤每个主机集中的主机。主机IO负载根据参数max_io_ops_per_host值（默认为8）来决定，此过滤器会将IO负载过高的主机过滤掉。</li>
+<li><strong>AggregateNumInstancesFilter：</strong>表示根据主机已有实例数目来过滤每个主机集中的主机，过滤标准为主机集中允许的最大主机实例数目参数max_instances_per_host（默认50）值，当前运行实例数目超过此参数值的主机将会被过滤掉。</li>
+<li><strong>AggregateMultiTenancyIsolation：</strong>用于将特定某个租户或多个租户的实例创建到特定的主机集或可用域中。如果主机属于某个具有元数据且key为filter_tenant_id的主机集，则对应filter_tenant_id值的某个租户或多个租户发起的创建实例请求将会在该主机上创建实例。而如果主机不属于元数据key为filter_tenant_id的主机集，则所有组合都可以在该主机上创建实例。AggregateMultiTenancyIsolation过滤器并不会将具有元数据Key为filter_tenant_id的主机集与其他租户隔离，任何租户仍然可以在指定的主机集上创建实例。</li>
+<li><strong>AggregateRamFilter：</strong>表示通过主机可用内存RAM来过滤每个主机集中的主机，主机的可用内存根据主机集配置文件中ram_allocation_ratio值（默认为1.5）来计算。</li>
+<li><strong>AggregateTypeAffinityFilter：</strong>用于通过主机集的instance_type键来过滤主机，如果主机集没有设置Key为instance_type的元数据，或者将主机集中key为instance_type的元数据值设为实例创建请求中所包含的instance_type值，则请求中的instance_type的元数据值可以是单个字符串或者逗号分开的多个字符串，如m1.nano或m1.nano，m1.small。</li>
+<li><strong>AllHostsFilter：</strong>不会发生任何过滤操作，所有正常运行的计算节点都会通过该过滤器。</li>
+<li><strong>AvailabilityZoneFilter：</strong>是可用域AZ过滤器，当在请求中指定创建实例的AZ时，必须在Scheduler中使用该过滤器。</li>
+<li><strong>ComputeCapabilitiesFilter：</strong>与AggregateInstanceExtraSpecsFilter类似，也是通过设置Nova中主机类型的元数据来对主机进行过滤，不过ComputeCapabilitiesFilter过滤器中与Flavor的元数据匹配的对象不是主机集中的metadata，而是主机的Capabilities。Capabilities可以是主机的Architecture、Cores、Features、Model和Vendor等，在使用ComputeCapabi-litiesFilter过滤器时，Flavors的extra specs格式为“Capabilities：key：value”形式，“Capabilities”表示命名空间，“key：value”表示extra specs键值对。如extra specs为“Capabilities：architecture：x86”的Flavor在创建实例时，ComputeCapabilitiesFilter只会允许X86架构的主机通过，如果命名空间不是“Capabilities”，则Flavors的extra specs中命名空间字段会被忽略而仅提取“key：value”部分。在使用ComputeCapabilitiesFilter过滤器时，强烈建议不要省略命名空间（extra specs中第一个冒号前的字符串），否则将会与AggregateInstanceExtraSpecsFilter过滤器冲突（两个过滤器同时启用的情况下），同时建议将命名空间字符串设为Capabilities。</li>
+<li><strong>ComputeFilter：</strong>意味着正常运行nova-compute服务的计算节点才能被Nova-scheduler调度，通常而言，ComputeFilter是必须的过滤器。</li>
+<li><strong>CoreFilter：</strong>CoreFilter与AggregateCoreFilter过滤器类似，按主机CPU核数来过滤主机。如果未启用此过滤器，则Scheduler调度给实例的CPU核数会超出物理主机的实际CPU核数，即运行在实例上的虚拟CPU核数之和可以超出物理主机CPU核数。通过启用CoreFilter过滤器，并且设置超额使用比率参数cpu_allocation_ratio，限定实例可以超额使用的虚拟CPU核数。例如在启用CoreFilter的情况下，cpu_allocation_ratio设置为8，主机物理CPU核数为8，则该主机可供实例使用的全部vCPU核数为64。如果希望实例vCPU与主机物理CPU为1：1的分配使用关系，则可以设置cpu_allocation_ratio为1。</li>
+<li><strong>DifferentHostFilter：</strong>将请求实例创建在与请求所指定的实例主机不同的主机上，即指定新创建的实例不能位于某个或多个实例的宿主机上。如Nova中已经有两个实例，并且用户希望新创建的实例不能与这两个已有实例的宿主机相同，则可以启用DifferentHostFilter过滤器。</li>
+<li><strong>DiskFilter：</strong>与AggregateDiskFilter过滤器类似，即仅调度磁盘空间满足请求实例的root和临时存储空间的主机。在Nova中，主机磁盘可以超额使用，可以通过配置磁盘超额使用比率参数disk_allocation_ratio来限定调度器可见的最大虚拟主机磁盘容量。在配置文件nova.conf中，disk_allocation_ratio的默认值为1，即不允许主机磁盘空间被超额分配，在调度时以主机的实际可用磁盘容量为准。此外，需要注意的是，Scheduler提取的主机磁盘空间并不是hypervisor统计结果中free_disk_gb的值，而是disk_available_least的值。</li>
+<li><strong>RamFilter：</strong>RamFilter过滤器将根据主机是否有足够的可用RAM来进行过滤。如果未启用RamFilter过滤器，则Scheduler会从主机上提取超额的RAM，即分配给实例的RAM之和会大于主机物理RAM容量。在启用RamFilter后，可以通过配置RAM超额使用比率参数ram_allocation_ratio的值来限定该主机可用的最大虚拟内存值，ram_allocation_ratio的默认值为1.5，因此如果当前主机可用物理RAM为10GB，则Scheduler提取到的主机RAM为15GB。</li>
+<li><strong>JsonFilter：</strong>JsonFilter过滤器允许用户通过Json格式的Scheduler调度提示（hint）来自定义主机调度。JsonFilter过滤器允许的操作符有=、&gt;、&lt;、in、&lt;=、&gt;=、not、or和and，允许使用的变量有$free_ram_mb、$free_disk_mb、$total_usable_ram_mb、$vcpus_total和$vcpus_used。如希望将实例创建在主机可用RAM大于等于2GB的主机上，则在启用JsonFilter过滤器的情况下，使用如下实例创建语句：nova boot –image 827d564a-e636-4fc4-a376-d36f7ebe1747 –flavor 1 –hint query=’[“&gt;=”,”$free_ram_mb”,2048]’ VM01</li>
+<li><strong>RetryFilter：</strong>用于将之前已经调度过的主机过滤掉。此过滤器只有在主机过滤重复参数scheduler_max_attempts值大于1的情况下才有效。如A、B、C三台主机在某次过滤后均符合标准，并且A主机因为权重最优而被选为创建实例的主机，但是由于某些原因实例创建失败，同时参数scheduler_max_attempts值大于1，因此Scheduler将进行再次调度，为了避免再次失败，当启用RetryFilter过滤器时，A主机将不再参与调度。为了避免反复过滤失败主机，RetryFilter通常是默认过滤器列表中的第一个过滤器。</li>
+<li><strong>SameHostFilter：</strong>与DifferentHostFilter相反，即将请求实例创建在指定实例的宿主机上，使得要创建的实例与一个或多个已经存在的实例位于同一主机上。要使用此过滤器，客户端在创建实例时需要通过hint传入same_host键，键值为特定实例的UUID。</li>
+<li><strong>ServerGroupAffinityFilter：</strong>与GroupAffinityFiltre功能相同，而GroupAffinityFilter即将被淘汰，过滤器ServerGroupAffinityFilter的作用是将请求实例调度到指定的Server Group中（此处的Server表示虚拟机），即将实例尽量创建到同一台主机上。要使用此过滤器，用户必须使用“affinity”策略预先创建一个服务器组（实例组），并在创建实例时通过hint参数的group键值对指定该实例属于此服务器组，group键的值为服务器组的UUID。</li>
+<li><strong>ServerGroupAntiAffinityFilter：</strong>与ServerGroupAffinityFilter正好相反，以前的过滤器GroupAntiAffinityFilter即将被丢弃，ServerGroupAntiAffinityFilter表示将实例尽量不要创建在同一台主机上。要启用此过滤器，用户需要使用“anti-affinity”策略预先创建服务器组，并在创建实例时通过hint参数的group键值对指定该实例属于此服务器组，group键的值为服务器组的UUID。</li>
+<li><strong>SimpleCIDRAffinityFilter：</strong>是一个基于网络的过滤器，主要用于根据创建实例时指定的IP地址范围来过滤主机。要使用此过滤器，用户在创建实例时必须指定两个hint参数，hint参数的两个Key分别为build_near_host_ip和cidr，第一个键的值为有效的IP地址，第二个键的值为CIDR格式的掩码。</li>
+</ul>
+<p>在经过SchedulerFilter中一系列的过滤器过滤之后，Nova-scheduler会选出符合请求实例资源的主机，但是如果有多台主机同时符合要求，则经过SchedulerFilter之后，仍然会得到一个主机列表。为了得到最终的实例创建主机，Nova-scheduler会给过滤后的主机列表中的计算节点进行“评分”，分数最高的主机将成为最终的实例创建主机，这个“评分”的过程即是所谓的权重计算。<strong>权重计算就是给有效主机列表中的主机进行权重赋值并选出最优权重值主机的过程。每个计算节点都可以通过不同的维度参数来进行评估，如内存、磁盘、CPU和IO负载，由于各个权重的单位不同，如内存单位为MB，磁盘单位为GB，CPU单位为核数等，因此不能对这些权重进行简单的线性相加来获取计算节点最终的权重值。同时，不同的权重对用户而言可能重要程度并不一样（如A用户认为内存比CPU重要，而B用户认为CPU比内存更重要）。为了解决这一问题，需要预先为每个权重定义关联的权重因子（multiplier），如果认为此权重要优于其他权重，则可以为其设置较大的权重因子</strong>，nova.conf配置文件中与权重相关的默认参数配置在DEFAULT会话中，如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[DEFAULT]</span><br><span class="line"></span><br><span class="line">scheduler_host_subset_size = 1 <span class="comment">#&lt;===按照排序后主机列表仅选取一台主机</span></span><br><span class="line"></span><br><span class="line">scheduler_weight_classes = nova.scheduler.weights.all_weighers</span><br><span class="line"></span><br><span class="line">ram_weight_multiplier = 1.0 <span class="comment">#&lt;===权重因子</span></span><br><span class="line"></span><br><span class="line">io_ops_weight_multiplier = 2.0 <span class="comment">#&lt;===权重因子</span></span><br><span class="line"></span><br><span class="line">soft_affinity_weight_multiplier = 1.0 <span class="comment">#&lt;===权重因子</span></span><br><span class="line"></span><br><span class="line">soft_anti_affinity_weight_multiplier = 1.0 <span class="comment">#&lt;===权重因子</span></span><br><span class="line"></span><br><span class="line">[metrics]</span><br><span class="line"></span><br><span class="line">weight_multiplier = 1.0</span><br><span class="line"></span><br><span class="line">weight_setting = var_name1=1.0, var_name2=-1.0</span><br><span class="line"></span><br><span class="line">required = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">weight_of_unavailable = -10000.0</span><br></pre></td></tr></table></figure>
+<p>最后，各个权重与其权重因子的乘积之和便是最终的计算节点权重值。需要指出的是，各个权重在参与计算之前会事先进行标准化（normalize），因此，节点最终的权重计算公式为：<strong>weight = w1_multiplier * norm（w1） + w2_multiplier * norm（w2） + ……</strong>，这里的norm(w1)就是标准化的权重值，原始权重值的标准化公式为：<strong>ratio_weight =（raw_weight - min_weight）/（max_weight - min_weight）。</strong>现假设有host1、host2、host3、host4、host5和host6六台主机需要进行权重排序，并且有3个权重，分别为W1、W2和W3，而3个权重对应的权重因子分别为1、1、2。六台主机经过W1、W2和W3计算后得到的原始权重值分别如下：</p>
+<table>
+<thead>
+<tr>
+<th>主机名称</th>
+<th>HOST-01</th>
+<th>HOST-02</th>
+<th>HOST-03</th>
+<th>HOST-04</th>
+<th>HOST-05</th>
+<th>HOST-06</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>W1原始权重</td>
+<td>110</td>
+<td>20</td>
+<td>10</td>
+<td>80</td>
+<td>50</td>
+<td>90</td>
+</tr>
+<tr>
+<td>W2原始权重</td>
+<td>4</td>
+<td>2</td>
+<td>1</td>
+<td>11</td>
+<td>6</td>
+<td>8</td>
+</tr>
+<tr>
+<td>W3原始权重</td>
+<td>5</td>
+<td>25</td>
+<td>10</td>
+<td>15</td>
+<td>5</td>
+<td>20</td>
+</tr>
+</tbody>
+</table>
+<p>根据标准化计算公式，六台主机针对W1、W2和W3原始权重值进行标准化计算后的结果分别如下：</p>
+<table>
+<thead>
+<tr>
+<th>主机名称</th>
+<th>HOST-01</th>
+<th>HOST-02</th>
+<th>HOST-03</th>
+<th>HOST-04</th>
+<th>HOST-05</th>
+<th>HOST-06</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>W1标准化权重</td>
+<td>1</td>
+<td>0.1</td>
+<td>0</td>
+<td>0.7</td>
+<td>0.4</td>
+<td>0.8</td>
+</tr>
+<tr>
+<td>W2标准化权重</td>
+<td>0.3</td>
+<td>0.1</td>
+<td>0</td>
+<td>1</td>
+<td>0.5</td>
+<td>0.7</td>
+</tr>
+<tr>
+<td>W3标准化权重</td>
+<td>0</td>
+<td>1</td>
+<td>0.25</td>
+<td>0.5</td>
+<td>0</td>
+<td>0.75</td>
+</tr>
+</tbody>
+</table>
+<p>由于W1、W2和W3的权重因子分别为1、1、2，因此根据节点最终的权重计算公式，六台主机节点的最终权重值分别如下：</p>
+<table>
+<thead>
+<tr>
+<th>主机名称</th>
+<th>HOST-01</th>
+<th>HOST-02</th>
+<th>HOST-03</th>
+<th>HOST-04</th>
+<th>HOST-05</th>
+<th>HOST-06</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>weight</td>
+<td>1.3</td>
+<td>2.2</td>
+<td>0.5</td>
+<td>2.7</td>
+<td>0.9</td>
+<td>3.0</td>
+</tr>
+</tbody>
+</table>
+<p>对主机列表中的主机依据各自权重值进行降序排列后，得到的排序结果为host6、host4、host2、host1、host5、host3，因此根据权重排序后的最优节点应该是host6节点。如果各个权重的权重因子为负数，则host3节点为最优节点。关于节点加权排序的过程描述，OpenStack的官方网站给出了形象图示，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/S1T1AjXa1VUz.png?imageslim" alt="mark"></p>
+<p>在实际使用中，FilterScheduler根据主机配置文件nova.conf中的scheduler_weight_classes配置参数对主机进行不同的加权计算，此参数的默认配置为：<strong>scheduler_weight_classes=nova.scheduler.weights.all_weighers</strong>，即默认使用全部Nova自带的Weigher，也可以自定义scheduler_weight_classes参数值。Nova自带的常用Weigher包括：RAMWeigher、DiskWeigher、MetricsWeigher、IoOpsWeigher、ServerGroupSoftAffinity-Weigher和ServerGroupSoftAntiAffinityWeigher，其具体含义如下：</p>
+<ul>
+<li><strong>RAMWeigher：</strong>表示根据计算节点的可用RAM进行权重计算，剩余可用RAM最大的节点具有最优权重值。如果权重因子是负数，则剩余可用RAM最小的节点具有最优权重值。</li>
+<li><strong>DiskWeigher：</strong>表示根据计算节点的可用磁盘空间进行权重计算，剩余可用磁盘空间最大的节点具有最优权重值。如果权重因子是负数，则剩余可用磁盘空间最小的节点具有最优权重值。</li>
+<li><strong>MetricsWeigher：</strong>表示根据计算节点的各自定义指标进行权重计算，要成为计算权重的自定义指标参数需要在配置文件中指定，设置语法如下：</li>
+</ul>
+<p><strong>metrics_weight_setting = var_name1=1.0, var_name2=-1.0</strong></p>
+<ul>
+<li><strong>IoOpsWeigher：</strong>表示根据计算节点的工作负载来计算权重值，默认选择负载较轻的计算节点作为最优节点，如果权重因子是正数，则会认为负载较大的节点最优，即此时效果刚好也默认情况相反。</li>
+<li><strong>ServerGroupSoftAffinityWeigher：</strong>表示根据主机上运行在服务器组（Server Group）中的实例数目来计算节点权重值，实例将会创建到权重值最大的主机上。在使用该Weigher时，只有对应的权重因子设为正数才有效，因为负权重因子意味着不要将实例创建在同一台主机上，正好与目标结果相反。</li>
+<li><strong>ServerGroupSoftAntiAffinityWeigher：</strong>表示根据主机上运行在服务器组（Server Group）中的实例数目来计算节点权重值，其权重值为负数，实例将会创建到权重值最大的主机上（意味着服务器组中的实例数目最少）。在使用该Weigher时，只有对应的权重因子设为负数才有效，因为负权重因子意味着将实例尽量创建在同一台主机上，正好与目标结果相反。</li>
+</ul>
+<h2 id="Nova创建虚拟机实例流程分析"><a href="#Nova创建虚拟机实例流程分析" class="headerlink" title="Nova创建虚拟机实例流程分析"></a><strong>Nova创建虚拟机实例流程分析</strong></h2><p>在OpenStack中，创建实例主要有两种方式：Nova客户端命令行和Dashboard用户接口GUI界面。无论是哪种方式，其实例创建过程的后端调用流程本质上是相同的，都要经过Nova内部组件之间和Nova与其他服务项目之间的频繁交互才能完成实例的创建工作。正常情况下，要完成一个实例的创建，需要参与的OpenStack服务项目除了Nova之外，还有Dashboard、Keystone、Glance、Cinder和Neutron等项目，其中，Nova、Keystone、Glance和Neutron为必须项目，而Dashboard和Cinder为非必须。此外，在Nova内部，参与实例创建的组件包括nova-api、nova-conductor、nova-scheduler、nova-compute、nova-consoleauth、nova-novncproxy、nova-cert和nova-objectstore等，其中，nova-api、nova-conductor、nova-scheduler、nova-compute为必须使用到的组件。如果要使用虚拟网络控制台VNC与实例交互，则nova-consoleauth和nova-novncproxy是必须的；如果使用AWS风格API，则nova-cert和nova-objectstore是必须的。</p>
+<p>在OpenStack中创建实例的大致流程为：<strong>用户通过Dashboard界面或命令行发起实例创建请求，Keystone从请求中获取用户相关信息并进行身份验证；验证通过后，用户获得认证Token，实例创建请求进入nova-api；在向Keystone验证用户Token有效后，nova-api将请求转入nova-scheduler；nova-scheduler进行实例创建目的主机的调度选择，目标主机选取完成后，请求转入nova-compute；nova-compute与nova-conductor交互以获取创建实例的信息，在成功获取实例信息后，nova-compute分别与Glance、Neutron和Cinder交互以获取镜像资源、网络资源和云存储资源；一切资源准备就绪后，nova-compute便通过Libvirt API与具体的Hypervisor交互并创建虚拟机。</strong>在创建虚拟机实例的过程中，各组件的交互流程如下图所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/q5e1qob1Qy00.png?imageslim" alt="mark"></p>
+<h3 id="Keystone的工作流程"><a href="#Keystone的工作流程" class="headerlink" title="Keystone的工作流程"></a>Keystone的工作流程</h3><p>当Nova客户端发起实例创建请求时，Nova客户端便与Keystone进行交互以获取授权Token，如果Nova客户端通过Keystone的身份验证，则Keystone为其生成授权Token，并将此Token存储到后端数据库中。Keystone的后端数据库可以是关系型的SQL数据库，也可以是如Memcache这样的缓存系统。Keystone的身份验证过程可以在本地进行，也可以通过LDAP服务器进行身份验证。Nova客户端与Keystone交互进行身份验证和Token颁发（使用LDAP进行身份验证）流程如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/BVFyxsmAcd9D.png?imageslim" alt="mark"></p>
+<h3 id="nova-api的工作流程"><a href="#nova-api的工作流程" class="headerlink" title="nova-api的工作流程"></a><strong>nova-api的工作流程</strong></h3><p>Nova客户端在通过Keystone的验证并获取Token后，便向nova-api发出实例创建的请求，nova-api接收到请求后向Keystone验证Token的有效性，验证成功后，nova-api开始判断实例创建请求所携带的参数是否有效合法，如检查虚拟机名字是否符合命名规范，使用的虚拟机模板flavor_id在数据库中是否存在，使用的镜像image_uuid是否是有效的uuid格式等。检查instance、vCPU、RAM的数量是否超出了配置文件中的限制，通常每个Project拥有的资源都是有限的，如创建虚拟机的个数、vCPU个数、内存大小和volume个数等，这些限制是管理员通过与Project相关的Quota来设置的，如quota_instances、quota_cores、quota_ram、quota_volumes等。如果管理员未做设置更改，则默认情况下所有Project拥有相等的资源数量。此外，nova-api还会检查相关metadata的长度是否超过限制，inject_files的数目是否超过限制，一般情况下这些参数都为空，因此都能通过检查。实例请求中的网络、镜像和flavor也是nova-api主要的检查对象，其主要检查请求中的network是否存在且可用以及image和flavor是否存在且可用，同时还会检测请求中flavor的磁盘是否满足image需求等。当所有资源检查都通过后，<strong>nova-api便在nova数据库中初始化虚拟机相关的记录（intial entry），主要包括instance、block_device_mapping和quota等记录，并将instance记录中的vm_states字段设为building，task_state字段设为scheduling。之后，nova-api调用nova-conductor并将请求传递到消息队列（MQ）中。由于nova-api将请求以RPC cast的方式发送给nova-conductor，而cast（）方法发送的请求并不会返回消息，因此Nova客户端此时只会接收到请求已被接受的返回，但是具体的虚拟创建过程还在后台继续执行</strong>，而Nova客户端可以查到的虚拟机vmstate为building，task_state为scheduling。nova-api在实例创建过程的工作流程如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/WdylG8lamgFL.png?imageslim" alt="mark"></p>
+<h3 id="nova-conductor工作流程"><a href="#nova-conductor工作流程" class="headerlink" title="nova-conductor工作流程"></a><strong>nova-conductor工作流程</strong></h3><p>由于nova-conductor提供了build_instances（）这个RPC方法，因此一直处于消息队列监听状态，一旦监听的队列有消息进入，nova-conductor便开始执行build_instances（）方法。nova-conductor还向nova-schduler发出RPC call调用，并要求其返回计算节点调度结果，在收到nova-scheduler的调度结果后，nova-conductor的build_instances（）方法将请求传递到nova-compute的消息队列中。nova-conductor在实例创建过程中的流程如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GKlHPOJazK2B.png?imageslim" alt="mark"></p>
+<h3 id="nova-scheduler工作流程"><a href="#nova-scheduler工作流程" class="headerlink" title="nova-scheduler工作流程"></a><strong>nova-scheduler工作流程</strong></h3><p>nova-scheduler的功能就是负责监听消息队列，并在获取消息队列的请求消息之后进行计算节点的调度选取，同时将调度结果传递给消息队列。为了获取创建实例的目标主机，<strong>nova-conductor会向nova-scheduler发起RPC call调用</strong>，并调用nova-scheduler的select_destin-ations（）方法；nova-scheduler在消息队列中接收到调用消息后，根据nova.conf配置文件中关于Filters和Weight的配置参数对计算节点主机列表进行过滤和加权调度，在这个过程中，nova-scheduler需要访问数据库以获取节点相关的信息；在获取信息后，nova-scheduler便开始进行节点调度，默认使用的调度驱动为FilterScheduler，调度完成之后，将节点调度结果传递到消息队列，以完成nova-conductor的RPC call调用过程。实际上，nova-scheduler从topic：scheduler消息队列获取调用信息后，开始执行select_destinations（）方法，由于Nova通常采用默认的FilterScheduler调度器，因此FilterScheduler的select_destinations（）和_scheduler（）方法被执行，_scheduler（）函数最终会调用获取主机信息的函数和各种节点过滤器以及加权方法以对计算节点进行过滤和计算权重值，并将最终调度选取的计算节点信息传递到消息队列，返回给nova-conductor。nova-scheduler在实例创建过程中的流程如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/fOz6YailId45.png?imageslim" alt="mark"></p>
+<h3 id="nova-compute工作流程"><a href="#nova-compute工作流程" class="headerlink" title="nova-compute工作流程"></a><strong>nova-compute工作流程</strong></h3><p>nova-compute是Nova服务项目中最复杂和最关键的组件，运行nova-compute的节点称为计算节点，通常nova-compute部署在独立的计算节点上，并与Nova项目的其他组件分开部署。在实例创建过程中，<strong>nova-compute随时监听topic：compute-computeN（computeN为计算节点名称）消息队列</strong>，在监听到nova-conductor传递的实例创建请求后，nova-compute开始启动内部工作流程以响应实例创建请求。在nova-api的工作流程中，请求中创建实例所需的镜像、网络和存储等资源已经做过有效性和可用性的检查，因此nova-compute将直接与Glance交互以获取镜像资源，与Cinder交互获取块存储资源。如果配置了Ceph块存储或对象存储服务，nova-compute还会与Ceph RADOS进行交互以访问Ceph存储集群。</p>
+<p>在获取镜像和存储资源后，nova-compute还需与OpenStack的网络服务项目Neutron进行交互访问以获取网络资源。由于网络资源的有效性和可用性已经在nova-api工作流程中完成，这里主要是获取虚拟机的Fixed IP等网络资源。在准备好常见实例所需的一切资源后，nova-compute将通过Libvirt与对应的Hypervisor API进行交互，并通过Libvirt API接口进行虚拟机的创建工作。以上就是nova-compute的大致工作流程，实际上nova-compute接收到消息队列中由nova-conductor发起的RPC cast调用请求，该请求调用manager.py中的ComputeManager.build_and_run_instance（）方法，该方法继而调用ComputeManager类中的<strong>_build_and_run_instance（）方法以尝试创建实例；这里创建实例不一定成功，如果创建失败并且是因为Scheduler调度结果的原因，则会发起Re-scheduler操作以重新调度计算节点，并再次尝试创建实例。_</strong></p>
+<p>_进入_build_and_run_instance（）方法开始创建实例后，nova-compute便开始准备网络和存储等资源（这两个资源分别由_build_networks_for_instance（）和_prep_block_device（）方法来完成）。其中，在进行网络资源准备时，实例的vm_state被设为building，而task_state被设置为networking；在准备块存储资源时，实例的vm_state被设为building，而task_state被设置为blockdevicemapping。在实例所需资源均准备完成后，nova/virt/libvirt/driver.py的LibvirtDriver.spawn（）方法被调用，此时实例vm_state被设为building，而task_state被设置为spawning。</p>
+<p>在spawn过程中，首先进行镜像加载，如果镜像较大，则此过程可能会花费较长时间，然后创建虚拟机的资源定义文件并通过Libvirt发起创建虚拟机的操作。虚拟机创建完成之后，spawn（）将调用_wait_for_boot（）方法以等待虚拟机的power_state状态变为running才返回，此时虚拟机的各个状态应该是，vm_state为active，power_state为running，task_state为none。因此，nova-compute在实例创建过程中的流程主要包括三个子流程，如下所示：</p>
+<ul>
+<li><strong>与Glance、Cinder交互获取镜像和云磁盘等资源（后端采用ceph分布式存储）</strong></li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kcq8SRsJnxdd.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>与Neutron交互获得网络资源</strong></li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pKS8YjuJE5yO.png?imageslim" alt="mark"></p>
+<ul>
+<li><strong>与libvirt对应的Hypervisor交互创建虚拟机实例（虚拟机磁盘由分布式存储ceph提供）</strong></li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/X0VQF184hxWu.png?imageslim" alt="mark"></p>
+<h2 id="Nova实例的状态机"><a href="#Nova实例的状态机" class="headerlink" title="Nova实例的状态机"></a><strong>Nova实例的状态机</strong></h2><p>在虚拟机实例的创建和运行维护过程中，Nova使用三个变量来描述虚拟机当前的状态，分别为<strong>vm_state、power_state</strong>和<strong>task_state</strong>。其中，power_state代表虚拟机电源状态，其本质上反应的是Hypervisor的状态，其状态值遵循“由下至上（bottom-up）”的变更过程，即先是底层计算节点上Hypervisor状态变更，然后上层数据库对应值变更；vm_state反应的是基于API调用的一种稳定状态，其状态变更比较符合用户的逻辑思维，是一种由上至下（top-down）的API实现过程；task_state代表的是API调用过程中的过渡状态，反映了不同阶段所调用API对实例进行的操作。</p>
+<p><strong>1）power_state</strong></p>
+<p>power_state是Nova程序调用特定虚拟机上的虚拟驱动所获取的状态。数据库中关于特定实例的power_state值仅是虚拟机最近一段时间的快照值，并不能真正反映当前虚拟机的实际power_state，虚拟机当前power_state的实际值位于Hypervisor中。<strong>如果出现可能影响到power_state的任务，则在此任务结束时，位于数据库中的power_state值就会被更新。其更新过程遵循“bottom-top”原则，即计算节点首先报告虚拟机power_state已经更新，然后再刷新数据库中的power_state字段值。</strong>power_state状态值衍生自Libvirt，其中BLOCKED状态值本质上代表的是RUNNING状态，所以不会记录。SHUTOFF被映射为SHUTDOWN状态，FAILED被映射为NOSTATE状态，因此power_state目前有<strong>RUNNING、SHUTDOWN和NOSTATE</strong>三种状态。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/99MPrRa6NBQ1.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Yvh9vxplnkas.png?imageslim" alt="mark"></p>
+<p><strong>2）vm_state</strong></p>
+<p>vm_state状态值是对虚拟机当前稳定状态的描述，而不是过渡状态。也就是说，如果针对特定虚拟机已经没有API继续调用，则应该用vm_state来描述此时虚拟机的稳定状态。例如，当vm_state状态值为ACTIVE，则表示虚拟机正常运行。再如SUSPENDING状态，其表示虚拟机正处于挂起过程中，并且在几秒之后会过渡到SUSPENDED状态，因此这是一种过渡状态，即SUSPENDING应该属于task_state的状态值。vm_state状态值更新的前提是针对此虚拟机有任务发生，并且任务成功完成，同时task_state被置为NOSTATE。如果没有API调用发生，则vm_state状态值绝对不会改变；如果对虚拟机的操作任务失败，但是成功回滚（rollback），则vm_state状态值也不会改变；如果不能回滚成功，则vm_state被置为ERROR状态。</p>
+<p><strong>vm_state状态与power_state状态之间没有必然的对应关系，即不能由vm_state的某一状态值推导出power_state的状态，反之亦然。</strong>当有针对虚拟机的操作任务正在执行时，power_state与vm_state的状态值很可能不协调：出现不协调的主要原因是vm_state仅代表虚拟机的稳定状态，而在任务执行中，虚拟机的状态一直在过渡，而且不能及时同步更新。<strong>如果没有任务正在执行，则vm_state与power_state不应该冲突，除非出现错误或任务失败，此时就需要具体问题具体分析，常见的不一致有以下几种：</strong></p>
+<ul>
+<li><strong>power_state为SHUTDOWN，而vm_state为ACTIVE：</strong>这种情况最可能的原因是虚拟机内部执行shutdonw命令时出现异常，解决这个问题最简单粗暴的方法就是手动调用stop（）API，之后，vm_state应该变为STOPPED。</li>
+<li><strong>power_state为RUNNING，而vm_state为HARD_DELETE：</strong>如果出现这种情况，则表明用户已经发出删除虚拟机的命令，但是执行过程出错，可以尝试再次删除虚拟机。</li>
+<li><strong>power_state为RUNNING，而vm_state为PAUSED：</strong>出现这个情况，表明虚拟机在执行pause（）之前出现了意外情况，这个问题的解决办法就比较多样，可以尝试将其强设为ERROR。</li>
+</ul>
+<p>vm_state有多个状态值，不同状态值表示虚拟机当前处于不同的稳定状态。有些状态值彼此之间可以互相转换，如PAUSED与ACTIVE状态；而有些状态值之间没有任何直接联系，如PAUSED与STOPPED；没有联系的状态值之间只有借助第三个状态值才能转换，如ACTIVE状态值。vm_state状态机示意图如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ee4uL8W29L7O.png?imageslim" alt="mark"></p>
+<p><strong>3）task_state</strong></p>
+<p><strong>task_state代表的是过渡状态，并且与调用的API函数密切相关，其状态值描述了虚拟机当前正在执行的任务。</strong>只有对虚拟机发起了操作任务时，才会有task_state状态值出现，而当vm_state处于稳定值时，task_state通常为NOSTATE。简单来说，当虚拟机在执行任务时，task_state便会有反映操作任务的状态值，而如果没有执行任何任务，则task_state一定是NOSTATE。如下图所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/utft3njJwDvK.png?imageslim" alt="mark"></p>
+<p><strong>task_state的一个特殊任务状态是FORCE_DELETE（或HARD_DELETE）</strong>。正常情况下，任何时候用户都可以成功删除虚拟机，删除虚拟机后便可使用更多受Quota限制的资源，同时删除的虚拟机不会被计费，但是虚拟机删除任务可能会因为某些原因而失败，例如之前的任务堵塞或卡死而导致虚拟机删除失败，删除虚机时虚拟驱动卡死或计算节点因为网络/硬件不可用导致操作失败等。失败的虚拟机删除任务意味着task_state状态值不能成功过渡到NOSTATE，而虚拟机状态值vm_state更新的前提是task_state从具体的任务状态过渡到NOSTATE，因此，对于force_delete（）任务，不应该等到任务执行到计算节点并完成全部相关工作才更新vm_state的状态值为HARD_DELETE，而是应该发起force_delete（）任务之后便立即更新vm_state状态值。也就是说，<strong>force_delete（）是个纯粹的数据库操作任务，其对数据库中vm_state字段值刷新之后便结束，而相应的虚拟机清除工作随后才进行。</strong></p>
+<p>当任务被确认为虚拟机上唯一执行的任务时，task_state就会被设置为具体的状态值。虚拟机中每个正在执行的任务都会被分配一个与虚拟机相关的唯一task_id（UUID格式）。如果虚拟机已经有个task_id，则表明有任务正在执行，<strong>要在任务执行中途更新task_state，就必须确保虚机的task_id匹配当前的task_id，否则当前执行的任务会被抢占（目前只有force_delete任务能抢占）</strong>。通常在某个具体的任务执行期间，task_state的值绝对不能改变。当一个任务执行完成后，task_state被置为NOSTATE，而task_id被置为NONE。task_state的状态值名称通常是代表某个API方法动词的正在进行时（“ing”形式），如下表所示，因此，从task_state的状态值便可推出虚拟机当前正在执行什么任务。</p>
+<table>
+<thead>
+<tr>
+<th><strong>vm_state</strong></th>
+<th><strong>task_state</strong></th>
+<th><strong>status</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>active</td>
+<td>rebooting</td>
+<td>REBOOT</td>
+</tr>
+<tr>
+<td></td>
+<td>reboot_pending</td>
+<td>REBOOT</td>
+</tr>
+<tr>
+<td></td>
+<td>reboot_started</td>
+<td>REBOOT</td>
+</tr>
+<tr>
+<td></td>
+<td>rebooting_hard</td>
+<td>HARD_REBOOT</td>
+</tr>
+<tr>
+<td></td>
+<td>reboot_pending_hard</td>
+<td>HARD_REBOOT</td>
+</tr>
+<tr>
+<td></td>
+<td>reboot_started_hard</td>
+<td>HARD_REBOOT</td>
+</tr>
+<tr>
+<td></td>
+<td>rebuild_block_device_mapping</td>
+<td>REBUILD</td>
+</tr>
+<tr>
+<td></td>
+<td>rebuilding</td>
+<td>REBUILD</td>
+</tr>
+<tr>
+<td></td>
+<td>rebuild_spawning</td>
+<td>REBUILD</td>
+</tr>
+<tr>
+<td></td>
+<td>migrating</td>
+<td>MIGRATING</td>
+</tr>
+<tr>
+<td></td>
+<td>resize_prep</td>
+<td>RESIZE</td>
+</tr>
+<tr>
+<td></td>
+<td>resize_migrating</td>
+<td>RESIZE</td>
+</tr>
+<tr>
+<td></td>
+<td>resize_migrated</td>
+<td>RESIZE</td>
+</tr>
+<tr>
+<td></td>
+<td>resize_finish</td>
+<td>RESIZE</td>
+</tr>
+<tr>
+<td></td>
+<td>default</td>
+<td>ACTIVE</td>
+</tr>
+<tr>
+<td><strong>vm_state</strong></td>
+<td><strong>task_state</strong></td>
+<td><strong>status</strong></td>
+</tr>
+<tr>
+<td>stopped</td>
+<td>resize_prep</td>
+<td>RESIZE</td>
+</tr>
+<tr>
+<td></td>
+<td>resize_migrating</td>
+<td>RESIZE</td>
+</tr>
+<tr>
+<td></td>
+<td>resize_migrated</td>
+<td>RESIZE</td>
+</tr>
+<tr>
+<td></td>
+<td>resize_finish</td>
+<td>RESIZE</td>
+</tr>
+<tr>
+<td></td>
+<td>default</td>
+<td>SHUTOFF</td>
+</tr>
+</tbody>
+</table>
+<p>对任一实例，不管是在实例创建过程中，还是创建完成后的维护操作中，vm_state、power_state和task_state总是同时存在，并共同决定了虚拟机的当前运行状态。下图为虚拟机创建过程中vm_state、power_state和task_state的状态值变更过程，可以看到，实例创建过程中，vm_state状态由Building变为Active，power_state则由NoState变为Running，经历状态值变更最多的是task_state，其经历了Scheduling、None、Networking、Block_Device_Mapping和Spawning等状态值的变更。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/plErMynznnr9.png?imageslim" alt="mark"></p>
+<p>虚拟机之间的状态可以相互转换，上图就描述了这种状态转换关系。让虚拟机由一个或多个状态转换到另外一种或几种状态，需要对虚拟机发出相关的任务操作，或者说要让虚拟机最终处于某种状态，则需要对当前状态的虚拟机执行相应的操作命令。<strong>虚拟机当前状态与目标状态之间的对应关系可以是一对一或多对一</strong>，如当前为Paused状态的虚拟机通过unpause命令可以变为Active状态，当前是Active、Shutoff和Rescued状态的虚拟机都可以通过pause命令变为Paused状态，而对于某些如backup或snapshot等备份命令则不会改变虚拟机状态。</p>
+<h2 id="Nova虚拟机实例的迁移"><a href="#Nova虚拟机实例的迁移" class="headerlink" title="Nova虚拟机实例的迁移"></a><strong>Nova虚拟机实例的迁移</strong></h2><h3 id="冷迁移—resize-migrate"><a href="#冷迁移—resize-migrate" class="headerlink" title="冷迁移—resize/migrate"></a>冷迁移—resize/migrate</h3><p>Nova为虚拟机提供了资源升级（resize）和主机迁移（migrate）操作。从底层调用的API接口来看，resize与migrate本质上是相同的，不同之处在于resize需要提供新的资源配置flavor，并使用新的flavor参数在目标主机上重新启动实例，而migrate则无须flavor参数，或者可以认为当resize操作提供的flavor与原实例的flavor一致时，则resize操作就是migrate操作。由于resize/migrate操作在迁移过程中会关闭源主机上的实例，并在新的主机上重新启动实例，因此resize/migrate对实例的迁移并非实时在线，而是先关闭实例再以copy镜像的形式迁移，迁移完成之后再在新的主机上启动实例，resize/migrate迁移也称为“冷迁移”。在虚拟机实例冷迁移结束之前，无法对虚拟机进行其他操作。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/7yMVJkj95nXg.png?imageslim" alt="mark"></p>
+<p>resize/migrate迁移的优点在于其无须共享存储支持，而且允许用户重新自定义虚拟机资源和宿主机。例如，由于Nova调度或者物理设备的原因导致某台宿主机负载过重，而且其上的某些虚拟机比较关键，同时需要更多的物理资源，此时便可申请维护窗口，通过Nova的resize/migrate功能将此宿主机上的某些关键虚拟机迁移到硬件资源更强大的物理宿主机上。resize/migrate操作无须用户指定目标主机，而是由Nova-scheduler调度。resize操作允许源主机与目标主机相同，前提是当前主机的资源满足虚拟机resize后的资源需求，同时<strong>用户需要设置nova.conf配置文件中的allow_resize_to_same_host参数为true（默认为false）</strong>，并重新启动Nova相关服务。而migrate操作则不允许scheduler将模板节点选取为源主机，如果scheduler调度的目标节点与源节点相同，则会引起re-scheduler操作（再次调度时源主机会因RetryFilter而被排除）。</p>
+<p>对于resize/migrate操作，在迁移过程接近尾声，准备在目标主机启动实例和虚拟机状态为resized时，还有两个相关操作需要用户执行，即confirm_resize和revert_resize。confirm_resize操作表示用户接受此次实例迁移操作，revert_resize表示用户不接受（反悔）此次迁移操作。如果用户需要Nova自动确认迁移操作，则可以将resize_confirm_window参数设置为某个大于0的时间值（一般设置为1即可），当迁移完成并且虚拟机处于reszied的时间大于此参数值时，迁移操作将会被自动确认。<strong>要对虚拟机进行resize操作，需要修改计算节点上/etc/passwd中nova条目并为用户nova设置密码，配置可登录系统，同时需要在计算节点之间设置SSH免密互信机制。如果不需要进行虚拟机资源调整，只需进行纯粹的“冷迁移”migrate操作即可。migrate与resize类似，但是migrate操作无须指定flavor参数，仅仅是将实例迁移至其他主机，而不进行资源调整，也无需进行上述配置。</strong></p>
+<h3 id="热迁移—live-migration"><a href="#热迁移—live-migration" class="headerlink" title="热迁移—live-migration"></a><strong>热迁移—live-migration</strong></h3><p>为了进行服务非中断的实时维护，Nova提供了live-migration功能。<strong>相对于resize/migrate的“冷迁移”，live-migration称为“热迁移”，即实时在线迁移</strong>，其可以将实例由一个计算节点在线迁移到另一个计算节点，期间仅有非常短暂的访问延时。live-migration迁移按其实现方式可以划分为三种类型，即<strong>基于非共享存储的块迁移（block live migration）、基于共享存储的迁移（Shared storage-based live migration）和基于Volume后端的迁移（Volume-backed live migration）。其中，后两种是使用最多的live-migration方式，而块迁移在使用上一直存在很多问题，而且也不符合实时迁移的基本设计思想，故不推荐使用。</strong>块迁移在迁移过程中需要拷贝临时存储及镜像文件，对于节点之间的网络带宽要求极高，尤其是在临时存储很大的情况下，还有可能出现消耗很长时间却不能成功的情况，如当实例I/O负载很大时，如果应用程序对临时存储的写入速率快于块迁移对临时存储的拷贝速率，则块迁移将不能完成。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/xVKjy5lMLBbA.png?imageslim" alt="mark"></p>
+<p>使用live-migration功能时，不管是基于共享存储还是Volume的迁移，都需要对nova.conf和libvirt.conf做相应修改，然后重启nova-compute和libvirtd服务，即需要完成一些迁移前的准备工作。准备工作完成之后，便可开始live-migration迁移—基于Volume后端的实例迁移其实就是对SAN BOOT形式的实例进行迁移，由于实例系统位于Volume而非临时磁盘上，因此无须共享存储，其迁移原理就是将Volume从源主机卸载，并重新挂载到目标主机的过程。与基于Volume后端的live-migration不同，其原理是需要计算节点之间共享实例镜像文件目录，通常是/var/lib/nova/instances，即每个计算节点都可以对共享的/var/lib/nova/instances目录进行读写，然后在共享目录创建实例镜像，这样每个计算节点都能读取该镜像。</p>
+<p>上述的Nova实例的迁移配置和实战详情请参考本站的《OpenStack虚拟机实例迁移实战》一文。</p>
+<h2 id="Nova计算管理服务实战"><a href="#Nova计算管理服务实战" class="headerlink" title="Nova计算管理服务实战"></a><strong>Nova计算管理服务实战</strong></h2><h3 id="Hypervisor、主机聚合和可用分区管理"><a href="#Hypervisor、主机聚合和可用分区管理" class="headerlink" title="Hypervisor、主机聚合和可用分区管理"></a>Hypervisor、主机聚合和可用分区管理</h3><p><strong>步骤1：</strong>执行以下命令，查看OpenStack Hypervisor的列表</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack hypervisor list --long</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/yOLBU3znjpxn.png?imageslim" alt="mark"></p>
+<p><strong>步骤2：</strong>执行以下命令，查看OpenStack Hypervisor的列表</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack host list</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/J97HRphYELqH.png?imageslim" alt="mark"></p>
+<p><strong>步骤3：</strong>执行以下命令，创建主机聚合“Aggregate_kk”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack aggregate create --zone nova Aggregate_kk</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/riIYsu6E8TpM.png?imageslim" alt="mark"></p>
+<p><strong>步骤4：</strong>执行以下命令，为主机聚合“Aggregate_kk”添加主机“rocky-compute”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack aggregate add host Aggregate_kk rocky-compute</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/KQis72N3N6Ry.png?imageslim" alt="mark"></p>
+<p><strong>步骤5：</strong>执行以下命令，验证同一个主机是否可以加入不同的AZ</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dDn4EArgPnHW.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kX4E4l3fucCt.png?imageslim" alt="mark"></p>
+<p><strong>步骤6：</strong>执行以下命令，验证同一个主机是否可以加入不同的AZ</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack aggregate <span class="built_in">set</span> --zone nova Aggregate_Test</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5xEETw84c3mQ.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5AXjpY1tviJR.png?imageslim" alt="mark"></p>
+<p><strong>步骤7：</strong>执行以下命令，从主机聚合“Aggregate_Test”移除主机“rocky-compute”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack aggregate remove host Aggregate_Test rocky-compute</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/oOEpfiQtBIiy.png?imageslim" alt="mark"></p>
+<p><strong>步骤8：</strong>执行以下命令，删除主机聚合“Aggregate_Test”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack aggregate delete Aggregate_Test</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/fJOlrLeXcv0g.png?imageslim" alt="mark"></p>
+<h3 id="虚拟机规格管理实战"><a href="#虚拟机规格管理实战" class="headerlink" title="虚拟机规格管理实战"></a><strong>虚拟机规格管理实战</strong></h3><p><strong>步骤1：</strong>执行以下命令，查看现有的虚拟机规格列表</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack flavor list</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/YgndsCag3qxY.png?imageslim" alt="mark"></p>
+<p><strong>步骤2：</strong>执行以下命令，创建规则Flavor_Test ，vCPU=1，RAM=128M，ROOT DISK=1G，仅对项目kkproject可见</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack flavor create --vcpu 1 --ram 128 --disk 1 --private --project kkproject Flavor_Test</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HSnoXAoUSYPe.png?imageslim" alt="mark"></p>
+<p><strong>步骤3：</strong>执行以下命令，移除规格Flavor_Test仅对项目kkproject可见</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack flavor <span class="built_in">unset</span> --project kkproject Flavor_Test</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/L97I2wL7jyPy.png?imageslim" alt="mark"></p>
+<p><strong>步骤4：</strong>执行以下命令，删除规格Flavor_Test</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack flavor delete Flavor_Test</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/se6ex0GCdW8G.png?imageslim" alt="mark"></p>
+<p><strong>步骤5：</strong>执行以下命令，创建规格Flavor_ubuntu，vCPU=2，RAM=2048M，ROOT DISK=20G，其他默认</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack flavor create --vcpu 2 --ram 2048 --disk 20 Flavor_ubuntu</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/LOwDdBaCpjPd.png?imageslim" alt="mark"></p>
+<h3 id="秘钥对和虚拟机组的管理实战"><a href="#秘钥对和虚拟机组的管理实战" class="headerlink" title="秘钥对和虚拟机组的管理实战"></a><strong>秘钥对和虚拟机组的管理实战</strong></h3><p><strong>步骤1：</strong>执行以下命令，创建密钥对“KeyPair_kk01”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack keypair create KeyPair_kk01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GRvOdaLnk8vN.png?imageslim" alt="mark"></p>
+<p><strong>步骤2：</strong>执行以下命令，创建虚拟机组“ServerGroup_kk01”，策略设置为“affinity”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server group create --policy affinity ServerGroup_kk01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/lF7lXJnP29Yl.png?imageslim" alt="mark"></p>
+<p><strong>步骤3：</strong>执行以下命令，创建虚拟机组“ServerGroup_kk02”，策略设置为“anti-affinity”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server group create --policy anti-affinity ServerGroup_kk02</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/yy06Y22k9StB.png?imageslim" alt="mark"></p>
+<h3 id="虚拟机实例实战"><a href="#虚拟机实例实战" class="headerlink" title="虚拟机实例实战"></a><strong>虚拟机实例实战</strong></h3><p><strong>步骤1：</strong>执行以下命令，创建虚拟机实例“instance_01”，要求配置为：AZ=nova，image=kk_img，flavor=Flavor_Web，KeyPair=KeyPair_kk01，Server Group=ServerGroup_kk01</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server create --availability-zone nova --image kk_img --flavor Flavor_Web --key-name KeyPair_kk01 --hint group=e320072b-1a76-4b87-854b-53c40db3e265 instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/N25QqkOLh9z2.png?imageslim" alt="mark"></p>
+<p><strong>步骤2：</strong>执行以下命令，查看虚拟机实例“instance_01”的状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server show instance_01 | grep status</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/KyPvbhyYi9vm.png?imageslim" alt="mark"></p>
+<p><strong>步骤3：</strong>执行以下命令，软重启虚拟机实例“instance_01”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server reboot instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jL4MLIt8nhJt.png?imageslim" alt="mark"></p>
+<p><strong>步骤4：</strong>执行以下命令，硬重启虚拟机实例“instance_01”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server reboot --hard instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/NUMSH53bmc9n.png?imageslim" alt="mark"></p>
+<p><strong>步骤5：</strong>执行以下命令，关闭虚拟机实例“instance_01”</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/RPasYqaKJK8d.png?imageslim" alt="mark"></p>
+<p><strong>步骤6：</strong>执行以下命令，启动虚拟机实例“instance_01”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server start instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HUzlta1t86DJ.png?imageslim" alt="mark"></p>
+<p><strong>步骤7：</strong>执行以下命令，锁定虚拟机实例“instance_01”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server lock instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pF0nkwPK9CYd.png?imageslim" alt="mark"></p>
+<p><strong>步骤8：</strong>执行以下命令，解锁虚拟机实例“instance_01”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server unlock instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Qdq86DkTgsYs.png?imageslim" alt="mark"></p>
+<p><strong>步骤9：</strong>执行以下命令，暂停虚拟机实例“instance_01”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server pause instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/7LvQr0Ranwrw.png?imageslim" alt="mark"></p>
+<p><strong>步骤10：</strong>执行以下命令，恢复暂停的虚拟机实例“instance_01”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server unpause instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/PuADnYJi11nU.png?imageslim" alt="mark"></p>
+<p><strong>步骤11：</strong>执行以下命令，挂起虚拟机实例“instance_01”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server <span class="built_in">suspend</span> instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Vf2D8Eo68NOK.png?imageslim" alt="mark"></p>
+<p><strong>步骤12：</strong>执行以下命令，恢复挂起的虚拟机实例“instance_01”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server resume instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5zKXSc7jKdPP.png?imageslim" alt="mark"></p>
+<p><strong>步骤13：</strong>执行以下命令，搁置虚拟机实例“instance_01”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server shelve instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/1ipDMkPNsoek.png?imageslim" alt="mark"></p>
+<p><strong>步骤14</strong>：执行以下命令，恢复搁置的虚拟机实例“instance_01”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server unshelve instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Leh7FmOfzKQ2.png?imageslim" alt="mark"></p>
+<p><strong>步骤15：</strong>执行以下命令，创建虚拟机实例“instance_01”的快照“instance01_snap_01”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server image create --name instance01_snap_01 instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/xdlaGADR8WJo.png?imageslim" alt="mark"></p>
+<p><strong>步骤16：</strong>执行以下命令，查看镜像列表</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/a9d4dJ8q82tu.png?imageslim" alt="mark"></p>
+<p><strong>步骤17：</strong>执行以下命令，创建一个新的规格“Flavor_Web_new”，将内存大小调整为256M，其余与规格“Flavor_Web”保持一致</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack flavor create --vcpu 1 --ram 256 --disk 1 Flavor_Web_New</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/QdKohImGAXUd.png?imageslim" alt="mark"></p>
+<p><strong>步骤18：</strong>执行以下命令，将虚拟机实例“instance_01”的规格调整为新的规格“Flavor_Web_New”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server resize --flavor Flavor_Web_New instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/9NLIf91aC7NV.png?imageslim" alt="mark"></p>
+<p><strong>步骤19：</strong>执行以下命令，确认虚拟机实例“instance_01”的Resize调整</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server resize --confirm instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dEsn0lBBxYxw.png?imageslim" alt="mark"></p>
+<p><strong>步骤20：</strong>执行以下命令，确认虚拟机实例“instance_01”的规格信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server show instance_01 | grep flavor</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/srKJMDh0cVll.png?imageslim" alt="mark"></p>
+<p><strong>步骤21：</strong>执行以下命令，从虚拟机快照恢复实例instance_01，并查看虚拟机实例的镜像信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack server rebuild --image instance01_snap_01 instance_01</span><br></pre></td></tr></table></figure>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/J23NNI8L0sSS.png?imageslim" alt="mark"></p>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a><strong>思考</strong></h2><p><strong>1、请从nova的重要概念角度阐述虚拟机故障迁移的最大范围是多少？</strong></p>
+<p><strong>2、多个AZ可以通过一个nova-scheduler进行调度，那么在虚拟机故障时或部署虚拟机的计算节点主机故障时，虚拟机实例是否可以跨AZ迁移？请阐述理由？</strong></p>
+<p><strong>3、请阐述为什么一个主机Host只能属于一个AZ？</strong></p>
+<p><strong>4、请阐述nova cell的V1与V2版本的区别？并分析在V2版本中，nova_cell0S数据库的作用？在nova-api数据库中请分析与cell相关的数据表之间的挂链关系？</strong></p>
+<p><strong>5、请分析虚拟机实例在软重启和硬重启时内部流程的区别？并解释为什么虚拟机软重启和硬重启中状态status一直为active？</strong></p>
+<p><strong>6、请分析虚拟机实例暂停状态下pause和suspend的区别？关机状态下Poweroff和shelve的区别？</strong></p>
+<p><strong>7、请根据虚拟机实战的2-14步画出虚拟机实例的状态变更图，并标注出引起状态变化的相关操作指令？</strong></p>
+<p><strong>8、请分析虚拟化场景下和云场景下虚拟机快照的区别？</strong></p>
+<p><strong>9、请分析虚拟机实例resize过程中虚拟机的在线状态？并分析为什么在VERIFY_RESIZE状态下需要通过cofirm操作进行确认？确认后虚拟机状态的的变化是什么？同时，除了confirm操作外，还有回滚操作revert，那么revert后虚拟机实例状态变为ACTIVE前是否需要再次confirm？</strong></p>
+<p><strong>10、请分析为什么在你们的环境中虚拟机实例resize不成功？请从日志关联的角度分析产生错误请求400 Bad Request的原因？</strong></p>
+<p><strong>11、请从Ubuntu官网下载一个cloud镜像，并通过命令行拉起一个ubuntu虚拟机实例，并要求能够通过SSH的用户名密码方式登录。</strong></p>
+<p><strong>12、请手动制作一个win7/win10的cloud镜像，并通过命令行拉起一个win7/win10的虚拟机实例，并要求该实例能够正常运行。</strong></p>
+<p><strong>13、请阐述冷迁移resize和migrate的区别？</strong></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2020/03/03/2020-03-03-计算管理服务Nova/" title="2020-03-03-计算管理服务Nova">https://kkutysllb.cn/2020/03/03/2020-03-03-计算管理服务Nova/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/云计算/" rel="tag"><i class="fa fa-tag"></i> 云计算</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/03/2020-03-03-镜像管理服务Glance/" rel="next" title="2020-03-03-镜像管理服务Glance">
+                <i class="fa fa-chevron-left"></i> 2020-03-03-镜像管理服务Glance
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/03/2020-03-03-网络管理服务Neutron/" rel="prev" title="2020-03-03-网络管理服务Neutron">
+                2020-03-03-网络管理服务Neutron <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">70</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Nova的架构"><span class="nav-number">2.</span> <span class="nav-text">Nova的架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Nova中的几个重要概念"><span class="nav-number">3.</span> <span class="nav-text">Nova中的几个重要概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Nova中的主机调度策略"><span class="nav-number">4.</span> <span class="nav-text">Nova中的主机调度策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Nova创建虚拟机实例流程分析"><span class="nav-number">5.</span> <span class="nav-text">Nova创建虚拟机实例流程分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Keystone的工作流程"><span class="nav-number">5.1.</span> <span class="nav-text">Keystone的工作流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nova-api的工作流程"><span class="nav-number">5.2.</span> <span class="nav-text">nova-api的工作流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nova-conductor工作流程"><span class="nav-number">5.3.</span> <span class="nav-text">nova-conductor工作流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nova-scheduler工作流程"><span class="nav-number">5.4.</span> <span class="nav-text">nova-scheduler工作流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nova-compute工作流程"><span class="nav-number">5.5.</span> <span class="nav-text">nova-compute工作流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Nova实例的状态机"><span class="nav-number">6.</span> <span class="nav-text">Nova实例的状态机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Nova虚拟机实例的迁移"><span class="nav-number">7.</span> <span class="nav-text">Nova虚拟机实例的迁移</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#冷迁移—resize-migrate"><span class="nav-number">7.1.</span> <span class="nav-text">冷迁移—resize/migrate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#热迁移—live-migration"><span class="nav-number">7.2.</span> <span class="nav-text">热迁移—live-migration</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Nova计算管理服务实战"><span class="nav-number">8.</span> <span class="nav-text">Nova计算管理服务实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hypervisor、主机聚合和可用分区管理"><span class="nav-number">8.1.</span> <span class="nav-text">Hypervisor、主机聚合和可用分区管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机规格管理实战"><span class="nav-number">8.2.</span> <span class="nav-text">虚拟机规格管理实战</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#秘钥对和虚拟机组的管理实战"><span class="nav-number">8.3.</span> <span class="nav-text">秘钥对和虚拟机组的管理实战</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机实例实战"><span class="nav-number">8.4.</span> <span class="nav-text">虚拟机实例实战</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考"><span class="nav-number">9.</span> <span class="nav-text">思考</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">885k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">13:25</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2020/03/03/2020-03-03-计算管理服务Nova/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

@@ -1,0 +1,2335 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="概述Neutron便是OpenStack云计算中的网络服务项目，其源自早期的Nova-network网络组件。Nova-network从Nova项目中独立出来之后，社区成立了针对网络功能虚拟化的Quantum项目。但由于商标侵权的原因，在Havana版本后，Quantum项目更名为现在的Neutron项目。Neutron是OpenStack的核心项目之一，虽然是OpenStack核心项目中成熟相对">
+<meta name="keywords" content="云计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020-03-03-网络管理服务Neutron">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/2020-03-03-网络管理服务Neutron/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="概述Neutron便是OpenStack云计算中的网络服务项目，其源自早期的Nova-network网络组件。Nova-network从Nova项目中独立出来之后，社区成立了针对网络功能虚拟化的Quantum项目。但由于商标侵权的原因，在Havana版本后，Quantum项目更名为现在的Neutron项目。Neutron是OpenStack的核心项目之一，虽然是OpenStack核心项目中成熟相对">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/D2PDJQIy9DDG.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/qaG3cHiA0Iqn.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/uXnl2zDAF8Ni.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/LSSfpRqg6AAN.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/bL9MfzCHyOdj.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/1hX7WoTmKIP8.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/9ntWGD8emzjW.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/PpHzaPOfQN2H.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/3egBBjWDsL4E.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5qIfo3ddTmcf.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/NqtmkrJDxHRT.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6hxSkHzOIMPx.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/SgPsoP56O1Yv.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nlqK2kvuHxvz.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nvyViAIlOxPQ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/aesgt38i4ON1.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/m7BaBpW9WPip.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/msiA3WTJMjTU.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/VgJnPNzUF86g.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Xl4XVNu7syKG.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/DsMOufsjaHvD.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/xIRAR6cbjFDa.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dUxe2MoB5rhM.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/EytPqzhlo4xI.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/VAt9FgWxuQqi.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/1YqrIi7Wsa7e.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nFdrKHoi7hM1.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/1KVjrH5OHUrI.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GoM9Aodt9lzU.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/gGGapRm3KK1L.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nVl5UyclS30z.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/yyBeW1rG1FQb.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/1DpFcHak6RfV.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jMRHUkX9yrW5.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/s6JIehWo0G45.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/RheHvcBGmE3P.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GD850Xk2Rgb8.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rV75R5W53VPz.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Y5oRUbq3V4qk.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/FgQWyK2qcB4v.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/a4If4D9GRcrx.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/22yFotOOvExm.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HW6MSWULfANc.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/4dWzuDMSm3nn.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/G49jAGEvOS2n.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/fauHKXyuCVz8.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/F86NfnEyLaHH.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/2STkzOl217Gv.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/scY7Ic6BD4m6.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/quBL67DkldVa.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rsDhqEOdeUyw.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/CujLXRlbTt3O.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/m98xkKF8xFLM.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/hMqDuSkKnaRQ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6o1FTMLEeNEf.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/JRmDgaYjOSV5.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/3sUOfvNmayS3.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/mzV4GvhuKBmk.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/83veH2YUsO7p.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/SJUzykqbuCyW.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GYjCM1akuRe9.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/admWvXL4W7r7.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/g1cIi11htLEk.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pLE2fpMVBWdm.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/SrcqCsGRIKJ4.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/I2odGjt3tqrf.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/wBny2KogzxI8.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nB5PQnljyMPo.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Wvs6vqLNWQyH.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/eJRBmG6t816W.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/J4ULOwCgvbqe.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kPmzxULVFqT6.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/IGi9PaBj6zoV.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ccSNVpy76Eg1.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/MMsTCnAQWaQL.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/aBcyvRtRWqa3.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/M4M6uRIWUOlr.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/LnG69KW61e29.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dc67VCQfDidI.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/XNh5Dd6PzGz5.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/cUXCpNq1FG6s.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HpyDrBkEMahr.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/QjKsd5XVyQhk.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rhwcXXBe3pAv.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/e6os5ntLO6r4.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/xtvsfDKvLxLl.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/7bk9LjlzFmjQ.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dc872B1l3eop.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/FmAH1b08HLRW.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/z3U9TbJKvQQG.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/b8D8jd3u0kGi.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/lYR5seRRCg43.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/qHyOJ8FUL4pm.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/n4Lw0bjIkAo3.png?imageslim">
+<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GtheCaxDAtA5.png?imageslim">
+<meta property="og:updated_time" content="2020-03-03T13:20:07.189Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2020-03-03-网络管理服务Neutron">
+<meta name="twitter:description" content="概述Neutron便是OpenStack云计算中的网络服务项目，其源自早期的Nova-network网络组件。Nova-network从Nova项目中独立出来之后，社区成立了针对网络功能虚拟化的Quantum项目。但由于商标侵权的原因，在Havana版本后，Quantum项目更名为现在的Neutron项目。Neutron是OpenStack的核心项目之一，虽然是OpenStack核心项目中成熟相对">
+<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/D2PDJQIy9DDG.png?imageslim">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/2020-03-03-网络管理服务Neutron/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2020-03-03-网络管理服务Neutron | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/2020-03-03-网络管理服务Neutron/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2020-03-03-网络管理服务Neutron
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-03 20:40:36 / 修改时间：21:20:07" itemprop="dateCreated datePublished" datetime="2020-03-03T20:40:36+08:00">2020-03-03</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">42k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">38 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h2><p>Neutron便是OpenStack云计算中的网络服务项目，其源自早期的Nova-network网络组件。Nova-network从Nova项目中独立出来之后，社区成立了针对网络功能虚拟化的Quantum项目。但由于商标侵权的原因，在Havana版本后，Quantum项目更名为现在的Neutron项目。Neutron是OpenStack的核心项目之一，虽然是OpenStack核心项目中成熟相对较晚的项目，但是Neutron项目在社区的热度很高。直到目前，在最新发行的OpenStack版本中，Neutron是新增功能和问题修复最多的核心项目。OpenStack的网络服务由Neutron项目提供，Neutron允许OpenStack用户创建和管理网络对象，如网络、子网、端口和路由等，而这些网络对象正是其他OpenStack服务正常运行所需的网络资源。Neutron项目中实现的各种插件使得用户可以选择不同的网络设备和软件，并为OpenStack的网络架构和部署提供极大的灵活性。此外，Neutron提供了API Server以供用户进行云计算网络的定义和配置，而Neutron灵活多样的插件使得用户可以借助各种网络技术来增强自己的云计算网络能力。Neutron还提供了用以配置、管理各种网络服务的API，如L3转发、NAT、负载均衡、防火墙和VPN等高级网络服务。因此，我们大致可以画出Neutron在OpenStack上下文架构（增加个Heat云编排服务），如下图所示，Neutron已经成为OpenStack三大核心（计算、存储、网络）之一，对外提供Naas（Network as a Service）服务。<a id="more"></a></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/D2PDJQIy9DDG.png?imageslim" alt="mark"></p>
+<p>目前为止，Neutron支持的特性如上表所示，Neutron支持的这些特性，涵盖了2~7层的各种服务。除了基本的、必须支持的二层、三层服务外，4~7层支持的服务有：LBaaS（负载均衡服务）、FWaaS（防火墙服务）、VPNaaS（VPN服务）、Metering（网络计量服务）、DNSaaS（DNS服务）等。Neutron在大规模高性能层面，还支持L2POP、BGP、DVR、VRRP等特性。<strong>Neutron项目与OpenStack其他项目（Cinder除外）不同的地方在于，其基本全是通过Plugin-Agent方式实现各类网络技术的软件化呈现，虽然不如Nova项目复杂，但确是OpenStack中最灵活、最难理解的一个项目，尤其是针对没有网络基础新手，可以说直接让您懵逼也不为过。因此，要学好Nuetron的除了重点理解各类资源概念外，还需要宏观的去理解Neutron的不同表现形成。</strong></p>
+<h2 id="Neutron的应用方式"><a href="#Neutron的应用方式" class="headerlink" title="Neutron的应用方式"></a><strong>Neutron的应用方式</strong></h2><p>Neutron的应用本质上分为两大类：<strong>基于OpenStack的应用和基于SDN的应用</strong>。前者是在云的场景下，与OpenStack其他部件配合，为用户提供基于云的服务，此时Neutron只需要提供租户网络隔离和二层转发功能，使用户的云服务器能够进行网络互联互通。后者是在SDN场景下，作为SDN Controller或与SDN Controller（如ODL、OVN)一起，为用户提供NaaS服务。</p>
+<h3 id="基于OpenStack的应用—从Provider-Network-Service到Self-Network-Service"><a href="#基于OpenStack的应用—从Provider-Network-Service到Self-Network-Service" class="headerlink" title="基于OpenStack的应用—从Provider Network Service到Self-Network Service"></a><strong>基于OpenStack的应用—从Provider Network Service到Self-Network Service</strong></h3><p>基于OpenStack的应用，就是原生的云应用，Neutron作为OpenStack中的网络实现部件，为用户提供网络服务，其本质上是一种Provider Network Service类型。在Provider网络中，由于二层网络直接接入物理设备，二层网络之间的通信也由物理设备进行转发，因此Provider网络在实现过程中无须L3服务，控制节点只需部署API Server、ML2核心插件及DHCP和Linux bridging代理即可。计算节点中的实例通过虚拟二层交换机直接接入物理网络，因此计算节点只需部署如Open vSwitch或Linux bridging等代理软件即可。先来看一个简单的例子，如下图左边所示，是一个单平面的租户共享网络，共享网络VLAN/FLAT就是Neutron网络实现控制方式。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/qaG3cHiA0Iqn.png?imageslim" alt="mark"></p>
+<p>上图左边的含义为：租户可以创建许多虚机，但是这些虚机只能属于一个Network。不同租户共享这同一个网络，而且这个网络只能是VLAN网络或FLAT网络，网络类型必须单一实现。同时，在这个架构中，是通过外部物理网络的路由器实现网络包的转发功能，Neutron并不提供虚拟路由转发功能。而且因为各租户属于同一网络，也不支持IP地址重叠功能。其实，这个网络实现对应物理网络实现就是如上图右边所示，由一个交换机+一个路由器来完成。</p>
+<p>如果网络都这么简单该多好，各种标准组织、厂家等没必要为各自的网络实现方式满世界BB，维护和开发人员也没必要花大力气去学习网络，整个世界都清净了。但是世界是复杂的，网络也是复杂的。就算只是和OpenStack其他服务为用户云服务，Neutron的简单网络实现也不是上面那么简单，而是下面这个样子：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/uXnl2zDAF8Ni.png?imageslim" alt="mark"></p>
+<ul>
+<li><ul>
+<li>租户A独占一个VLAN网络，地址段为10.0.0.0/24，同时租户A的虚机要求能够外部网络互联互通（包括和租户B的虚机互联互通）。</li>
+<li>租户B占用2个隧道网络，一个VxLAN网络，地址段也为10.0.0.0/24，另一个是GRE网络，地址段为10.0.1.0/24。而且，租户B这两个网络的虚机也要求和外部网络互联互通（包括和租户A网络内的虚机互联互通）。</li>
+<li>租户A独占一个虚拟路由器，租户B独占一个虚拟路由器，且租户A网络地址段和租户B私有网络（1）地址段重叠，也就是要实现网络资源隔离功能。</li>
+<li>租户A和租户B与外部网络互联互通时，要支持SNAT/DNAT功能。</li>
+</ul>
+</li>
+</ul>
+<p>可以看出，即使是基于OpenStack的云服务应用，在多租户场景下，Neutron也从最初始低端交换机提供角色发展成为支持各种协议、融合交换路由转发一体的，支持多租户隔离的网络实现角色，即Self-Network Service。上面的模型对应到物理网络实现就是如下的架构：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/LSSfpRqg6AAN.png?imageslim" alt="mark"></p>
+<p>因此，Neutron基于OpenStack的应用，网络的实现一般都是Host内的虚拟交换机、子网和端口模型，3层-7层的路由等功能可以通过物理设备实现也可通过虚拟设备实现，取决于不同网络部署类型（Provider or Self）。</p>
+<h3 id="基于SDN的应用"><a href="#基于SDN的应用" class="headerlink" title="基于SDN的应用"></a><strong>基于SDN的应用</strong></h3><p>不同的人心中，就有不同SDN实现方式。因此，这也是目前SDN亟待完成标准制定和冻结的需求所在。即使是业内公认的北向采用RESTful协议，大家都号称自己支持并采用的就是RESTful方式，但是对接起来兼容性仍然感人。既然要谈SDN的应用，我们首先看下什么是SDN？这里我们采用设备商和运营商共同认可的方式来介绍。通过下图的左边，大家可以对SDN有个初步感性认识。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/bL9MfzCHyOdj.png?imageslim" alt="mark"></p>
+<p>SDN主要将网络的控制平面与数据转发平面进行分离，采用集中控制替代现有的分布式控制，并通过开放的可编程的接口实现“软件定义”的网络架构。<strong>SDN是IT化的网络，是“软件主导一切”的趋势从IT产业向网络领域延伸的标志性技术</strong>，其核心就是网络的“软化”。SDN的标准架构就是俗称的“三层两接口”，其实这种架构并不是SDN所独有，在现有网络中如VoLTE网络的核心网IMS也是一个标准的“三层两接口”架构，其目的就是实现转控分离。别忘了，IMS可是转发、控制和业务三层完全分离的一个架构体系。SDN的核心特点是将实体设备作为基础资源，抽象出NOS（网络操作系统），隐藏底层物理细节并向上层提供统一的管理和编程接口。以NOS为平台，开发的应用程序可以实现通过软件定义的网络拓扑、资源分配和处理流程及机制等。SDN架构的特点如下：</p>
+<ul>
+<li><ul>
+<li>分离网络的控制功能和转发功能。</li>
+<li>使得网络变得可编程控制。</li>
+<li>底层的设备抽象成虚拟网络设备。</li>
+<li>南向支持OpenFlow协议。</li>
+</ul>
+</li>
+</ul>
+<p>接下来，我们来看下Neutron作为SDN应用场景下逻辑架构是什么？如上图右边所示，Neutron具备SDN网络的4个特点。在Neutron基于SDN的应用场景中，所有SDN控制器都挂接在Netron之下，这不仅是因为业界期望Neutron能够成为统一的北向接口，也是源于Neutron的可扩展能力。我们再来看看Neutron内部组件实现方式是什么？先来放一张较复杂图，大家不要被吓着，重点看我图中标注出来的（1）、（2）、（3）三个地方，这些标注出来的地方就是Neutron的可扩展能力，其余部分会在后文中逐步介绍。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/1hX7WoTmKIP8.png?imageslim" alt="mark"></p>
+<ul>
+<li><ol>
+<li><strong>支持Vendor Plugins（设备商/供应商插件）扩展。</strong>这是对Core API（Network、Subnet和Port三个核心资源的业务API)的扩展。原生的Neutron，实现Core API的载体是ML2插件，这是一种Driver方式，实现多种协议的协同，支持网络多种方式实现和共存。因此，作为设备商不会去扩展Core API，因为Core API正是运营商所追求的统一API接口模式。但是，Neutron原生的ML2管理的是虚拟交换机，如果需要管理设备商自己的交换机，则需要设备商自己扩展。因此，Neutron在设计时，就保留了Vendor Plugins的位置，便于不同设备商开发自己的插件并实现对接自己的SDN控制器。</li>
+<li><strong>支持Service Plugins扩展。</strong>与第(1)点一样，不过它所对应的其他业务API（Neutron称之为Extension API，如上图中标注位置（3）点）。它的功能是：如果设备商觉得Neutron原生的Service Plugins不合适或者功能缺失，设备商可以扩展自己的的插件，然后对接自己的SDN控制器。比如与ODL对接时，此处的LBaaS，FWaaS、VPNaaS和L3 Service均需要替换。</li>
+<li><strong>支持Extension API扩展。</strong>这一点可以说将Neutron的可扩展能力放大到极致。所谓挂一漏万、百密一疏，Neutron也不能保证自己的原生定义的业务API就能100%满足业界需求，所以Neutron也允许其他组织（包括运营商、设备商）对它的业务API进行扩展，并同时在标注点（2）完成对应插件的扩展，这样就能满足各种业务需求。</li>
+</ol>
+</li>
+</ul>
+<p>上面列举的3个可扩展点只是为了说明Neutron具备的优势，并不是它的全部，它的全部包括但不限于上图中列举出所有功能。也就是说，厂商或运营商可以根据自己的需要对Neutron进行扩展，如果不扩展，Neutron仍然可以提供完备的网络实现方案。为了和SDN网络的“三层两接口”架构进行对应，让大家更好的理解“<strong>Neutron就是SDN”</strong>这个说法，我们再将上面的进行抽象，就得出下面SDN应用场景典型逻辑架构图。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/9ntWGD8emzjW.png?imageslim" alt="mark"></p>
+<p>Neutron对外提供的CLI和Web UI接口，其用户主要是“人”；对外提供的REST ful API接口，其用户主要是OpenStack之内的其他服务（如Nova等）以及OpenStack之外的其他系统（如MANO等）。Neutron管理的网元，主要以“软”网元为主（即虚拟网络功能）。这些“软”网元，有三种来源：</p>
+<ul>
+<li><ul>
+<li>Linux原生（内核模块）的网络功能，比如LinuxBridge，LinuxRouter等。</li>
+<li>开源的网络功能，比如OVS等。</li>
+<li>厂商提供的闭源商用产品。</li>
+</ul>
+</li>
+</ul>
+<p>Neutron管理的网元，也可能涉及一些“硬”网元，比如采用隧道网络进行主机之间互通时，往往各个机柜中TOR交换机（如5300\9300等）就是隧道网络的VTEP（隧道终结点），此时这些TOR交换机也在Neutron的管理范围内。再比如数据内部的DCGW，Firewall、LB这些3-7层的硬件网络设备，也是Nuetron的管理对象。这就是Neutron作为SDN应用时承担的管理角色。</p>
+<h2 id="Neutron的逻辑架构"><a href="#Neutron的逻辑架构" class="headerlink" title="Neutron的逻辑架构"></a><strong>Neutron的逻辑架构</strong></h2><p>Neutron服务的架构和OpenStack其他服务一样，是一种分布式架构，各子服务服务通过消息队列来完成异步通信，从而对外提供网络服务。如下图所示，主要包括neutron-server、neutron-agent、neutron-metadata、消息队列MQ几部分。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/PpHzaPOfQN2H.png?imageslim" alt="mark"></p>
+<ul>
+<li><ul>
+<li><strong>Neutron Server：</strong>包含neutron-api和neutron-plugin两部分。neutron-api对外提供统一的REST ful API接口，接收和响应外部其他用户API请求。neutron-plugin接收来自neutron-api的请求，建立并维护网络的逻辑状态，同时调用响应agent来实现各种网络服务，包括core-plugin和service-plugin两部分。</li>
+<li><strong>Nuetron-agent：</strong>处理 Plugin 的请求，负责在 network provider （linuxbridgde、openvswitch、物理网络交换机等）上真正实现各种网络功能。核心的neutron-agent包括：neutron-ml2-agent（实现2层网络的功能，比如通过虚拟交换机linuxbridge或openstackvswitch实现2层转发功能）、neutron-dhcp-agent（实现DHCP服务）、neutron-L3-agent（实现3层路由转发功能）。</li>
+<li><strong>Neutron-metadata：</strong>上面图中未画出，在后面节点服务分布图中相应位置。用来和nova-metadata服务通信，获取虚机的网络元数据。因为VM在启动时需要访问 nova-metadata-api 服务获取 metadata 和 userdata，这些 data 是该VM的定制化信息，比如 hostname, ip， public key 等。但VM 启动时并没有 ip，那如何通过网络访问到 nova-metadata-api 服务呢？答案就是 neutron-metadata-agent 让VM 能够通过 dhcp-agent 或者 l3-agent 与 nova-metadata-api 通信。</li>
+<li><strong>Neutron-ML2-agent：</strong>响应来自ML2-plugin的调用，实现2层网络功能。由于ML2-plugin属于Core-plugin，用来控制实现Network、Subnet、Port等核心网络功能，因此ML2-agent负责完成这些核心网络功能的具体实现，概括起来有两种实现方式，主要基于软件虚拟的linuxbridge（官方推荐）或OVS（生产环境普遍采用）和基于专有硬件的物理交换机VLAN网络或VxLAN网络。</li>
+<li><strong>Neutron-L3-agent：</strong>L3 Agent在Provider类型的网络中并不是必须的，而在Self-Service网络中却是必须的。L3 Agent服务主要在外网访问租户网络中的虚拟机时提供L3 Route功能和DNAT功能，其也需要访问消息队列，其路由功能默认通过 IPtables 实现。</li>
+<li><strong>Neutron-dhcp-agent：</strong>DHCP Agent服务（neutron-dhcp-agent）主要为租户网络提供DHCP服务，DHCP Agent对于Neutron支持的全部网络Plugins都是相同的，即DHCP代理并不依赖用户选用的Plugin。DHCP Agent服务也需要访问消息队列以便同网络Plugins进行交互。</li>
+<li><strong>AMQP-Server：</strong>Neutron Server，Plugin 和 Agent 之间通过 Messaging Queue 通信和调用。</li>
+<li><strong>Neutron-DATABASE：</strong>存放 OpenStack 的网络状态信息，包括 Network, Subnet, Port, Router 等。</li>
+</ul>
+</li>
+</ul>
+<p>在Neutron中，除了上述介绍的DHCP Agent和L3 Agent，还有很多提供高级服务的插件代理，如VPNaaS代理、FWaaS代理和LBaaS代理等，而这些代理通过基于消息队列的RPC与Neutron的API Server、Plugins进行交互。Neutron之所以能够处理各种网络技术和协议，主要因为Neutron包含了实现各种网络技术的插件。从代码层面而言，<strong>插件是“可插拔（Pluggable）”的Python类和函数</strong>，<strong>这些Python类在Neutron API响应请求时被触发，同时插件在Neutron Server服务启动时加载，加载完成后插件被当成Neutron Server的一部分而运行</strong>。在Neutron中，API是Pluggable的，因此用户可以实现自己的Plugin并将其“插入”Neutron API中使用，通常不同插件实现的Neutron API是不同的。用户对插件的实现可以是<strong>完整性（Monolithic）</strong>的也可以是<strong>模块式（Moduler）</strong>的。Monolithic意味着用户需要实现对网络进行直接或间接控制的全部核心技术，由于其实现过程较为复杂，Monolithic形式的插件正被逐步淘汰，取而代之的是Moduler插件，其中最为成功的便是Moduler Layer2，即ML2插件。<strong>ML2插件解耦了对不同网络驱动的调用，它将驱动分为两个部分，即TyperDriver和MechanismDriver</strong>。在Neutron网络中，<strong>TyperDriver代表不同的网络隔离类型（Segmentation Type）</strong>，如Flat、Local、VLAN、GRE和VxLAN，TyperDriver负责维护特定类型网络所需的状态信息、执行Provider网络验证和租户网络分配等工作，而<strong>MechanismDriver主要负责提取TyperDriver所建立的信息并确保将其正确应用到用户启用的特定网络机制（Networking Mechanism）中</strong>。尽管ML2插件是个单一整体的插件，但是ML2插件支持多种TyperDriver和MechanismDriver，并且<strong>不同的MechanismDriver所支持的TyperDriver种类不一样</strong>，如LinuxBridge和OpevSwitch两种MechanismDriver都支持Flat、VLAN、VXLAN和GRE这4种TyperDriver，而L2 population仅支持VXLAN和GRE这2种TyperDriver，这意味着在启动L2 population时，用户不能使用Flat和VLAN进行租户网络的隔离。ML2插件各类型MechanismDriver与TypeDriver的矩阵管理如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/3egBBjWDsL4E.png?imageslim" alt="mark"></p>
+<p>在Neutron中，Neutron Server服务扮演的是网络控制中心的角色，而实际上与网络相关的命令和配置主要在网络节点和各个计算节点上执行，位于这些节点上的Agents便是与网络相关命令的实际执行者，而Agents可以划分为<strong>L2 Agents与非L2 Agents</strong>两大类，如OpenvSwitch agent、LinuxBridge Agent、SRIOV nic switch Agent和Hyper-V Agent等属于L2 Agents。L2 Agents主要负责处理OpenStack中的二层网络通信，是Neutron网络中最为核心的部分。非L2 Agents主要包括L3 Agent、DHCP Agent和Metadata Agent等。Agents所获取的消息或指令来自消息队列总线，并且由Neutron Server或Plugins发出。由于Agents负责网络的具体实现，因此Agents与特定的网络技术、Plugins密切相关，如使用OpenvSwitch Agent则意味着通过OpenvSwitch技术来实现虚拟网络，并且其对应的插件是OpenvSwitch Plugin（被ML2插件取代）。大致上Neutron实现虚拟网络的实现过程就是：Neutron Server接收到客户端的API请求后，触发ML2插件进行请求处理，这里假设ML2插件已经加载了OVS Mechanism Driver（即OpenvSwitch插件），于是ML2插件将请求转发给OVS驱动，OVS驱动收到请求后使用其中的可用信息创建RPC消息，RPC消息以Cast形式投递到计算节点上特定的OVS Agent，计算节点上的OVS Agent接收到消息后便开始配置本地OpenvSwitch交换机实例。</p>
+<p>这里有一个业界常使用的概念—<strong>参考实现，即Mechanism Driver与L2 Agent的一种组合</strong>，如Open vSwitch这个Mechanism Driver与Open vSwitch Agent这个代理的组合被称为OpenvSwitch参考实现，用Open vSwitch&amp;Open vSwitch Agent表示。<strong>不同的参考实现支持不同的非L2 Agent</strong>，如参考实现MacVTap&amp;MacVTap Agent不支持L3 Agent和DHCP Agent，这意味着如果用户在ML2插件配置时选择了使用MacVTap这个Mechanism Driver，并在计算节点/网络节点部署了MacVTap Agent，则该Neutron网络中不能使用L3服务和DHCP服务。不同参考实现支持的非L2 Agent的对应关系如下表所示。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5qIfo3ddTmcf.png?imageslim" alt="mark"></p>
+<p>在Neutron中，L3 Service是个非常关键的服务，其主要提供虚拟机不同L2子网之间的L3路由，以及虚拟机与外网之间的SNAT和基于Floating IP的DNAT功能，如果OpenStack网络中未部署L3服务，则用户只能部署基于Provider的网络，而无法实现真正的云计算Self-Service网络。L3 Service主要由L3 Service插件及其API和对应的L3 Agent组成，从OpenStack的Juno版本开始，L3 Agent也可以部署在计算节点上以实现<strong>分布式虚拟路由（Distributed Vritual Router，DVR）</strong>功能。通常情况下，租户可以通过L3 Plugin提供的API创建虚拟Router和Floating IP，并通过Nova的API将Floating IP绑定到实例上，从而实现租户内网与外网的通信。</p>
+<p>Neutron各组件在各节点的部署方案一般有两种：<strong>网络节点和控制节点合一部署，网络节点单独部署</strong>。在我们的实验环境采用的是前者，从逻辑功能上划分，其实两者都一样，Nuetron各组件服务在不同角色的节点上实际部署如下图所示。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/NqtmkrJDxHRT.png?imageslim" alt="mark"></p>
+<ul>
+<li><ul>
+<li><strong>控制节点：</strong>部署 neutron server 、消息队列MQ、数据库NuetronDB等服务。其作用就是接收网络实现请求，建立网络逻辑模型，保存网络逻辑模型到NuetronDB，然后通过消息队列MQ调度网络节点和计算节点的各种agent完成网络的具体实现。简易流程如下：</li>
+</ul>
+</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6hxSkHzOIMPx.png?imageslim" alt="mark"></p>
+<ul>
+<li><ul>
+<li><strong>计算节点：</strong>部署 core plugin 的agent，调用network provider来完成二层网络的具体实现。agent一直监听Nuetron MQ的消息，一旦发现有来自Plugin的网络建立请求，根据请求中网络实现需求，调用本节点的Network provider来实现网络功能。比如在我们的例子中采用linuxbridge来实现网络，那么计算节点的linuxbridge-agent就会调用本节点linux OS原生的linuxbridge来建立虚拟二层交换机。简易流程如下：</li>
+</ul>
+</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/SgPsoP56O1Yv.png?imageslim" alt="mark"></p>
+<ul>
+<li><ul>
+<li><strong>网络节点：</strong>部署的服务包括：ML2- agent 和 service plugin 的 agent。其中，ML2-agent用来在网络节点完成具体二层网络实现，用来确保各计算节点虚机VM的数据流量通过网络节点的ML2-agent来互通，即网络节点为整个网络中数据流量汇聚点。而各种Service plugin的agent用来实现各种3层服务。在我们的例子中用到了DHCP三层服务，具体由DHCP-agent调用linux操作系统的dnsmasq来具体实现DHCP服务，同时默认实现DNS三层服务，其简易流程如下：</li>
+</ul>
+</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nlqK2kvuHxvz.png?imageslim" alt="mark"></p>
+<p>通过上面对各节点上Neutron各组家部署方案的了解，我们应该抽象并总结出Neutron在OpenStack的各个功能节点中所处的角色和功能：控制节点上的Neutron-Server并不实现具体的网络功能，它只是对各种虚拟网元和实体网元做管理配合的工作。控制节点的Neutron-Server进程（子服务）接收REST ful API外部请求，调用内部的Plugins通过RPC与agent进行交互，Neutron-server内的Puligins进程与各个agent进行共同完成网络的管理任务；计算节点上的neutron-ml2-agent通过调用本节点操作系统原生linuxbridge或OVS完成各种2层网络的具体实现，并完成虚机的虚拟网卡绑定。即用户创建的租户网络请求信息到达计算节点后，ml2-agent通过各种Bridge来实现2层虚拟交换机，或调用物理交换机来实现2层功能，同时将Port通过tap设备绑定到VM上，提供VM的MAC和IP，即实现虚拟网卡功能；网络节点上的neutron-ml2-agent建立各种bridge（OVS也是bridge）实现一个二层网络的汇聚转发网桥，各计算节点中的虚拟机互通或访问外部网络时，数据包首先发到这个二层汇聚转发网桥上，同时这个网桥会连接到物理网络中的一个设备（如交换机、路由器），通过这个设备再到达物理网络的网关，其上的DHCP-agent，采用dnsmasq进程提供DNS、DHCP和TFTP服务，一个网络对应一个DHCP，不同网络的DHCP通过namespace实现隔离。L3-agent，利用linux操作系统内核实现虚拟router功能，同时还提供SNAT/DNAT服务。</p>
+<h2 id="Neutron的资源模型"><a href="#Neutron的资源模型" class="headerlink" title="Neutron的资源模型"></a><strong>Neutron的资源模型</strong></h2><p>在OpenStack的官网<a href="https://developer.openstack.org/api-ref/network/v2/，对其公开的REST" target="_blank" rel="noopener">https://developer.openstack.org/api-ref/network/v2/，对其公开的REST</a> ful API做了相关说明。这些RESTful API背后就是Neutron的网络资源模型。Neutron把它管理的对象统统称为资源，比如Network、Subnet、Port等，表面看与传统网络中概念一样，但是由于Neutron管理的范围（DC内）和对象的特点（Host内部虚机VM）等原因，与传统网络的概念并不完全相同，甚至有些令人困惑。Neutron管理的核心资源包括：Network、Subent、Port和Router。</p>
+<ul>
+<li><ul>
+<li><strong>Network：</strong>是一个隔离的二层广播域。Neutron支持多种类型的network，包括local，flat，VLAN，VxLAN和GRE。其中，VxLAN和GRE属于隧道网络，local、vlan和flat属于非隧道网络。<strong>从全局看，Network是Neutron资源模型的“根”，Subnet隶属于它，Port也要隶属于它。</strong>在Network中引申出两个重要概念：<strong>运营商网络(provider network)和物理网络（provider:physical_network）</strong>。运营商网络（provider network）是相对于租户（project）创建的网络，即租户网络而言。租户创建的租户网络属于内网网络，和外部网络之间是隔离的，如果该租户创建的虚机VM有访问外部网络的需求，此时neutron就必须通过一个网络来映射这个外部网络，实现这个功能的就是运营商网络（provider network），即运营商网络就是运营商的某个物理网络在OpenStack的延伸。而物理网络（provider：physical_network)主要指为了满足租户（project）创建的虚机VM访问外网的需求（这里的外网不一定是internet，也可能是企业内部其他物理网络），需要创建一个运营商网络（provider network）来对外网进行映射，而这个映射是如何实现的呢？答案就是通过物理主机Host的物理网卡来完成，通过这物理网卡实现运营商网络和外部网络的对接。这个物理网卡就是neutron管理范围内的物理网络（如果Neutron作为SDN控制器，该物理网络好包括DC内部的物理数通网络设备)，这个概念在创建运营商网络类型为VLAN和FLAT是尤其明显，因为创建这两种网络类型时，其配置文件中明确要求对应物理网卡名称。但是当创建的运营商网络为隧道网络时，却不需要指定物理网卡。这又是为什么呢？答案就要从隧道网络的报文说起，如下图所示，隧道性网络离开主机的报文，外面有一层隧道Header的，这个Header包括隧道的源IP和目的IP。只要有了目的IP，主机Host的IP协议栈就会找到合适的网卡将报文转发出去。</li>
+</ul>
+</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nvyViAIlOxPQ.png?imageslim" alt="mark"></p>
+<p>因此，当运营商网络类型为VxLAN或GRE等隧道网络时，是通过对应物理网卡的IP找到物理网卡转发报文，本质上还是需要占用一个物理网卡，只是配置上无需指定物理网卡名称，只需完成隧道网络对应VTEP IP配置即可。这里面还隐含一个概念，就是隧道网络的物理网卡可以复用，即当我们的创建多个隧道网络类型的运营商网络时，可以通过同一个VTEP IP对应的物理网卡转发数据包。那么VLAN网络类型和FLAT网络类型运营商网络指定了物理网卡名称，是否也可以复用？答案是，VLAN网络可以通过在物理网卡上起子接口来实现复用，但是主机Host的物理网卡要配置成Trunk模式。这个不难理解，和实际物理网络交换机的实现方式一致。但FLAT网络一个网络必须独占一个物理网卡，这也是flat网络在实际生产中应用不多的原因，因为成本太大。</p>
+<ul>
+<li><ul>
+<li><strong>Subnet：</strong>是一个IPv4或者IPv6地址段，其数据模型只包含两个字段cidr和ip_version。虚拟机VM的IP从subnet中分配。每个subnet需要定义IP地址的范围和掩码。<strong>network与subnet是1对多关系，即一个subnet只能属于某 network，一个network可以有多个subnet，这些subnet可以是不同的IP段，但不能重叠。</strong>表面看，Subnet只是代表纯逻辑资源，是一批IP地址的集合，但实际上每个IP背后都代表一个实体，如VM。那么就会产生以下两个问题：虚机VM的IP地址如何分配？虚机VM的DNS是什么？因此，Subnet除了cidr和ip_version等纯逻辑资源外，还隐含了IP核心网络服务的内容，即俗称的<strong>DDI服务（DHCP\DNS\IPAM）</strong>。当创建网络时，勾选启用DHCP服务，其对应配置文件中的enabel_dhcp=true，此时Neutron会自动创建一个DHCP Server，该DHCP Server被操作系统OS创建在namespace中，通过veth pair与Bridge网桥相连。DHCP可以配置为一个IP地址池，如果没配置，就默认采用subnet的cidr字段作为标准地址池。当创建网络时，勾选启用DHCP服务，同时也默认启用DNS服务，Neutron会根据虚机的主机名和绑定Port信息完成主机名和IP地址解析功能。有了DNS、有了DHCP，这个还不够。实际的组网中，一般还有一个IPAM（IP Address Management，IP地址管理）功能，数据模型中与其相关的字段是Subnetpool_id，其与DHCP数据模型的allocation_pools重复，也就意味着IPAM就是从subnet设定的地址池中管理虚机VM的IP地址分配。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><ul>
+<li><strong>Port：</strong>可以看做虚拟交换机上的一个端口。port上定义了MAC地址和IP地址，当VM的虚拟网卡VIF（Virtual Interface） 绑定到port时，port会将MAC和IP分配给VIF。其实这个port其实就是linux操作系统的一个tap设备。而tap又是什么呢？它其实是Linux原生的虚拟网络设备，在linux中所指的“设备”并不是我们实际生产或生活中常见路由器或交换机这类设备，它其实本质上往往是一个数据结构、内核模块或设备驱动这样含义。在linux中，tap和tun往往是会被并列讨论，tap位于二层，tun位于三层，详见博客《<a href="https://kkutysllb.cn/2019/06/24/2019-06-24-Linux原生网络虚拟化实践/">Linux原生网络虚拟化实践</a>》一文。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><ul>
+<li><strong>Router：</strong>如果说Port是Neutron资源模型的“灵魂”，那么Router就是Neutron资源模型的“发动机“，它承担着路由转发功能。Router的资源模型可以简单抽象为三部分：<strong>端口、路由表、路由协议处理单元</strong>。如下图所示：</li>
+</ul>
+</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/aesgt38i4ON1.png?imageslim" alt="mark"></p>
+<p>Router并没有使用某个字段表示端口，而是提供2个API以增加/删除端口，如下所示，非常好理解。</p>
+<ul>
+<li><ul>
+<li>Add interface to router /v2.0/routers/{router_id}/add_router_interface  <strong>—-增加端口</strong></li>
+<li>Remove interface from router /v2.0/routers/{router_id}/remove_router_interface  <strong>—-删除端口</strong></li>
+</ul>
+</li>
+</ul>
+<p>理论上，Router只要有了路由表以及对应的端口信息就可以进行路由转发，但是对于外部网络（Neutron管理范围之外的网络）路由转发，尤其公网internet，Router还用了一个特殊字段external_gateway_info（外部网关信息）来表示。这又是什么意思？我们通过一个例子来理解，如下图所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/m7BaBpW9WPip.png?imageslim" alt="mark"></p>
+<p>位于Nuetron管理网络的内部虚机VM，IP地址为10.10.10.10，它要访问位于公网（外部网络）的网站<a href="http://www.openstack" target="_blank" rel="noopener">www.openstack</a> .org，IP地址为104.20.110.33，需要经过公网的路由器RouterB才能到达。RouterB的Port2直接与Neutron网络节点的RouterA的Port1相连（中间经过Bridge相连）。这个RouterB就是真正意义上的外部网关，RouterB的接口Port2的IP地址120.192.0.1就是Neutron网络的外部网关IP。但是RouterB根本不在Neutron的管理范围内（RouterA才属于），而且Neutron也不需要管理它。从路由转发的角度讲，它只需要在RouterA中建一个路由表项即可，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/msiA3WTJMjTU.png?imageslim" alt="mark"></p>
+<p>不过从RouterA的角度来看，不仅仅是增加一个路由表项那么简单（后面网络云SDN实现源码讲解时会详细阐述）。于是，Neutron提出了external_gateway_info这个模型，它由network_id，enable_snat，external_fixed_ips等几个字段组成。对应上图，其数据结构如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">“external_gateway_info":&#123;</span><br><span class="line">   "enable_snat": true，</span><br><span class="line">   “external_fixed_ips": [</span><br><span class="line">     &#123;</span><br><span class="line">      <span class="attr">"ip_address"</span>: <span class="string">"120.192.0.6"</span></span><br><span class="line">      <span class="string">"subnet_id"</span>: <span class="string">"b7832312223-ceb8-40ad-8b81---a332dd999dse"</span></span><br><span class="line">      &#125;,</span><br><span class="line">],</span><br><span class="line">   "network_id": "ae3405f12-aa7d-4b87-abdd-50fccaadef453"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中，ip_address就是RouterA的Port1的地址，subnet_id中对应的subnet的gateway_ip就是RouterB中的Port2地址。所以，external_gateway_info其实隐含了Neutron的管理理念：</p>
+<ul>
+<li><ul>
+<li><strong>Neutron只能管理自己的网络。</strong></li>
+<li><strong>Neutron不需要管理外部网络，只需知道外部网络网关IP即可。而它获取外部网关IP的方式就是通过subnet_id间接获取到其gateway_ip得到。</strong></li>
+<li><strong>当enable_snat=true时，SNAT真正生效的地方在RouterA的port1上。</strong></li>
+</ul>
+</li>
+</ul>
+<p>如上面例子，当我们创建外部网关信息（external_gateway_info)的时候，Neutron会自动在Router上增加一个相应的路由表项，这个路由称为<strong>默认静态路由</strong>。同时，当我们在Router上增加一个端口时，这个端口背后的subnet的所有进出流量都要经过这个端口转发，这其实也是一种路由转发模式，称为<strong>直连路由</strong>。但是，无论是增加外部网关信息还是增加端口，其产生的路由表项均不会在Router的路由表routers中增加相应的表项。那这个routers到底有什么用？答案是，这个routers中只体现静态路由信息，它与默认路由一样，都是通往外部网络的。不过，静态路由的外部网络一般指的是私网，而默认静态路由的外部网络一般指的是公网，同时在external_gateway_info中并没有包含目的网段，也就是说除了直连路由（由链路层协议自动发现，不体现在路由表中），静态路由（体现在路由表中，需手工配置）外，到达其他所有目的地都走这条默认静态路由转发。默认静态路由、静态路由和直连路由的路由表转发逻辑如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/VgJnPNzUF86g.png?imageslim" alt="mark"></p>
+<h2 id="Neutron网络资源的隔离机制"><a href="#Neutron网络资源的隔离机制" class="headerlink" title="Neutron网络资源的隔离机制"></a><strong>Neutron网络资源的隔离机制</strong></h2><p>OpenStack是一个多租户的云操作系统，其中提供网络实现Neutron自然也需要提供多租户的服务。所以，多租户之间资源隔离是Neutron必须要支持的特性。在Neutron的资源模型中，老版本有一个tenant_id的字段，而从Newton版本开始，又引入了project_id，在官方文档解释中，这两个都是：The ID of the project。因此，不论新老版本，这两个字段都表示一个意思：租户资源隔离。<strong>租户隔离，顾名思义就是为了资源隔离，但其更深层次的含义是多租户资源共享！！！</strong>—-这句话怎么理解?我们慢慢往下看。</p>
+<h3 id="Neutron下面租户资源隔离的含义"><a href="#Neutron下面租户资源隔离的含义" class="headerlink" title="Neutron下面租户资源隔离的含义"></a><strong>Neutron下面租户资源隔离的含义</strong></h3><p>从租户的视角，或者从需求的角度来看，租户资源隔离有三种含义：<strong>管理面资源隔离、数据面资源隔离</strong>和<strong>故障面资源隔离</strong>。<strong>管理面资源隔离是指管理权限的隔离</strong>，如下图所示，两个网络Network VIN 100和Network VNI 200都是Neutron的管理范围，但是VNI 100属于租户A，VNI 200属于租户B，这就意味租户A的网络对租户B而言是不可见的，租户A也就无法管理（CRUD）租户B的网络，反之亦然。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Xl4XVNu7syKG.png?imageslim" alt="mark"></p>
+<p><strong>数据面资源隔离是指数据转发的隔离。</strong>不同租户的网络不仅在管理上面隔离，而且在数据转发层面还可以“重复”。比如，租户A建立一个私网网段10.0.10.0/24，租户B同样可以建立10.0.10.0/24这个网段，这两个网段不仅不会冲突，还可以互通（通过3层转发），因此，数据面资源隔离的目的正是为了资源共享。<strong>故障面的资源隔离就是指一个租户网络出问题了，不能影响另一个租户网络，但是这是相对的</strong>。比如上面那个图，如果租户A和租户B同属于一个计算节点host1，当租户A网络的分布式虚拟路由器DVR-A出问题了，自然不会影响租户B的网络。但是，当租户A和租户B在网路节点的互通路由器router_global出问题了，那么自然两个网络都会受影响。再比如，该云系统在都在西咸数据中心A机房部署，那么这个机房的动力、线路等出问题，部署在该机房A的所有租户业务都会中断。因此，故障面的租户资源隔离，只是针对租户本身独占的资源而言，而对于多租户共享资源是无法做到也无需刻意去做的（就算是土豪动，也不能做到每个租户所有资源都独占，那属于败家！）。因此，在多租户共享层面资源只能尽量做到容错，比如高可用集群的架构。其实，不光Neutron的故障资源隔离是这样，所有OpenStack其他服务的故障隔离都是这种特点。</p>
+<h3 id="Neutron的租户资源隔离实现模型"><a href="#Neutron的租户资源隔离实现模型" class="headerlink" title="Neutron的租户资源隔离实现模型"></a><strong>Neutron的租户资源隔离实现模型</strong></h3><p><strong>管理面的租户资源隔离实现模型</strong>：对于Neutron而言就是控制节点资源隔离实现。OpenStack的控制节点实现模型如下图所示，对于管理面而言，租户资源隔离一般涉及几个层面：<strong>硬件/操作系统层面、应用程序层面、数据库层面</strong>。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/DsMOufsjaHvD.png?imageslim" alt="mark"></p>
+<p><strong>Neutron在这几个层面的隔离方案如下：</strong></p>
+<ul>
+<li><ul>
+<li><strong>硬件/操作系统层面：</strong>不隔离。管理面（控制节点）都部署在一个Host，多个租户共享一个Host、一个操作系统，因此无法隔离，只能依靠集群高可用实现容灾保障。</li>
+<li><strong>应用程序层面：</strong>不隔离。原因同上，管理面的各个服务，多租户共享，因此无法隔离，也只能依靠集群高可用在做容灾保障。</li>
+<li><strong>数据库层面：</strong>轻微隔离。OpenStack的各个服务（包括Nuetron）针对多个租户，在数据库层面采用共享数据库，共享表的方式进行资源共享，只是通过表中字段(project_id）来区分不同租户。因此是一种轻微隔离方案。除了这种方案，数据库层面还可以采用独立数据库或共享数据库，独立表的方式来做隔离。</li>
+</ul>
+</li>
+</ul>
+<p>通过上面的分析，在OpenStack这种云操作系统中，为了尽量保证服务的高可用特性，针对控制节点而言，生产环境必然也必须采用高可用集群的方式部署，其目的就是保证业务的连续性。</p>
+<p><strong>数据面的租户资源隔离实现模型：</strong>为清楚描述，这里我们采用OVS的实现方案，LinuxBridge的实现方案由于SecurityGroups和网桥brq在一起，会呈现独占和共享一体的画面，对于新手容易混淆。Nuetron的计算节点和网络节点都涉及数据转发，所以这两个节点也都涉及数据转发的租户隔离机制。计算节点的实现模型如下，br-ethx/br-tun、br-int分别只有一个实例，这个属于：<strong>用“多租户共享”的方案，来实现多租户隔离</strong>。比如br-int、br-ethx通过VLAN来隔离来自各个租户网络的数据流量，br-tun通过相应的tunnel ID，即VNI来隔离多租户的网络流量。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/xIRAR6cbjFDa.png?imageslim" alt="mark"></p>
+<p>qbr和VM一一对应，这个属于：<strong>“单租户独占”的方案，来实现多租户隔离。</strong>qbr由于绑定了安全组，它在原生的数据面租户隔离的基础上又多加了一层“安全层”来保证租户资源隔离。原生的数据面转发（br-tun/br-ehtx、br-int）负责“正常行为”的租户隔离，而安全技术（qbr)负责“异常行为”（非法访问）的租户隔离。Router/DVR跟租户相对应，而且每个Router/DVR运行在一个namespace中，这个属于：<strong>“单租户独占”（用namespace隔离）的方案，来实现多租户隔离的目的。</strong>这里的namespace是linux操作系统虚拟网络的一个重要概念。最早的linux系统的许多资源都是共享的，比如进程ID资源，而namespace的出现就是将这些资源进行隔离，详见博客《<a href="https://kkutysllb.cn/2019/06/24/2019-06-24-Linux原生网络虚拟化实践/">Linux原生网络虚拟化实践一文</a>》。单纯从网络角度来说，一个namespace提供了一份独立的网络协议栈（网络设备接口、IPv4、IPv6、路由、防火墙规则和套接字socket等）。一个设备（linux device）只能位于一个namespace中，不同namespace的设备可以利用veth pair进行桥接。而网络节点的实现模型如下图所示，网络节点中，br-ethx/br-tun、br-int、br-ex分别只有一个实例，这是属于：<strong>“多租户共享”的方案，实现了多租户隔离的目的</strong>。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dUxe2MoB5rhM.png?imageslim" alt="mark"></p>
+<p>Router跟租户对应，而且每个Router运行在一个namespace中，这属于：<strong>“单租户独占”的方案，实现了多租户隔离的目的</strong>。Router/DVR不仅保证了租户间网络资源不能互相访问外，还解决了逻辑资源（IP地址）冲突的问题。</p>
+<p><strong>故障面的租户资源隔离实现模型：</strong>通过前面的介绍，Neutron在数据面和控制面的租户资源隔离方案分为两类：资源单租户独占（比如Router等）和资源多租户共享（比如br-int等）。在故障资源隔离层面，对资源共享方案，没有任何故障层面的租户隔离能力，一旦一个部件发生故障，所有与其关联的租户都要受到影响。而对于资源独占层面，具有一定故障层面隔离能力，比如一个租户的Router发生故障，不会影响其他租户。以数据面的实现方案为例，故障面的租户隔离度与资源共享度的关系如下图所示。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/EytPqzhlo4xI.png?imageslim" alt="mark"></p>
+<p>但是，资源独占的粒度是有限的，也仅仅是在Router这样的层面才能做到租户资源独占，稍微大一点的粒度，比如主机Host，都不能保证资源独占。这不是技术问题，这是云服务的商业本质决定的。因此，高可用集群部署方案必不可少。用资源共享的方式来实现租户隔离，在正常情况下没有任何问题，但是如果发生故障，资源共享方案要想做到故障层面的租户隔离，这是不可能的。如果非要做成独占方式来隔离故障那是败家行为，土豪动也伤不起。</p>
+<p>通过上面的介绍，就回到我们开头那句话：<strong>“租户隔离，顾名思义就是为了资源隔离，但其更深层次的含义是多租户资源共享！！！”</strong>。隔离的其实都是租户使用的逻辑资源，其目的就是为了对底层资源能够做到复用，最大限度使用底层资源，这是针对控制面和数据转发而言。而针对故障面，由于隔离的真实目的是共享这个原因，正所谓，一荣俱荣，一损俱损，此时不仅要考虑逻辑资源隔离的问题，更多的是考虑资源容错的问题，也就是我们常说的高可用集群，这其实也是资源复用的一种方式，只是复用的资源对象是集群这个整体而已。</p>
+<h3 id="采用OVS参考实现的Neutron网络数据转发模型"><a href="#采用OVS参考实现的Neutron网络数据转发模型" class="headerlink" title="采用OVS参考实现的Neutron网络数据转发模型"></a><strong>采用OVS参考实现的Neutron网络数据转发模型</strong></h3><p>我们在前面提到过，Neutron网络管理服务的类型分为Provider Network Service和Self Network Service两种，同时在实际部署时，Neutron各组件分别部署在控制节点、网络节点和计算节点3种不同角色的逻辑功能节点上。因此，针对不同网络管理服务类型，不同的TypeDriver下的不同的参考实现方案，部署在计算节点的虚拟机实例instance的数据包转发模型并不相同。这里，我们主要分析两种网络管理服务类型下，VLAN和VxLAN两种TypeDriver下的OVS参考实现解决方案的数据包转发路径，理解了OVS参考实现解决方案，LinuxBridge就是个菜。</p>
+<h3 id="Provider-Network-Service下的OVS参考实现数据包转发模型"><a href="#Provider-Network-Service下的OVS参考实现数据包转发模型" class="headerlink" title="Provider Network Service下的OVS参考实现数据包转发模型"></a><strong>Provider Network Service下的OVS参考实现数据包转发模型</strong></h3><p>Provider网络是一种仅实现二层网络虚拟化，不提供三层路由和更高层的VPN、LoadBlancer、Firewall等高级功能的Neutron网络类型，相对而言，Provider是一种半虚拟化的网络。在Provider中，三层以上的功能不被虚拟化，而是借助物理网络设备来实现。在Provider网络中，由于二层网络直接接入物理设备，二层网络之间的通信也由物理设备进行转发，因此Provider网络在实现过程中无须L3服务，控制节点只需部署API Server、ML2核心插件及DHCP和Linux bridging代理即可。计算节点中的实例通过虚拟二层交换机直接接入物理网络，因此计算节点只需部署如Open vSwitch或Linux bridging等代理软件即可，Provider网络的节点服务布局如下图所示。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/VAt9FgWxuQqi.png?imageslim" alt="mark"></p>
+<p>Provider网络拓扑架构很简单，只需在控制节点和计算节点中分别规划一块物理网卡，并将其接入物理网络即可。如果采用的是VLAN网络，则将交换机接口配置为Trunk模式，节点只需一块物理网卡便可通过多个VLAN ID来实现不同网络的隔离。如果采用的是Flat网络，由于Flat网络没有Tagging，如要配置多个Flat网络则需要节点提供同样数量的物理网卡。<strong>需要注意一点：Provider网络不支持VxLAN的TypeDriver。</strong>在Provider网络中，虚拟机实例instance直接接入Provider网络（外部网络，如192.168.101.0/24），因此也不存在私有网络和虚拟路由设备的概念，同时也无须Floating IP，即实例虚拟接口上获取的就是外网IP。外部网络可以直接访问位于Provider网络上的虚拟机实例，而访问控制由计算节点上的防火墙规则来实现。Provider物理和虚拟网络必须属于同一个网段（192.168.101.0/24），只是网络被分为物理实现和虚拟实现，即节点内部为虚拟网络，而节点外部为物理设备网络。相对Self-Service网络，Provider网络的拓扑架构和通信过程都很简单，在故障排查中也相对容易，并且Provider网络中节点之间和二层网络之间的通信都由物理设备负责，因此Provider的稳定性和性能比起全虚拟化实现的Self-Service网络来说要高很多也更容易被理解和实现。Provider网络的拓扑架构如下图所示。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/1YqrIi7Wsa7e.png?imageslim" alt="mark"></p>
+<ul>
+<li><ul>
+<li><strong>Provider南北网络数据流分析：</strong>在Provider网络架构中，物理网络设备负责处理Provider网路（Provider Network）与外网网络（External Network）之间的路由和其他网络服务。</li>
+</ul>
+</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nFdrKHoi7hM1.png?imageslim" alt="mark"></p>
+<p>上图中，如果位于计算节点上的实例Instance发送一个数据包到外网中的主机上，则计算节点将产生如下的操作：（外网主机对Provider网络中的实例访问过程与实例对外网主机的访问过程正好相反）</p>
+<ul>
+<li><ol>
+<li><em>实例Tap接口将数据转发到节点内部的LinuxBridge网桥qbr上，由于目标主机位于其他网络，实例instance发出的数据包中包含目标主机的MAC地址；</em></li>
+<li><em>数据进入qbr后，其上的安全组规则对数据包进行状态跟踪和防火墙处理。之后qbr将数据转发到OpenvSwitch的聚合网桥br-int上，并为数据包添加与Provider Network对应的内部VLAN标记（Internal tag）。然后br-int将数据转发到OpenvSwitch的ProviderBridge外部网桥br-ex上，br-ex用实际的外部VLAN ID替换掉br-int添加的内部VLAN ID，然后通过计算节点的Provider网络接口将数据包转发到物理网络设备上。</em></li>
+<li><em>数据包进入物理网络设备后，首先由交换机处理Provider Network与路由之间的外部VLAN tag操作，剥离掉外部VLAN tag，将数据包转发给路由器；</em></li>
+<li><em>路由器查询路由表，将来自Provider Network的数据包路由到外部网络，交换机再次处理路由器与外网之间的VLAN tag操作，添加外部VLAN ID，最后交换机将数据包转发到外网。</em></li>
+</ol>
+</li>
+<li></li>
+<li><ul>
+<li><strong>Provider东西数据流分析：</strong>Provider网络东西数据流分为两种类型，即位于相同网段中的实例通信和不同网段之间的实例通信。二者的区别在于，不同Provider网段之间的实例通信需要具备三层路由功能的物理网络设备进行路由转发，而相同Provider网络中的实例通信只需二层物理交换机进行转发。</li>
+</ul>
+</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/1KVjrH5OHUrI.png?imageslim" alt="mark"></p>
+<p>上图中，当Compute Node1中的实例Instance1向Compute Node2中的实例Instance2发送数据包时，Compute Node1中将会发生如下的数据传递操作：</p>
+<ul>
+<li><ol>
+<li>首先Instance1的tap接口将数据包转发到LinuxBridge qbr，转发的数据包中包含了目标地址的MAC地址。</li>
+<li>qbr中的安全组规则对数据包进行防火墙相关的操作，之后qbr将数据包转发到OpenvSwitch聚合网桥br-int，并为数据包添加属于Provider Network1的内部VLAN ID，然后br-int将数据包转发到OpenvSwitch的ProviderBridge br-ex，br-ex使用Provider Network1的外部VLAN ID替换br-int添加的内部VLAN ID，然后将数据包通过Compute Node1节点的Provider网络接口转发到物理网络设备中。</li>
+<li>物理网络设备接收到Compute Node1转发来的数据包后，交换机处理Provider Network1与路由之间的VLAN tag操作（剥离VLAN ID），将数据包转发到路由器。</li>
+<li>路由将来自Provider Network1的数据包转发到Provider Network2，交换机再次处理路由与Provider Network2之间的VLAN tag操作（添加VLAN ID），之后交换机将数据包转发到Compute Node2中。</li>
+<li>Compute Node2接收到物理网络设备发送的数据包后，位于其上的Provider网络接口将数据包转发到OpenvSwitch的ProviderBridge br-ex，然后br-ex将数据包转发到OpenvSwitch的集成网桥br-int，br-int使用Provider Network2的内部VLAN ID替换掉Provider Network2的外部VLAN ID，并将数据包转发到LinuxBridge qbr，qbr使用安全组规则对网络数据包进行过滤。</li>
+<li>最后，qbr通过tap接口将数据包转发给Instance2。至此，Compute Node1上的Instance1发出的数据包成功到达Compute Node2上的Instance2中。</li>
+</ol>
+</li>
+</ul>
+<p>当Compute Node1中的Instance1与Compute Node2中的Instance2位于相同的Provider网络时，Instance1对Instance2的访问过程与上面过程类似，但是由于相同网段通信不需路由转发，因此此时的网络设备无须具备三层路由功能，只需二层交换功能即可。</p>
+<h3 id="Self-Network-Service下的OVS参考实现数据包转发模型"><a href="#Self-Network-Service下的OVS参考实现数据包转发模型" class="headerlink" title="Self Network Service下的OVS参考实现数据包转发模型"></a><strong>Self Network Service下的OVS参考实现数据包转发模型</strong></h3><p>Self-Service网络又称租户网络，在实现Self-Service网络之前，管理员必须已经实现Provider网络，因此在Self-Service网络中，用户也可以直接使用Provider网络，并将实例直接接入Provider物理网络而不是租户私有云网络。也可以认为Self-Service网络是对Provider网络的扩展和增强实现。与Provider网络相比，Self-Service最大的不同在于租户可以按需创建自己的私有网络，并且网络中需要提供L3服务以实现网络的东西和南北数据流。此外，从主流的Self-Service网络与Provider网络的部署模型上看，Self-Service网络的Neutron服务组件通常分布在控制节点、网络节点和计算节点上，而Provider网络并不需要网络节点。如下图所示，<strong>在最简单的三节点Self-Service网络部署中，为了Project网络既可以使用VLAN类型，也可以使用GRE/VxLAN类型，控制节点至少需要一个网络接口（管理网络），网络节点至少需要四个网络接口（管理网络、隧道网络、VLAN网络和外部网络），计算节点至少需要三个网络接口（管理网络、隧道网络和VLAN网络）。需要指出的是，计算节点和网络节点上并非同时需要VLAN网络和Tunnel网络。根据Project网络类型，用户也可以只部署VLAN网络或Tunnel网络。如Project网络为GRE/VxLAN类型，则仅需要Tunnel网络，如果Project网络为VLAN，则仅需要VLAN网络。</strong></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GoM9Aodt9lzU.png?imageslim" alt="mark"></p>
+<ul>
+<li><ul>
+<li><strong>Self-Service网络南北数据流分析：</strong>在Self-Service网络中，南北数据通信分为两种情况，即Fixed IP形式的南北网络通信和Floating IP形式的南北网络通信。对于仅有Fixed IP而没有为其绑定Floating IP的实例，网络节点的Router负责Project网络与External网络的通信路由。</li>
+</ul>
+</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/gGGapRm3KK1L.png?imageslim" alt="mark"></p>
+<p>上图中，假设Compute Node1中的instance向External网络中的主机发送数据包，则<strong>该数据包在Compute Node1节点内部的处理流程如下：</strong></p>
+<ul>
+<li><ol>
+<li><em>实例instance转发包含目标主机MAC地址的数据包到LinuxBridge网桥qbr。</em></li>
+<li><em>LinuxBridge网桥qbr对数据包采用安全组规则进行过滤处理。</em></li>
+<li><em>LinuxBridge网桥qbr将安全规则过滤后的数据转发到OpenvSwitch集成网桥br-int。</em></li>
+<li><em>OpenvSwitch集成网桥br-int为数据包添加Project网络的内部VLAN ID。</em></li>
+<li><em>如果Project网络是GRE/VxLAN类型，则转到步骤6。</em></li>
+</ol>
+</li>
+<li><ul>
+<li><ul>
+<li><em>如果Project网络是VLAN类型，则OpenvSwitch集成网桥br-int将数据包转发到OpenvSwitch VLAN网桥br-vlan。</em></li>
+<li><em>OpenvSwitchVLAN网桥br-vlan使用Project网络的外部VALN ID替换掉br-int添加的Project网络内部VLAN ID。</em></li>
+<li><em>OpenvSwitchVLAN网桥br-vlan通过VALN接口将数据转发到网络节点。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><ol>
+<li><em>如果Project网络是GRE/VxLAN类型，则直接进入此步骤。</em></li>
+</ol>
+</li>
+<li><ul>
+<li><ul>
+<li><em>OpenvSwitch集成网桥br-int将数据包转发到OpenvSwitch隧道网桥br-tun。</em></li>
+<li><em>OpenvSwitch隧道网桥br-tun将数据封装到VxLAN/GRE隧道中，并为封装后的数据包添加用以识别不同Project网络的VNI。</em></li>
+<li><em>OpenvSwitch隧道网桥br-tun通过隧道网络接口将数据转发到网络节点。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>数据包到达网络节点后，在网络节点内部的处理流程如下：</strong></p>
+<ul>
+<li><ol>
+<li><em>如果Project网络是GRE/VxLAN类型，则转到步骤2。</em></li>
+</ol>
+</li>
+<li><ul>
+<li><ul>
+<li><em>网络节点的VLAN网络接口将数据包转发到OpenvSwitchVLAN网桥br-vlan。</em></li>
+<li><em>OpenvSwitchVLAN网桥br-vlan将数据包转发到OpenvSwitch集成网桥br-int。</em></li>
+<li><em>OpenvSwitch集成网桥br-int使用Project网络的内部VLAN ID替换掉Project的外部VLAN ID。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><ol>
+<li><em>如果Project网络是GRE/VxLAN类型，则直接进入此步骤。</em></li>
+</ol>
+</li>
+<li><ul>
+<li><ul>
+<li><em>网络节点隧道网络接口将数据转发到OpenvSwitch隧道网桥br-tun。</em></li>
+<li><em>OpenvSwitch隧道网桥br-tun解封经过GRE/VxLAN协议封装的数据包，并为解封后的数据添加Project网络内部tag。</em></li>
+<li><em>OpenvSwitch隧道网桥br-tun将数据包转发到OpenvSwitch集成网桥br-int。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><ol>
+<li><em>OpenvSwitch集成网桥br-int将数据转发到qrouter命名空间的qr接口，qr接口事先配置了Project网络的网关地址。</em></li>
+<li><em>qrouter命名空间中的iptables服务使用qg接口上的IP作为Source IP对数据包进行SNAT操作，qg接口事先配置了External网络的网关地址。</em></li>
+<li><em>Router通过qg接口转发数据包到OpenvSwitch集成网桥br-int。</em></li>
+<li><em>OpenvSwitch集成网桥br-int转发数据包到OpenvSwitch外部网桥br-ex。</em></li>
+<li><em>OpenvSwitch外部网桥br-int通过网络节点上的外部网络接口将数据包转发到External网络。</em></li>
+</ol>
+</li>
+</ul>
+<ul>
+<li><ul>
+<li><strong>Self-Service网络东西数据流分析：</strong>Project网络内部的实例之间的通信称为东西网络通信，东西网络通信通常分为两种，即相同Project网络内部的实例通信和不同Project网络中的实例通信。此外，对于东西网络通信，实例是否绑定Floating IP并不影响通信方式。</li>
+</ul>
+</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nVl5UyclS30z.png?imageslim" alt="mark"></p>
+<p>上图中，表示两个不同Project网络的东西流量模型，假设位于Compute Node1且Project网络为Network1的实例instance1要与位于Compute Node2且Project网络为Network2的实例instance1通信，则<strong>instance1发出的数据在Compute Node1上的处理过程如下：</strong></p>
+<ul>
+<li><ol>
+<li><em>instance1的tap接口将包含目标MAC地址的数据转发到LinuxBridge网桥qbr中。</em></li>
+<li><em>LinuxBridge网桥qbr按照安全组规则对数据进行过滤处理。</em></li>
+<li><em>LinuxBridge网桥qbr中将数据转发到OpenvSwitch集成网桥br-int。</em></li>
+<li><em>OpenvSwitch集成网桥br-int为数据包添加Project Network1的内部tag。</em></li>
+<li><em>如果Project网络是VLAN类型，则进入此步骤，否则转到步骤6。</em></li>
+</ol>
+</li>
+<li><ul>
+<li><ul>
+<li><em>OpenvSwitch集成网桥br-int将数据转发到OpenvSwitch VLAN网桥br-vlan。</em></li>
+<li><em>OpenvSwitch VLAN网桥br-vlan使用Project Network1的外部VLAN ID替换掉内部tag。</em></li>
+<li><em>OpenvSwitch VLAN网桥br-vlan通过Compute Node1的VLAN网络接口将数据转发到网络节点。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><ol>
+<li><em>如果Project网络为GRE/VxLAN类型，则直接接入此步骤。</em></li>
+</ol>
+</li>
+<li><ul>
+<li><ul>
+<li><em>OpenvSwitch集成网桥br-int将数据转发到OpenvSwitch隧道网桥br-tun。</em></li>
+<li><em>OpenvSwitch隧道网桥br-tun将数据封装到VxLAN/GRE隧道中，并为封装后的数据包添加用以识别不同Project网络的隧道标记tag。</em></li>
+<li><em>OpenvSwitch隧道网桥br-tun通过Compute Node1的隧道网络接口将数据转发到网络节点。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>数据进入网络节点之后，在网络节点中的处理过程如下：</strong></p>
+<ul>
+<li><ol>
+<li><em>如果Project网络是VLAN类型，则进入此步骤，否则转到步骤2。</em></li>
+</ol>
+</li>
+<li><ul>
+<li><ul>
+<li><em>网络节点的VLAN网络接口将数据包转发到OpenvSwitchVLAN网桥br-vlan。</em></li>
+<li><em>OpenvSwitchVLAN网桥br-vlan将数据包转发到OpenvSwitch集成网桥br-int。</em></li>
+<li><em>OpenvSwitch集成网桥br-int使用Project网络的内部tag替换掉Project的实际VLAN ID。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><ol>
+<li><em>如果Project网络是GRE/VxLAN类型，则直接进入此步骤。</em></li>
+</ol>
+</li>
+<li><ul>
+<li><ul>
+<li><em>网络节点隧道网络接口将数据转发到OpenvSwitch隧道网桥br-tun。</em></li>
+<li><em>OpenvSwitch隧道网桥br-tun解封经过GRE/VxLAN协议封装的数据包，并为解封后的数据添加Project网络内部tag。</em></li>
+<li><em>OpenvSwitch隧道网桥br-tun将数据包转发到OpenvSwitch集成网桥br-int。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><ol>
+<li><em>OpenvSwitch集成网桥br-int将数据转发到qrouter命名空间中的qr-1接口。qr-1接口已配置有Project Network1的网关IP。</em></li>
+<li><em>qrouter命名空间将数据包路由到qr-2接口，qr-2接口已配置有Project Network2的网关IP。</em></li>
+<li><em>qrouter命名空间将数据包转发到OpenvSwitch集成网桥br-int。</em></li>
+<li><em>OpenvSwitch集成网桥br-int为数据包添加Project Network2的内部tag。</em></li>
+<li><em>如果Project网络是GRE/VxLAN类型，则转到步骤8。如果是VLAN类型，则进入此步骤。</em></li>
+</ol>
+</li>
+<li><ul>
+<li><ul>
+<li><em>OpenvSwitch集成网桥br-int将数据包转发到OpenvSwitchVLAN网桥br-vlan。</em></li>
+<li><em>OpenvSwitchVLAN网桥br-vlan使用Project网络实际VLAN ID替换掉Project网络内部tag。</em></li>
+<li><em>OpenvSwitchVLAN网桥br-vlan通过网络节点VLAN接口将数据转发到Compute Node2计算节点。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><ol>
+<li><em>如果Project网络是GRE/VxLAN类型，则进入此步骤。</em></li>
+</ol>
+</li>
+<li><ul>
+<li><ul>
+<li><em>OpenvSwitch集成网桥br-int将数据包转发到OpenvSwitch隧道网桥br-tun。</em></li>
+<li><em>OpenvSwitch隧道网桥br-tun将数据封装到VxLAN/GRE隧道中，并为封装后的数据包添加用以识别不同Project网络的隧道标记tag。</em></li>
+<li><em>OpenvSwitch隧道网桥br-tun将数据包通过网络节点上的隧道网络接口转发到Compute Node2计算节点。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>数据进入Compute Node2计算节点后，在Compute Node2中的处理过程如下：</strong></p>
+<ul>
+<li><ol>
+<li><em>如果Project网络是VLAN类型，则直接进入此步骤，如果是GRE/VxLAN网络，则转到步骤2。</em></li>
+</ol>
+</li>
+<li><ul>
+<li><ul>
+<li><em>计算节点的VLAN接口将数据包转发到OpenvSwitchVLAN网桥br-vlan。</em></li>
+<li><em>OpenvSwitchVLAN网桥br-vlan将数据包转发到OpenvSwitch集成网桥br-int。</em></li>
+<li><em>OpenvSwitch集成网桥br-int使用Project Network2的内部tag替换掉实际VLAN ID。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><ol>
+<li><em>如果Project网络是GRE/VxLAN类型，则直接进入此步骤。</em></li>
+</ol>
+</li>
+<li><ul>
+<li><ul>
+<li><em>计算节点上的隧道接口将数据转发到OpenvSwitch隧道网桥br-tun。</em></li>
+<li><em>OpenvSwitch隧道网桥br-tun解封经过GRE/VxLAN协议封装的数据包，并为解封后的数据添加Project Network2络内部tag。</em></li>
+<li><em>OpenvSwitch隧道网桥br-tun将数据包转发到OpenvSwitch集成网桥br-int。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><ol>
+<li><em>OpenvSwitch集成网桥br-int转发数据到LinuxBridge网桥qbr。</em></li>
+<li><em>LinuxBridge网桥qbr根据安全组规则过滤数据包。</em></li>
+<li><em>LinuxBridge网桥qbr将数据转发到Compute Node2计算节点实例instance2的tap接口。</em></li>
+</ol>
+</li>
+</ul>
+<p>相比不同Project网络中的实例通信，相同Project网络内部实例通信要简单很多，因为相同Project网络内部实例通信无须进行路由，而是完全由OpenvSwitch Agent进行数据交换处理，因此也不需要网络节点参与。</p>
+<h2 id="Neutron的不同网络类型实现实战"><a href="#Neutron的不同网络类型实现实战" class="headerlink" title="Neutron的不同网络类型实现实战"></a><strong>Neutron的不同网络类型实现实战</strong></h2><h3 id="Local网络"><a href="#Local网络" class="headerlink" title="Local网络"></a>Local网络</h3><p>local network的特点是不会与宿主机的任何物理网卡相连，也不关联任何的VLAN ID。对于每个local netwrok，ML2 linux-bridge会创建一个bridge，instance的tap 设备会连接到bridge。位于同一个local network的instance会连接到相同的bridge，这样instance之间就可以通信了。因为bridge没有与物理网卡连接，所以instance 无法与宿主机之外的网络通信。 同时因为每个local network有自己的bridge，bridge之间是没有连通的，所以两个local network之间也不能通信，即使它们位于同一宿主机上的同一网段。以下就是通过linuxbridge方式实现的一个local网络的拓扑逻辑图。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/yyBeW1rG1FQb.png?imageslim" alt="mark"></p>
+<p><strong>步骤1：</strong>首先通过web页面创建一个本地网络local_net1，local_net1的子网地址段cidr为10.10.10.0/24，如下图</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/1DpFcHak6RfV.png?imageslim" alt="mark"></p>
+<p>由于创建子网subnet时，我们勾选了起用DHCP服务（默认勾选，如想手动配置地址，可不选），因此子网subnet创建成功后，默认起用了一个DHCP端口，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jMRHUkX9yrW5.png?imageslim" alt="mark"></p>
+<p>此时，我们看下网络节点的底层发生 了什么变化？如下图所示，在网络节点执行brctl show，如下显示</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/s6JIehWo0G45.png?imageslim" alt="mark"></p>
+<p>我们发现，在网络节点的底层网络上，多了一个网桥brqea861547-ce，同时其上挂载了一个tap设备tapb8dca9e6-ec。通过命名我们应该可以联想到网桥brqea861547-ce就是我们创建的local_net1，后面ID就是local_network ID的前11位“短ID”，而tap设备tapb8dca9e6-ec就是DHCP Server在root namespace中接口（这是个veth pair设备，另一头连接的是DHCP Server的namespace接口），同样tap后面的字符串ID就是DHCP端口ID的前11位“短ID”。</p>
+<p><strong>步骤2：</strong>我们再创建一个local_net2，和local_net1的创建方法一样，如下图所示。同样，我们可以设置local_net2的子网subnet的cidr为10.10.10.0/24，实现资源隔离和复用。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/RheHvcBGmE3P.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GD850Xk2Rgb8.png?imageslim" alt="mark"></p>
+<p>同样，我们在网络节点上查看一下底层网络有什么变化？如下图所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rV75R5W53VPz.png?imageslim" alt="mark"></p>
+<p>我们发现网络节点的底层网络多了一个网桥brq05b09958-c0，同时其上也挂载了一个tap设备tap436a2ae5-ac，通过ID我们知道其分别对应local_net2和其上DHCP Server的veth pair接口。</p>
+<p><strong>步骤3：</strong>此时，我们创建两个虚机VM1和VM2，其网络分配为local_net1，如下图所示</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Y5oRUbq3V4qk.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/FgQWyK2qcB4v.png?imageslim" alt="mark"></p>
+<p>可以看出虚机VM1和VM2创建成功，DHCP分配的IP地址分别为10.10.10.13和10.10.10.16，此时，我们通过VNC或SSH登录到虚机VM2中，尝试ping虚机VM1，可以ping通。如下图，与我们预期一样。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/a4If4D9GRcrx.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/22yFotOOvExm.png?imageslim" alt="mark"></p>
+<p><strong>步骤4：</strong>我们再创建一个虚机VM3，为其分配的网络local_net2，创建成功后DHCP为其分配的IP地址为10.10.10.11</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HW6MSWULfANc.png?imageslim" alt="mark"></p>
+<p>同样，我们登录到虚机VM3中，尝试ping虚机VM1和VM2，如下图所示，ping不通，完全符合我们的预期。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/4dWzuDMSm3nn.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/G49jAGEvOS2n.png?imageslim" alt="mark"></p>
+<h3 id="flat网络"><a href="#flat网络" class="headerlink" title="flat网络"></a><strong>flat网络</strong></h3><p>flat network 是不带tag的网络，就是一个大二层网络。要求宿主机的物理网卡直接虚拟网络相连，这意味着：<strong>每个flat network都会独占一个物理网卡。</strong>如下图，ens34 桥接到 brqXXX，为 instance 提供 flat 网络。如果需要创建多个 flat network，就得准备多个物理网卡。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/fauHKXyuCVz8.png?imageslim" alt="mark"></p>
+<p><strong>步骤1：</strong>创建一个flat网络llb_flat，标签为default，子网段cidr为30.10.20.0/24，DHCP Server的IP地址为30.10.20.10.如下所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/F86NfnEyLaHH.png?imageslim" alt="mark"></p>
+<p><strong>步骤2：</strong>我们看下底层网络有啥变化。如下所示</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/2STkzOl217Gv.png?imageslim" alt="mark"></p>
+<p>对于ovs bridge “br-ex”和其上桥接的port“ens35”我们应该不会感到意外，这是前面配置的结果。然而除此之外，br-int和br-ex分别多了一个port“int-br-ex”和“phy-br-ex”，而且这两个port都是<strong>“patch”类型</strong>，<strong>同时通过“peer”指向对方</strong>。上面的配置描述了这样一个事实：br-int与br-ex这两个网桥通过int-br-ex和phy-br-ex连接在一起了。如下图所示</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/scY7Ic6BD4m6.png?imageslim" alt="mark"></p>
+<p>此时网络节点的逻辑拓扑如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/quBL67DkldVa.png?imageslim" alt="mark"></p>
+<p>通过前面的分析我们可知veth pair和patch port都可以连接网桥，使用的时候如何选择呢？答案是patch port 是ovs bridge自己特有的port类型，只能在ovs中使用。如果是连接两个ovs bridge，优先使用patch port，因为性能更好。</p>
+<p><strong>步骤3：</strong>此时我们创建两个虚机FLAT_VM1和FLAT_VM2，为其配置为FLAT网络模式，如下，FLAT-VM1和FLAT_VM2通过DHCP拿到的地址分别为30.10.20.13和30.10.20.16。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rsDhqEOdeUyw.png?imageslim" alt="mark"></p>
+<p>我们看到instance在启动过程中能够从Neutron的DHCP服务获得IP，Neutron提供DHCP服务的组件是DHCP agent。DHCP agent在网络节点运行上，通过dnsmasq实现DHCP功能。DHCP agent的配置文件位于/etc/neutron/dhcp_agent.ini。当创建network并在subnet上enable DHCP时，网络节点上的DHCP agent会启动一个dnsmasq进程为该network提供DHCP服务。dnsmasq是一个提供DHCP和DNS服务的开源软件。dnsmasq与network是一对一关系，一个dnsmasq进程可以为同一netowrk中所有enable了DHCP的subnet提供服务。DHCP agent会为每个network创建一个目录/etc/data/neutron/dhcp/，用于存放该network的dnsmasq配置文件。Neutron通过namespace为每个network提供独立的DHCP和路由服务，从而允许租户创建重叠的网络。如果没有namespace，网络就不能重叠，这样就失去了很多灵活性。在创建虚拟机实例instance时，Neutron会为其分配一个port，里面包含了MAC和IP地址信息。这些信息会同步更新到dnsmasq的host文件。同时nova-compute会设置虚机实例instance的VIF的MAC地址。一切准备就绪，虚拟机实例instance获取IP的过程如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/CujLXRlbTt3O.png?imageslim" alt="mark"></p>
+<ul>
+<li><ul>
+<li><strong>Step1：</strong>虚拟机实例instance开机启动，发出DHCPDISCOVER广播，该广播消息在整个Network中都可以被收到。</li>
+<li><strong>Step2：</strong>广播到达veth interface的tap设备，然后传送给veth pair的另一端ns设备。dnsmasq在它上面监听，dnsmasq检查其 host 文件，发现有对应项，于是dnsmasq以DHCPOFFER消息将IP、子网掩码、地址租用期限等信息发送给虚拟机实例instance。</li>
+<li><strong>Step3：</strong>虚拟机实例instance发送DHCPREQUEST消息确认接受此DHCPOFFER。</li>
+<li><strong>Step4：</strong>dnsmasq发送确认消息DHCPACK，整个过程结束。</li>
+</ul>
+</li>
+</ul>
+<h3 id="vlan网络"><a href="#vlan网络" class="headerlink" title="vlan网络"></a><strong>vlan网络</strong></h3><p>vlan network是带tag的网络，是实际应用最广泛的网络类型。在Open vSwitch实现方式下，不同vlan instance的虚拟网卡都接到聚合网桥br-int上。这一点与 linux bridge非常不同，linux bridge是不同vlan接到不同的网桥上。下面，我们将采用实践部署的方式先完成网络创建，然后通过底层分析，最后画出我们的逻辑拓扑图。</p>
+<p><strong>步骤1：</strong>首先我们创建一个VLAN网络，VLAN ID为10，如下VLAN的label是flat（在ml2.conf.ini文件中配置，名字可以随意起，也可以配置多个，之间用逗号“,”隔开），子网cidr为172.18.10.0/24，DHCP Server的端口和IP地址为172.18.10.10</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/m98xkKF8xFLM.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/hMqDuSkKnaRQ.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/6o1FTMLEeNEf.png?imageslim" alt="mark"></p>
+<p>我们在网络节点的br-int上发现多了一个tap设备，这个tap设备就是DHCP Server在root空间veth interface。此时网络节点的拓扑如下图右边所示</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/JRmDgaYjOSV5.png?imageslim" alt="mark"></p>
+<p><strong>步骤2：</strong>现在创建一个虚拟机实例instance，为其配置网络的为上面VLAN10，同时这个虚拟机实例instance被创建在计算节点computer1上，IP地址为172.18.10.15，发现在VLAN10的网络上了多了一个端口</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/3sUOfvNmayS3.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/mzV4GvhuKBmk.png?imageslim" alt="mark"></p>
+<p>在计算节点computer1上看下底层网络变化？发现网桥上不仅有个tap设备（虚机虚拟网卡VIF），还多个qvb设备，如下图左边上部，这其实是个veth pair设备的veth interface，同时在计算节点的br-int找到了该veth pair设备另一端接口qvo，如下图左边下部，此时计算节点computer1上的网络拓扑如下图右边。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/83veH2YUsO7p.png?imageslim" alt="mark"></p>
+<p><strong>步骤3：</strong>再创建一个虚机VM2，该虚机被调度到了计算节点computer2上，IP地址为172.18.10.18。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/SJUzykqbuCyW.png?imageslim" alt="mark"></p>
+<p>在计算节点computer2上查看底层网络变化，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GYjCM1akuRe9.png?imageslim" alt="mark"></p>
+<p>发现其上创建的qbr网桥与计算节点computer1的网桥并不是同一个。这一点就是OVS网络与linuxbridge网络不同点，在linuxbridge网络中，同一个网络对应一个网桥brq，也就是说网桥brq与网络network是一一对应的关系。但是在OVS网络中，一个网桥qbr其实对应的一个虚机，而网络network对应的是br-int这个网桥，但不是一一对应，而是m:1的关系。</p>
+<p><strong>步骤4：</strong>再创建一个vlan11的网络，方法同VLAN10，此时网络节点的拓扑如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/admWvXL4W7r7.png?imageslim" alt="mark"></p>
+<p><strong>步骤5：</strong>再创建一个虚机VM3，为其分配VLAN11的网络，其IP地址为172.18.11.18，该虚机被调度到计算节点computer1上</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/g1cIi11htLEk.png?imageslim" alt="mark"></p>
+<p>此时计算节点compute1的拓扑如下，VM3和VM1虽然同属于一个Host，甚至共享同一个br-int，但他们分属于不同VLAN网络，因此二层上应该是隔离的。下面我们就来分析下OVS网络下的VLAN隔离机制。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/pLE2fpMVBWdm.png?imageslim" alt="mark"></p>
+<p>与Linux Bridge driver不同，Open vSwitch driver并不通过eth1.100, eth1.101等VLAN interface来隔离不同的VLAN。所有的instance都连接到同一个网桥br-int，<strong>Open vSwitch通过 flow rule（流规则）来指定如何对进出br-int 的数据进行转发，进而实现vlan之间的隔离。具体来说：当数据进出br-int时，flow rule可以修改、添加或者剥掉数据包的VLAN tag，Neutron负责创建这些flow rule并将它们配置到br-int，br-ens34等Open vSwitch上。</strong></p>
+<p>下面就来研究一下当前的flow rule。查看flow rule的命令是ovs-ofctl dump-flow <bridge>，首先查看计算节点computer1的br-ens34的flow rule，如下，每一个cookie就是一条flow rule，下图中br-ens34上配置了四条rule，每条rule有不少属性，其中比较重要的属性有：<strong>priority、in_port、dl_vlan和actions</strong>。</bridge></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/SrcqCsGRIKJ4.png?imageslim" alt="mark"></p>
+<ul>
+<li><ul>
+<li><strong>priority：</strong>rule 的优先级，值越大优先级越高，Open vSwitch会按照优先级从高到低应用规则。</li>
+<li><strong>in_port：</strong>inbound端口编号，每个port 在Open vSwitch中会有一个内部的编号。可以通过命令ovs-ofctl show <bridge> 查看port编号，如下图br-ens34：ens34编号为1；phy-br-ens34编号为2。</bridge></li>
+</ul>
+</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/I2odGjt3tqrf.png?imageslim" alt="mark"></p>
+<ul>
+<li><ul>
+<li><strong>dl_vlan：</strong>数据包原始的 VLAN ID。</li>
+<li><strong>actions：</strong>对数据包进行的操作。</li>
+</ul>
+</li>
+</ul>
+<p>br-ens34跟VLAN相关的flow rule比较重要的有两条，下面我们来详细分析。清晰起见，我们只保留重要的信息，如下：</p>
+<ul>
+<li><ul>
+<li>priority=4,in_port=2,dl_vlan=2 actions=mod_vlan_vid:10,NORMAL</li>
+<li>priority=4,in_port=2,dl_vlan=3 actions=mod_vlan_vid:11,NORMAL</li>
+</ul>
+</li>
+</ul>
+<p><strong>第一条的含义是：</strong>从br-ens34的端口phy-br-ens34（in_port=2）接收进来的包，如果VLAN ID是2（dl_vlan=2），那么需要将VLAN ID改为10（actions=mod_vlan_vid:10）</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/wBny2KogzxI8.png?imageslim" alt="mark"></p>
+<p>从上面的网络结构我们可知，phy-br-ens34连接的是br-int，phy-br-ens34的inbound包实际上就是虚机VM通过br-int发送给外部网络的数据。那么怎么理解将VLAN ID 2改为VLAN ID 10呢？请看下面计算节点computer1的ovs-vsctl show的输出：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/nB5PQnljyMPo.png?imageslim" alt="mark"></p>
+<p>br-int通过tag隔离不同的port，这个tag可以看成内部的VLAN ID。从qvo2cc37622-be（对应VM1，vlan10）进入的数据包会被打上内部VLAN ID= 2的VLAN tag。因为br-int中的VLAN ID跟物理网络中的VLAN ID并不相同，所以当br-ens34接收到br-int发来的数据包时，需要对VLAN进行转换。Neutron负责维护内外VLAN ID的对应关系，并将转换规则配置在flow rule中。理解了br-ens34的flow rule，我们再来分析br-int的flow rule。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Wvs6vqLNWQyH.png?imageslim" alt="mark"></p>
+<p>最关键的是下面两条：</p>
+<ul>
+<li><ul>
+<li>priority=3,inport=2,dl_vlan=10 actions=mod_vlan_vid:2,NORMAL</li>
+<li>priority=3,inport=2,dl_vlan=11 actions=mod_vlan_vid:3,NORMAL</li>
+</ul>
+</li>
+</ul>
+<p><strong>port 2为int-br-ens34，那么这两条规则的含义就应该是：</strong></p>
+<ol>
+<li><p>从物理网卡接收进来的数据包，如果 VLAN 为 10，则改为内部 VLAN 2。</p>
+</li>
+<li><p>从物理网卡接收进来的数据包，如果 VLAN 为 11，则将为内部 VLAN 3。</p>
+</li>
+</ol>
+<p><strong>简单的说，数据包在物理网络中通过VLAN 10和VLAN 11隔离，在计算节点OVS br-int中则是通过内部VLAN 2和VLAN 3隔离。也就是说通过OVS实现的VLAN网络存在内外VLAN转换的机制，这一点同样适用于后面的VxLAN网络，同时也是和Linubridge实现的VLAN的不同点之一。OVS实现下不同VLAN之间通过router三层互通和前面linuxbridge实现基本一样，唯一区别是Router的接口不再与qbr通过veth pair相连，而改为和br-int相连。</strong></p>
+<h3 id="VxLAN网络"><a href="#VxLAN网络" class="headerlink" title="VxLAN网络"></a><strong>VxLAN网络</strong></h3><p>前面讨论了local, flat, vlan这几类网络，OpenStack还支持vxlan和gre这两种overlay network。overlay network是指建立在其他网络之上的网络。overlay network中的节点可以看作通过虚拟（或逻辑）链路连接起来的。overlay network在底层可能由若干物理节点组成，但是不需要关心这些底层实现。例如P2P网络就是overlay network。vxlan和gre都是基于隧道技术实现的，它们也都是overlay network。linux bridge只支持vxlan，不支持gre；open vswitch两者都支持。vxlan与gre实现非常类似，而且vxlan用得较多，所以只讨论vxlan网络的Neutron实现。VxLAN即Virtual eXtensible Local Area Network，正如名字所描述的，VxLAN提供与VLAN 相同的以太网二层服务，但拥有更强的扩展性和灵活性，且支持16777216个二层网段。关于VxLAN的技术原理请参考博客《<a href="https://kkutysllb.cn/2019/06/22/2019-06-21-服务器外部交换网络虚拟化/">服务器外部交换网络虚拟化</a>》一文。Neutron服务重启后，通过ovs-vsctl show查看网络配置：可以发现br-tun和br-int上各有一个path 接口指向对方，如下图左边，此时网络节点/计算节点的拓扑如下图右边所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/eJRBmG6t816W.png?imageslim" alt="mark"></p>
+<p><strong>步骤1：</strong>创建一个VIN=30的VxLAN网络，子网cidr为10.10.30.0/24，如下</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/J4ULOwCgvbqe.png?imageslim" alt="mark"></p>
+<p><strong>步骤2：</strong>此时网络节点的底层网络发生如下变化，如下图左边所示，在br-int网桥上多了一个tap设备，同时该tap设备与DHCP Server的namespace ID一致，这个tap设备是个veth pair设备，一头连接在br-int网桥，一头连接namespace中DHCP Server。此时，网络节点的逻辑拓扑如下图右边所示。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kPmzxULVFqT6.png?imageslim" alt="mark"></p>
+<p><strong>步骤3：</strong>在VXLAN30的网络上创建2个VM，虚机VM1被调度到计算节点computer01上，IP地址为10.10.30.15。虚机VM2被调度到计算节点computer02上，IP地址为10.10.30.13。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/IGi9PaBj6zoV.png?imageslim" alt="mark"></p>
+<p><strong>步骤4：</strong>分别在计算节点computer01和computer02上查看下底层网络的变化，如下图左边所示，两个计算节点各多了一个qbr网桥，每个qbr网桥上挂载了虚机虚拟网卡VIF和qvb设备。此时，网络节点和计算节点的逻辑拓扑如下图右边所示。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ccSNVpy76Eg1.png?imageslim" alt="mark"></p>
+<p><strong>步骤5：</strong>在computer01上有2个VxLAN端口：1个是vxlan-ac124b0c，另一个是vxlan-ac124b0e，如下图上半部分。同时，在网络节点的network01的底层网络也是存在两个VxLAN网络：vxlan-ac124b0d和vxlan-ac124b0e，如下图下半部分。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/MMsTCnAQWaQL.png?imageslim" alt="mark"></p>
+<p>此时，网络逻辑拓扑如下，表示当计算节点computer01和computer02上的VM通过VxLAN互访时，vxlan-ac124b0c完成。当计算节点computer01和computer02上的VM要与外部网络互访时，分别通过vxlan-ac124b0d和vxlan-ac124b0e完成。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/aBcyvRtRWqa3.png?imageslim" alt="mark"></p>
+<p><strong>步骤6：</strong>分析VxLAN网络数据包的转发规则，首先查看br-int 的 flow rule，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/M4M6uRIWUOlr.png?imageslim" alt="mark"></p>
+<p>br-int的rule看上去虽然多，其实逻辑很简单，br-int被当作一个二层交换机，其重要的rule 是下面这条，含义为<strong>根据 vlan 和 mac 进行转发。</strong></p>
+<ul>
+<li><ul>
+<li><strong>cookie=0x965a57f99ba197f2, duration=406.721s, table=0, n_packets=51, n_bytes=3570, idle_age=119, priority=0 actions=NORMAL</strong></li>
+</ul>
+</li>
+</ul>
+<p>然后，查看br-tun的flow rule，如下，这才是真正处理 VXLAN 数据包的 rule。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/LnG69KW61e29.png?imageslim" alt="mark"></p>
+<p>其具体处理流程如下，下图各方块中的数字对应 rule 中 table 的序号。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dc67VCQfDidI.png?imageslim" alt="mark"></p>
+<ol>
+<li><strong>（1）编号为0的方块（table 0）对应下面4条rule：</strong></li>
+</ol>
+<ul>
+<li><ul>
+<li><ul>
+<li>cookie=0x9455c3750d53ad75, duration=602.160s, table=0, n_packets=79, n_bytes=5500, idle_age=12, priority=1,in_port=1 actions=resubmit(,2)</li>
+<li>cookie=0x9455c3750d53ad75, duration=420.913s, table=0, n_packets=0, n_bytes=0, idle_age=420, priority=1,in_port=2 actions=resubmit(,4)</li>
+<li>cookie=0x9455c3750d53ad75, duration=420.908s, table=0, n_packets=0, n_bytes=0, idle_age=420, priority=1,in_port=3 actions=resubmit(,4)</li>
+<li>cookie=0x9455c3750d53ad75, duration=602.159s, table=0, n_packets=0, n_bytes=0, idle_age=602, priority=0 actions=drop</li>
+</ul>
+</li>
+<li><p>结合如下 port 编号，table 0 flow rule 的含义为：</p>
+</li>
+<li><p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/XNh5Dd6PzGz5.png?imageslim" alt="mark"></p>
+</li>
+</ul>
+</li>
+<li><ul>
+<li>从 port 1（patch-int）进来的包，扔给table 2 处理：actions=resubmit(,2)</li>
+<li>从 port 2（vxlan-ac124b0e）进来的包，扔给 table 4 处理：actions=resubmit(,4)</li>
+<li>从 port 3 （vxlan-ac124b0d）进来的包，扔给table 4处理：actions=resubmit(,4)</li>
+<li><strong>即第一条rule处理来自内部br-int（这上面挂载着所有的网络服务，包括路由、DHCP 等）的数据；第二条、第三条rule处理来自外部VxLAN隧道的数据。</strong></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>（2）编号为4的方块（table 4）对应下面2条rule：</strong></p>
+</li>
+<li><ul>
+<li><ul>
+<li><strong>cookie=0x9455c3750d53ad75, duration=422.298s, table=4, n_packets=0, n_bytes=0, idle_age=422, priority=1,tun_id=0x64 actions=mod_vlan_vid:1,resubmit(,10)</strong></li>
+<li><strong>cookie=0x9455c3750d53ad75, duration=602.155s, table=4, n_packets=0, n_bytes=0, idle_age=602, priority=0 actions=drop</strong></li>
+</ul>
+</li>
+<li><p><strong>其含义为：如果数据包的 VXLAN tunnel ID 为 100（tun_id=0x64），action 是添加内部 VLAN ID 1（tag=1），然后扔给 table 10 去学习。而对于其他tun_id的数据包则直接丢弃。</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>（3）编号为10的方块（table 10）对应下面1条rule：</strong></p>
+</li>
+<li><ul>
+<li><ul>
+<li>cookie=0x9455c3750d53ad75, duration=602.154s, table=10, n_packets=0, n_bytes=0, idle_age=602, priority=1actions=learn(table=20,hard_timeout=300,priority=1,cookie=0x9455c3750d53ad75,NXM_OF_VLAN_TCI[0..11],NXM_OF_ETH_DST[]=NXM_OF_ETH_SRC[],load:0-&gt;NXM_OF_VLAN_TCI[],load:NXM_NX_TUN_ID[]-&gt;NXM_NX_TUN_ID[],output:OXM_OF_IN_PORT[]),output:1</li>
+</ul>
+</li>
+<li><p><strong>其含义为：学习外部（从tunnel）进来的包，往 table 20 中添加对返程包的正常转发规则，然后从 port 1（patch-int）扔给 br-int。</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>（4）编号为2的方块（table 2）对应下面2条rule：</strong></p>
+</li>
+<li><ul>
+<li><ul>
+<li>cookie=0x9455c3750d53ad75, duration=602.158s, table=2, n_packets=0, n_bytes=0, idle_age=602, priority=0,dl_dst=00:00:00:00:00:00/01:00:00:00:00:00 actions=resubmit(,20)</li>
+<li>cookie=0x9455c3750d53ad75, duration=602.157s, table=2, n_packets=79, n_bytes=5500, idle_age=12, priority=0,dl_dst=01:00:00:00:00:00/01:00:00:00:00:00 actions=resubmit(,22)</li>
+</ul>
+</li>
+<li><p><strong>其含义为：br-int 发过来数据如果是单播包，扔给 table 20 处理：resubmit(,20)；br-int 发过来数据如果是多播或广播包，扔 table 22 处理：resubmit(,22)。</strong></p>
+</li>
+</ul>
+</li>
+<li></li>
+<li><p><strong>（5）编号为20的方块（table 20）对应下面3条rule：</strong></p>
+</li>
+<li><ul>
+<li><ul>
+<li>cookie=0x9455c3750d53ad75, duration=323.953s, table=20, n_packets=0, n_bytes=0, idle_age=420, priority=2,dl_vlan=1,dl_dst=fa:16:3e:36:14:b3 actions=strip_vlan,load:0x64-&gt;NXM_NX_TUN_ID[],output:2</li>
+<li>cookie=0x9455c3750d53ad75, duration=323.950s, table=20, n_packets=0, n_bytes=0, idle_age=420, priority=2,dl_vlan=1,dl_dst=fa:16:3e:83:ec:c7 actions=strip_vlan,load:0x64-&gt;NXM_NX_TUN_ID[],output:3</li>
+<li>cookie=0x9455c3750d53ad75, duration=602.153s, table=20, n_packets=0, n_bytes=0, idle_age=602, priority=0 actions=resubmit(,22)</li>
+</ul>
+</li>
+<li><p><strong>其含义为：第一条规则就是 table 10 学习来的结果，即数据包的返程规则。内部 VLAN 号为 1（tag=1），目标 MAC 是 fa:16:3e:36:14:b3（VM1）的数据包，即发送给 VM1的包（VM1在computer01计算节点），action 是去掉 VLAN 号，添加 VXLAN tunnel ID 100(十六进制 0x64)，并从 port 2 (tunnel 端口 vxlan-ac124b0e) 发出。第二条规则也是table 10 学习来的结果，也是数据包的返程规则。内部 VLAN 号为 1（tag=1），目标 MAC 是 fa:16:3e:83:ec:c7（VM2）的数据包，即发送给 VM2的包（VM2在computer02计算节点），action 是去掉 VLAN 号，添加 VXLAN tunnel ID 100(十六进制 0x64)，并从 port 3(tunnel 端口 vxlan-ac124b0d) 发出。第三条规则是对于没学习到规则的数据包，则扔给 table 22 处理。</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>（6）编号为22的方块（table 22）对应下面2条rule：</strong></p>
+</li>
+<li><ul>
+<li><ul>
+<li>cookie=0x9455c3750d53ad75, duration=323.951s, table=22, n_packets=11, n_bytes=866, idle_age=318, priority=1,dl_vlan=1 actions=strip_vlan,load:0x64-&gt;NXM_NX_TUN_ID[],output:2,output:3</li>
+<li>cookie=0x9455c3750d53ad75, duration=602.152s, table=22, n_packets=68, n_bytes=4634, idle_age=12, priority=0 actions=drop</li>
+</ul>
+</li>
+<li><p><strong>其含义为：如果数据包的内部 VLAN 号为 1（tag=1），action 是去掉 VLAN 号，添加 VXLAN tunnel ID 100(十六进制 0x64)，并从port 2 (tunnel 端口 vxlan-ac124b0e) 或port 3 (tunnel 端口 vxlan-ac124b0d) 。</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="SNAT、Floating-IP"><a href="#SNAT、Floating-IP" class="headerlink" title="SNAT、Floating IP"></a><strong>SNAT、Floating IP</strong></h3><p>不同VLAN网络之间是二层隔离的，如果两个不同VLAN网络要互通，就需要建立一个路由器，此时路由器会增加2个Port，分别作为这两个VLAN网络的网关，然后通过直连路由表项完成两个不同VLAN网络之间的三层互通。在数据模型部分的Router数据模型讨论中，每个虚拟Router会有3种路由表项：直连路由、静态路由，默认静态路由。而默认静态路由表项的产生，就是当我们给Router设置外部网关时，它会自动增加一个Port，而这个Port就是用来对外部网络进行映射。也就是说，在虚机角度来看，外部网络的网关就是这个Port。因此，当内部网络的数据包经过这个Port时，该Port会对数据包的源地址进行替换，也就是我们常说的SNAT（Source NAT）。而Floating IP的作用正好相反，当外部网络的主机需要访问云主机时，此时目的地址为云主机在Router上的Floating IP，当数据包到达Router时，需要将Floating IP替换为云主机的内部IP，此过程就是DNAT。floating IP 提供静态NAT功能，建立外网IP与VM租户网络IP的一对一映射，其配置在router提供网关的外网interface上的，而非VM 中。router会根据通信的方向修改数据包的源或者目的地址，即SNAT/DNAT。</p>
+<p><strong>步骤1：</strong>建立一个外部网络ext_net1，该网络cidr为10.10.10.0/24，默认网关10.10.10.1。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/cUXCpNq1FG6s.png?imageslim" alt="mark"></p>
+<p>同时，我们的宿主机Vnet2对应的地址段也是10.10.10.0/24，而虚拟网卡Vnet2的IP地址就是10.10.10.1，如下所示。也就是说，建立这个外部网络ext_net1就是Neutron中建立的一个物理网络的映射。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HpyDrBkEMahr.png?imageslim" alt="mark"></p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/QjKsd5XVyQhk.png?imageslim" alt="mark"></p>
+<p><strong>步骤2：</strong>给路由器Router设置一个外部网关，网关映射配置为ext_net1，此时ext_net1的DHCP Server会给Router的这个Port分配一个IP地址，我们这里分配的IP地址为：10.10.10.19。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/rhwcXXBe3pAv.png?imageslim" alt="mark"></p>
+<p>此时我们的底层网络网桥上会增加一个tap设备tap099f513f-e9，这是一个veth interface，用来连接namespace for router的中另一个veth interface，目的就是将Router的外部网关Port连接到外部网络ext_net1。如下，在Router的namespace中，用来连接外部网络的Port命名为：qg-xxxxx，而用来连接内部网络的Port命名为：gr-xxxx。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/e6os5ntLO6r4.png?imageslim" alt="mark"></p>
+<p><strong>步骤3：</strong>登录到路由器Router中，查看其路由表情况发现：存在一条默认路由，网关为10.10.10.1（Vnet2地址），接口为qg_099，含义就是内网任意云服务器(VM)访问任意外部网络（0.0.0.0），数据包从qg-099转发出去，到达网关10.10.10.1。同时，存在一条直连路由，含义是当这个外部网络映射ext_net1也有云服务器时，其他任意网络云服务器访问这些云服务器的数据包从接口qg-099接口转发。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/xtvsfDKvLxLl.png?imageslim" alt="mark"></p>
+<p><strong>步骤4：</strong>登录虚机VM进行验证，VM的IP地址为（172.18.15.12）。发现可以ping通路由器RouterA的Port1（10.10.10.19），同时也能ping通我们宿主机网卡Vnet2（10.10.10.1）。进行trace发现，路由只经过2跳就到达外部网关RouterB的Port2，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/7bk9LjlzFmjQ.png?imageslim" alt="mark"></p>
+<p><strong>步骤5：</strong>当数据包从 RouterA连接外网的接口 qg-099f513f-e9 发出的时候，会做一次 Source NAT，即将包的源地址修改为 RouterA的接口Port1的IP地址 10.10.10.19，这样就能够保证目的端能够将应答的包发回给 RouterA，然后再转发回源端 VM。可以通过 iptables 命令查看Router的 SNAT 的规则，如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/dc872B1l3eop.png?imageslim" alt="mark"></p>
+<p>此时当VLAN11的VM（172.18.11.12） Ping 10.10.10.1 时，可用通过 tcpdump 分别观察 RouterA和VM的 icmp 数据包来验证 SNAT 的行为。如下：</p>
+<ul>
+<li><ul>
+<li><strong>RouterA的Port0端口（qr-1b1706db-b0）的ICMP数据包：</strong></li>
+</ul>
+</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/FmAH1b08HLRW.png?imageslim" alt="mark"></p>
+<ul>
+<li><ul>
+<li><strong>RouterA的PortA端口（qg-099f513f-e9）的ICMP数据包</strong></li>
+</ul>
+</li>
+</ul>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/z3U9TbJKvQQG.png?imageslim" alt="mark"></p>
+<p><strong>因此，SNAT 让 VM 能够直接访问外网，但外网还不能直接访问VM。因为VM没有外网 IP。这里 “直接访问 VM” 是指通信连接由外网发起，例如从外网 SSH VM，这个问题可以通过 floating IP 解决。</strong></p>
+<p><strong>步骤6：</strong>给虚机VM（172.18.15.19）绑定一个floating IP（10.10.10.12），如下所示：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/b8D8jd3u0kGi.png?imageslim" alt="mark"></p>
+<p><strong>步骤7：</strong>查看Router的interface变化发现，在qg-099f513f-e9接口上增加了一个IP地址（10.10.10.12），如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/lYR5seRRCg43.png?imageslim" alt="mark"></p>
+<p>查看 router 的 NAT 规则，iptables 增加了两条处理 floating IP 的规则：1）当 router 接收到从外网发来的包，如果目的地址是 floating IP 10.10.10.12，将目的地址修改为 VM的 IP 172.18.15.19。这样外网的包就能送达到 VM。2）当VM发送数据到外网，源地址 172.18.15.19 将被修改为 floating IP 10.10.10.12。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/qHyOJ8FUL4pm.png?imageslim" alt="mark"></p>
+<p><strong>步骤8：</strong>在我的实验环境中，10.10.10.1 是宿主机网卡Vnet2的地址，现在让它PING VM。</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/n4Lw0bjIkAo3.png?imageslim" alt="mark"></p>
+<p>能够 PING 通。同时，我们任意一个主机节点ssh连接虚机VM，发现可以直接登录。如下：</p>
+<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/GtheCaxDAtA5.png?imageslim" alt="mark"></p>
+<h2 id="思考："><a href="#思考：" class="headerlink" title="思考："></a><strong>思考：</strong></h2><p><strong>1、Nuetron的Nuetron-Server为什么与其他服务不一样，不起名为Neutron-api？</strong></p>
+<p><strong>2、请阐述Provider与Self网络的区别，请分析网络云采用哪种网络虚拟化解决方案，并给出理由？</strong></p>
+<p><strong>3、OVS agent与Linux Bridge agent在实现二层网络上区别是什么？为什么OVS agent实现的二层网络会包含一个Linux Bridge网桥？</strong></p>
+<p><strong>4、请分析直连路由与静态路由的区别？并分析在Neutron的vRoute解决方案中，直连路由和静态路由的内部转发机制（结合实际虚拟机实例instance的数据包流向分析）</strong></p>
+<p><strong>5、在网络云大区华为OVS/EVS解决方案中，一个OVS网桥内部至少包含几个二层网桥？各网桥的类型和作用是什么？</strong></p>
+<p><strong>6、虚拟机的虚拟网卡vNIC，在Neutron的网络虚拟化解决方案中本质上是一个什么设备？它与Network上Port是否同一个概念？为什么？Network上的Port资源是否与虚拟机实例一一对应？</strong></p>
+<p><strong>7、在网络云数据中心内各物理网络平面的网关设置在哪里？不同物理平台互通通过什么设备实现（根据管理平面下发指令到业务虚机的场景阐述）</strong></p>
+<p><strong>8、SNAT和DNAT分别用于什么场景？NAT技术是否属于安全领域的技术之一？</strong></p>
+<p><strong>9、在OVS的br-int网桥上不同VLAN的虚拟机实例通过什么机制进行隔离？（根据实际部署场景抓包分析）</strong></p>
+<p><strong>10、在后续网络云资源池引入SDN控制器，其需要与Nuetron进行对接，则SDN控制作为Neutron的pulgin进行集成还是作为Neutron的agent进行对接？其API接口通过Neutron的什么API组件实现？其与neutron-server，neutron-agent是否通过消息队列进行交互？</strong></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2020/03/03/2020-03-03-网络管理服务Neutron/" title="2020-03-03-网络管理服务Neutron">https://kkutysllb.cn/2020/03/03/2020-03-03-网络管理服务Neutron/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/云计算/" rel="tag"><i class="fa fa-tag"></i> 云计算</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/03/2020-03-03-计算管理服务Nova/" rel="next" title="2020-03-03-计算管理服务Nova">
+                <i class="fa fa-chevron-left"></i> 2020-03-03-计算管理服务Nova
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">70</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Neutron的应用方式"><span class="nav-number">2.</span> <span class="nav-text">Neutron的应用方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于OpenStack的应用—从Provider-Network-Service到Self-Network-Service"><span class="nav-number">2.1.</span> <span class="nav-text">基于OpenStack的应用—从Provider Network Service到Self-Network Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于SDN的应用"><span class="nav-number">2.2.</span> <span class="nav-text">基于SDN的应用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Neutron的逻辑架构"><span class="nav-number">3.</span> <span class="nav-text">Neutron的逻辑架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Neutron的资源模型"><span class="nav-number">4.</span> <span class="nav-text">Neutron的资源模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Neutron网络资源的隔离机制"><span class="nav-number">5.</span> <span class="nav-text">Neutron网络资源的隔离机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Neutron下面租户资源隔离的含义"><span class="nav-number">5.1.</span> <span class="nav-text">Neutron下面租户资源隔离的含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Neutron的租户资源隔离实现模型"><span class="nav-number">5.2.</span> <span class="nav-text">Neutron的租户资源隔离实现模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#采用OVS参考实现的Neutron网络数据转发模型"><span class="nav-number">5.3.</span> <span class="nav-text">采用OVS参考实现的Neutron网络数据转发模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Provider-Network-Service下的OVS参考实现数据包转发模型"><span class="nav-number">5.4.</span> <span class="nav-text">Provider Network Service下的OVS参考实现数据包转发模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Self-Network-Service下的OVS参考实现数据包转发模型"><span class="nav-number">5.5.</span> <span class="nav-text">Self Network Service下的OVS参考实现数据包转发模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Neutron的不同网络类型实现实战"><span class="nav-number">6.</span> <span class="nav-text">Neutron的不同网络类型实现实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Local网络"><span class="nav-number">6.1.</span> <span class="nav-text">Local网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flat网络"><span class="nav-number">6.2.</span> <span class="nav-text">flat网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vlan网络"><span class="nav-number">6.3.</span> <span class="nav-text">vlan网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VxLAN网络"><span class="nav-number">6.4.</span> <span class="nav-text">VxLAN网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SNAT、Floating-IP"><span class="nav-number">6.5.</span> <span class="nav-text">SNAT、Floating IP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考："><span class="nav-number">7.</span> <span class="nav-text">思考：</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">885k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">13:25</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2020/03/03/2020-03-03-网络管理服务Neutron/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>
