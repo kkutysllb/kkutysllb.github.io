@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://kkutysllb.cn/2020/03/01/2020-03-01-CentOS-7%E6%89%8B%E5%8A%A8%E9%83%A8%E7%BD%B2Openstack-Rocky%E7%89%88%E6%9C%AC%E7%AC%94%E8%AE%B0%EF%BC%88%E5%90%AB%E5%BC%80%E6%BA%90NFVO-VNFM%EF%BC%89/</loc>
+    <lastmod>2020-06-25</lastmod>
+  </url>  <url>
     <loc>https://kkutysllb.cn/2020/03/03/2020-03-03-%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98Memcache%E5%92%8CRedis/</loc>
     <lastmod>2020-03-04</lastmod>
   </url>  <url>
@@ -35,9 +38,6 @@
     <lastmod>2020-03-01</lastmod>
   </url>  <url>
     <loc>https://kkutysllb.cn/2020/03/01/2020-03-01-OpenStack%E6%A6%82%E8%BF%B0/</loc>
-    <lastmod>2020-03-01</lastmod>
-  </url>  <url>
-    <loc>https://kkutysllb.cn/2020/03/01/2020-03-01-CentOS-7%E6%89%8B%E5%8A%A8%E9%83%A8%E7%BD%B2Openstack-Rocky%E7%89%88%E6%9C%AC%E7%AC%94%E8%AE%B0%EF%BC%88%E5%90%AB%E5%BC%80%E6%BA%90NFVO-VNFM%EF%BC%89/</loc>
     <lastmod>2020-03-01</lastmod>
   </url>  <url>
     <loc>https://kkutysllb.cn/2020/03/01/2020-03-01-KVM%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86%E5%AE%9E%E6%88%98/</loc>
