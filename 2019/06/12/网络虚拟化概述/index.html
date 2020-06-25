@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="网络作为提供数据交换的模块，是数据中心内最为核心的基础设施之一，并直接关系到数据中心的能力、规模、可扩展性和管理性。为了满足日益增长的网络服务需求，特别是移动互联网业务的爆发式增长，数据中心逐渐向大型化、自动化、虚拟化、多租户的方向发展。传统网络设备不仅部署慢、调整难、成本高，而且其二层地址表项的规模直接决定了数据中心的规模。为此，网络虚拟化的概念应运而生。">
+<meta name="keywords" content="电信云">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络虚拟化概述">
+<meta property="og:url" content="https://kkutysllb.cn/2019/06/12/网络虚拟化概述/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="网络作为提供数据交换的模块，是数据中心内最为核心的基础设施之一，并直接关系到数据中心的能力、规模、可扩展性和管理性。为了满足日益增长的网络服务需求，特别是移动互联网业务的爆发式增长，数据中心逐渐向大型化、自动化、虚拟化、多租户的方向发展。传统网络设备不仅部署慢、调整难、成本高，而且其二层地址表项的规模直接决定了数据中心的规模。为此，网络虚拟化的概念应运而生。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d0108389809573087.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d01085f46c1356706.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d01087e357d454361.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d010898a434795631.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d0108bd833a193969.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d0108ef17a0911208.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d0109114f93969773.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d0109693d58327773.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d010980d1cb013743.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d01099ec713e51544.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d0109b8111ea32153.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d0109d8eaa4462134.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d010a1496dca41543.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d010a439d87c85492.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d010a64adca313019.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d010a89b362689802.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d010aca0dde071037.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d010af5908e959720.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d010b1763a9e52967.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/12/5d010b3af1e6193765.jpg">
+<meta property="og:updated_time" content="2020-06-25T11:50:22.838Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="网络虚拟化概述">
+<meta name="twitter:description" content="网络作为提供数据交换的模块，是数据中心内最为核心的基础设施之一，并直接关系到数据中心的能力、规模、可扩展性和管理性。为了满足日益增长的网络服务需求，特别是移动互联网业务的爆发式增长，数据中心逐渐向大型化、自动化、虚拟化、多租户的方向发展。传统网络设备不仅部署慢、调整难、成本高，而且其二层地址表项的规模直接决定了数据中心的规模。为此，网络虚拟化的概念应运而生。">
+<meta name="twitter:image" content="https://i.loli.net/2019/06/12/5d0108389809573087.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2019/06/12/网络虚拟化概述/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>网络虚拟化概述 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/06/12/网络虚拟化概述/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">网络虚拟化概述
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-12 22:09:08" itemprop="dateCreated datePublished" datetime="2019-06-12T22:09:08+08:00">2019-06-12</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-06-25 19:50:22" itemprop="dateModified" datetime="2020-06-25T19:50:22+08:00">2020-06-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV关键技术/" itemprop="url" rel="index"><span itemprop="name">NFV关键技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">11k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">10 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>网络作为提供数据交换的模块，是数据中心内最为核心的基础设施之一，并直接关系到数据中心的能力、规模、可扩展性和管理性。为了满足日益增长的网络服务需求，特别是移动互联网业务的爆发式增长，数据中心逐渐向大型化、自动化、虚拟化、多租户的方向发展。传统网络设备不仅部署慢、调整难、成本高，而且其二层地址表项的规模直接决定了数据中心的规模。为此，网络虚拟化的概念应运而生。<a id="more"></a></p>
+<p><img src="https://i.loli.net/2019/06/12/5d0108389809573087.jpg"></p>
+<p>事实上，网络虚拟化这个概念由来已久。早在1990年代，世界上就出现了第一个虚拟局域网VLAN，后来逐渐出现GRE、VPN、L2TP等网络虚拟化技术。到今天，很多公司如Vmware、华为等都在使用这种不依赖物理设备的技术。最初，网络虚拟技术被设置为一个简单的开关功能，后续随着二层广播风暴的隔离和跨网络连接需求的出现，VLAN和VPN技术也应运而生。如今随着云计算技术的推动，在数据中心层面不再是简单的三层架构，而是演进出了大二层和spine-leaf架构，同时随着东西向流量的增加，I/O虚拟化技术、虚拟接入识别、物理网络可靠性以及路由网络随选SDN等技术为云数据中心提供自动化的强有力手段。</p>
+<h2 id="传统二、三层网络中的虚拟化"><a href="#传统二、三层网络中的虚拟化" class="headerlink" title="传统二、三层网络中的虚拟化"></a>传统二、三层网络中的虚拟化</h2><h3 id="网络的基础知识—OSI模型和TCP-IP模型"><a href="#网络的基础知识—OSI模型和TCP-IP模型" class="headerlink" title="网络的基础知识—OSI模型和TCP/IP模型"></a><strong>网络的基础知识—OSI模型和TCP/IP模型</strong></h3><p><strong>开放式系统互联通信参考模型</strong>（Open System Interconnection Reference Model，OSI），简称为OSI模型（OSI model），如下图左边所示，<strong>是一种概念模型</strong>，由国际标准化组织提出，是一个试图使各种计算机在世界范围内互连为网络的标准框架。OSI的七层网络协议体系结构的概念清楚，理论也较为完整，但是它<strong>既复杂也不实用。</strong></p>
+<p><img src="https://i.loli.net/2019/06/12/5d01085f46c1356706.jpg"></p>
+<p>为此，<strong>互联网协议套件（Internet Protocol Suite，IPS</strong>）的概念被提出，它是<strong>一个网络通信模型</strong>，包含整个网络传输协议家族，是网络的基础通信架构，通常被称为TCP/IP协议族（TCP/IP Protocol Suite，或TCP/IP Protocols），简称TCP/IP模型。如上图右边所示，OSI模型与TCP/IP模型的对比示意图。</p>
+<p>TCP/IP模型应用的非常广泛，它是一个四层的体系结构，包括：<strong>网络接口层、网际层（IP）、传输层（TCP或UDP）、应用层（各种应用层协议，如：TELNET、FTP、SMTP等）</strong>。通过这四层的协同工作，能够完成一些特定的任务。每一层创建在低一层提供的服务上，并且为高一层提供服务。 整个TCP/IP协议栈则负责解决数据如何通过许许多多个点对点通路（一个点对点通路，也称为一”跳”, 1 hop）顺利传输，由此不同的网络成员能够在许多”跳”的基础上创建相互的数据通路。 </p>
+<h3 id="绕不开的二层和三层"><a href="#绕不开的二层和三层" class="headerlink" title="绕不开的二层和三层"></a><strong>绕不开的二层和三层</strong></h3><p>二层交换技术是发展比较成熟的技术，二层交换机属数据链路层设备，可以识别数据包中的MAC地址信息，根据MAC地址进行转发，并将这些MAC地址与对应的端口记录在自己内部的一个地址表中。三层交换技术就是将路由技术与交换技术合二为一的技术。在对第一个数据流进行路由后，它将会产生一个MAC地址与IP地址的映射表，当同样的数据流再次通过时，将根据此表直接从二层通过而不是再次路由，从而消除了路由器进行路由选择而造成网络的延迟，提高了数据包转发的效率。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d01087e357d454361.jpg"></p>
+<p>二层网络就是数据链路层，只完成本地网络的互通，只识别相同的数据链路层协议，二层交换机是基于MAC地址转发，并且支持高密度以太网接口。而三层网络就是IP网络层，负责不同物理网络的连接，就像是树干一样，将物理世界与应用世界互联。可以识别多种链路层协议，使用IP协议屏蔽差异，兼容互联。三层路由器都是基于IP地址转发，可以支持ATM/SDN/以太网等多种链路层接口。</p>
+<p>数据包在二、三层网络中转发，其封装格式示意图如下所示，数据包从四层发送到三层会被添加上IP首部然后进行转发，同样数据包到达二层会被添加上二层协议如以太首部然后进行转发，这个过程叫做<strong>封装</strong>。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d010898a434795631.jpg"></p>
+<p>数据包从二层发送到三层时，会被二层设备剥离对应的首部，露出上层设备能够识别的首部，如IP首部，同样三层向四层转发的时，也会剥离本层的协议首部露出上层设备能够识别的首部，这个过程叫做<strong>解封装</strong>。能够执行二层封装、解封装的设备为二层设备，如二层交换机。能够执行三层封装、解封装的设备为三层设备，如路由器。三层交换机既能执行二层封装解封装，也能执行三层封装解封装，为三层设备。</p>
+<p>数据包在两个网络端点之间传输，可以有三种传送方式：<strong>单播、组播</strong>和<strong>广播</strong>。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d0108bd833a193969.jpg"></p>
+<p>单播方式中，发送源端明确知道目的端地址，直接使用该地址与接收者建立联系。组播方式中，发送源端将数据同时传递给一组目的地址，多个client组成接收者，接收者与源之间的路径由组播协议计算后得出。在广播方式中，发送源端不知道目的端地址，首先会发一个询问给在同一广播域的所有设备，真正的接收者收到该询问后会给源以单播的方式回一个答复，其他设备则不理会该询问。当网络很大的时候，广播包会占用一定的带宽，造成带宽的浪费，一个二层的本地网络就是广播域。</p>
+<h3 id="最原始的网络虚拟化VLAN的技术实现"><a href="#最原始的网络虚拟化VLAN的技术实现" class="headerlink" title="最原始的网络虚拟化VLAN的技术实现"></a><strong>最原始的网络虚拟化VLAN的技术实现</strong></h3><p>在实际的物理二层网络中，经常会有广播包的发送需求，如果不加限制，除了会带来安全性和带宽占用浪费等问题外，最重要的是会产生<strong>广播风暴</strong>。所谓广播风暴，是指由于网络拓扑的设计和连接问题，或者其他原因导致广播包在网段内大量复制传播，导致网络性能下降甚至瘫痪。如下图所示，为了解决这个问题，传统网络使用虚拟局域网技术VLAN来实现。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d0108ef17a0911208.jpg"></p>
+<p><strong>VLAN的主要作用就是隔离广播域</strong>，不同的VLAN之间不能直接通信。VLAN技术把用户划分成多个逻辑的网络（group），组内可以通信，组间不允许直接通信，二层转发的单播、组播、广播报文只能在组内转发。同时，VLAN技术可以很容易地实现组成员的添加或删除。也就是说，VLAN技术提供了一种管理手段，控制终端之间的互通。如上图，组1和组2的PC无法相互直接通信。</p>
+<p>如下图所示，<strong>VLAN是通过对传统的数据帧添加tag字段来实现的。</strong>添加VLAN信息的方法最常用的就是IEEE802.1Q协议，还有一种是ISL协议。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d0109114f93969773.jpg"></p>
+<p>IEEE802.1Q所附加的VLAN识别信息，位于数据帧中“<strong>发送源MAC地址</strong>”与“<strong>类别域（Type Field）</strong>”之间。具体内容为2字节的<strong>TPID</strong>和2字节的<strong>TCI</strong>，共计4字节。 在数据帧中添加了4字节的内容，那么CRC值自然也会有所变化。这时数据帧上的CRC是插入TPID、TCI后，对包括它们在内的整个数据帧重新计算后所得的值。<strong>TPID (Tag Protocol Identifier）</strong>是IEEE定义的新的类型，表明这是一个加了802.1Q标签的帧，<strong>TPID包含了一个固定的值0x8100</strong>。<strong>TCI (Tag Control Information）</strong>包括<strong>用户优先级(User Priority，3bit)、规范格式指示器(Canonical Format Indicator，1bit)</strong>和 <strong>VLAN ID（12bit）</strong>。VLAN ID 是对 VLAN 的识别字段，支持4096(2的12次方) VLAN 的识别。在4096个可能的VID 中，VID＝0 用于识别帧优先级。 4095(FFF)作为预留值，所以 VLAN 配置的最大可能值为4094，有效的VLAN ID范围一般为1-4094。</p>
+<p>在VLAN中有以下两种链路类型：<strong>普通链路</strong>和<strong>中继链路</strong>。<strong>普通链路（Access Link）是用于连接用户主机和交换机的链路</strong>。通常情况下，主机并不需要知道自己属于哪个VLAN，主机硬件通常也不能识别带有VLAN标记的帧。因此，主机发送和接收的帧都是untagged帧。<strong>中继链路（Trunk Link）是用于交换机间的互连或交换机与路由器之间的连接</strong>。中继链路可以承载多个不同VLAN数据，数据帧在中继链路传输时，中继链路的两端设备需要能够识别数据帧属于哪个VLAN，所以在中继链路上传输的帧都是Tagged帧。</p>
+<p>在VLAN网络中，针对上述两种不同的链路类型使用场景，分别有三种网络端口类型去适配：<strong>Access端口、Trunk端口</strong>和<strong>Hybrid端口</strong>。<strong>Access接口</strong>是交换机上用来连接用户主机的接口，它只能接入【普通链路。仅仅允许唯一的VLAN ID通过本接口，这个VLAN ID与接口的缺省VLAN ID相同，Access接口发往对端设备的以太网帧永远是不带标签的untagged帧。<strong>Trunk接口</strong>是交换机上用来和其他交换机连接的接口，它只能连接中继链路，允许多个VLAN的帧（带Tag标记）通过。<strong>Hybrid接口</strong>是交换机上既可以连接用户主机，又可以连接其他交换机的接口。Hybrid接口既可以连接普通链路又可以连接中继链路。Hybrid接口允许多个VLAN的帧通过，并可以在出接口方向将某些VLAN帧的Tag剥掉。<strong>而在虚拟交换机只用Access接口和Trunk接口。</strong></p>
+<p><strong>各类型接口对数据帧的处理方式汇总如下：</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>接口类型</strong></th>
+<th><strong>对接收不带Tag的报文处理</strong></th>
+<th><strong>对接收带Tag的报文处理</strong></th>
+<th><strong>发送帧处理过程</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Access接口</strong></td>
+<td>接收该报文，并打上缺省的VLAN ID。</td>
+<td>当VLAN ID与缺省VLAN ID相同时，接收该报文。当VLAN ID与缺省VLAN ID不同时，丢弃该报文。</td>
+<td>先剥离帧的PVID Tag，然后再发送。</td>
+</tr>
+<tr>
+<td><strong>Trunk接口</strong></td>
+<td>打上缺省的VLAN ID，当缺省VLAN ID在允许通过的VLAN ID列表里时，接收该报文。打上缺省的VLAN ID，当缺省VLAN ID不在允许通过的VLAN ID列表里时，丢弃该报文。</td>
+<td>当VLAN ID在接口允许通过的VLAN ID列表里时，接收该报文。当VLAN ID不在接口允许通过的VLAN ID列表里时，丢弃该报文。</td>
+<td>当VLAN ID与缺省VLAN ID相同，且是该接口允许通过的VLAN ID时，去掉Tag，发送该报文。当VLAN ID与缺省VLAN ID不同，且是该接口允许通过的VLAN ID时，保持原有Tag，发送该报文。</td>
+</tr>
+<tr>
+<td><strong>Hybrid接口</strong></td>
+<td>打上缺省的VLAN ID，当缺省VLAN ID在允许通过的VLAN ID列表里时，接收该报文。打上缺省的VLAN ID，当缺省VLAN ID不在允许通过的VLAN ID列表里时，丢弃该报文。</td>
+<td>当VLAN ID在接口允许通过的VLAN ID列表里时，接收该报文。当VLAN ID不在接口允许通过的VLAN ID列表里时，丢弃该报文。</td>
+<td>当VLAN ID是该接口允许通过的VLAN ID时，发送该报文。可以通过命令设置发送时是否携带Tag。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="爱折腾的VPN"><a href="#爱折腾的VPN" class="headerlink" title="爱折腾的VPN"></a>爱折腾的VPN</h3><p>VPN技术起初是为了解决明文数据在网络上传输带来的安全隐患而产生的。TCP/IP协议族中的很多协议都采用明文传输，如telnet、ftp、tftp等。一些黑客可能为了获取非法利益，通过诸如窃听、伪装等攻击方式截获明文数据，使企业或者个人蒙受损失。VPN技术可以从某种程度上解决该问题。例如，它可以对公网上传输的数据进行加密，即使黑客通过窃听工具截获到数据，也无法了解数据信息的含义。VPN也可以实现数据传输双方的身份验证，避免黑客伪装成网络中的合法用户攻击网络资源。</p>
+<p><strong>VPN（virtual private network，虚拟专用网）就是在两个网络实体之间建立的一种受保护的连接，这两个实体可以通过点到点的链路直接相连</strong>，但通常情况下他们会相隔较远的距离。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d0109693d58327773.jpg"></p>
+<p>VPN技术通过使用加密技术防止数据被窃听，并且通过数据完整性校验防止数据被破坏、篡改。通过认证机制实现通信双方身份确认，来防止通信数据被截获和回放。此外，在VPN中还可以定义何种流量需要被保护，数据被保护的机制以及数据封的过程。</p>
+<p>VPN技术有两种基本的连接模式：<strong>隧道模式</strong>和<strong>传输模式</strong>。这两种模式实际上定义了两台实体设备之间传输数据时所采用的不同的封装过程。<strong>传输模式一个最显著的特点就是：在整个VPN的传输过程中，IP包头并没有被封装进去，这就意味着从源端到目的端数据始终使用原有的IP地址进行通信</strong>。如下图所示，而传输的实际数据载荷被封装在VPN报文中。对于大多数VPN传输而言，VPN的报文封装过程就是数据的加密过程，因此，攻击者截获数据后将无法破解数据内容，但却可以清晰地知道通信双方的地址信息。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d010980d1cb013743.jpg"></p>
+<p>由于传输模式封装结构相对简单（每个数据报文较隧道模式封装结构节省20字节），因此传输效率较高，多用于通信双方在同一个局域网内的情况。</p>
+<p>隧道模式中，如下图所示VPN设备将整个三层数据报文封装在VPN数据内，再为封装后的数据报文添加新的IP包头。由于新IP包头中封装的是VPN设备的ip地址信息，所以当攻击者截获数据后，不但无法了解实际载荷数据的内容，同时也无法知道实际通信双方的地址信息。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d01099ec713e51544.jpg"></p>
+<p>由于隧道模式的VPN在安全性和灵活性方面具有很大的优势，在企业环境中应用十分广泛，总部和分公司跨广域网的通信、移动用户在公网访问公司内部资源等很多情况，都会应用隧道模式的VPN对数据传输进行加密。</p>
+<p>通常情况下，VPN的类型分为<strong>站点到站点VPN</strong>和<strong>远程访问VPN</strong>。站点到站点VPN就是通过隧道模式在VPN网关之间保护两个或者更多的站点之间的流量，站点间的流量通常是指局域网之间（L2L）的通信流量。L2L的VPN多用于总部与分公司、分公司之间在公网上传输重要业务数据。比如：我们各地市VOBB固网用户接入方式就是这种类型，对于两个地市的固网终端用户来说，在VPN网关（针对现网来说可以看成一个统一的逻辑设备，包含现网中的SR、BRAS、FW、CE、SBC等设备)中间的网络是透明的，就好像通过一台路由器连接的两个局域网。各地市终端设备通过VPN连接访问核心网或其他地市接入网络资源。数据包封装的地址都是各地市规划的内网地址（一般为私有地址），而VPN网关对数据包进行的再次封装过程，客户端是全然不知的。</p>
+<p>远程访问VPN通常用于单用户设备与VPN网关之间通信连接，单用户设备一般为一台pc或小型办公网络等。VPN连接的一端为PC，可能会让很多人误解远程访问VPN使用传输模式，但因为该种VPN往往也是从公网传输关键数据，而且单一用户更容易成为黑客的攻击对象，所以远程访问VPN对于安全性要求较高，更适用于隧道模式，如下图所示。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d0109b8111ea32153.jpg"></p>
+<p>要想实现隧道模式的通信，就需要给远程客户端分配两个IP地址：一个是它自己的NIC地址，另一个是内网地址。也就是说远程客户端在VPN建立过程中同时充当VPN网关（使用NIC地址）和终端用户（使用内网地址）。比如：我们使用VPN代理软件从公网访问4A服务器，或者私有云远程用户从公网访问私有云资源都是这种方式。</p>
+<h2 id="数据中心对网络的总体要求"><a href="#数据中心对网络的总体要求" class="headerlink" title="数据中心对网络的总体要求"></a><strong>数据中心对网络的总体要求</strong></h2><p>随着电信云NFV的全面部署，以及后续5G网络架构的演进，利用虚拟化和面向服务的技术，能够为智能设备提供广泛的业务服务。虚拟化是IaaS服务的基础，计算虚拟化将一台物理服务器”分裂“成多个虚拟服务器来调度，虚拟服务器作为业务的承载者和物理服务器一样，有着网络通信需求。也就是说不仅虚拟服务器之间需要网络通信，虚拟服务器与外部也存在网络通信的需求。在这种模式下，计算和存储能力向网络中心迁移，形成云化数据中心，大量的计算请求、信息请求依托网络向数据中心发送，网络成为数据中心的和用户的纽带。因此，如下图所示，云化数据中心对网络存在<strong>业务发展弹性、虚拟感知技术、网络资源整合和共享、高效运维和能耗管理</strong>等4大要求。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d0109d8eaa4462134.jpg"></p>
+<h3 id="业务发展弹性需求"><a href="#业务发展弹性需求" class="headerlink" title="业务发展弹性需求"></a><strong>业务发展弹性需求</strong></h3><p>在信息化蓬勃发展的今天，业务流量增长异常迅猛。为了应对这一切，数据中心不仅需要提升服务器性能和网卡接入带宽，也需要充分利用现有的IT资源。分布式计算和虚拟化应运而生，流量模型随之从南北向流量为主向东西向流量为主转变。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d010a1496dca41543.jpg"></p>
+<p>从Gartner 的报告中可以看到服务器10GE TOR 接入从2011年开始迅速成为主流，所占份额不断扩大，必然会导致网络侧上行40GE/100GE互联大量应用。横向交互流量增大使网络模型从传统的三层模型向胖树架构演进，横向无阻塞和大缓存成为数据中心网络规划设计的基本需求。</p>
+<p>在这种计算、存储、网络整合的云数据中心内，对网络的要求<strong>由连接变为服务</strong>。因为，云计算本身就是一种服务，能按需、弹性提供，且可计量。网络资源被云计算整合在基础设施资源中，自然也是一种可按需、弹性提供，且可计量的服务。</p>
+<h3 id="虚拟感知技术需求"><a href="#虚拟感知技术需求" class="headerlink" title="虚拟感知技术需求"></a><strong>虚拟感知技术需求</strong></h3><p>服务器虚拟化使得可以高效利用IT资源，降低企业运营成本成为可能。服务器内多虚拟机之间的交互流量，传统网络设备无法感知，也不能进行流量监控和必要的策略控制。虚拟机的灵活部署和动态迁移需要网络接入侧做相应的调整，在迁移时保持业务不中断。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d010a439d87c85492.jpg"></p>
+<p>虚拟机的大量运用以及虚拟机交互流量的出现，使网络的前沿深入到服务器内部。虚拟拓扑发现，虚拟机策略下发，接入侧交换机网络配置和动态调整对传统网络模型和管理模式提出了很大的挑战。虚拟机迁移的物理范围不应过小，否则无法充分利用空闲的服务器资源。迁移后虚拟机的IP地址不变，以保持业务不中断。因此，迁移不能跨VLAN。综合以上两点，对数据中心网络提出了大二层的需求。</p>
+<h3 id="网络资源的整合与共享"><a href="#网络资源的整合与共享" class="headerlink" title="网络资源的整合与共享"></a><strong>网络资源的整合与共享</strong></h3><p>数据中心对网络可靠性和安全性的需求是最基本的需求。可靠性设计包括：链路冗余、关键设备冗余和重要业务模块冗余。安全性设计包括物理空间的安全控制及网络的安全控制。企业多业务系统安全隔离和冗余设计导致网络资源成本高昂，利用率低，运维复杂。 </p>
+<p><img src="https://i.loli.net/2019/06/12/5d010a64adca313019.jpg"></p>
+<p>在云计算时代，为了充分利用网络资源实现业务的灵活部署，需要将多业务网络纵向融合成一张物理网，通过网络设备的虚拟化实现业务隔离和冗余备份。对于多类型的网络可以横向融合，通过采用FCOE和DCB等技术降低管理复杂性以及部署扩展性的挑战。</p>
+<h3 id="高效的运维的电源管理"><a href="#高效的运维的电源管理" class="headerlink" title="高效的运维的电源管理"></a><strong>高效的运维的电源管理</strong></h3><p>数据中心内部存在网络设备和IT资源数量大，厂商多，运行配置复杂等问题。数据中心网络延伸到服务器内部，需要物理和虚拟网络拓扑完整展示，实现网络流量的精细化管理和监控，针对网络故障快速定位是对云计算时代数据中心运维的基本需求。 不断攀升的能耗成本，催高了数据中心的运营成本，绿色节能是云计算数据中心的必备条件。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d010a89b362689802.jpg"></p>
+<h2 id="数据中心层面的网络虚拟化"><a href="#数据中心层面的网络虚拟化" class="headerlink" title="数据中心层面的网络虚拟化"></a><strong>数据中心层面的网络虚拟化</strong></h2><p>随着云计算、大数据、物联网等技术的发展，传统的网络虚拟化技术，已经难以满足云时代下多租户的需求。例如：广泛被使用的VLAN技术，虽然可以在物理交换机上通过划分多个VLAN来隔离，并虚拟出多个逻辑网络，但是其设计和配置，通常基于固定的规划，以及网络和服务器的位置不会频繁变更为前提。而面对云化的数据中心，大量虚拟机的动态的生命周期变化，以及弹性漂移和伸缩的特点，对网络提出了更高的按需配置和随动的要求。也就说，在云化数据中心内，网络不仅仅提供连接，更是一种服务，一种像虚拟化的计算资源一样逻辑隔离，弹性且可计量的服务。</p>
+<h3 id="从计算虚拟化走向网络虚拟化"><a href="#从计算虚拟化走向网络虚拟化" class="headerlink" title="从计算虚拟化走向网络虚拟化"></a><strong>从计算虚拟化走向网络虚拟化</strong></h3><p><strong>网络虚拟化是指将网络的控制从网络硬件中脱离出来，交给虚拟化的网络层处理。这个虚拟化的网络层加载在整个物理网络之上，屏蔽掉底层的物理差异，在虚拟空间重建整个网络。</strong>如下图所示，就像计算虚拟化中将物理服务器整合抽象为计算资源池一样，物理网络也被泛化为网络资源池，通过控制面软件的集中调度，使得底层网络资源更加灵活。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d010aca0dde071037.jpg"></p>
+<p>逻辑网络资源池是一种逻辑资源的灵活管理抽象，是对底层物理网络的一种形象描述。每一个虚拟网络可以根据业务或部门进行灵活分配，各个虚拟网络之间逻辑隔离。因此，每个虚拟网络内的网络资源变更，不会影响其它虚拟网络。与服务器虚拟化类似，网络虚拟化可以在很短的时间（秒级）创建L2、L3到L7的网络服务，如交换，路由，防火墙和负载均衡等。虚拟网络独立于底层网络硬件，可以按照业务需求配置、修改、保存、删除，而无需重新配置底层物理硬件或拓扑。这种网络技术的革新为实现软件定义网络SDN和软件定义数据中心（SDDC）奠定了基础。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d010af5908e959720.jpg"></p>
+<p>云化数据中心内部的网络要同时解决<strong>多租户资源隔离</strong>和<strong>内外互通访问</strong>的需求。多租户环境中主要存在私有云场合，一个租户就是任何一个应用，租户内的安全、资源对外隔离且排他，因此需要有网络的隔离作为基础。同时，云化的数据中心不再局限四面墙之内，需要实现地理上相互隔离的故障转移性，位于虚拟网络内的应用需要访问外部网络环境，外部网络环境也需要访问虚拟网络内的资源。因此，虚拟网络也必须具备内外互通的开放性，通过利用隧道封装技术实现跨地理资源的迁移特性。</p>
+<p>如下所示，隧道封装技术是一种通过使用互联网络的基础设施在网络之间传递数据的方式，使用隧道传递的数据（或负载）可以是不同协议的数据帧或包。隧道协议将这些数据帧或包重新封装在新的包头中发送，新的包头提供路由信息，使封装的负载数据可以通过互联网络传递。被封装的数据包在隧道的两个端点之间通过公共互联网络进行路由，其所经过的逻辑路径就是隧道。一旦到达网络端点，数据将被解包并转发到最终的目的地。</p>
+<p><img src="https://i.loli.net/2019/06/12/5d010b1763a9e52967.jpg"></p>
+<p>网络虚拟化将网络的边缘从硬件交换机推到了服务器里面，将服务器和虚拟机的所有部署、管理的职能从原来的系统管理员+网络管理员的模式变成了纯系统管理员的模式，让服务器的业务部署变得简单，不再依赖于形态和功能各异的硬件交换机，一切归于软件控制，实现自动化部署。这就是网络虚拟化在数据中心中最大的价值所在，也是为什么大家明知服务器的性能远远比不上硬件交换机但还是使用网络虚拟化技术的根本原因。</p>
+<h3 id="数据中心网络虚拟化的层次"><a href="#数据中心网络虚拟化的层次" class="headerlink" title="数据中心网络虚拟化的层次"></a>数据中心网络虚拟化的层次</h3><p>随着越来越多的服务器被虚拟化，网络已经延伸到Hypervisor内部，网络通信的端点已经从以前的服务器变成了运行在服务器中的虚拟机，数据包从虚拟机的虚拟网卡流出，通过Hypervisor内部的虚拟交换机，在经过服务器的物理网卡流出到上联交换机。因此，<strong>虚拟化环境下的网络虚拟化需要解决端到端的问题。</strong>在整个过程中，虚拟交换机，网卡的I/O问题以及虚拟机的网络接入都是虚拟化的重点。如下图所示，每一个层面网络虚拟化的实现技术和方式均不同，我个人将其归纳为4个部分：<strong>服务器内部I/O虚拟化、服务器内部的虚拟接入、服务器与物理网络的连接、物理交换网络。</strong></p>
+<p><img src="https://i.loli.net/2019/06/12/5d010b3af1e6193765.jpg"></p>
+<p><strong>第一部分是服务器内部的IO虚拟化。</strong>多个虚拟机共享服务器中的物理网卡，需要一种机制既能保证I/O的效率，又要保证多个虚拟机对用物理网卡共享使用。I/O虚拟化的出现就是为了解决这类问题，详情可参见本站《计算虚拟化之I/O虚拟化》一文，这里不再赘述。</p>
+<p><strong>第二部分是服务器内部的虚拟接入识别。</strong>用于识别不同虚拟机的网络包。在传统的服务器虚拟化方案中，从虚拟机的虚拟网卡发出的数据包在经过服务器的物理网卡传送到外部网络的上联交换机后，虚拟机的标识信息被屏蔽掉了，上联交换机只能感知从某个服务器的物理网卡流出的所有流量而无法感知服务器内某个虚拟机的流量，这样就不能从传统网络设备层面来保证QoS和安全隔离。虚拟接入要解决的问题是要把虚拟机的网络流量纳入传统网络交换设备的管理之中，需要对虚拟机的流量做标识。</p>
+<p>在解决虚拟接入的问题时，思科和惠普分别提出了自己的解决方案。思科的是VN-Tag, 惠普的方案是VEPA(VirtualEthernet Port Aggregator)。为了制定下一代网络接入的话语权，思科和惠普这两个巨头在各自的方案上都毫不让步，纷纷将自己的方案提交为标准，分别为802.1Qbh和802.1Qbg。</p>
+<p><strong>第三部分是服务器到网络的连接。</strong>网络连接技术一直都在追求更高的带宽中发展，比如Infiniband和10Gb以太网。在传统的企业级数据中心IT构架中，服务器到存储网络和互联网络的连接是异构和分开的。存储网络用光纤，互联网用以太网线（ISCSI虽然能够在IP层上跑SCSI，但是性能与光纤比还是差的很远）。数据中心连接技术的发展趋势是用一种连接线将数据中心存储网络和互联网络聚合起来，使服务器可以灵活的配置网络端口，简化IT部署。以太网上的<strong>FCOE</strong>技术和**Infiniband技术本身都使这种趋势成为可能。</p>
+<p>Infiniband 技术产生于上个世纪末，是由Compaq、惠普、IBM、戴尔、英特尔、微软和Sun七家公司共同研究发展的高速先进的I/O标准。InfiniBand是一种长缆线的连接方式，具有高速、低延迟的传输特性。基于InfiniBand技术的网卡的单端口带宽可达20Gbps，为了发挥Infiniband设备的性能，需要一整套的软件栈来驱动和使用，这其中最著名的就是OFED（OpenFabrics Enterprise Distribution）,它基于Infiniband设备实现了RDMA（remote direct memoryaccess）。RDMA的最主要的特点就是零拷贝和旁路操作系统，数据直接在设备和应用程序内存之间传递，这种传递不需要CPU的干预和上下文切换。OFED还实现了一系列的其它软件栈：IPoIB（IP over Infiniband），SRP（SCSI RDMA Protocol）等，这就为Infiniband聚合存储网络和互联网络提供了基础。OFED由OpenFabrics联盟负责开发。</p>
+<p>FCOE的出现则为数据中心互联网络和存储网络的聚合提供了另一种可能。FCOE是将光纤信道直接映射到以太网线上，这样光纤信道就成了以太网线上除了互联网网络协议之外的另一种网络协议。FCOE能够很容易的和传统光纤网络上运行的软件和管理工具相整合，因而能够代替光纤连接存储网络。虽然出现的晚，但FCOE发展极其迅猛。与Infiniband技术需要采用全新的链路相比，企业更愿意升级已有的以太网。在两者性能接近的情况下，采用FCOE方案似乎性价比更高。</p>
+<p><strong>第四部分是网络交换。</strong>需要将物理网络和逻辑网络有效的分离，另外网络设备如交换机、路由器等需要具备1：N和N:1的虚拟化能力。在这一层面上要解决的问题则是要对现有的互联网络进行升级，使之满足新业务的需求，网络虚拟化则是这一变革的重要方向。在这一方向上目前有两种做法，一种是在原有的基础设施上添加新的协议来解决新的问题；另一种则完全推倒重来，希望设计出一种新的网络交换模型。</p>
+<p>当虚拟数据中心开始普及后，虚拟数据中心本身的一些特性引入了对网络新的需求。物理机的位置一般是相对固定的，虚拟化方案的一个很大的特性在于虚拟机可以迁移。当虚拟机的迁移发生在不同网络，不同数据中心之间时，对网络产生了新的要求，比如需要保证虚拟机的IP在迁移前后不发生改变，需要保证虚拟机内运行在第二层（链路层）的应用程序也在迁移后仍可以跨越网络和数据中心进行通信等等。在这方面，Cisco连续推出了OTV，LISP和VXLAN等一系列解决方案，也就是隧道封装技术。</p>
+<p><strong><em>以上就是云计算时代网络虚拟化的基本概述，不知你看明白没有，反正我是觉得我写明白了！！！</em></strong></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2019/06/12/网络虚拟化概述/" title="网络虚拟化概述">https://kkutysllb.cn/2019/06/12/网络虚拟化概述/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/电信云/" rel="tag"><i class="fa fa-tag"></i> 电信云</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/09/Linux原生的存储虚拟化软RAID和LVM/" rel="next" title="Linux原生的存储虚拟化软RAID和LVM">
+                <i class="fa fa-chevron-left"></i> Linux原生的存储虚拟化软RAID和LVM
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/14/正则表达式基础入门/" rel="prev" title="正则表达式基础入门">
+                正则表达式基础入门 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#传统二、三层网络中的虚拟化"><span class="nav-number">1.</span> <span class="nav-text">传统二、三层网络中的虚拟化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#网络的基础知识—OSI模型和TCP-IP模型"><span class="nav-number">1.1.</span> <span class="nav-text">网络的基础知识—OSI模型和TCP/IP模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#绕不开的二层和三层"><span class="nav-number">1.2.</span> <span class="nav-text">绕不开的二层和三层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最原始的网络虚拟化VLAN的技术实现"><span class="nav-number">1.3.</span> <span class="nav-text">最原始的网络虚拟化VLAN的技术实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#爱折腾的VPN"><span class="nav-number">1.4.</span> <span class="nav-text">爱折腾的VPN</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据中心对网络的总体要求"><span class="nav-number">2.</span> <span class="nav-text">数据中心对网络的总体要求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#业务发展弹性需求"><span class="nav-number">2.1.</span> <span class="nav-text">业务发展弹性需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟感知技术需求"><span class="nav-number">2.2.</span> <span class="nav-text">虚拟感知技术需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络资源的整合与共享"><span class="nav-number">2.3.</span> <span class="nav-text">网络资源的整合与共享</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高效的运维的电源管理"><span class="nav-number">2.4.</span> <span class="nav-text">高效的运维的电源管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据中心层面的网络虚拟化"><span class="nav-number">3.</span> <span class="nav-text">数据中心层面的网络虚拟化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#从计算虚拟化走向网络虚拟化"><span class="nav-number">3.1.</span> <span class="nav-text">从计算虚拟化走向网络虚拟化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据中心网络虚拟化的层次"><span class="nav-number">3.2.</span> <span class="nav-text">数据中心网络虚拟化的层次</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">932k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">14:07</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/06/12/网络虚拟化概述/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

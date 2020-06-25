@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="华为FusionStorage中的基础概念FusionStorage采用全分布式DHT架构，将所有元数据按规则分布在各存储节点，不存在跨节点的元数据访问，彻底避免了元数据瓶颈。该核心架构设计保证了FusionStorage系统相比分布式文件系统具备更大规模的线性扩展能力。">
+<meta name="keywords" content="电信云">
+<meta property="og:type" content="article">
+<meta property="og:title" content="华为分布式存储FusionStorage原理详解">
+<meta property="og:url" content="https://kkutysllb.cn/2019/06/07/华为分布式存储FusionStorage原理详解/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="华为FusionStorage中的基础概念FusionStorage采用全分布式DHT架构，将所有元数据按规则分布在各存储节点，不存在跨节点的元数据访问，彻底避免了元数据瓶颈。该核心架构设计保证了FusionStorage系统相比分布式文件系统具备更大规模的线性扩展能力。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf998494d5e771062.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99877a3e4e24277.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf9989fd248f84381.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf998fe60e0e62718.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf9992d3f1b431081.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99972273ce79632.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf9999da7c9d70499.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf999beef1c284728.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf999f73062d18561.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99a1ac589f26534.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99a60c14b049375.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99a8a5198479125.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99aa4c463820797.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/07/5cf99aca30dfa92476.jpg">
+<meta property="og:updated_time" content="2020-06-25T11:48:07.192Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="华为分布式存储FusionStorage原理详解">
+<meta name="twitter:description" content="华为FusionStorage中的基础概念FusionStorage采用全分布式DHT架构，将所有元数据按规则分布在各存储节点，不存在跨节点的元数据访问，彻底避免了元数据瓶颈。该核心架构设计保证了FusionStorage系统相比分布式文件系统具备更大规模的线性扩展能力。">
+<meta name="twitter:image" content="https://i.loli.net/2019/06/07/5cf998494d5e771062.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2019/06/07/华为分布式存储FusionStorage原理详解/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>华为分布式存储FusionStorage原理详解 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/06/07/华为分布式存储FusionStorage原理详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">华为分布式存储FusionStorage原理详解
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-07 06:46:10" itemprop="dateCreated datePublished" datetime="2019-06-07T06:46:10+08:00">2019-06-07</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-06-25 19:48:07" itemprop="dateModified" datetime="2020-06-25T19:48:07+08:00">2020-06-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV关键技术/" itemprop="url" rel="index"><span itemprop="name">NFV关键技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">8.1k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">7 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="华为FusionStorage中的基础概念"><a href="#华为FusionStorage中的基础概念" class="headerlink" title="华为FusionStorage中的基础概念"></a>华为FusionStorage中的基础概念</h2><p>FusionStorage采用全分布式DHT架构，将<strong>所有元数据按规则分布在各存储节点，不存在跨节点的元数据访问</strong>，彻底避免了元数据瓶颈。该核心架构设计保证了FusionStorage系统相比分布式文件系统具备更大规模的线性扩展能力。<a id="more"></a></p>
+<p><strong>所谓DHT架构，就是分布式哈希表，Distributed Hash Table</strong>。如下图所示，它是FusionStorage中指数据路由算法。</p>
+<p><img src="https://i.loli.net/2019/06/07/5cf998494d5e771062.jpg"></p>
+<p>DHT机制可以保证上层应用对数据的IO操作会均匀分布在不同服务器的不同硬盘上，不会出现局部的热点，实现全局复负载均衡。DHT采用的是开源对象存储swift中一致性哈希算法（详见OpenStack的swift介绍），每个存储节点负责存储一小部分数据，基于DHT实现整个系统的<strong>寻址</strong>和<strong>存储</strong>。</p>
+<p>上图中，<strong>Partition</strong>代表了一块数据分区，在DHT环上映射为固定Hash段代表的数据区Pn（n=1,2,3…)。<strong>Key-Value键值对</strong>表示底层磁盘上的数据组织索引，每个Value代表一个块存储空间。当我们要查找某一个数据的存放位置时，通过key值计算散列值（哈希值），根据计算的散列值找到DHT换上某一个Partition，然后根据Partition与disk的映射关系找到对应的磁盘，再通过Value值查找磁盘上的具体数据。具体如下所示</p>
+<p><img src="https://i.loli.net/2019/06/07/5cf99877a3e4e24277.jpg"></p>
+<p><strong>Volume</strong>代表应用卷，也就是虚拟机能看见并挂载的虚拟磁盘，它本质上代表了应用看到的一个LBA连续编址。而Volume的LBA连续编址就是上述用于数据查找的key值。</p>
+<p>在华为FusionStorage中还有一个基础概念就是<strong>资源池，它是由上述一组分区Partition构成的存储池。</strong>如下图所示，<strong>每个资源池对应一个DHT环。</strong></p>
+<p><img src="https://i.loli.net/2019/06/07/5cf9989fd248f84381.jpg"></p>
+<p>在上图中，由两个资源池，分别对应两个DHT环，左边三个硬盘对应DHT1的三个Partition分区（P1、P2和Px），右边三块硬盘对应DHT2的三个Partition分区（P1、P2和Py）。当虚拟机挂载上面的Volume1/2/3时，将对应的LBA散列后，计算的结果分别对用DHT1的P1/P2/Px；当虚拟机挂载上面的Volume10/11时，将对应的LBA散列后，计算的结果分别对应DHT2的P1/P2/Py。</p>
+<p>华为FusionStorage的资源池类似于SAN存储中的RAID组概念，但是<strong>与RAID相比，其优点是主要有三点：一是条带宽度大</strong>，最大支持96块盘（2份拷贝），提供超大存储空间，而且系统自动将每个卷的数据块打散存储在不同服务器的不同硬盘上，冷热不均的数据会均匀分布在不同的服务器上，不会出现集中的热点，<strong>避免高I/O应用导致热点瓶颈；二是具有动态热备功能</strong>，资源池内所有硬盘都可用作资源池的热备盘；<strong>三是结构简单</strong>，通过资源池和Volume二层结构，使服务器直接看到Volume，消除了中间的LUN逻辑存储，提升I/O读写性能。</p>
+<h2 id="FusionStorage的数据路由原理"><a href="#FusionStorage的数据路由原理" class="headerlink" title="FusionStorage的数据路由原理"></a>FusionStorage的数据路由原理</h2><p>如下所示，<strong>FusionStorage数据路由采取分层处理方式：1）VBS通过计算确定数据存放在哪个服务器的哪块硬盘上。2）OSD通过计算确定数据存放在硬盘的具体位置。</strong></p>
+<p><img src="https://i.loli.net/2019/06/07/5cf998fe60e0e62718.jpg"></p>
+<p><strong>Step1：</strong>系统初始化时，FusionStorage将哈希空间（0~2^32）划分为N等份，每一等份是1个分区（Partition），这N等份按照硬盘数量取整除并进行均分。例如：<strong>二副本场景下，系统N默认为3600</strong>，假设当前系统有36块硬盘，则每块硬盘承载100个分区。<strong>上述“分区-硬盘”的映射关系在系统初始化时会分配好，后续会随着系统中硬盘数量的变化会进行调整</strong>。该映射表所需要的空间很小，FusionStorage系统中的节点会在内存中保存该映射关系，用于进行快速路由。</p>
+<p><strong>Step2：</strong>FusionStorage<strong>会对每个LUN在逻辑上按照1MB大小进行切片</strong>，例如1GB的LUN则会被切成1024*1MB分片。当应用侧访问FusionStorage时候，在SCSI命令中会带上LUN ID和LBA ID以及读写的数据内容，OS转发该消息到本节点VBS模块，<strong>VBS根据LUN ID和LBA ID组成一个key，该key会包含LBA ID对1MB的取整计算信息</strong>。通过DHT Hash计算出一个整数(范围在0~2^32内)，并落在指定Partition中；根据内存中记录的“<strong>分区-硬盘</strong>”映射关系确定具体硬盘，VBS将IO操作转发到该硬盘所属的OSD模块。</p>
+<p><strong>Step3：</strong>每个OSD会管理一个硬盘，<strong>系统初始化时，OSD会按照1MB为单位对硬盘进行分片管理，并在硬盘的元数据管理区域记录每个1MB分片的分配信息</strong>。<strong>OSD接收到VBS发送的I/O操作后，根据key查找该数据在硬盘上的具体分片信息，获取数据后返回给VBS</strong>。从而完成整个数据路由过程。</p>
+<p>比如：应用需要访问LUN1+LBA1地址起始的4KB长度的数据，首先构造key=LUN1+LBA1/1M，对该key进行HASH计算得到哈希值，并对N取模，得到partition号，根据内存中记录的“分区-硬盘“映射表可得知数据归属的硬盘。</p>
+<p><strong>总结：</strong>VBS将操作系统的SCSI命令中的key提取出来（Key值的计算方式：Key=LUN ID+LBA ID/1MB），通过哈希运算，确定访问数据内容落到DHT环上的哪块Partition上，根据Partition和Disk的对应关系（系统初始化时形成），确定数据存放在那个服务器上的哪块盘上，再通过OSD通过计算确定数据存放在硬盘的具体位置并将获取的数据返回给VBS。</p>
+<h2 id="FusionStorage的内部组件功能和相互关系"><a href="#FusionStorage的内部组件功能和相互关系" class="headerlink" title="FusionStorage的内部组件功能和相互关系"></a>FusionStorage的内部组件功能和相互关系</h2><h3 id="FusionStorage-VBS模块及处理流程"><a href="#FusionStorage-VBS模块及处理流程" class="headerlink" title="FusionStorage VBS模块及处理流程"></a>FusionStorage VBS模块及处理流程</h3><p>VBS模块作为FusionStorage系统存储功能的接入侧，负责完成两大类业务：<strong>一是卷和快照的管理功能；二是I/O的接入和处理。</strong>VBS模块内部如下图所示，主要由：<strong>VBM、VBP、CLIENT、DATANET、SCSI协议控制（SCSI Initiator和SCSI Target）</strong>和<strong>心跳控制模块HeartBeat</strong>组成。</p>
+<p><img src="https://i.loli.net/2019/06/07/5cf9992d3f1b431081.jpg"></p>
+<p><strong>VBM模块是VBS中的控制管理模块，主要负责完成卷和快照的管理功能。</strong>比如：创建卷、挂载卷、卸载卷、查询卷、删除卷、创建快照、删除快照、基于快照创建卷等。</p>
+<p><strong>I/O数据流在VBS进程中需要经过三个模块的处理，分别为**</strong>SCSI<strong><strong>、</strong></strong>VBP<strong><strong>、</strong></strong>CLIENT<strong>**：</strong></p>
+<p><strong>Step1：</strong>SCSI启动器模块SCSI Initiator负责从内核（VSC.KO）中将I/O引入VBS进程，SCSI目标模块SCSI Target接收到的I/O数据包是<strong>标准SCSI协议格式的I/O请求</strong>，通过<strong>SCSI协议的四元组</strong>（host_id/channel_id/target_id/lun_id）和该I/O数据包在块设备上的偏移地址<strong>offset</strong>，<strong>读写的数据长度len共三个参数标识符，唯一标识一个I/O数据包</strong>，SCSI目标模块SCSI Target将收到的I/O信息交给VBP(Virtual Block Process)模块。</p>
+<p><strong>Step2：</strong>VBP内部将通用块格式的I/O数据包<strong>转换为FusionStorage内部Key-Value</strong>格式的I/O数据包下发给client，其中<strong>KEY的组成为</strong>：<strong>tree_id（4Byte）</strong>+<strong>block_no（4Byte）</strong>+ <strong>branch_id（2Byte）</strong>+<strong>snap_id（2Byte）</strong>，<strong>tree_id/branch_id/snap_id是FusionStorage内部对卷、快照的唯一标识</strong>；<strong>block_no是将卷按照1M的块划分，本次I/O落在哪一个1M块上的编号。（**</strong>block_no对1M取整后与tree_id/branch_id/snap_id求和就是key值，对1M取余后得到的余数就是offset<strong>**）</strong></p>
+<p><strong>Step3：</strong>I/O数据包请求到达client模块后，<strong>client根据KEY中的tree_id/branch_id进行hash计算</strong>，<strong>确定本次I/O发给哪一个OSD进程处理</strong>，确定后将I/O通过DATANET模块发给对应的OSD处理。</p>
+<p><strong>Step4：</strong>OSD完成I/O数据收取后在物理硬盘上执行真正的读写I/O操作，然后将操作结果逐层返回返回给内核VSC.KO模块。</p>
+<p><strong><em>备注：卷和快照的通用属性信息（如卷大小、卷名等）及卷和快照在DSware系统内部的一些私有属性（如用于定位卷和快照数据在系统中存储位置的tree_id/branch_id/snap_id）保存在DSware内部的一个私有逻辑卷中，该卷我们就称为元数据卷。</em></strong></p>
+<h3 id="FusionStorage-OSD模块及处理流程"><a href="#FusionStorage-OSD模块及处理流程" class="headerlink" title="FusionStorage OSD模块及处理流程"></a><strong>FusionStorage OSD模块及处理流程</strong></h3><p>FusionStorage存储池管理的每个物理磁盘对应一个OSD进程，OSD进程作为FusionStorage中读写磁盘I/O的执行进程，主要实现3大功能：一是磁盘的管理；二是I/O数据流的复制；三是I/O数据流的Cache处理。</p>
+<p><img src="https://i.loli.net/2019/06/07/5cf99972273ce79632.jpg"></p>
+<p>如上图所示，OSD进程是一种主备方式部署的进程，由MDC模块实时监控主备OSD进程的状态。当指定Partition所在的主OSD故障时，存储服务会实时自动切换到备OSD，保证了业务的连续性。OSD进程内部主要分为RSM、SNAP、CACHE、AIO和SMIO等子进程。各类子进程的作用的如下：</p>
+<ul>
+<li><strong>RSM：</strong>采用复制协议实现I/O数据流的复制。</li>
+<li><strong>SNAP：</strong>实现卷与快照的I/O功能、磁盘空间的管理。</li>
+<li><strong>CACHE：</strong>实现cache功能。</li>
+<li><strong>AIO：</strong>实现异步I/O数据流下发到底层SMIO模块，并且通过调用SMIO接口来监控介质故障。</li>
+<li><strong>SMIO：**</strong>下发I/O数据流到实际的物理介质、监控物理介质故障、获取磁盘信息。**</li>
+</ul>
+<p>每个OSD会管理一个硬盘，系统初始化时，OSD会按照1MB为单位对硬盘进行分片管理，并在硬盘的元数据管理区域记录每个1MB分片的分配信息。OSD接收到VBS发送的I/O数据流操作后，根据key查找该数据在硬盘上的具体分片信息，获取数据后返回给VBS，从而完成整个数据路由过程。</p>
+<p>对于写请求，OSD根据<strong>分区-主磁盘-备磁盘1-备磁盘2</strong>映射表，通知各个备磁盘的OSD进行写操作，主与备OSD进程都完成写后返回VBS。<strong>（在多副本场景下，备OSD数据由主OSD数据同步写入，避免调用VBS进程占用计算节点资源）</strong></p>
+<p><strong>在OSD内核部分还有有一个VDB子进程（上图中VDL，新版本已改为VDB），也就是Key-Value DB数据库。如下图所示：</strong></p>
+<p><img src="https://i.loli.net/2019/06/07/5cf9999da7c9d70499.jpg"></p>
+<p>磁盘的每一个1M空间都固定的分配给一个key，一定数量连续的key组成一个chunk。所谓的Chunk就是组成Partition的基本单位，一个Partition的存储空间由1个或多个Chunk构成。</p>
+<h3 id="FusionStorage-MDC模块功能"><a href="#FusionStorage-MDC模块功能" class="headerlink" title="FusionStorage MDC模块功能"></a><strong>FusionStorage MDC模块功能</strong></h3><p><strong>MDC（Metadata Controller）是一个高可靠集群，通过HA(High Availability)机制保证整个系统的高可用性和高可靠性，如下图所示：</strong></p>
+<p><img src="https://i.loli.net/2019/06/07/5cf999beef1c284728.jpg"></p>
+<p>MDC模块部署在Zookeeper集群中，通过ZooKeeper集群，实现元数据（如Topology、OSD View、Partition View、VBS View等）的可靠保存。ZK盘的配置原则为：在32台服务器内，默认选择3个独立的ZK盘（HDD）；在32~128台服务器内，默认选择5个独立ZK盘（HDD）；在多于128台服务器，默认选择5个独立ZK盘（SSD）；当使用SSD卡做主存时，选择3个ZK分区。</p>
+<p>### </p>
+<p>MDC模块内部通过Partition分配算法，实现数据多份副本的RAID可靠性。并且，作为FusionStorage的主控制模块，通过与OSD、VBS间的消息交互，实现对OSD、VBS节点的状态变化的获取与通知。</p>
+<p>通过与Agent间的消息交互，MDC实现系统的扩减容、状态查询、维护等。通过心跳检测机制，MDC模块完成对OSD、VBS的状态监控。</p>
+<p><strong>Zookeeper(简称ZK) 分布式服务框架主要用来解决分布式应用中经常遇到的，如：统一命名服务、状态同步服务、集群管理、分布式应用配置项的管理等，ZK主要工作包括三项：</strong></p>
+<ul>
+<li><strong>MDC主备管理：</strong> MDC采用一主两备部署模式；在MDC模块进程启动后，各个MDC进程会向ZK注册选主，先注册的为主MDC；运行过程中，ZK记录MDC主备信息，并通过心跳机制监控MDC主备健康状况，一旦主MDC进程故障，会触发MDC重新选主。</li>
+<li><strong>数据存储：</strong>在MDC运行过程中，会生成各种控制视图信息，包括目标视图、中间视图、IO视图信息等，<strong>这些信息的保存、更新、查询、删除操作都通过ZK提供的接口实现</strong>。</li>
+<li><strong>数据同步：</strong>数据更新到主ZK，由主ZK自动同步到两个备ZK，保证主备ZK数据实时同步。一旦ZK发生主备切换，业务不受影响</li>
+</ul>
+<p><strong>在FusionStorage典型部署中，为了保证系统可靠性，ZK采用一主两备部署模式，每个管理节点部署一个ZK进程，ZK主备管理由ZK内部机制保证。</strong></p>
+<p><strong>MDC进程与ZK进程采用C/S模式，通过TCP协议通信</strong>；MDC可以连接到任意一个ZK服务器，并且维持TCP连接。如果这个TCP连接中断，MDC能够顺利切换到另一个ZK服务器。</p>
+<h3 id="FusionStorage中的视图"><a href="#FusionStorage中的视图" class="headerlink" title="FusionStorage中的视图"></a>FusionStorage中的视图</h3><p>如下图所示，FusionStorage中有三种视图最为关键，分别是：<strong>OSD View、IO View和Partition View。</strong></p>
+<p><img src="https://i.loli.net/2019/06/07/5cf999f73062d18561.jpg"></p>
+<p><strong>其中，OSD View</strong>主要记录OSD进程的ID和状态；而<strong>IO View</strong>中记录了主Partition分区ID和对应的OSD节点之间的映射关系；<strong>Partition View</strong>中记录主备Partition与OSD的对应关系。<strong>IO View是Partition View的子集。</strong></p>
+<p><strong>MDC通过心跳感知OSD的状态，</strong>OSD每秒上报给MDC特定的消息（比如：OSD容量等），当MDC连续在特定的时间内（比如：当前系统为5s）没有接收到OSD的心跳信息，则MDC认为该OSD已经出故障（<strong>比如：OSD进程消失或OSD跟MDC间网络中断等</strong>），MDC则会发送消息告知该OSD需要退出，MDC更新系统的OSD视图信息，并给每台OSD发送视图变更通知，OSD根据新收到的视图，来决定后续的操作对象。</p>
+<p><strong>多副本复制取决于MDC的视图</strong>；两副本情况下，当client发送一个写请求到达该OSD的时候，<strong>该OSD将根据Partition视图的信息，将该写请求复制一份到该Partition的备OSD</strong>。多副本情况下，则会复制发送多个写请求到多个备OSD上。</p>
+<h3 id="FusionStorage-主要模块交互关系"><a href="#FusionStorage-主要模块交互关系" class="headerlink" title="FusionStorage 主要模块交互关系"></a>FusionStorage 主要模块交互关系</h3><p><img src="https://i.loli.net/2019/06/07/5cf99a1ac589f26534.jpg"></p>
+<p><strong>Step1：**</strong>系统启动时，MDC与ZK互动决定主MDC**。主MDC与其它MDC相互监控心跳，主MDC决定某MDC故障后接替者。其它MDC发现主MDC故障又与ZK互动升任主MDC。</p>
+<p><strong>Step2：**</strong>OSD启动时向主MDC查询归属MDC,向归属MDC报告状态，归属MDC把状态变化发送给VBS。<strong>当归属MDC故障，主MDC指定一个MDC接管，</strong>最多两个池归属同一个MDC。**</p>
+<p><strong>Step3：**</strong>VBS启动时查询主MDC，向主MDC注册（主MDC维护了一个活动VBS的列表，主MDC同步VBS列表到其它MDC，以便MDC能将OSD的状态变化通知到VBS），向MDC确认自己是否为leader<strong>；</strong>VBS从主MDC获取IO View<strong>，</strong>主VBS向OSD获取元数据，其它VBS向主VBS获取元数据**。</p>
+<p>FusionStorage系统中会存在多个VBS进程，如果多个VBS同时操作元数据卷，会引起数据被写坏等问题。<strong>为避免该问题，FusionStorage系统对VBS引入了主备机制，只有主VBS可操作元数据卷，所有的备VBS不允许操作元数据卷</strong>，<strong>一套FusionStorage系统中只存在一个主VBS</strong>；VBS的主备角色由MDC进程确定，所有VBS通过和MDC间的心跳机制保证系统中不会出现双主的情况。</p>
+<p><strong>只有主VBS能够操作元数据，所以备VBS收到的卷和快照管理类命令需要转发到主VBS处理，对于挂载、卸载等流程，主VBS完成元数据的操作后，还需要将命令转到目标VBS实现卷的挂载、卸载等操作。</strong></p>
+<h2 id="FusionStorage的I-O读写流程"><a href="#FusionStorage的I-O读写流程" class="headerlink" title="FusionStorage的I/O读写流程"></a><strong>FusionStorage的I/O读写流程</strong></h2><h3 id="FusionStorage-Cache读机制"><a href="#FusionStorage-Cache读机制" class="headerlink" title="FusionStorage Cache读机制"></a><strong>FusionStorage Cache读机制</strong></h3><p>FusionStorage的<strong>读缓存采用分层机制</strong>，第一层为内存cache，内存cache采用LRU机制缓存数据。第二层为SSD cache，SSD cache采用热点读机制，系统会统计每个读取的数据，并统计热点访问子，当达到阈值时，系统会自动缓存数据到SSD中，同时会将长时间未被访问的数据移出SSD。FusionStorage预读机制，统计读数据的相关性，读取某块数据时自动将相关性高的块读出并缓存到SSD中。</p>
+<p><img src="https://i.loli.net/2019/06/07/5cf99a60c14b049375.jpg"></p>
+<p><strong>如上图所示，OSD收到VBS发送的读I/O操作的步骤处理：</strong></p>
+<p><strong>Step 1：</strong>从<strong>“内存读cache”</strong>中查找是否存在所需I/O数据，存在则直接返回，并调整该I/O数据到“<strong>读cache”LRU队首</strong>，否则执行Step 2；</p>
+<p><strong>Step 2：</strong>从<strong>“SSD的读cache”</strong>中查找是否存在所需I/O数据，存在则直接返回，并增加该I/O数据的热点访问因子，否则执行Step 3；</p>
+<p><strong>Step 3：</strong>从<strong>“SSD的写cache”</strong>中查找是否存在所需I/O数据，存在则直接返回，并增加该I/O数据的热点访问因子；如果热点访问因子达到阈值，则会被缓存在<strong>“SSD的读cache”</strong>中。如果不存在，执行Step 4；</p>
+<p><strong>Step 4：</strong>从硬盘中查找到所需I/O数据并返回，同时增加该I/O数据的热点访问因子，如果热点访问因子达到阈值，则会被缓存在<strong>“SSD的读cache”</strong>中；</p>
+<p><strong>读修复：</strong>在读数据失败时，系统会判断错误类型，如果是磁盘扇区读取错误，系统会自动从其他节点保存的副本读取数据，然后重新写入该副本数据到硬盘扇区错误的节点，从而保证数据副本总数不减少和副本间的数据一致性。</p>
+<h3 id="FusionStorage-Cache写机制"><a href="#FusionStorage-Cache写机制" class="headerlink" title="FusionStorage Cache写机制"></a>FusionStorage Cache写机制</h3><p>OSD在收到VBS发送的写I/O操作时，会将写I/O缓存在SSD cache后完成本节点写操作。OSD会周期性地将缓存在SSD cache中的写I/O数据批量写入到硬盘，写Cache有一个水位值，未到刷盘周期超过设定水位值也会将Cache中数据写入到硬盘中。</p>
+<p><img src="https://i.loli.net/2019/06/07/5cf99a8a5198479125.jpg"></p>
+<p><strong>FusionStorage支持将服务器部分内存用作读缓存，NVDIMM和SSD用作写缓存。并且支持大块直通，按缺省配置大于256KB的块直接落盘不写Cache，这个配置可以人为修改。</strong></p>
+<h3 id="FusionStorage-读I-O流程"><a href="#FusionStorage-读I-O流程" class="headerlink" title="FusionStorage 读I/O流程"></a><strong>FusionStorage 读I/O流程</strong></h3><p><img src="https://i.loli.net/2019/06/07/5cf99aa4c463820797.jpg"></p>
+<p><strong>Step1：</strong>APP下发读IO请求到OS，OS转发该IO请求到本服务器的VBS模块；VBS根据读I/O信息中的LUN和LBA信息，通过数据路由机制确定数据所在的Primary OSD；如果此时Primary OSD故障，VBS会选择secondary OSD读取所需数据。</p>
+<p><strong>Step2：</strong>Primary OSD接收到读I/O请求后，按照Cache机制中的“<strong>Read cache机制</strong>”获取到读I/O所需数据，并返回读I/O成功给VBS。</p>
+<h3 id="FusionStorage-写I-O流程"><a href="#FusionStorage-写I-O流程" class="headerlink" title="FusionStorage 写I/O流程"></a><strong>FusionStorage 写I/O流程</strong></h3><p><img src="https://i.loli.net/2019/06/07/5cf99aca30dfa92476.jpg"></p>
+<p><strong>Step1：</strong>APP下发写I/O请求到OS，OS转发该I/O请求到本服务器的VBS模块；VBS根据写I/O信息中的LUN和LBA信息，通过数据路由机制确定数据所在的Primary OSD。</p>
+<p><strong>Step2：</strong>Primary OSD接收到写I/O请求后，同时以同步方式写入到本服务器SSD cache以及数据副本所在其他服务器的secondary OSD，secondary OSD也会同步写入本服务器SSD cache。Primary OSD接收到两个都写成功后，返回写I/O成功给VBS；同时，SSD cache中的数据会异步刷入到硬盘。</p>
+<p><strong>Step3：</strong>VBS返回写I/O成功，如果是3副本场景，primary OSD会同时同步写I/O操作到secondary OSD和third OSD。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2019/06/07/华为分布式存储FusionStorage原理详解/" title="华为分布式存储FusionStorage原理详解">https://kkutysllb.cn/2019/06/07/华为分布式存储FusionStorage原理详解/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/电信云/" rel="tag"><i class="fa fa-tag"></i> 电信云</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/03/华为分布式存储FusionStorage概述/" rel="next" title="华为分布式存储FusionStorage概述">
+                <i class="fa fa-chevron-left"></i> 华为分布式存储FusionStorage概述
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/07/2G-5G网络架构的演进/" rel="prev" title="2G~5G网络架构的演进">
+                2G~5G网络架构的演进 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#华为FusionStorage中的基础概念"><span class="nav-number">1.</span> <span class="nav-text">华为FusionStorage中的基础概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FusionStorage的数据路由原理"><span class="nav-number">2.</span> <span class="nav-text">FusionStorage的数据路由原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FusionStorage的内部组件功能和相互关系"><span class="nav-number">3.</span> <span class="nav-text">FusionStorage的内部组件功能和相互关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-VBS模块及处理流程"><span class="nav-number">3.1.</span> <span class="nav-text">FusionStorage VBS模块及处理流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-OSD模块及处理流程"><span class="nav-number">3.2.</span> <span class="nav-text">FusionStorage OSD模块及处理流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-MDC模块功能"><span class="nav-number">3.3.</span> <span class="nav-text">FusionStorage MDC模块功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage中的视图"><span class="nav-number">3.4.</span> <span class="nav-text">FusionStorage中的视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-主要模块交互关系"><span class="nav-number">3.5.</span> <span class="nav-text">FusionStorage 主要模块交互关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FusionStorage的I-O读写流程"><span class="nav-number">4.</span> <span class="nav-text">FusionStorage的I/O读写流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-Cache读机制"><span class="nav-number">4.1.</span> <span class="nav-text">FusionStorage Cache读机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-Cache写机制"><span class="nav-number">4.2.</span> <span class="nav-text">FusionStorage Cache写机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-读I-O流程"><span class="nav-number">4.3.</span> <span class="nav-text">FusionStorage 读I/O流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FusionStorage-写I-O流程"><span class="nav-number">4.4.</span> <span class="nav-text">FusionStorage 写I/O流程</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">932k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">14:07</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/06/07/华为分布式存储FusionStorage原理详解/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

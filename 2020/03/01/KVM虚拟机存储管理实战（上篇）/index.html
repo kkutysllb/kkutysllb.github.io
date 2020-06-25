@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="我们上一篇介绍了KVM虚拟机的全生命周期管理实战，如果与OpenStack的实操对应，正好与nova服务的实操相符。在云计算体系中，运维管理主要涉及计算nova、存储cinder和网络neutron三部分。因此，本篇文章我们主要介绍KVM的存储管理实战。KVM的存储选项有多种，包括虚拟磁盘文件、基于文件系统的存储和基于设备的存储。同样，也有对应的virsh管理命令。">
+<meta name="keywords" content="Hypervisor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KVM虚拟机存储管理实战（上篇）">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/01/KVM虚拟机存储管理实战（上篇）/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="我们上一篇介绍了KVM虚拟机的全生命周期管理实战，如果与OpenStack的实操对应，正好与nova服务的实操相符。在云计算体系中，运维管理主要涉及计算nova、存储cinder和网络neutron三部分。因此，本篇文章我们主要介绍KVM的存储管理实战。KVM的存储选项有多种，包括虚拟磁盘文件、基于文件系统的存储和基于设备的存储。同样，也有对应的virsh管理命令。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4966c14195aa594402fd3.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4968a14195aa594404098.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4969f14195aa594404bcf.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef496b414195aa59440579e.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef496c614195aa5944061e5.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef496d614195aa594406a65.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef496e514195aa59440722f.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef496f514195aa594407a24.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4970514195aa594408250.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4971314195aa5944089cb.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4972314195aa5944091c1.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4973214195aa594409abe.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4974114195aa59440a2a8.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4975614195aa59440add4.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4976614195aa59440b6ad.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4977514195aa59440bee0.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4978414195aa59440c7d5.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4979214195aa59440cef2.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef497a214195aa59440dae5.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef497b714195aa59440e5e0.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef497cf14195aa59440f1e9.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef497de14195aa59440fa6c.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef497f214195aa594410510.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4980114195aa594410d5f.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4981114195aa5944116da.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4982514195aa594412275.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4983a14195aa594412e8b.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4984c14195aa594413aa3.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4985d14195aa594414374.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4986b14195aa594414c12.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4987a14195aa59441556a.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4988814195aa594415d96.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4989814195aa59441661b.jpg">
+<meta property="og:updated_time" content="2020-06-25T12:29:22.067Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KVM虚拟机存储管理实战（上篇）">
+<meta name="twitter:description" content="我们上一篇介绍了KVM虚拟机的全生命周期管理实战，如果与OpenStack的实操对应，正好与nova服务的实操相符。在云计算体系中，运维管理主要涉及计算nova、存储cinder和网络neutron三部分。因此，本篇文章我们主要介绍KVM的存储管理实战。KVM的存储选项有多种，包括虚拟磁盘文件、基于文件系统的存储和基于设备的存储。同样，也有对应的virsh管理命令。">
+<meta name="twitter:image" content="https://pic.imgdb.cn/item/5ef4966c14195aa594402fd3.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/01/KVM虚拟机存储管理实战（上篇）/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>KVM虚拟机存储管理实战（上篇） | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/01/KVM虚拟机存储管理实战（上篇）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">KVM虚拟机存储管理实战（上篇）
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-01 19:17:55" itemprop="dateCreated datePublished" datetime="2020-03-01T19:17:55+08:00">2020-03-01</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-06-25 20:29:22" itemprop="dateModified" datetime="2020-06-25T20:29:22+08:00">2020-06-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">8.2k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">7 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>我们上一篇介绍了KVM虚拟机的全生命周期管理实战，如果与OpenStack的实操对应，正好与nova服务的实操相符。在云计算体系中，运维管理主要涉及计算nova、存储cinder和网络neutron三部分。因此，本篇文章我们主要介绍KVM的存储管理实战。KVM的存储选项有多种，包括虚拟磁盘文件、基于文件系统的存储和基于设备的存储。同样，也有对应的virsh管理命令。<a id="more"></a></p>
+<h2 id="KVM的存储选项和常用管理命令"><a href="#KVM的存储选项和常用管理命令" class="headerlink" title="KVM的存储选项和常用管理命令"></a><strong>KVM的存储选项和常用管理命令</strong></h2><p>为实现KVM存储管理，可以使用LVM逻辑卷和创建存储池。储存池Storage Pool 是宿主机上可以看到的一片存储空间，可以是多种型。而逻辑卷Volume 是在 存储池Storage Pool 中划分出的一块空间，宿主机将 Volume 分配给虚拟机，Volume 在虚拟机中看到的就是一块硬盘。</p>
+<h3 id="虚拟磁盘文件"><a href="#虚拟磁盘文件" class="headerlink" title="虚拟磁盘文件"></a><strong>虚拟磁盘文件</strong></h3><p>当系统创建KVM虚拟机的时候，默认使用虚拟磁盘文件作为后端存储。安装后，虚拟机认为在使用真实的磁盘，但实际上看到的是用于模拟硬盘的虚拟磁盘文件。就是因为加了一层额外的文件系统层，所以系统的I/O读写性能会降低，但是基于文件系统的虚拟磁盘可以用于其他虚拟机，且具备快照、链接克隆、弹性扩缩容等特性，方便虚拟机的迁移。因此，可以说是各有利弊，根据实际使用场景来选择。</p>
+<h3 id="基于文件系统的KVM存储"><a href="#基于文件系统的KVM存储" class="headerlink" title="基于文件系统的KVM存储"></a><strong>基于文件系统的KVM存储</strong></h3><p>在安装KVM宿主机时，<strong>可选文件系统为dir（directory）或fs（formatted block storage）</strong>作为初始KVM存储格式。默认为dir，通过指定本地文件系统中的一个目录用于创建磁盘镜像文件。而fs选项可以允许指定某个格式化文件系统的分区，把它作为专用的磁盘镜像文件存储。<strong>两种KVM存储选项之间最主要的区别在于：fs文件系统不需要挂载到某个特定的目录。</strong>两种选项所指定的文件系统，都可以是本地文件系统或位于SAN上某个物理宿主机上的网络文件系统。后者具备数据共享的优势，可以很轻易地实现多个主机同时访问。</p>
+<p><strong>还有一种基于文件的磁盘存储方式是netfs</strong>，可以指定一个网络文件系统的名称，如NFS，用这种方式作为KVM存储与SAN类似，可以访问到位于其它服务器上的虚拟磁盘，同时也可以多台宿主机共享访问磁盘文件。</p>
+<p>但是，所有的这些基于文件系统的KVM存储方式都有一个缺点：<strong>文件系统固有缺陷。</strong>因为虚拟机的磁盘文件不能直接读取或写入KVM存储设备，而是写入宿主机OS之上的文件系统。这也就意味着在访问和写入文件时中间增加了额外一层，因此会降低性能。所以，如果只是单纯要求性能好，就需要考虑考虑基于设备的存储。</p>
+<h3 id="基于设备的KVM存储"><a href="#基于设备的KVM存储" class="headerlink" title="基于设备的KVM存储"></a><strong>基于设备的KVM存储</strong></h3><p>另外一种KVM存储的方式就是使用基于设备的方式。<strong>共支持四种不同的物理存储：磁盘、iSCSI、SCSI和lvm逻辑盘。</strong>磁盘方式指直接读写硬盘设备。iSCSI和SCSI方式可选，取决于通过SCSI或iSCSI地址与磁盘设备连接。这种KVM存储方式的<strong>优势在于磁盘的名称固定</strong>，不依赖宿主机OS搜索到磁盘设备的顺序。但是，这种连接磁盘的方式也有<strong>缺点：灵活性不足</strong>。虚拟磁盘的大小很难改变，而且这种连接方式的KVM存储不支持快照。</p>
+<p><strong>如果要提升基于设备的KVM存储灵活性，可以使用LVM。</strong>LVM的优势在于可以使用快照，但是快照并不是KVM虚拟化的特性，而是LVM自带的特性。</p>
+<p>LVM可以把所有存储放到一个卷组里，该卷组是物理磁盘设备的一个抽象，所以如果超出可用磁盘空间最大值，还可以向卷组中添加新的设备，增加的空间在逻辑卷中直接可以使用。使用LVM使得磁盘空间分配更加灵活，而且增加和删除存储也更为容易。LVM除了在单机场景下使用外，还可以在多机场景下使用。在多宿主机环境中，可以在SAN上创建逻辑卷，且如果使用Cluster LVM（集群LVM），可以很容易的配置成多个主机同时访问某个逻辑卷。详见本站Linux常用运维工具分类中LVM逻辑卷一文。</p>
+<p>virsh也可以对节点上的存储池和存储卷进行管理。virsh常用于存储池和存储卷的管理命令如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>命令</strong></th>
+<th><strong>功能描述</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pool-list</td>
+<td>显示libvirt管理的存储池</td>
+</tr>
+<tr>
+<td>pool-define &lt;pool.xml&gt;</td>
+<td>根据xml文件定义一个存储池</td>
+</tr>
+<tr>
+<td>pool-define-as <pool-name>&lt;–type\</pool-name></td>
+<td>target&gt;</td>
+<td>定义一个存储池，指定pool名，并指定pool类型和存储路径</td>
+</tr>
+<tr>
+<td>pool-build <pool-name></pool-name></td>
+<td>构建一个存储池</td>
+</tr>
+<tr>
+<td>pool-start <pool-name></pool-name></td>
+<td>激活一个存储池</td>
+</tr>
+<tr>
+<td>pool-autostart <pool-name></pool-name></td>
+<td>设置存储池开机自动运行</td>
+</tr>
+<tr>
+<td>pool-info<pool-name></pool-name></td>
+<td>根据一个存储池名称查询其基本信息</td>
+</tr>
+<tr>
+<td>pool-uuid<pool-name></pool-name></td>
+<td>根据存储池名称查询其uuid信息</td>
+</tr>
+<tr>
+<td>pool-create&lt;pool.xml&gt;</td>
+<td>根据xml配置文件信息创建一个存储池</td>
+</tr>
+<tr>
+<td>pool-edit<pool-name or uuid></pool-name></td>
+<td>编辑一个存储池的xml配置文件</td>
+</tr>
+<tr>
+<td>pool-destroy<pool-name or uuid></pool-name></td>
+<td>关闭一个存储池</td>
+</tr>
+<tr>
+<td>pool-delete<pool-name or uuid></pool-name></td>
+<td>删除一个存储池，不可恢复</td>
+</tr>
+<tr>
+<td>vol-list<pool-name or uuid></pool-name></td>
+<td>查询一个存储池中的存储卷的列表</td>
+</tr>
+<tr>
+<td>vol-name<vol-key-or-path></vol-key-or-path></td>
+<td>查询一个存储卷的名称</td>
+</tr>
+<tr>
+<td>vol-path –pool<pool><vol-name or key></vol-name></pool></td>
+<td>查询一个存储卷的路径</td>
+</tr>
+<tr>
+<td>vol-create&lt;vol.xml&gt;</td>
+<td>根据xml配置创建一个存储卷</td>
+</tr>
+<tr>
+<td>vol-create-as &lt;–pool\</td>
+<td>name\</td>
+<td>capacity\</td>
+<td>allocation\</td>
+<td>format&gt;</td>
+<td>创建一个卷，指定归属pool，卷名、预分配大小、占用大小、磁盘格式</td>
+</tr>
+<tr>
+<td>vol-clone<vol-name-path><name></name></vol-name-path></td>
+<td>克隆一个存储卷</td>
+</tr>
+<tr>
+<td>vol-delete<vol-name-or-key-or-path></vol-name-or-key-or-path></td>
+<td>删除一个存储卷</td>
+</tr>
+<tr>
+<td>vol-pool <vol-name or vol-path></vol-name></td>
+<td>根据存储卷名或路径查询归属存储池信息</td>
+</tr>
+</tbody>
+</table>
+<p>与全生命周期管理一样，可以通过<strong>virsh help|egrep ‘(pool*|vol*)’</strong>查看全量存储管理命令。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4966c14195aa594402fd3.jpg" alt></p>
+<h2 id="KVM虚拟机的存储管理实战"><a href="#KVM虚拟机的存储管理实战" class="headerlink" title="KVM虚拟机的存储管理实战"></a><strong>KVM虚拟机的存储管理实战</strong></h2><h3 id="存储池和存储卷的信息查询"><a href="#存储池和存储卷的信息查询" class="headerlink" title="存储池和存储卷的信息查询"></a><strong>存储池和存储卷的信息查询</strong></h3><p>有了上面的命令知识储备，我们<strong>通过pool-list命令首先看下当前宿主机（192.168.101.251）上存储池信息。</strong>如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4968a14195aa594404098.jpg" alt></p>
+<p>上图中表示当前宿主机上有两个KVM虚拟机存储池，一个是网络文件系统NFS的存储池，名称为nfsdir，另一个是本地文件系统存储池，名称为root。其实，这两个存储池是在我们前面创建虚拟机通过disk选项制定虚拟机系统盘时，默认创建的。我们可以<strong>通过pool-info命令查看对应存储池的详细信息。</strong>如下：</p>
+<p><strong>1）nfsdir存储池信息</strong></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4969f14195aa594404bcf.jpg" alt></p>
+<p><strong>2）root存储池信息</strong></p>
+<p><img src="https://pic.imgdb.cn/item/5ef496b414195aa59440579e.jpg" alt></p>
+<p><strong>这里需要明确一个概念，上图中的存储池的总空间大小并不是创建的存储池空间大小，而是存储池所在的磁盘分区的大小，由于我们前面在创建虚拟机时指定的虚拟机系统盘文件都在系统根分区下创建（/root and /mydata/nfsdir/），所以这里的存储池总大小为根分区的大小。这一点可以通过查看根分区大小来确认。</strong>如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef496c614195aa5944061e5.jpg" alt></p>
+<p>掌握了存储池信息查看后，我们可以通<strong>过vol-list命令查看该存储池下有哪些存储卷</strong>。如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef496d614195aa594406a65.jpg" alt></p>
+<p>上图中表示nfsdir存储池下有一个存储卷cto67s.img，它位于/mydata/nfsdir目录下。接下来，我们还可以<strong>通过vol-info命令查看该存储卷的详细信息。</strong>如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef496e514195aa59440722f.jpg" alt></p>
+<p>如上图，在查看存储卷的详细信息时，需要通过–pool选项制定该存储卷对应的存储池名称。上图中表示cto67s.img存储卷的类型为file，总大小为2.28GB。</p>
+<h3 id="存储池和存储卷的增、删、改实战"><a href="#存储池和存储卷的增、删、改实战" class="headerlink" title="存储池和存储卷的增、删、改实战"></a><strong>存储池和存储卷的增、删、改实战</strong></h3><p>上面查看存储池和存储卷的命令只能浏览大致的一些信息，其实，我们还可以通过<strong>命令pool-deumpxml查看具体的存储卷xml配置详细信息。</strong>如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef496f514195aa594407a24.jpg" alt></p>
+<p>上图中显示的存储池nfsdir的xml配置信息，从配置信息中我们可以知道存储池nfsdir的类型type、name、uuid、空间的大小、路径path、权限、归属的用户和用户组等信息。同理，我们如果<strong>想查看某个存储卷的xml配置信息，可以使用vol-dumpxml命令实现</strong>。如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4970514195aa594408250.jpg" alt></p>
+<p>在上图中，我们不仅知道存储卷的类型type、name、key、空间大小、路径、磁盘格式、文件权限，归属用户&amp;用户组，还知道该存储卷的访问时间，修改时间和状态改变时间。</p>
+<p>有了上面的知识储备后，我们就可以通过xml文件创建一个存储池和一个存储卷。我们首先创建一个存储池POOLB，xml配置内容如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4971314195aa5944089cb.jpg" alt></p>
+<p>如上图，我们只需要定义要创建的存储池类型、名称、路径、权限和归属用户及用户组等信息，其他如uuid、空间大小等信息会在存储池创建后，系统自动生成。由于我们定义的存储池类型为dir目录类型，因此实际上空间大小等信息就是存储池目录所在的磁盘分区大小信息。</p>
+<p>有了上面存储池的xml配置文件后，就可以<strong>通过pool-create命令来创建一个存储池poolB了</strong>。需要注意，<strong>由于我们定义的存储池类型为dir目录类型，所以需要提前在xml文件指定的路径下创建目标目录，否则会提示创建存储池失败。</strong>如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4972314195aa5944091c1.jpg" alt></p>
+<p>在/mydata目录下创建poolB子目录后，结果如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4973214195aa594409abe.jpg" alt></p>
+<p>上图中，我们完成存储池创建后，在该存储池中创建一个卷data01.img。同理，我们还是<strong>通过xml文件来创建，首先创建卷的xml配置文件data01.xml</strong>。如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4974114195aa59440a2a8.jpg" alt></p>
+<p>然后，我们通过<strong>命令vol-cretae命令来创建卷data01.img</strong>。如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4975614195aa59440add4.jpg" alt></p>
+<p>完成存储池和卷的创建验证后，我们现在来验证删除存储池和卷。既然我们创建的时候，先创建存储池，再创建卷。那么，删除的时候自然是反着来，是不是就是先删除卷再删除存储池。如果不删除存储池中的卷就直接删除存储池行不行？答案是可以的。。。所以，<strong>我们既可以先通过vol-delete命令删除卷，然后通过pool-destroy命令删除池。也可以直接通过pool-destroy命令删除池。</strong>如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4976614195aa59440b6ad.jpg" alt></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4977514195aa59440bee0.jpg" alt></p>
+<p>在删除池时还有一个pool-delete命令，这个命令请慎用。因为一旦通过它删除池就无法恢复。所以，我们一般使用pool-destroy命令来销毁一个池，一旦需要时还可以通过pool-start命令恢复。即使真的不需要这个池，也可以通过find+rm命令来删除。</p>
+<p>大家可能发现了，通过上面的方式创建的存储池是不能自动开始的。其实，KVM的virsh命令还有另一种方式来创建存储池和存储卷。就是<strong>通过pool-define-as命令先定义一个存储池，然后通过pool-build命令来构建一个存储池，再通过pool-start命令激活存储池，最后通过pool-autostart命令设置该存储池开机自动运行。</strong>如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4978414195aa59440c7d5.jpg" alt></p>
+<p>其实，通过xml配置文件也能通过这种方式创建。如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4979214195aa59440cef2.jpg" alt></p>
+<p>完成上面pool的创建后，我们也可以<strong>通过vol-create-as命令来创建一个卷。</strong>如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef497a214195aa59440dae5.jpg" alt></p>
+<p>如上图，通过制定归属pool，卷名、预分配大小、占用大小和磁盘格式，通过vol-create-as命令完成一个卷的创建。</p>
+<p>删除卷和池的方式与上面类似，这里就不再举例了。存储池和卷的其他命令大家可以参考virsh help的信息自行研究。接下来，我们来看一个经常使用qemu-img命令，也就是KVM存储磁盘管理命令。</p>
+<h2 id="qemu-img命令实战"><a href="#qemu-img命令实战" class="headerlink" title="qemu-img命令实战"></a><strong>qemu-img命令实战</strong></h2><p>镜像算不算存储？在我初学OpenStack时，因为镜像管理服务是glance，存储管理服务是cinder和swift，所以当初单纯以为的镜像不算存储。后来通过深入了解和研究，发现其实镜像也是一种存储，可以把它简单理解为“<strong>虚拟机的元数据</strong>”，既然是元数据，当然是存储。</p>
+<p>我们都知道，在创建KVM虚拟机时，首先需要通过qemu-img命令去创建一个虚拟系统盘。这个qemu-img命令就是是QEMU的磁盘镜像管理工具，在完成qemu-kvm源码编译或rpm包安装后就会默认编译好qemu-img这个二进制文件。qemu-img也是QEMU/KVM使用过程中一个比较重要的工具，我们下来就对其常用用法总结验证下。</p>
+<p>qemu-img支持非常多种的文件格式，可以通过“qemu-img-h”查看其命令帮助得到，它支持20多种格式：file，quorum，blkverify，luks，dmg，sheepdog，parallels，nbd，vpc，bochs，blkdebug，qcow2，vvfat，qed，host_cdrom，cloop，vmdk，host_device，qcow，vdi，null-aio，blkreplay，null-co，raw等。</p>
+<p><strong>qemu-img工具的命令行基本用法为：qemu-img command[command options]</strong>，也就是说qemu-img工具通过后面命令和命令选项实现各种磁盘镜像管理功能。它支持的命令分为如下几种：</p>
+<h3 id="检查镜像磁盘的数据一致性check-f-fmt-filename"><a href="#检查镜像磁盘的数据一致性check-f-fmt-filename" class="headerlink" title="检查镜像磁盘的数据一致性check[-f fmt]filename"></a><strong>检查镜像磁盘的数据一致性check[-f fmt]filename</strong></h3><p><strong>该命令用于对磁盘镜像文件进行一致性检查，查找镜像文件中的错误</strong>，目前，仅支持对<strong>“qcow2”、”qed”、”vdi”格式文件的检查</strong>。如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef497b714195aa59440e5e0.jpg" alt></p>
+<p>如上图，提示该磁盘镜像没有错误，并且其中显示了该镜像磁盘在物理盘的I/O偏移地址等存储信息。在上面的命令中，我们使用<strong>-f参数指定镜像磁盘的格式</strong>为qcow2，它和qed都是QEMU支持的磁盘镜像格式，qed是qcow2的增强磁盘文件格式，避免了qcow2格式的一些缺点，也提高了性能，不过目前还不够成熟。而另一种磁盘镜像格式vdi（Virtual Disk Image）是Oracle的VirtualBox虚拟机中的存储格式。最后的<strong>filename参数是磁盘镜像文件的名称（包括路径）。</strong></p>
+<h3 id="创建磁盘镜像文件create-f-fmt-o-options-filename-size"><a href="#创建磁盘镜像文件create-f-fmt-o-options-filename-size" class="headerlink" title="创建磁盘镜像文件create[-f fmt][-o options]filename[size]"></a><strong>创建磁盘镜像文件create[-f fmt][-o options]filename[size]</strong></h3><p><strong>该命令用于创建一个格式为fmt，大小为size，文件名为filename（包含路径）的镜像文件。</strong>如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef497cf14195aa59440f1e9.jpg" alt></p>
+<p>上图中，我们创建了一个raw格式的，大小为20G的镜像磁盘metdata001.raw，位于/mydata/poolB目录下。其实，可以根据文件格式fmt的不同，添加一个或多个选项（options）来附加对该文件的各种功能设置，可以使用”-o?”来查询某种格式文件支持哪些选项，在”-o”选项中各个选项用逗号来分隔。如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef497de14195aa59440fa6c.jpg" alt></p>
+<p><img src="https://pic.imgdb.cn/item/5ef497f214195aa594410510.jpg" alt></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4980114195aa594410d5f.jpg" alt></p>
+<p>如上图，如果“-o”选项中使用了backing_file这个选项来指定其后端镜像文件，那么这个创建的镜像文件仅记录与后端镜像文件的差异部分。后端镜像文件不会被修改，除非在QEMU monitor中使用“commit”命令或者使用“qemu-img commit”命令去手动提交这些改动。这种情况下，size参数不是必须需的，其值默认为后端镜像文件的大小。另外，镜像文件的大小（size）也并非必须写在命令的最后，它也可以被写在“-o”选项中作为其中一个选项。而且，直接使用“-b backfile”参数也与“-o backing_file=backfile”效果等价。如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4981114195aa5944116da.jpg" alt></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4982514195aa594412275.jpg" alt></p>
+<h3 id="修改磁盘镜像文件格式convert-c-f-fmt-O-output-fmt-o-options-filename-filename2-…-output-filename"><a href="#修改磁盘镜像文件格式convert-c-f-fmt-O-output-fmt-o-options-filename-filename2-…-output-filename" class="headerlink" title="修改磁盘镜像文件格式convert[-c][-f fmt][-O output_fmt][-o options]filename[filename2[…]]output_filename"></a><strong>修改磁盘镜像文件格式convert[-c][-f fmt][-O output_fmt][-o options]filename[filename2[…]]output_filename</strong></h3><p><strong>该命令用于将fmt格式的filename镜像文件根据options选项转换为格式为output_fmt的名为output_filename的镜像文件。</strong>比如我们先创建test01的qcwo2格式磁盘文件，然后将其转换为raw格式文件。<strong>如下：</strong></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4983a14195aa594412e8b.jpg" alt></p>
+<p>如上图，将创建的qcow2格式的test01文件转换为raw格式的文件（蓝色框部分）。<strong>这个命令一般在做虚拟机模板镜像文件时经常用到，将非raw格式的磁盘文件转换为raw格式的后缀为.img的镜像模板文件，用于后续的批量虚拟机发放。同时，它支持不同格式的镜像文件之间的转换，比如可以用VMware用的vmdk格式文件转换为qcow2文件，这对从其他虚拟化方案转移到KVM上的用户非常有用。</strong>一般来说，输入文件格式fmt由qemu-img工具自动检测到，而输出文件格式output_fmt根据自己需要来指定，默认会被转换为与raw文件格式（且默认使用稀疏文件的方式存储以节省存储空间）。</p>
+<p>命令中，“-c”参数是对输出的镜像文件进行压缩，<strong>不过只有qcow2和qcow格式的镜像文件才支持压缩，而且这种压缩是只读的，如果压缩的扇区被重写，则会被重写为未压缩的数据。</strong>同样可以使用“-o options”来指定各种选项，如：后端镜像、文件大小、是否加密等等。<strong>使用backing_file选项来指定后端镜像，让生成的文件是copy-on-write的增量文件，这时必须让转换命令中指定的后端镜像与输入文件的后端镜像的内容是相同的，尽管它们各自后端镜像的目录、格式可能不同。</strong></p>
+<p><strong>如果使用qcow2、qcow、cow等作为输出文件格式来转换raw格式的镜像文件（非稀疏文件格式），镜像转换还可以起到将镜像文件转化为更小的镜像，</strong>因为它可以将空的扇区删除使之在生成的输出文件中并不存在。</p>
+<h3 id="查看镜像磁盘信息info-f-fmt-filename"><a href="#查看镜像磁盘信息info-f-fmt-filename" class="headerlink" title="查看镜像磁盘信息info [-f fmt] filename"></a><strong>查看镜像磁盘信息info [-f fmt] filename</strong></h3><p><strong>该命令用于显示镜像磁盘的详细信息。</strong>如果文件是使用稀疏文件的存储方式，也会显示出它的本来分配的大小以及实际已占用的磁盘空间大小。如果文件中存放有客户机快照，快照的信息也会被显示出来。比如，我们想查看cto67s.img这个镜像磁盘的信息。如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4984c14195aa594413aa3.jpg" alt></p>
+<p>这个命令比较简单，聪明如你，一学就会。。。。。。</p>
+<h3 id="镜像磁盘的快照命令集snapshot-l-a-snapshot-c-snapshot-d-snapshot-filename"><a href="#镜像磁盘的快照命令集snapshot-l-a-snapshot-c-snapshot-d-snapshot-filename" class="headerlink" title="镜像磁盘的快照命令集snapshot [-l | -a snapshot | -c snapshot | -d snapshot] filename"></a><strong>镜像磁盘的快照命令集snapshot [-l | -a snapshot | -c snapshot | -d snapshot] filename</strong></h3><p><strong>这是一组命令，“-l” 选项是查询并列出镜像文件中的所有快照，“-a snapshot”是让镜像文件使用某个快照，“-c snapshot”是创建一个快照，“-d”是删除一个快照。</strong>比如，我们现在看当下宿主机中有没有虚拟机磁盘cto74d.img的快照，可以使用-l选项查看，结果发现没有。如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4985d14195aa594414374.jpg" alt></p>
+<p>此时，我们使用-c选项对该磁盘创建一个快照，此时需要注意<strong>raw格式的磁盘文件不支持快照，因此对raw格式的磁盘创建快照时，需要将其转换为qcow2格式。同时，无论是使用快照还是创建快照都需要在关闭虚拟机的情况下进行，如果虚拟机时运行状态需要使用另一个命令virsh save vm。</strong>如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4986b14195aa594414c12.jpg" alt></p>
+<p>上述快照创建成功后，我们在当前目录下查看是否新的镜像文件产生。如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4987a14195aa59441556a.jpg" alt></p>
+<p>发现并没有新的镜像文件产生，说明通过qemu-img该步并不会创建一个新的镜像，但是磁盘镜像的快照确实存在，因为通过-l选项可以查看。这样，我们在需要的时候，就可以使用<strong>-a选项利用快照恢复磁盘</strong>。同样，如果我们不需要快照，可以通过<strong>-d选项将其删除</strong>。如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4988814195aa594415d96.jpg" alt></p>
+<h3 id="修改磁盘镜像文件的大小resize-filename-size"><a href="#修改磁盘镜像文件的大小resize-filename-size" class="headerlink" title="修改磁盘镜像文件的大小resize filename[+|-]size"></a><strong>修改磁盘镜像文件的大小resize filename[+|-]size</strong></h3><p><strong>该命令用于改变镜像文件的大小。</strong>“+”和“-”分别表示增加和减少镜像文件的大小，size也支持K、M、G、T等单位的使用。比如，我们现在将cto67s.img磁盘镜像大小增大5G。如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4989814195aa59441661b.jpg" alt></p>
+<p>在上图中，源磁盘大小为40G（红色框部分），通过resize命令增大5G后（黄色框部分），变成了45G（蓝色框部分）。<strong>需要注意的是：使用resize命令时需要小心（做好备份），如果失败，可能会导致镜像文件无法正常使用，而造成数据丢失。同时，缩小镜像的大小之前，需要在虚拟机中保证其中的文件系统有空余空间，否则数据会丢失。另外，qcow2格式文件不支持缩小镜像的操作。</strong></p>
+<p>至此，KVM虚拟机的存储管理实战上篇介绍完了。我们主要讲述了如何利用virsh命令行工具来管理KVM虚拟机的存储池以及存储卷等操作，以及介绍了qemu-img这个常用的命令几种用法等内容。这些内容是下一篇通过virsh命令完成快照链操作的基础，因此需要重点掌握。光说不练假把式，IT的东西就需要大量实践才能掌握，这也是IT领域没有科技创建只有最佳实践的原因。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2020/03/01/KVM虚拟机存储管理实战（上篇）/" title="KVM虚拟机存储管理实战（上篇）">https://kkutysllb.cn/2020/03/01/KVM虚拟机存储管理实战（上篇）/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hypervisor/" rel="tag"><i class="fa fa-tag"></i> Hypervisor</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/01/KVM虚拟机全生命周期管理实战/" rel="next" title="KVM虚拟机全生命周期管理实战">
+                <i class="fa fa-chevron-left"></i> KVM虚拟机全生命周期管理实战
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/01/KVM虚拟机存储管理实战（下篇）/" rel="prev" title="KVM虚拟机存储管理实战（下篇）">
+                KVM虚拟机存储管理实战（下篇） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#KVM的存储选项和常用管理命令"><span class="nav-number">1.</span> <span class="nav-text">KVM的存储选项和常用管理命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟磁盘文件"><span class="nav-number">1.1.</span> <span class="nav-text">虚拟磁盘文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于文件系统的KVM存储"><span class="nav-number">1.2.</span> <span class="nav-text">基于文件系统的KVM存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于设备的KVM存储"><span class="nav-number">1.3.</span> <span class="nav-text">基于设备的KVM存储</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVM虚拟机的存储管理实战"><span class="nav-number">2.</span> <span class="nav-text">KVM虚拟机的存储管理实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#存储池和存储卷的信息查询"><span class="nav-number">2.1.</span> <span class="nav-text">存储池和存储卷的信息查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#存储池和存储卷的增、删、改实战"><span class="nav-number">2.2.</span> <span class="nav-text">存储池和存储卷的增、删、改实战</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#qemu-img命令实战"><span class="nav-number">3.</span> <span class="nav-text">qemu-img命令实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#检查镜像磁盘的数据一致性check-f-fmt-filename"><span class="nav-number">3.1.</span> <span class="nav-text">检查镜像磁盘的数据一致性check[-f fmt]filename</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建磁盘镜像文件create-f-fmt-o-options-filename-size"><span class="nav-number">3.2.</span> <span class="nav-text">创建磁盘镜像文件create[-f fmt][-o options]filename[size]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改磁盘镜像文件格式convert-c-f-fmt-O-output-fmt-o-options-filename-filename2-…-output-filename"><span class="nav-number">3.3.</span> <span class="nav-text">修改磁盘镜像文件格式convert[-c][-f fmt][-O output_fmt][-o options]filename[filename2[…]]output_filename</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看镜像磁盘信息info-f-fmt-filename"><span class="nav-number">3.4.</span> <span class="nav-text">查看镜像磁盘信息info [-f fmt] filename</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#镜像磁盘的快照命令集snapshot-l-a-snapshot-c-snapshot-d-snapshot-filename"><span class="nav-number">3.5.</span> <span class="nav-text">镜像磁盘的快照命令集snapshot [-l | -a snapshot | -c snapshot | -d snapshot] filename</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改磁盘镜像文件的大小resize-filename-size"><span class="nav-number">3.6.</span> <span class="nav-text">修改磁盘镜像文件的大小resize filename[+|-]size</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">932k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">14:07</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2020/03/01/KVM虚拟机存储管理实战（上篇）/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

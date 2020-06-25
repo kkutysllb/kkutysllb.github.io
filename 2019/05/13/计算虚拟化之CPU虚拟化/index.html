@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="CPU虚拟化概述CPU虚拟化的一个很大挑战就是要确保虚拟机发出CPU指令的隔离性。即为了能让多个虚拟机同时在一个主机上安全运行，VMM必须将各个虚拟机隔离，以确保不会相互干扰，同时也不会影响VMM内核的正常运行。尤其要注意的是：由于特权指令会影响到整个物理机，必须要使得虚拟机发出的特权指令仅作用于自身，而不会对整个系统造成影响。例如：当虚拟机发出重启命令时，并不是要重启整个物理机，而仅仅是重启所在">
+<meta name="keywords" content="电信云">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算虚拟化之CPU虚拟化">
+<meta property="og:url" content="https://kkutysllb.cn/2019/05/13/计算虚拟化之CPU虚拟化/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="CPU虚拟化概述CPU虚拟化的一个很大挑战就是要确保虚拟机发出CPU指令的隔离性。即为了能让多个虚拟机同时在一个主机上安全运行，VMM必须将各个虚拟机隔离，以确保不会相互干扰，同时也不会影响VMM内核的正常运行。尤其要注意的是：由于特权指令会影响到整个物理机，必须要使得虚拟机发出的特权指令仅作用于自身，而不会对整个系统造成影响。例如：当虚拟机发出重启命令时，并不是要重启整个物理机，而仅仅是重启所在">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd936cddfae743184.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd936ea46c3c16573.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd93705adbec22425.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd937364346e91496.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd9375b03d0624108.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd9378993cc569946.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd937a72be2962794.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd937d8e362836269.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd93848b9b3e66204.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd9386a8ed5914424.jpg">
+<meta property="og:updated_time" content="2020-06-25T11:35:31.712Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算虚拟化之CPU虚拟化">
+<meta name="twitter:description" content="CPU虚拟化概述CPU虚拟化的一个很大挑战就是要确保虚拟机发出CPU指令的隔离性。即为了能让多个虚拟机同时在一个主机上安全运行，VMM必须将各个虚拟机隔离，以确保不会相互干扰，同时也不会影响VMM内核的正常运行。尤其要注意的是：由于特权指令会影响到整个物理机，必须要使得虚拟机发出的特权指令仅作用于自身，而不会对整个系统造成影响。例如：当虚拟机发出重启命令时，并不是要重启整个物理机，而仅仅是重启所在">
+<meta name="twitter:image" content="https://i.loli.net/2019/05/13/5cd936cddfae743184.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2019/05/13/计算虚拟化之CPU虚拟化/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>计算虚拟化之CPU虚拟化 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/05/13/计算虚拟化之CPU虚拟化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">计算虚拟化之CPU虚拟化
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-13 17:17:34" itemprop="dateCreated datePublished" datetime="2019-05-13T17:17:34+08:00">2019-05-13</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-06-25 19:35:31" itemprop="dateModified" datetime="2020-06-25T19:35:31+08:00">2020-06-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV关键技术/" itemprop="url" rel="index"><span itemprop="name">NFV关键技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">6.8k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">6 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="CPU虚拟化概述"><a href="#CPU虚拟化概述" class="headerlink" title="CPU虚拟化概述"></a>CPU虚拟化概述</h2><p><strong>CPU虚拟化的一个很大挑战就是要确保虚拟机发出CPU指令的隔离性。</strong>即为了能让多个虚拟机同时在一个主机上安全运行，VMM必须将各个虚拟机隔离，以确保不会相互干扰，同时也不会影响VMM内核的正常运行。尤其要注意的是：<strong>由于特权指令会影响到整个物理机，必须要使得虚拟机发出的特权指令仅作用于自身，而不会对整个系统造成影响。</strong>例如：当虚拟机发出重启命令时，并不是要重启整个物理机，而仅仅是重启所在的虚拟机。因此，VMM必须能够对来自于虚拟机操作硬件的特权指令 进行<strong>翻译</strong>并<strong>模拟</strong>，然后在对应的虚拟设备上执行，而不在整个物理机硬件设备上运行。<a id="more"></a></p>
+<h3 id="软件方式实现的CPU虚拟化—二进制翻译技术"><a href="#软件方式实现的CPU虚拟化—二进制翻译技术" class="headerlink" title="软件方式实现的CPU虚拟化—二进制翻译技术"></a>软件方式实现的CPU虚拟化—二进制翻译技术</h3><p>二进制翻译（Binary Translation，BT）是一 种软件虚拟化技术，由VMware在Workstations和ESX产品中最早实现。在最初没有硬件虚拟化时代，是全虚拟化的唯一途径。由于BT最开始是用来虚拟化32位平台的，因此，也称为BT32。</p>
+<p>二进制翻译，简单来说就是将那些不能直接执行的特权指令进行翻译后才能执行。具体来说，当虚拟机第一次要执行一段指令代码时，VMM会将要执行执行的代码段发给一个称为“Just-In-Time”的BT翻译器，它类似Java中的JVM虚拟机和Python的解释器，实时将代码翻译成机器指令。 翻译器将虚拟机的非特权指令翻译成可在该虚拟机上安全执行的指令子集， 而对于特权指令，则翻译为一组在虚拟机上可执行的特权指令，却不能运行在物理机上。这种机制实现了对虚拟机的<strong>隔离</strong>与<strong>封装</strong>，同时又使得x86指令的语义在虚拟机层次上得到保证。</p>
+<p>在执行效率上，为了降低翻译指令的开销，VMM会将执行过的二进制指令翻译结果进行缓存。如果虚拟机再次执行同样的指令序列，那么之前被缓存的翻译结果可以被复用。这样就可以均衡整个VM执行指令集的翻译开销。为了进一步降低由翻译指令导致的内存开销，VMM还会将虚拟机的内核态代码 翻译结果和用户态代码直接绑定在一起。由于用户态代码不会执行特权指令，因此这种方法可以保证 安全性。<strong>采用BT机制的VMM必须要在虚拟机的地址空间和VMM的地址空间进行严格的边界控制。</strong>VMware VMM利用x86CPU中的段检查功能（Segmentation）来确保这一点。但是由于现代操作系统 Windows、Linux以及Solaris等都很少使用段检查功能，因此VMM可以使用段保护机制来限制虚拟机和VMM之间的地址空间边界控制。在极少数情况下，当虚拟机的确使用了段保护机制并且引发了 VMM冲突，VMM可以转而使用软件的段检查机制来解决这一问题。</p>
+<h3 id="硬件方式实现的CPU虚拟化—VT-x和AMD-v"><a href="#硬件方式实现的CPU虚拟化—VT-x和AMD-v" class="headerlink" title="硬件方式实现的CPU虚拟化—VT-x和AMD-v"></a>硬件方式实现的CPU虚拟化—VT-x和AMD-v</h3><p>2003年，当AMD公司将x86从32位扩展到64位时，也将段检查功能从64位芯片上去除。同样的情况也 出现在Intel公司推出的64位芯片上。这一变化意味着基于BT的VMM无法在64位机上使用段保护机制保护VMM。尽管后来AMD公司为了支持虚拟化又恢复了64位芯片的段检查功能，并一直延续到目前所有的AMD 64位芯片，但是Intel公司却并没有简单恢复 ，而是研发了新的硬件虚拟化技术VT-x，AMD公司紧随后也推出了AMD-V技术来提供CPU指令集虚拟化的硬件支持。VT-x与AMD-V尽管在具体实现上有所不同，但其目的<strong>都是希望通过硬件的途径来限定某些特权指令操作的权限</strong>，而不是原先只能通过二进制动态翻译来解决这个问题。</p>
+<p>如前所述，VT-x提供了2个运行环境：<strong>根（Root）环境</strong>和<strong>非根（Non-root）环境</strong>。根环境专门为VMM准备，就像没有使用VT-x技术的x86服务器，只是多了对VT-x支持的几条指令。非根环境作为一个受限环境用来运行多个虚拟机。</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd936cddfae743184.jpg"></p>
+<p>根操作模式与非根操作模式都有相应的特权级0至特权级3。VMM运行在根模式的特权级0，Guest OS的内核运行在非根模式的特权级0，Guest OS的应用程序运行在非根模式的特权级3。运行环境之间相互转化，从根环境到非根环境叫VM Entry；从非根环境到根环境叫VM Exit。VT-x定义了VM Entry操作，使CPU由根模式切换到非根模式，运行客户机操作系统指令。若在非根模式执行了敏感指令或发生了中断等，会执行VM Exit操作，切换回根模式运行VMM。此外，VT-x还引入了一组新的命令：<strong>VMLanch/ VMResume用于调度Guest OS，发起VM Entry；</strong>VMRead/ VMWrite则用于配置VMCS。</p>
+<p><strong>根模式与非根模式之问的相互转换是通过VMX操作实现的。</strong>VMM可以通过VMX ON 和VMX OFF打开或关闭VT-x。如下图所示：</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd936ea46c3c16573.jpg"></p>
+<p><strong>VMX操作模式流程：</strong></p>
+<ol>
+<li>VMM执行VMX ON指令进入VMX操作模式。</li>
+<li>VMM可执行VMLAUNCH指令或VMRESUME指令产生VM Entry操作，进入到Guest OS，此时CPU处于非根模式。</li>
+<li>Guest OS执行特权指令等情况导致VM Exit的发生，此时将陷入VMM，CPU切换为根模式。VMM根据VM Exit的原因作出相应处理，处理完成后将转到第2步，继续运行GuestOS。</li>
+<li>VMM可决定是否退出VMX操作模式，通过执行VMXOFF指令来完成。</li>
+</ol>
+<p>这样，就无需二进制翻译和半虚拟化来处理这些指令。同时，VT-x与AMD-V都提供了存放虚拟机状态的模块，这样做的的目的就是将虚拟机上 下文切换状态进行缓存，降低频模式繁切换引入的大量开销。 还是以VT-x解决方案为例，VMX新定义了虚拟机控制结构VMCS(Virtual Machine ControlStructure)。VMCS是保存在内存中的数据结构，其包括虚拟CPU的相关寄存器的内容及相关的控制信息。CPU在发生VM Entry或VM Exit时，都会查询和更新VMCS。VMM也可通过指令来配置VMCS，达到对虚拟处理器的管理。VMCS架构图如下图所示：</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd93705adbec22425.jpg"></p>
+<p><strong>每个vCPU都需将VMCS与内存中的一块区域关联起来，此区域称为VMCS区域。</strong>对VMCS区域的操纵是通过VMCS指针来实现的，这个指针是一个指向VMCS的64位的地址值。VMCS区域是一个<strong>最大不超过4KB的内存块，且需4KB对齐</strong>。</p>
+<p>VMCS区域分为三个部分：<strong>偏移地址0起始存放VMCS版本标识，通过不同的版本号，CPU可维护不同的VMCS数据格式</strong>；<strong>偏移地址4起始存放VMX终止指示器，在VMX终止发生时，CPU会在此处存入终止的原因；偏移地址8起始存放VMCS数据区，这一部分控制VMX非根操作及VMX切换。</strong></p>
+<p>VMCS 的数据区包含了VMX配置信息：<strong>VMM在启动虚拟机前配置其哪些操作会触发VM Exit</strong>。VMExit 产生后，处理器把执行权交给VMM 以完成控制，然后VMM 通过指令触发VM Entry 返回原来的虚拟机或调度到另一个虚拟机。<strong>。</strong></p>
+<p>VMCS 的数据结构中，每个虚拟机一个，加上虚拟机的各种状态信息，共由3个部分组成：</p>
+<ul>
+<li><p><strong>Gueststate：</strong>该区域保存了虚拟机运行时的状态，在VM Entry 时由处理器装载；在VM Exit时由处理器保存。它又由两部分组成：</p>
+</li>
+<li><ul>
+<li><strong>Guest OS寄存器状态</strong>：包括控制寄存器、调试寄存器、段寄存器等各类寄存器的值。</li>
+<li><strong>Guest OS非寄存器状态</strong>：记录当前处理器所处状态，是活跃、停机（HLT）、关机（Shutdown）还是等待启动处理器间中断（Startup-IPI）。</li>
+</ul>
+</li>
+<li><p><strong>Hoststate：</strong>该区域保存了VMM 运行时的状态，主要是一些寄存器值，在VM Exit时由处理器装载。</p>
+</li>
+<li><p><strong>Control data：</strong>该区域包含虚拟机执行控制域、VM Exit控制域、VM Entry控制域、VM Exit信息域和VM Entry信息域。</p>
+</li>
+</ul>
+<p>有了VMCS结构后，对虚拟机的控制就是读写VMCS结构。比如：对vCPU设置中断，检查状态实际上都是在读写VMCS数据结构。</p>
+<h2 id="CPU虚拟化管理"><a href="#CPU虚拟化管理" class="headerlink" title="CPU虚拟化管理"></a>CPU虚拟化管理</h2><p>为了保证电信云/NFV中关键业务虚机运行的性能，就要求同一台物理机上的多个业务虚机实例所获取的资源既能满足其运行的需要，同时不互相产生干扰，这就需要对CPU资源进行精细化的调优和管理，也就是CPU QoS保障技术。在介绍CPU QoS保障技术之前，我们首先来看下CPU虚拟化的本质和超配技术。</p>
+<h3 id="CPU虚拟化的本质和超配"><a href="#CPU虚拟化的本质和超配" class="headerlink" title="CPU虚拟化的本质和超配"></a>CPU虚拟化的本质和超配</h3><p><img src="https://i.loli.net/2019/05/13/5cd937364346e91496.jpg"></p>
+<p>vCPU数量和物理CPU对应关系如上图所示，以华为RH2288H V3服务器使用2.6GHz主频CPU为例，单台服务器有2个物理CPU，每颗CPU有8核，又因为超线程技术，每个物理内核可以提供两个处理线程，因此每颗CPU有16线程，总vCPU数量为2<em>8</em>2=32个vCPU。总资源为32*2.6GHz=83.2GHz。</p>
+<p><strong>虚拟机vCPU数量不能超过单台物理服务器节点可用vCPU数量</strong>。但是，由于多个虚拟机间可以复用同一个物理CPU，因此单物理服务器节点上运行的虚拟机vCPU数量总和可以超过实际vCPU数量，这就叫做<strong>CPU超配技术</strong>。</p>
+<p>例如，以华为的FusionCompute为例，查询显示的服务器可用CPU的物理个数为2个，每个主频2.4GHz。</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd9375b03d0624108.jpg"></p>
+<p>这是特权虚机中占用CPU资源，占用了4个vCPU</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd9378993cc569946.jpg"></p>
+<p>在资源池性能页，可以查看每个物理CPU有6个核，并且开启了超线程，也就是每个物理CPU有12个核的资源，一台服务器总共vCPU数量为：12<em>2=24个。由于在华为的FUSinCompute中CPU的资源统计单位不是逻辑核数，而是频率HZ。因此，可用资源（12</em>2-4）*2.4=48GHz（为什么减4个？因为系统DM0占用了4个vCPU，因此单个客户机最多只能使用20个vCPU）。如下所示，当前已经使用了19.15GHZ，占用率为39.39%。</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd937a72be2962794.jpg"></p>
+<h3 id="CPU的QoS保障"><a href="#CPU的QoS保障" class="headerlink" title="CPU的QoS保障"></a>CPU的QoS保障</h3><p>了解了CPU虚拟化的本质和超配，前文提到的CPU的QoS保障技术主要指的是<strong>CPU上下限配额</strong>及<strong>优先级调度</strong>技术。</p>
+<p><strong>CPU的上下限配额主要指的是vCPU资源管理层面的解决方案。</strong>在CPU虚拟化后，根据虚拟化的资源—频率HZ，来对虚拟机进行分配时，为了保证虚拟机的正常运行，特地定义了三种vCPU资源的划分方式，这就是CPU资源的QoS管理。可以按照限额、份额和预留三种方式进行vCPU资源划分，三者之间是有一定依赖和互斥关系的，其定义具体如下：</p>
+<ul>
+<li><strong>CPU资源限额：</strong>控制虚拟机占用物理资源的上限。</li>
+<li><strong>CPU资源份额：</strong>CPU份额定义多个虚拟机在竞争物理CPU资源的时候按比例分配计算资源。</li>
+<li><strong>CPU资源预留：</strong>CPU预留定义了多个虚拟机竞争物理CPU资源的时候分配的最低计算资源。</li>
+</ul>
+<p>为了描述上述三种vCPU资源划分方式的关系，我们还是举例来说明。比如：单核CPU主频为3GHz，该资源供两个虚拟机VM1和VM2使用。</p>
+<p><strong>场景一：当</strong>VM1资源限额为2GHz，VM1可用的CPU资源最多为2GHz，也就意味着如果VM2没有设定CPU QoS，那么VM2最多只有1GHZ的vCPU可以使用。</p>
+<p><strong>场景二：当</strong>VM1和VM2的资源份额分别是1000和2000，在资源紧张场景下发生竞争时，VM1最多可获得1GHz的vCPU，VM2最多可获得2GHz的vCPU。</p>
+<p><strong>场景三：当给虚拟机</strong>VM1资源预留2GHz的vCPU资源，VM2资源预留为0，在资源紧张发生竞争时，VM1最少可获得2GHz的vCPU，最多可获得3GHZ的vCPU（在没有超配时），而VM2最多可获得1GHz（3-2=1）的vCPU资源，最少为0。</p>
+<p>上例只是简单描述了各种vCPU划分方式单独生效时的场景，也是在实际中较常用的场景。同时，在实际中还有一些场景是多种vCPU划分方式共同作用的，虽然不常用，但是却是实实在在有意义的。比如：以一个主频为2.8GHz的单核物理机为例，如果运行有三台单CPU的虚拟机A、B、C，份额分别为1000、2000、4000，预留值分别为700MHz、0MHz、0MHz。当三个虚拟机满CPU负载运行时，每台虚拟机应分配到资源计算如下：</p>
+<p>虚拟机A按照份额分配本应得400MHz，由于其预留值大于400MHz，最终计算能力按照预留值700MHz算，剩余的2100MHz资源按照2000:4000也就是1:2的比例在B和C之间进行划分，因此虚拟机B得到700MHz计算资源，虚拟机C得到1400MHz计算资源。</p>
+<p><strong>这里有一点需要注意：CPU的份额和预留只在多个虚拟机竞争物理CPU资源时发生，如果没有竞争发生，有需求的虚拟机可以独占物理CPU的资源。</strong></p>
+<p><strong>而CPU的优先级调度技术主要指的的服务器虚拟化后资源的重分配机制。</strong>从上述虚拟化的结构可以看出，虚拟机和VMM共同构成虚拟机系统vCPU资源的两极调度框架。如下图所示，是一个多核环境下的虚拟机vCPU资源的两级调度框架。</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd937d8e362836269.jpg"></p>
+<p><strong>虚拟机操作系统负责第2级调</strong>度，即<strong>线程或进程在vCPU上的调度</strong>（将核心线程映射到相应的vCPU 上）。VMM负责第1级调度，即<strong>vCPU在物理处理单元上的调度</strong>。<strong>两级调度的策略和机制不存在依赖关系。</strong> vCPU调度器负责物理处理器资源在各个虚拟机之间的分配与调度，本质上把各个虚拟机中的vCPU按照一定的策略和机制调度在物理处理单元上，可以采用任意的策略（如上面资源管理方案）来分配物理资源，满足虚拟机的不同需求。vCPU可以调度在一个或多个物理处理单元执行（分时复用或空间复用物理处理单元），也可以与物理处理单元建立一对一绑定关系（限制访问指定的物理理单元）。</p>
+<h2 id="NUMA架构感知的调度技术"><a href="#NUMA架构感知的调度技术" class="headerlink" title="NUMA架构感知的调度技术"></a>NUMA架构感知的调度技术</h2><p>除了基础的两级调度技术外，还有基于NUMA架构的精细化调度技术。在<a href>《DPDK技术栈在电信云中的最佳实践（一）》</a>一文中，我们介绍过服务器的NUMA架构，其产生的主要原因就是解决服务器SMP架构扩展性能的问题。同样，在计算虚拟化中的CPU资源调度方面，也有基于服务器NUMA架构的调度技术，这就是<strong>Host NUMA</strong>和<strong>Guest NUMA</strong>技术，<strong>它们都是虚拟化软件技术。</strong></p>
+<p>Host NUMA主要提供CPU负载均衡机制，解决CPU资源分配不平衡引起的VM性能瓶颈问题，当启动VM时，Host NUMA根据当时主机内存和CPU负载，选择一个负载较轻的node放置该VM，使VM的CPU和内存资源分配在同一个node上。</p>
+<p><img src="https://i.loli.net/2019/05/13/5cd93848b9b3e66204.jpg"></p>
+<p>如上图左边所示，Host NUMA把VM的物理内存放置在一个node上，对VM的vCPU调度范围限制在同一个node的物理CPU上，并将VM的vCPU亲和性绑定在该node的物理CPU上。考虑到VM的CPU负载是动态变化，在初始放置的node上，node的CPU资源负载也会随之变化，这会导致某个node的CPU资源不足，而另一个node的CPU资源充足，在此情况下，Host NUMA会从CPU资源不足的node上选择VM，把VM的CPU资源分配在CPU资源充足的node上，从而动态实现node间的CPU负载均衡。 Host NUMA保证VM访问本地物理内存，减少了内存访问延迟，可以提升VM性能，性能提升的幅度与VM虚拟机访问内存大小和频率相关。对于VM的vCPU个数超过node中CPU的核数时，如上图右边所示，Host NUMA把该VM的vCPU和内存均匀地放置在每个node 上，vCPU的调度范围为所有node的CPU。</p>
+<p>如果用户绑定了VM的vCPU亲和性，Host NUMA特性根据用户的vCPU亲和性设置决定VM的放置，若绑定在一个node的CPU上，Host NUMA把VM的内存和CPU放置在一个node上，若绑定在多个node的CPU上，Host NUMA把VM的内存均匀分布在多个node 上，VM的vCPU在多个node的CPU上均衡调度。</p>
+<p><strong>Host NUMA技术的本质保证了VM访问本地物理内存，减少了内存访问延迟，可以提升VM性能，性能提升的幅度与VM访问内存大小和频率相关。Host NUMA主要应用于针对大规格、高性能虚拟机场景，适用Oracle、 SQL Server等关键应用。</strong></p>
+<p><img src="https://i.loli.net/2019/05/13/5cd9386a8ed5914424.jpg"></p>
+<p>Guest NUMA如上图所示，能够使得虚拟机内部程序运行时针对NUMA结构进行优化，CPU会优先使用同一个Node上的内存，从而减小内存访问延时、提高访问效率，以此达到提升应用性能的目的。目前OS和应用都会有针对NUMA的优化，<strong>VMM通过向虚拟机呈现NUMA结构，使Guest OS及其内部应用识别Numa结构， CPU会优先使用同一个Node上的内存，减小内存访问延时、提高访问效率。</strong></p>
+<p><strong>Guest NUMA的本质就是VMM保证NUMNA结构的透传，使虚拟机中的关键应用在NUMA方面的优化生效，减少了内存访问延迟，可以提升VM性能。Guest NUMA主要应用于虚拟机中应用程序减小内存访问延时、提高访问效率，以此达到提升应用性能的目的。</strong></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2019/05/13/计算虚拟化之CPU虚拟化/" title="计算虚拟化之CPU虚拟化">https://kkutysllb.cn/2019/05/13/计算虚拟化之CPU虚拟化/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/电信云/" rel="tag"><i class="fa fa-tag"></i> 电信云</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/11/计算虚拟化概述/" rel="next" title="计算虚拟化概述">
+                <i class="fa fa-chevron-left"></i> 计算虚拟化概述
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/15/Linux系统命令-第八篇《进程管理命令》/" rel="prev" title="Linux系统命令-第八篇《进程管理命令》">
+                Linux系统命令-第八篇《进程管理命令》 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU虚拟化概述"><span class="nav-number">1.</span> <span class="nav-text">CPU虚拟化概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#软件方式实现的CPU虚拟化—二进制翻译技术"><span class="nav-number">1.1.</span> <span class="nav-text">软件方式实现的CPU虚拟化—二进制翻译技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#硬件方式实现的CPU虚拟化—VT-x和AMD-v"><span class="nav-number">1.2.</span> <span class="nav-text">硬件方式实现的CPU虚拟化—VT-x和AMD-v</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU虚拟化管理"><span class="nav-number">2.</span> <span class="nav-text">CPU虚拟化管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU虚拟化的本质和超配"><span class="nav-number">2.1.</span> <span class="nav-text">CPU虚拟化的本质和超配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU的QoS保障"><span class="nav-number">2.2.</span> <span class="nav-text">CPU的QoS保障</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NUMA架构感知的调度技术"><span class="nav-number">3.</span> <span class="nav-text">NUMA架构感知的调度技术</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">932k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">14:07</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/05/13/计算虚拟化之CPU虚拟化/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="数据中心服务器外部交换网络的虚拟化主要包括：数据中心内部二、三层交换设备虚拟化、大二层组网架构和软件定义网络SDN技术。其中，软件定义网络SDN技术在目前中国移动NovoNet战略中还处于现网试点阶段，预计2020年初会引入电信云数据中心。而数据中心内部二、三层交换设备虚拟化及大二层组网架构已完全成熟，并已在当前电信云数据中心中实际部署，本文也主要讲述这两种技术，其中大二层组网基石VxLAN需要大">
+<meta name="keywords" content="电信云">
+<meta property="og:type" content="article">
+<meta property="og:title" content="服务器外部交换网络虚拟化">
+<meta property="og:url" content="https://kkutysllb.cn/2019/06/22/服务器外部交换网络虚拟化/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="数据中心服务器外部交换网络的虚拟化主要包括：数据中心内部二、三层交换设备虚拟化、大二层组网架构和软件定义网络SDN技术。其中，软件定义网络SDN技术在目前中国移动NovoNet战略中还处于现网试点阶段，预计2020年初会引入电信云数据中心。而数据中心内部二、三层交换设备虚拟化及大二层组网架构已完全成熟，并已在当前电信云数据中心中实际部署，本文也主要讲述这两种技术，其中大二层组网基石VxLAN需要大">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0da8867958c61533.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0da901a17cc99156.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0da9511990669228.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0da999163d217174.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0da9d67084f96031.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0daa5681cf010026.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0daa867bc0484968.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0daabda7d4130313.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dab358e08a98162.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dab988404b57115.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dabe4ab98052900.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dac55927f483641.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dac78abf2e86468.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dac98e241381855.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dace16c0f061750.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dad0a9c43c76801.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dad348065a39648.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dad7dd2d6613666.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dadce3fbec15942.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dae365edc152866.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dae68818e161615.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0daed33215e73398.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0daf0abec5020399.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0daf467c21689706.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0dafc75e03223461.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db03a3bcd890662.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db0632f6bc42809.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db08b6b17627858.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db0c0c1a3f64646.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db123413b967489.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db168c2f3385731.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db195edab866822.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db1d1e9b4a86962.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/22/5d0db20054c3737805.jpg">
+<meta property="og:updated_time" content="2020-06-25T11:52:39.587Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="服务器外部交换网络虚拟化">
+<meta name="twitter:description" content="数据中心服务器外部交换网络的虚拟化主要包括：数据中心内部二、三层交换设备虚拟化、大二层组网架构和软件定义网络SDN技术。其中，软件定义网络SDN技术在目前中国移动NovoNet战略中还处于现网试点阶段，预计2020年初会引入电信云数据中心。而数据中心内部二、三层交换设备虚拟化及大二层组网架构已完全成熟，并已在当前电信云数据中心中实际部署，本文也主要讲述这两种技术，其中大二层组网基石VxLAN需要大">
+<meta name="twitter:image" content="https://i.loli.net/2019/06/22/5d0da8867958c61533.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2019/06/22/服务器外部交换网络虚拟化/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>服务器外部交换网络虚拟化 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/06/22/服务器外部交换网络虚拟化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">服务器外部交换网络虚拟化
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-22 11:54:39" itemprop="dateCreated datePublished" datetime="2019-06-22T11:54:39+08:00">2019-06-22</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-06-25 19:52:39" itemprop="dateModified" datetime="2020-06-25T19:52:39+08:00">2020-06-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV关键技术/" itemprop="url" rel="index"><span itemprop="name">NFV关键技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">22k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">20 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>数据中心服务器外部交换网络的虚拟化主要包括：<strong>数据中心内部二、三层交换设备虚拟化、大二层组网架构</strong>和<strong>软件定义网络SDN技术。</strong>其中，软件定义网络SDN技术在目前中国移动NovoNet战略中还处于现网试点阶段，预计2020年初会引入电信云数据中心。而数据中心内部二、三层交换设备虚拟化及大二层组网架构已完全成熟，并已在当前电信云数据中心中实际部署，本文也主要讲述这两种技术，其中大二层组网基石VxLAN需要大家重点掌握。<a id="more"></a></p>
+<h2 id="数据中心内部二、三层交换设备虚拟化"><a href="#数据中心内部二、三层交换设备虚拟化" class="headerlink" title="数据中心内部二、三层交换设备虚拟化"></a><strong>数据中心内部二、三层交换设备虚拟化</strong></h2><p>现有数据中心内部的三层网络架构起源于园区网，传统数据中心。如下图所示，三层架构将网络分为<strong>接入(access)、汇聚(aggregation)</strong>和<strong>核心(core)</strong>三层。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0da8867958c61533.jpg"></p>
+<p><strong>接入层</strong>通常使用二层交换机，主要负责接入服务器、标记VLAN以及转发二层的流量。<strong>汇聚层</strong>通常使用三层交换机，主要负责同一POD（所谓POD就是划分范围就是汇聚交换机管理的范围，对应到上图就是底层的三个iStack堆叠组范围）内的路由，并实现ACL等安全策略。<strong>核心层</strong>通常使用业务路由器，主要负责实现跨POD的路由，并提供Internet接入以及VPN等服务。</p>
+<p>在三层的网络规划中，接入层和汇聚层间通常是二层网络，接入交换机双上联到汇聚交换机，并运行STP来消除环路，汇聚交换机作为网关终结掉二层，和核心路由器起IGP来学习路由，少数情况下会选择BGP。</p>
+<p>众所周知，MAC自学习是以太网的根基，它以泛洪帧为探针同步转发表，实现简单，无需复杂控制。但是，如果网络中存在环路，泛洪会在极短的时间内使网络瘫痪。为此，引入STP用来破除转发环路，不过STP的引入却带来了更多问题，如收敛慢、链路利用率低、规模受限、难以定位故障等。虽然，业界为STP的优化费劲了心思，但打补丁的方式只能治标而不能治本。随着数据中心I/O密集型业务的大发展，STP成了网络最为明显的一块短板，处理掉STP自然也就成了数据中心网络架构演进打响的第一枪。</p>
+<h2 id="物理设备的“多虚一”：VRRP、iStack和虚拟机框"><a href="#物理设备的“多虚一”：VRRP、iStack和虚拟机框" class="headerlink" title="物理设备的“多虚一”：VRRP、iStack和虚拟机框"></a><strong>物理设备的“多虚一”：VRRP、iStack和虚拟机框</strong></h2><p>物理设备的“多虚一”功能，能够将多台设备中的控制平面进行整合，形成一台统一的逻辑设备，这台逻辑设备不但具有统一的管理IP，而且在各种L2和L3协议中也将表现为一个整体。因此在完成整合后，STP所看到的拓扑自然就是无环的了，这就间接地规避了STP的种种问题。</p>
+<p>目前，普遍采用VRRP、堆叠iStack和虚拟机框技术完成物理设备的“多虚一”功能。其中，虚拟机框技术和传统的堆叠技术一样，不同的物理设备分享同一个控制平面，实际上就相当于为物理网络设备做了个集群，也有选主和倒换的过程。相比之下，虚拟机框在组网上的限制较少，而且在可用性方面的设计普遍要好于堆叠，因此可以看作对于堆叠技术的升级，我们只要了解堆叠技术即可。而且，虚拟机框技术以Cisco的VSS、Juniper的Virtual Chassis以及H3C的IRF 2为代表，在中国移动NFV电信云数据中心内华为交换机堆叠技术与此等价。</p>
+<h3 id="VRRP技术"><a href="#VRRP技术" class="headerlink" title="VRRP技术"></a><strong>VRRP技术</strong></h3><p><strong>定义：</strong>虚拟路由冗余协议VRRP，通过把几台设备联合组成一台虚拟的路由设备，将虚拟路由设备的IP地址作为用户的默认网关实现与外部网络通信。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0da901a17cc99156.jpg"></p>
+<p>如上图所示，VRRP将局域网内的一组路由器划分在一起，形成一个VRRP备份组，它在功能上相当于一台虚拟路由器，使用虚拟路由器号进行标识。VRRP设备有自己的虚拟IP地址和虚拟MAC地址，它的外在表现形式和实际的物理路由器完全一样。局域网内的主机将VRRP设备的IP地址设置为默认网关，通过VRRP设备与外部网络进行通信。</p>
+<p>VRRP设备是工作在实际的物理三层设备之上的。它由多个实际的三层设备组成，包括一个Master设备和多个Backup设备。Master设备正常工作时，局域网内的主机通过Master设备与外界通信。当Master设备出现故障时，Backup设备中的一台设备将成为新的Master设备，接替转发报文的工作。</p>
+<p><strong>VRRP的工作过程为：</strong></p>
+<p>1）VRRP设备中的物理设备根据优先级选举出Master。Master设备通过发送免费ARP报文，将自己的虚拟MAC地址通知给与它连接的设备或者主机，从而承担报文转发任务；</p>
+<p>2）Master设备周期性发送VRRP报文，以公布其配置信息（优先级等）和工作状况；</p>
+<p>3）如果Master设备出现故障，VRRP设备中的Backup设备将根据优先级重新选举新的Master；</p>
+<p>4）VRRP设备状态切换时，Master设备由一台设备切换为另外一台设备，新的Master设备只是简单地发送一个携带VRRP设备的MAC地址和虚拟IP地址信息的免费ARP报文，这样就可以更新与它连接的主机或设备中的ARP相关信息。网络中的主机感知不到Maste设备已经切换为另外一台设备。</p>
+<p>5）Backup设备的优先级高于Master设备时，由Backup设备的工作方式（抢占方式和非抢占方式）决定是否重新选举Master。</p>
+<p><strong>VRRP根据优先级来确定VRRP设备中每台物理设备的角色（Master设备或Backup设备）。优先级越高，则越有可能成为Master设备。</strong></p>
+<p>1）初始创建的设备工作在Backup状态，通过VRRP报文的交互获知VRRP设备中其他成员的优先级：</p>
+<ol>
+<li>如果VRRP报文中Master设备的优先级高于自己的优先级，则路由器保持在Backup状态；</li>
+<li>如果VRRP报文中Master设备的优先级低于自己的优先级，采用抢占工作方式的路由器将抢占成为Master状态，周期性地发送VRRP报文，采用非抢占工作方式的路由器仍保持Backup状态；</li>
+<li>如果在一定时间内没有收到VRRP报文，则本设备切换为Master状态。</li>
+</ol>
+<p>2）VRRP优先级的取值范围为0到255（数值越大表明优先级越高），可配置的范围是1到254，优先级0为系统保留给路由器放弃Master位置时候使用，255则是系统保留给IP地址拥有者使用。当设备为IP地址拥有者时，其优先级始终为255。因此，当VRRP设备内存在IP地址拥有者时，只要其工作正常，则为Master设备。</p>
+<p><strong>VRRP的的工作方式</strong></p>
+<p><img src="https://i.loli.net/2019/06/22/5d0da9511990669228.jpg"></p>
+<p>主备备份方式表示业务仅由Master设备承担。当Master设备出现故障时，才会由选举出来的Backup设备接替它工作。</p>
+<p>如上图左边所示，初始情况下，Device A是Master路由器并承担转发任务，Device B和Device C是Backup路由器且都处于就绪监听状态。如果Device A发生故障，则虚拟路由器内处于Backup状态的Device B和Device C路由器将根据优先级选出一个新的Master路由器，这个新Master路由器继续为网络内的主机转发数据。</p>
+<p>负载分担方式是指多台设备同时承担业务，因此负载分担方式需要两个或者两个以上的VRRP设备，每个VRRP设备都包括一个Master设备和若干个Backup设备，各VRRP设备中的Master设备可以各不相同。通过在一个设备的一个接口上可以创建多个VRRP设备，使得该设备可以在一个VRRP设备中作为Master设备，同时在其他的VRRP设备中作为Backup设备。</p>
+<p>在上图右边中，有三个VRRP设备存在：</p>
+<ul>
+<li>VRRP1：Device A作为Master设备，Device B和Device C作为Backup设备。</li>
+<li>VRRP2：Device B作为Master设备，Device A和Device C作为Backup设备。</li>
+<li>VRRP3：Device C作为Master设备，Device A和Device B作为Backup设备。</li>
+</ul>
+<p>为了实现业务流量在Device A、Device B和Device C之间进行负载分担，需要将局域网内的主机的默认网关分别设置为VRRP1、2和3。在配置优先级时，需要确保三个VRRP设备中各路由器的VRRP优先级形成一定的交叉，使得一台路由器尽可能不同时充当2个Master路由器。</p>
+<h3 id="iStack交换机堆叠技术"><a href="#iStack交换机堆叠技术" class="headerlink" title="iStack交换机堆叠技术"></a><strong>iStack交换机堆叠技术</strong></h3><p><strong>堆叠iStack（Intelligent Stack），是指将多台支持堆叠特性的交换机设备组合在一起，从逻辑上组合成一台交换设备。</strong>如下图所示，SwitchA与SwitchB通过堆叠线缆连接后组成堆叠iStack，对于上游和下游设备来说，它们就相当于一台交换机Switch。通过交换机堆叠，可以实现网络高可靠性和网络大数据量转发，同时简化网络管理。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0da999163d217174.jpg"></p>
+<blockquote>
+<p><strong>1）高可靠性。</strong>堆叠系统多台成员交换机之间<strong>冗余备份</strong>；堆叠支持<strong>跨设备的链路聚合</strong>功能，实现<strong>跨设备的链路冗余备份</strong>。</p>
+<p><strong>2）强大的网络扩展能力。</strong>通过增加成员交换机，可以轻松的扩展堆叠系统的<strong>端口数</strong>、<strong>带宽</strong>和<strong>处理能力</strong>；同时<strong>支持成员交换机热插拔</strong>，<strong>新加入的成员交换机自动同步主交换机的配置文件和系统软件版本。</strong></p>
+<p><strong>3）简化配置和管理。</strong>一方面，用户可以<strong>通过任何一台成员交换机登录</strong>堆叠系统，对堆叠系统所有成员交换机进行<strong>统一配置和管理</strong>；另一方面，堆叠形成后，<strong>不需要配置复杂的二层破环协议和三层保护倒换协议</strong>，简化了网络配置。</p>
+</blockquote>
+<p><strong>堆叠涉及以下几个基本概念：</strong></p>
+<p><strong>1）角色：</strong>堆叠中所有的单台交换机都称为成员交换机，按照功能不同，可以分为三种角色：</p>
+<ul>
+<li><strong>主交换机</strong>：主交换机（Master）负责<strong>管理整个堆叠</strong>。堆叠中<strong>只有一台</strong>主交换机。</li>
+<li><strong>备交换机：</strong>备交换机（Standby）是<strong>主交换机的备份交换机</strong>。当主交换机故障时，备交换机会接替原主交换机的所有业务。堆叠中<strong>只有一台</strong>备交换机。</li>
+<li><strong>从交换机：</strong>从交换机（Slave）主要<strong>用于业务转发</strong>，从交换机数量越多，堆叠系统的转发能力越强。除主交换机和备交换机外，堆叠中其他所有的成员交换机都是从交换机。</li>
+</ul>
+<p><strong>2）堆叠ID：</strong>即<strong>成员交换机的槽位号</strong>（Slot ID），用来<strong>标识和管理成员交换机</strong>，堆叠中所有成员交换机的<strong>堆叠ID都是唯一</strong>的。</p>
+<p><strong>3）堆叠优先级</strong>：是成员交换机的<strong>一个属性</strong>，<strong>主要用于角色选举过程中确定成员交换机的角色，优先级值越大表示优先级越高，优先级越高当选为主交换机的可能性越大。</strong></p>
+<p><strong>堆叠建立的过程包括以下四个阶段：</strong></p>
+<p><strong>Step1：物理连接。</strong>如下图所示，根据网络需求，选择适当的连接方式和连接拓扑，组建堆叠网络。根据连接介质的不同，堆叠可分为<strong>堆叠卡堆叠</strong>和<strong>业务口堆叠</strong>。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0da9d67084f96031.jpg"></p>
+<p>如上图所示，每种连接方式都可组成<strong>链形</strong>和<strong>环形</strong>两种连接拓扑。下表从可靠性、链路带宽利用率和组网布线是否方便的角度对两种连接拓扑进行对比。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><strong>连接拓扑</strong></th>
+<th><strong>优点</strong></th>
+<th><strong>缺点</strong></th>
+<th><strong>适用场景</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">链形连接</td>
+<td>首尾不需要有物理连接，<strong>适合长距离堆叠</strong>。</td>
+<td><strong>可靠性低</strong>：其中一条堆叠链路出现故障，就会造成堆叠分裂。堆叠链路<strong>带宽利用率低</strong>：整个堆叠系统只有一条路径。</td>
+<td>堆叠成员交换机距离较远时，组建环形连接比较困难，可以使用链形连接。</td>
+</tr>
+<tr>
+<td style="text-align:left">环形连接</td>
+<td><strong>可靠性高</strong>：其中一条堆叠链路出现故障，环形拓扑变成链形拓扑，不影响堆叠系统正常工作。堆叠链路<strong>带宽利用率高</strong>：数据能够按照最短路径转发。</td>
+<td>首尾需要有物理连接，<strong>不适合长距离堆叠</strong>。</td>
+<td>堆叠成员交换机距离较近时，从可靠性和堆叠链路利用率上考虑，建议使用环形连接。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step2：主交换机选举。</strong>确定出堆叠的连接方式和连接拓扑，完成成员交换机之间的物理连接之后，所有成员交换机上电。此时，堆叠系统开始进行主交换机的选举。在堆叠系统中每台成员交换机都具有一个确定的角色，其中，主交换机负责管理整个堆叠系统。<strong>主交换机选举规则如下（依次从第一条开始判断，直至找到最优的交换机才停止比较）：</strong></p>
+<ol>
+<li><strong>运行状态比较，已经运行的交换机优先处于启动状态的交换机竞争为主交换机。</strong>堆叠主交换机选举超时时间为20s，堆叠成员交换机上电或重启时，由于不同成员交换机所需的启动时间可能差异比较大，因此不是所有成员交换机都有机会参与主交换机的选举：<strong>启动时间与启动最快的成员交换机相比，相差超过20s的成员交换机没有机会参与主交换机的选举，只能被动加入堆叠成为非主交换机，加入过程可参见堆叠成员加入与退出。因此，如果希望指定某一成员交换机成为主交换机，则可以先为其上电，待其启动完成后再给其他成员交换机上电。</strong></li>
+<li><strong>堆叠优先级高的交换机优先竞争为主交换机。</strong></li>
+<li><strong>叠优先级相同时，MAC地址小的交换机优先竞争为主交换机。</strong></li>
+</ol>
+<p><strong>Step3：拓扑收集和备交换机选举。</strong>主交换机选举完成后，会收集所有成员交换机的拓扑信息，根据拓扑信息计算出堆叠转发表项和破环点信息下发给堆叠中的所有成员交换机，并向所有成员交换机分配堆叠ID。之后进行备交换机的选举，作为主交换机的备份交换机。<strong>除主交换机外最先完成设备启动的交换机优先被选为备份交换机</strong>。<strong>当除主交换机外其它交换机同时完成启动时，备交换机的选举规则如下（依次从第一条开始判断，直至找到最优的交换机才停止比较）：</strong></p>
+<ol>
+<li><strong>堆叠优先级最高的设备成为备交换机。</strong></li>
+<li><strong>堆叠优先级相同时，MAC地址最小的成为备交换机。</strong></li>
+</ol>
+<p>除主交换机和备交换机之外，剩下的其他成员交换机作为从交换机加入堆叠。</p>
+<p><strong>Step4：稳定运行。</strong>角色选举、拓扑收集完成之后，所有成员交换机会自动同步主交换机的系统软件和配置文件。<strong>堆叠具有自动加载系统软件的功能，待组成堆叠的成员交换机不需要具有相同软件版本，只需要版本间兼容即可</strong>。当备交换机或从交换机与主交换机的软件版本不一致时，备交换机或从交换机会自动从主交换机下载系统软件，然后使用新系统软件重启，并重新加入堆叠。<strong>堆叠具有配置文件同步机制，</strong>备交换机或从交换机会将主交换机的配置文件同步到本设备并执行，以保证堆叠中的多台设备能够像一台设备一样在网络中工作，并且在主交换机出现故障之后，其余交换机仍能够正常执行各项功能。</p>
+<p><strong>堆叠支持跨设备链路聚合技术，通过配置跨设备Eth-Trunk接口实现。</strong>用户可以将不同成员交换机上的物理以太网端口配置成一个聚合端口连接到上游或下游设备上，实现多台设备之间的链路聚合。当其中一条聚合链路故障或堆叠中某台成员交换机故障时，Eth-Trunk接口能够将流量重新分布到其他聚合链路上，实现了链路间和设备间的备份，保证了数据流量的可靠传输。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0daa5681cf010026.jpg"></p>
+<blockquote>
+<p>如上图左边所示，流向网络核心的流量将均匀分布在聚合链路上，当某一条聚合链路失效时，Eth-Trunk接口将流量通过堆叠线缆重新分布到其他聚合链路上，实现了链路间的备份。</p>
+<p>如上图右边所示，流向网络核心的流量将均匀分布在聚合链路上，当某台成员交换机故障时，Eth-Trunk接口将流量重新分布到其他聚合链路上，实现了设备间的备份。</p>
+</blockquote>
+<p>跨设备链路聚合实现了数据流量的可靠传输和堆叠成员交换机的相互备份。但是由于堆叠设备间堆叠线缆的带宽有限，跨设备转发流量增加了堆叠线缆的带宽承载压力，同时也降低了流量转发效率。<strong>为了提高转发效率，减少堆叠线缆上的转发流量，设备支持流量本地优先转发。</strong>即从本设备进入的流量，优先从本设备相应的接口转发出去；如果本设备相应的接口故障或者流量已经达到接口的线速，那么就从其它堆叠成员交换机的接口转发出去。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0daa867bc0484968.jpg"></p>
+<p>如上图所示，SwitchA与SwitchB组成堆叠，上下行都加入到Eth-Trunk。如果没有本地优先转发，则从SwitchA进入的流量，根据当前Eth-Trunk的负载分担方式，会有一部分经过堆叠线缆，从SwitchB的物理接口转发出去。设备支持本地优先转发之后，从SwitchA进入的流量，只会从SwitchA的接口转发，流量不经过堆叠线缆。</p>
+<p><strong>设备堆叠ID缺省为0。</strong>堆叠时由堆叠主交换机对设备的堆叠ID进行管理，当堆叠系统有新成员加入时，如果新成员与已有成员堆叠ID冲突，则堆叠主交换机从0～最大的堆叠ID进行遍历，找到第一个空闲的ID分配给该新成员。新建堆叠或堆叠成员变化时，如果不在堆叠前手动指定各设备的堆叠ID，则由于启动顺序等原因，最终堆叠系统中各成员的堆叠ID是随机的。因此，在建立堆叠时，建议提前规划好设备的堆叠ID，或通过特定的操作顺序，使设备启动后的堆叠ID与规划的堆叠ID一致。<strong>修改堆叠ID设备需要重启。</strong></p>
+<p><img src="https://i.loli.net/2019/06/22/5d0daabda7d4130313.jpg"></p>
+<p>如上图所示，<strong>堆叠成员加入是指向已经稳定运行的堆叠系统添加一台新的交换机</strong>。堆叠成员加入分为<strong>新成员交换机带电加入和不带电加入</strong>，带电加入则需要采用堆叠合并的方式完成，此处堆叠成员加入是指不带电加入。新成员交换机加入堆叠时，<strong>建议采用不带电加入</strong>。</p>
+<p>堆叠成员加入的过程如下：</p>
+<p><strong>Step1：</strong>新加入的交换机连线上电启动后，进行角色选举，新加入的交换机会选举为从交换机，堆叠系统中原有主备从角色不变。</p>
+<p><strong>Step2：</strong>角色选举结束后，主交换机更新堆叠拓扑信息，同步到其他成员交换机上，并向新加入的交换机分配堆叠ID（新加入的交换机没有配置堆叠ID或配置的堆叠ID与原堆叠系统的冲突时）。</p>
+<p><strong>Step3：</strong>新加入的交换机更新堆叠ID，并同步主交换机的配置文件和系统软件，之后进入稳定运行状态。</p>
+<p><strong>堆叠成员退出是指成员交换机从堆叠系统中离开</strong>。根据退出成员交换机角色的不同，对堆叠系统的影响也有所不同：当主交换机退出，备份交换机升级为主交换机，重新计算堆叠拓扑并同步到其他成员交换机，指定新的备交换机，之后进入稳定运行状态。当备交换机退出，主交换机重新指定备交换机，重新计算堆叠拓扑并同步到其他成员交换机，之后进入稳定运行状态。当从交换机退出，主交换机重新计算堆叠拓扑并同步到其他成员交换机，之后进入稳定运行状态。堆叠成员交换机退出的过程，主要就是拆除堆叠线缆和移除交换机的过程。</p>
+<blockquote>
+<p><strong>对于环形堆叠：</strong>成员交换机退出后，为保证网络的可靠性还需要把退出交换机连接的两个端口通过堆叠线缆进行连接。</p>
+<p><strong>对于链形堆叠：</strong>拆除中间交换机会造成堆叠分裂。这时需要在拆除前进行业务分析，尽量减少对业务的影响。</p>
+</blockquote>
+<h3 id="高级STP欺骗：跨设备链路聚合M-LAG"><a href="#高级STP欺骗：跨设备链路聚合M-LAG" class="headerlink" title="高级STP欺骗：跨设备链路聚合M-LAG"></a><strong>高级STP欺骗：跨设备链路聚合M-LAG</strong></h3><p>STP会严重浪费链路资源，根源在于它会禁止冗余链路上的转发。如果通过一种办法来“欺骗”STP，让它认为物理拓扑中没有冗余链路，那么就可以解决上述问题。实际上，上面的VRRP、堆叠技术中就用到了跨设备链路聚合，不过在实现上过于复杂，因此又出现了一类技术，它们不再为控制平面做集群，只保留了跨设备链路聚合的能力，这类技术以M-LAG为代表。</p>
+<p><strong>定义：M-LAG（Multichassis Link Aggregation Group）即跨设备链路聚合组，是一种实现跨设备链路聚合的机制，将一台设备与另外两台设备进行跨设备链路聚合，从而把链路可靠性从单板级提高到了设备级，组成双活系统。</strong>如下图左边所示。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dab358e08a98162.jpg"></p>
+<p>如上图右边所示，用户侧设备Switch（可以是交换机或主机）通过M-LAG机制与另外两台设备（SwitchA和SwitchB）进行跨设备链路聚合，共同组成一个双活系统。这样可以实现SwitchA和SwitchB共同进行流量的转发，保证网络的可靠性。</p>
+<p>M-LAG作为一种跨设备链路聚合的技术，除了具备增加带宽、提高链路可靠性、负载分担的优势外，还具备以下优势：</p>
+<ul>
+<li><strong>更高的可靠性：</strong>把链路可靠性从单板级提高到了设备级。</li>
+<li><strong>简化组网及配置：</strong>可以将M-LAG理解为一种横向虚拟化技术，将双归接入的两台设备在逻辑上虚拟成一台设备。M-LAG提供了一个没有环路的二层拓扑同时实现冗余备份，不再需要繁琐的生成树协议配置，极大的简化了组网及配置。</li>
+<li><strong>独立升级：</strong>两台设备可以分别进行升级，保证有一台设备正常工作即可，对正在运行的业务几乎没有影响。</li>
+</ul>
+<p>下表对M-LAG涉及的相关概念做了个总结，如下：</p>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M-LAG主设备</td>
+<td>部署M-LAG且状态为主的设备。</td>
+</tr>
+<tr>
+<td>M-LAG备设备</td>
+<td>部署M-LAG且状态为备的设备。<strong>说明：</strong>正常情况下，主设备和备设备同时进行业务流量的转发。</td>
+</tr>
+<tr>
+<td>peer-link链路</td>
+<td>peer-link链路是一条直连链路且必须做链路聚合，用于交换协商报文及传输部分流量。为了增加peer-link链路的可靠性，推荐采用多条链路做链路聚合。</td>
+</tr>
+<tr>
+<td>peer-link接口</td>
+<td>peer-link链路两端直连的接口均为peer-link接口。</td>
+</tr>
+<tr>
+<td>M-LAG成员接口</td>
+<td>M-LAG主备设备上连接用户侧主机（或交换设备）的Eth-Trunk接口。为了增加可靠性，推荐链路聚合配置为LACP模式。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>基于M-LAG组成的双活系统提供了设备级的可靠性，如下图所示，M-LAG的建立过程有如下几个步骤：</strong></p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dab988404b57115.jpg"></p>
+<p><strong>Step1：</strong>当M-LAG两台的设备完成配置后，两台的设备会通过peer-link链路定期发送M-LAG协商报文。当收到对端的M-LAG协商报文后，会判断M-LAG协商报文中的DFS Group编号是否和本端相同。如果两台的DFS Group编号相同，则这两台设备配对成功。</p>
+<p><strong>Step2：</strong>配对成功后，两台设备会通过比较M-LAG协商报文中的DFS Group优先级确定出主备状态。以SwitchB为例，当SwitchB收到SwitchA发送的报文时，SwitchB会查看并记录对端信息，然后比较DFS Group的优先级，如果SwitchA的DFS Group优先级高于本端的DFS Group优先级，则确定SwitchA为M-LAG主设备，SwitchB为M-LAG从设备。如果SwitchA和SwitchB的DFS Group优先级相同，比较两台设备的MAC地址，确定MAC地址小的一端为M-LAG主设备。这里的主、备不影响正常的流量转发，只有在出现故障时才起作用。</p>
+<p><strong>Step3：</strong>协商出主备后，两台设备之间会通过网络侧链路周期性地发送M-LAG心跳报文，也可以配置通过管理网络检测心跳，当两台设备均能够收到对端发送的报文时，双活系统即开始正常的工作。M-LAG心跳报文主要用于peer-link故障时的双主检测。</p>
+<p><strong>Step4：</strong>正常工作后，两台设备之间会通过peer-link链路发送M-LAG同步报文实时同步对端的信息，M-LAG同步报文中包括MAC表项、ARP表项等，这样任意一台设备故障都不会影响流量的转发，保证正常的业务不会中断。</p>
+<p>M-LAG双活系统建立成功后即进入正常的工作，M-LAG主备设备负载分担共同进行流量的转发。如果出现故障，无论是链路故障、设备故障还是peer-link故障，M-LAG都能够保证正常的业务不受影响。按照数据中心TOR与EOR之间连接要求，我们这里仅以交换机双归接入普通以太网络和IP网络为例进行介绍。</p>
+<p>正常工作时，如下图所示，来自非M-LAG成员端口的单播流量，按照正常的转发流程进行转发，而来自M-LAG成员端口的单播流量按照M-LAG聚合设备负荷分担方式进行转发。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dabe4ab98052900.jpg"></p>
+<p>而来自非M-LAG成员接口的组播/广播流量 ，在SwitchA收到组播流量后向各个下一跳转发，当流量到达SwitchB时，由于peer-link与M-LAG成员接口存在单向隔离机制，到达SwitchB的流量不会向S-2转发。而来自M-LAG成员接口的组播/广播流量 ，在SwitchA收到组播流量后向各个下一跳转发，当流量到达SwitchB时，由于peer-link与M-LAG成员接口存在单向隔离机制，到达SwitchB的流量也不会向S-2转发。如下图所示：</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dac55927f483641.jpg"></p>
+<p>对于网络侧发往M-LAG成员接口的单播流量，流量会负载分担到SwitchA和SwitchB，然后发送至双活接入的设备。对于网络侧发往非M-LAG成员接口的单播流量，以发往S-1为例，流量不会进行负载分担，而是直接发到SwitchA，由SwitchA发往S-1。而网络侧的组播/广播流量不会在SwitchA、SwitchB之间采用负载分担方式转发，此处以SwitchA转发为例进行说明。</p>
+<p>以SwitchA为例，SwitchA会发送到每一个用户侧端口，由于peer-link与M-LAG成员接口存在单向隔离机制，到达SwitchB的流量不会向S-2转发。如下图：</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dac78abf2e86468.jpg"></p>
+<p>故障情况时，如下图所示，当peer-link链路故障时，按照M-LAG应用场景不同，M-LAG的设备表现也不同。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dac98e241381855.jpg"></p>
+<p>当M-LAG应用于TRILL网络的双归接入时，peer-link故障但心跳状态正常会触发状态为备的设备上M-LAG接口处于Error-Down状态。当M-LAG应用于普通以太网络、VXLAN网络或IP网络的双归接入时，peer-link故障但心跳状态正常会触发状态为备的设备上除管理网口、peer-link接口和堆叠口以外的接口处于Error-Down状态。M-LAG主设备侧Eth-Trunk链路状态仍为Up，M-LAG备设备侧Eth-Trunk链路状态变为Down，双归场景变为单归场景。一旦peer-link故障恢复，处于Error-Down状态的M-LAG接口默认将在2分钟后自动恢复为Up状态，处于Error-Down状态的其它物理接口将自动恢复为Up状态。数据中心场景中接入交换机TOR上处于Error-Down状态的M-LAG接口默认在5分钟后自动恢复为Up状态。</p>
+<p>当M-LAG主设备故障时，M-LAG备设备将升级为主，其设备侧Eth-Trunk链路状态仍为Up，流量转发状态不变，继续转发流量。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dace16c0f061750.jpg"></p>
+<blockquote>
+<p>M-LAG主设备侧Eth-Trunk链路状态变为Down，双归场景变为单归场景。M-LAG主备设备端口状态默认不回切，即当M-LAG主设备故障发生时，M-LAG由备状态升级为主状态的设备仍保持主状态，恢复故障的主设备成为M-LAG的备设备。</p>
+<p>如果是M-LAG备设备发生故障，M-LAG的主备状态不会发生变化，M-LAG备设备侧Eth-Trunk链路状态变为Down。M-LAG主设备侧Eth-Trunk链路状态仍为Up，流量转发状态不变，继续转发流量，双归场景变为单归场景。</p>
+</blockquote>
+<p>当下行Eth-Trunk链路发生故障，M-LAG主备状态不会变化，流量切换到另一条链路上进行转发。发生故障的Eth-Trunk链路状态变为Down，双归场景变为单归场景。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dad0a9c43c76801.jpg"></p>
+<p>当上行链路发生故障，由于双归接入普通以太网络时，心跳报文一般是走管理网络，故不影响M-LAG主设备的心跳检测，对于双活系统没有影响，M-LAG主备设备仍能够正常转发。如图中所示，由于M-LAG主设备的上行链路故障，通过M-LAG主设备的流量均经过peer-link链路进行转发。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dad348065a39648.jpg"></p>
+<p><strong>双归接入IP网络的M-LAG设备在正常工作时，与双归接入普通以太网类似，唯一区别是在为了保证M-LAG上三层组播功能正常，需要在M-LAG主备设备间部署一条三层直连链路，部分组播流量可以通过该三层链路进行转发，这条链路一般称为C链。在故障场景下，双归接入IP网络的M-LAG设备与接入普通以太网也只在上行链路故障时，表现有所区别。</strong></p>
+<p>双归接入IP网络的M-LAG设备，在上行链路故障时，M-LAG备设备由于收不到主设备的心跳报文而变为双主状态。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dad7dd2d6613666.jpg"></p>
+<p>这时用户侧流量到达SwitchA时，不能经过peer-link链路转发且没有可用的上行出接口，SwitchA会将用户流量全部丢弃。此时，需要分别在M-LAG主备设备上配置Monitor Link关联上行接口和下行接口，当上行出接口Down时，下行接口状态也会变为Down，这样就可以防止用户侧流量被丢弃。</p>
+<p><strong>M-LAG特性主要应用于将服务器或交换机双归接入普通以太网络、TRILL（Transparent Interconnection of Lots of Links）、VXLAN（Virtual eXtensible Local Area Network）和IP网络。</strong>一方面可以起到负载分担流量的作用，另一方面可以起到备份保护的作用。由于M-LAG支持多级互联，M-LAG的组网可以分为单级M-LAG和多级M-LAG。</p>
+<p>在电信云数据中心中，为了保证可靠性，服务器一般采用链路聚合的方式接入网络，如果服务器接入的设备故障将导致业务的中断。为了避免这个问题的发生，服务器可以采用跨设备链路聚合的方式接入网络，在SwitchA与SwitchB之间部署M-LAG，实现服务器的双归接入。组成M-LAG的两台TOR形成负载分担，共同进行流量转发，当其中一台设备发生故障时，流量可以快速切换到另一台设备，保证业务的正常运行。服务器双归接入时的配置和一般的链路聚合配置没有差异，必须保证服务器侧和交换机侧的链路聚合模式一致，推荐两端均配置为LACP模式。除了接入交换机TOR组成M-LAG外，汇聚交换机EOR之间也需要部署M-LAG配置，与下层TOR的M-LAG进行级联，这样不仅可以简化组网，而且在保证可靠性的同时可以扩展双归接入服务器的数量。多级M-LAG互联必须基于V-STP方式进行配置，如下图所示。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dadce3fbec15942.jpg"></p>
+<p>V-STP方式下，组成M-LAG的设备在二层网络中可以不作为根桥，组网灵活且支持M-LAG的级联。V-STP功能还可以解决M-LAG中错误配置或错误连线导致的环路问题，所以推荐采用V-STP方式。</p>
+<p><strong>VRRP技术、堆叠以及M-LAG数据中心二、层设备虚拟化技术优缺点对比及适用场景总结</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>优点</strong></th>
+<th><strong>缺点</strong></th>
+<th><strong>应用场景</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>堆叠</strong></td>
+<td>简化本地网络管理节点、易维护，同时增加系统端口密度和带宽，充分发挥设备性能。</td>
+<td>缺点就是可靠性不高，堆叠系统分裂、系统升级都会影响业务中断</td>
+<td>广泛应用于企业、教育</td>
+</tr>
+<tr>
+<td><strong>VRRP</strong></td>
+<td>网络设备冗余、可靠性高</td>
+<td>配置复杂、网络建设投入成本高，不能充分发挥设备的网络性能</td>
+<td>银行、证券、政府内网</td>
+</tr>
+<tr>
+<td><strong>M-LAG</strong></td>
+<td>网络可靠性非常高，设备控制层面独立，能单独设备升级且不影响业务，充分发挥设备性能</td>
+<td>管理节点多（控制层面无法虚拟化）</td>
+<td>银行、证券、数据中心（双规场景）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="大二层网络的基石VxLAN"><a href="#大二层网络的基石VxLAN" class="headerlink" title="大二层网络的基石VxLAN"></a><strong>大二层网络的基石VxLAN</strong></h2><h3 id="大二层是个什么鬼？"><a href="#大二层是个什么鬼？" class="headerlink" title="大二层是个什么鬼？"></a><strong>大二层是个什么鬼？</strong></h3><p>虽然Leaf-Spine为无阻塞传输提供了拓扑的基础，但是还需有配套合适的转发协议才能完全发挥出拓扑的能力。STP的设计哲学与Leaf-Spine完全就是不相容的，冗余链路得不到利用，灵活性和扩展性极差，废除STP而转向“大二层”成了业界的基本共识。</p>
+<p>说到大二层的“大”，首先体现在物理范围上。虚拟机迁移是云数据中心的刚性需求，由于一些License与MAC地址是绑定的，迁移前后虚拟机的MAC地址最好不变，同时为了保证业务连续，迁移前后虚拟机的IP地址也不可以变化。迁移的位置是由众多资源因素综合决定的，网络必须支持虚拟机迁移到任何位置，并能够保持位于同一个二层网络中。所以大二层要大到横贯整个数据中心网络，甚至是在多个数据中心之间。</p>
+<p>大二层的“大”，还意味着业务支撑能力的提升。随着公有云的普及，“多租户”成了云数据中心网络的基础能力。而传统二层网络中，VLAN最多支持的租户数量为4096，当租户间IP地址重叠的时候，规划和配置起来也比较麻烦，因此VLAN不能很好地支撑公有云业务的飞速发展。同理，对于大规模私有云而言，VLAN也难以胜任其对于网络虚拟化提出的要求。</p>
+<p>大二层网络的实现主要依赖于网络叠加技术。网络叠加技术指的是一种物理网络架构上叠加的虚拟化技术模式，其大体框架是对基础网络不进行大规模修改的条件下，实现应用在网络上的承载，并能与其他网络业务分离，以基于IP的基础网络技术为主。其实这种模式是以对传统技术的优化而形成的。早期就有标准支持的二层Overlay技术，如RFC3378（Ethernet in IP），并且基于Ethernet over GRE的技术。H3C与思科都在物理网络基础上分别发展了私有二层Overlay技术：<strong>EVI（Ethernet Virtual Interconnection）与OTV（Overlay Transport Virtualization）</strong>。主要用于解决数据中心之间的二层互联与业务扩展问题，并且对于承载网络的基本要求是IP可达，部署上简单且扩展方便。</p>
+<p><strong>网络叠加技术可以从技术解决目前数据中心面临的三个主要问题：</strong></p>
+<p><strong>1）解决了虚拟机迁移范围受到网络架构限制的问题。</strong>网络叠加是一种封装在IP报文之上的新的数据格式，因此，这种数据可以通过路由的方式在网络中分发，而路由网络本身并无特殊网络结构限制，具备良性大规模扩展能力，并且对设备本身无特殊要求，且具备很强的故障自愈能力、负载均衡能力。</p>
+<p><strong>2）解决了虚拟机规模受网络规格限制的问题</strong>。虚拟机数据封装在IP数据包中后，对网络只表现为封装后的网络参数，即隧道端点的地址，因此，对于承载网络（特别是接入交换机），MAC地址规格需求极大降低，最低规格也就是几十个（每个端口一台物理服务器的隧道端点MAC）。但是，对于核心/网关处的设备表项（MAC/ARP）要求依然极高，当前的解决方案是采用分散方式，即通过多个核心/网关设备来分散表项的处理压力。</p>
+<p><strong>3）解决了网络隔离/分离能力限制的问题。</strong>针对VLAN数量在4000以内的限制，在网络叠加技术中沿袭了云计算“<strong>租户</strong>”的概念，称之为Tenant ID（租户标识），用24或64比特表示，可以支持16M的虚拟隔离网络划分。针对VLAN技术下网络的TRUANK ALL（VLAN穿透所有设备）的问题，网络叠加对网络的VLAN配置无要求，可以避免网络本身的无效流量带宽浪费，同时网络叠加的二层连通基于虚拟机业务需求而创建，在云的环境中全局可控。</p>
+<h3 id="Overlay网络常用技术协议"><a href="#Overlay网络常用技术协议" class="headerlink" title="Overlay网络常用技术协议"></a><strong>Overlay网络常用技术协议</strong></h3><p>目前，IETF在Overlay技术领域有如下三大技术路线正在讨论：<strong>VxLAN（Virtual eXtensible Local Area Network）</strong>，是由VMware、思科、Arista、Broadcom、Citrix和红帽共同提出的IETF草案，是一种将以太网报文封装在UDP传输层上的隧道转发模式，目的UDP端口号为4798。<strong>NVGRE（Network Virtualization using Generic Routing Encapsulation）</strong>，是微软、Dell等提出的草案，是将以太网报文封装在GRE内的一种隧道转发模式。<strong>STT（Stateless Transport Tunneling）</strong>，是Nicira公司提出的一种Tunnel技术，目前主要用于Nicira自己的NVP平台上。STT利用了TCP的数据封装形式，但改造了TCP的传输机制，数据传输遵循全新定义的无状态机制，无需三次握手，以太网数据封装在无状态TCP中。三种网络叠加技术的优缺点和数据封装格式如下：</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dae365edc152866.jpg"></p>
+<p><strong>这三种二层网络叠加技术，大体思路均是将以太网报文承载到某种隧道层面，其差异性在于选择和构造隧道的不同，而底层均是IP转发。</strong>VxLAN和STT对于现网设备的流量均衡要求较低，即负载链路负载分担适应性好，一般的网络设备都能对L2~L4的数据内容参数进行链路聚合或等价路由的流量均衡，而NVGRE则需要网络设备对GRE扩展头感知并对flow ID进行Hash，需要硬件升级；STT对于TCP有较大修改，隧道模式接近UDP性质，隧道构造技术具有革新性，且复杂度较高，而VxLAN利用了现有通用的UDP传输，成熟性极高。总体来说，<strong>VLXAN技术相对具有优势。</strong></p>
+<h3 id="VxLAN的包封装格式"><a href="#VxLAN的包封装格式" class="headerlink" title="VxLAN的包封装格式"></a><strong>VxLAN的包封装格式</strong></h3><p>VXLAN报文是在原始的二层报文前面再封装一个新的报文，新的报文中和传统的以太网报文类似，拥有源目mac、源目ip等元组。当原始的二层报文来到vtep节点后会被封装上VXLAN包头（在VXLAN网络中把可以封装和解封装VXLAN报文的设备称为vtep，vtep可以是虚拟switch也可以是物理switch），打上VXLAN包头的报文到了目标的vtep后会将VXLAN包头解封装，并获取原始的二层报文。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dae68818e161615.jpg"></p>
+<p><strong>1）VXLAN头部。</strong>共计8个字节，目前使用的是Flags中的一个8bit的标识位和24bit的VNI（Vxlan Network Identifier），其余部分没有定义，但是在使用的时候必须设置为0x0000。</p>
+<p><strong>2）外层的UDP报头。目的端口使用4798，</strong>但是可以根据需要进行修改，同时UDP的校验和必须设置成全0。</p>
+<p><strong>3）IP报文头。</strong>目的IP地址可以是单播地址，也可以是多播地址。单播情况下，目的IP地址是VTEP（Vxlan Tunnel End Point）的IP地址；多播情况下引入VxLAN管理层，利用VNI和IP多播组的映射来确定VTEPs。<strong>protocol设置值为0x11</strong>，说明这是UDP数据包。Source ip是源vTEP_IP。Destination ip是目的VTEP IP。</p>
+<p><strong>4）Ethernet Header。</strong>Destination Address：目的VTEP的MAC地址，即为本地下一跳的地址（通常是网关MAC地址）。<strong>VLAN Type被设置为0x8100，并可以设置Vlan Id tag（这就是vxlan的vlan标签）</strong>。<strong>Ethertype设置值为0x8000，指明数据包为IPv4的</strong>。</p>
+<p><strong>outer mac header以及outer ip header里面的相关元组信息都是vtep的信息，和原始的二层报文没有任何关系。</strong>所在数据包在源目vtep节点之间的传输和原始的二层报文是毫无关系的，依靠的是外层的包头完成。  除此之外还有几个字段需要关注：</p>
+<p>1、隧道终端VTEP用于多VxLAN报文进行封装/解封装，包括MAC请求报文和正常VXLAN数据报文，在一端封装报文后通过隧道向另一端VTEP发送封装报文，另一端VTEP接收到封装的报文解封装后根据被封装的MAC地址进行转发，VTEP可由支持VXLAN的硬件设备或软件来实现。</p>
+<p>2、在UDP header里面有一个source port的字段，用于VxLAN网络节点之间ECMP的hash；</p>
+<p>3、在VXLAN Header里的reserved字段，作为保留字段，很多厂商都会加以运用来实现自己组网的一些特性。</p>
+<h3 id="VxLAN的控制和转发平面"><a href="#VxLAN的控制和转发平面" class="headerlink" title="VxLAN的控制和转发平面"></a><strong>VxLAN的控制和转发平面</strong></h3><p><strong>1）数据平面—隧道机制</strong> </p>
+<p>VTEP为虚拟机的数据包加上了层包头，这些新的报头只有在数据到达目的VTEP后才会被去掉。中间路径的网络设备只会根据外层包头内的目的地址进行数据转发，对于转发路径上的网络来说，一个Vxlan数据包跟一个普通IP包相比，除了个头大一点外没有区别。由于VxLAN的数据包在整个转发过程中保持了内部数据的完整，因此<strong>VxLAN的数据平面是一个基于隧道的数据平面</strong>。</p>
+<p><strong>2）控制平面—改进的二层协议</strong></p>
+<p> VxLAN不会在虚拟机之间维持一个长连接，所以VxLAN需要一个控制平面来记录对端地址可达情况。控制平面的表为（VNI，内层MAC，外层vtep_ip）。Vxlan学习地址的时候仍然保存着二层协议的特征，节点之间不会周期性的交换各自的路由表，对于不认识的MAC地址，VXLAN依靠组播来获取路径信息(如果有SDN Controller，可以向SDN单播获取)。</p>
+<p>另一方面，VxLAN还有自学习的功能，当VTEP收到一个UDP数据报后，会检查自己是否收到过这个虚拟机的数据，如果没有，VTEP就会记录源vni/源外层ip/源内层mac对应关系，避免组播学习。</p>
+<h3 id="VxLAN的报文转发"><a href="#VxLAN的报文转发" class="headerlink" title="VxLAN的报文转发"></a><strong>VxLAN的报文转发</strong></h3><p><strong>1）ARP报文转发，转发过程如下图：</strong></p>
+<p><img src="https://i.loli.net/2019/06/22/5d0daed33215e73398.jpg"></p>
+<p><strong>Step1：</strong>主机A向主机B发出ARP Request，Src MAC为MAC-A，Dst MAC为全F；</p>
+<p><strong>Step2：</strong>ARP Request报文到达vtep-1后，vtep-1对其封装VxLAN包头，其中外层的Src MAC为vtep-1的MAC-1，Dst MAC为组播mac地址， Src ip为vtep-1的IP-1，Dst ip为组播ip地址，并且打上了VxLAN VNID：10。由于vtep之间是三层网络互联的，广播包无法穿越三层网络，所以只能借助组播来实现arp报文的泛洪。通常情况下一个组播地址对应一个VNID，同时可能会对应一个租户或者对应一个vrf网络，通过VNID进行租户之间的隔离。</p>
+<p><strong>Step3：</strong>打了VxLAN头的报文转发到了其他的vtep上，进行VxLAN头解封装，原始的ARP Request报文被转发给了vtep下面的主机，并且在vtep上生成一条MAC-A（主机A的mac）、VxLAN ID、IP-1（vtep-1的ip）的对应表项；</p>
+<p><strong>Step4：</strong>主机B收到ARP请求，回复ARP Response，Src MAC：MAC-B、Dst MAC：MAC-A；</p>
+<p><strong>Step5：</strong>ARP Response报文到达vtep-2后，被打上VxLAN的包头，此时外层的源目mac和ip以及VxLAN ID是根据之前在vtep-2上的MAC-A、VXLAN ID、IP-1对应表项来封装的，所以ARP Response是以单播的方式回复给主机A；</p>
+<p><strong>Step6：</strong>打了VxLAN头的报文转发到vtep-1后，进行VxLAN头的解封装，原始的ARP Response报文被转发给了主机A；</p>
+<p><strong>Step7：</strong>主机A收到主机B返回的ARP Response报文，整个ARP请求完成。</p>
+<p><strong>这种用组播泛洪ARP报文的方式是VxLAN技术早期的方式，这种方式也是有一些缺点，比如产生一些不可控的组播流量等，所以现在很多厂商已经使用了控制器结合南向协议（比如openflow或者一些私有南向协议）来解决ARP的报文转发问题。</strong></p>
+<p><strong>2）单播报文转发（同一个Vxlan），转发过程如下：</strong></p>
+<p><img src="https://i.loli.net/2019/06/22/5d0daf0abec5020399.jpg"></p>
+<p>在经过arp报文后，vtep-1和vtep-2上都会形成一个VxLAN二层转发表，大致如下（不同厂商表项可能略有不同，但是最主要的是以下元素）：</p>
+<p><strong>vtep-1：</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>MAC</strong></th>
+<th><strong>VNI</strong></th>
+<th><strong>vtep</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MAC-A</td>
+<td>10</td>
+<td>e1/1</td>
+</tr>
+<tr>
+<td>MAC-B</td>
+<td>10</td>
+<td>vtep-2 ip</td>
+</tr>
+</tbody>
+</table>
+<p><strong>vtep-2：</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>MAC</strong></th>
+<th><strong>VNI</strong></th>
+<th><strong>vtep</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MAC-B</td>
+<td>10</td>
+<td>e1/1</td>
+</tr>
+<tr>
+<td>MAC-A</td>
+<td>10</td>
+<td>vtep-1 ip</td>
+</tr>
+</tbody>
+</table>
+<p> <strong>Step1：</strong>host-A将原始报文上行送到vtep-1；</p>
+<p><strong>Step2：</strong>根据目的mac和VNI的号（这里的VNI获取是vlan和vxlan的mapping查询出的结果），查找到外层的目的ip是vtep-2 ip，然后将外层的源目ip分别封装为vtep-1 ip和vtep-2 ip，源目mac为下一段链路的源目mac；</p>
+<p><strong>Step3：</strong>数据包穿越ip网络；</p>
+<p><strong>Step4：</strong>vtep-2根据VNI、外层的源目ip，进行解封装，通过VNI和目的mac查表，得到目的端口是e1/1；</p>
+<p><strong>Step5：</strong>host-B接受此原始报文，并回复host-A，回复过程同上一致。</p>
+<p><strong>3）不同Vxlan之间，VxLAN与VLAN之间转发</strong></p>
+<p>不同VxLAN之间转发，VxLAN与VLAN之间转发，各个厂商的解决方案不大一致，一般情况下所以跨VxLAN的转发需要一个叫VxLAN网关的设备，这个VxLAN网关可以是物理交换机也可以是软件交换机。具体如下图：</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0daf467c21689706.jpg"></p>
+<p>另外cisco对不同vxlan之间的转发又是另外一种模式，由于cisco是一家硬件设备厂商，所以它的所有vtep都是硬件交换机，但是通常物理交换机收到的都是报文已经是Hypervisor层打了vlan tag了，所以cisco的处理方式会比较复杂，大体上是通过一个L3的VNI来完成。</p>
+<p>VxLAN和VLAN之间的转发这部分，说实话我也想不到太多实际的应用场景，如果是一个L3的网络更是没有意义，因为VLAN的网关终结在了leaf节点上，唯一想到的场景可能就是L2网络中部分设备不支持打VxLAN只能打VLAN Tag（硬件overlay一般不会出现这个情况，软件overlay情况下，会有一些物理服务器没有vswitch来打vxlan tag，只能依靠硬件交换机来打vlan tag）。这种情况下是需要通过VxLAN网关设备来完成一个VxLAN到VLAN或者VLAN到VxLAN的mapping关系。这其实很好理解，就是比如一个打了VxLAN包头的报文要去访问一个某一个VLAN，这时候报文需要被先送到一个叫VxLAN网关设备，这个设备查找VxLAN和VLAN的对应表后，将VxLAN包头拆去，再打上内层的VLAN Tag，然后将数据包送给VLAN的网络中。同理，VLAN到VxLAN网络反之处理类似。</p>
+<h3 id="典型的VXLAN组网模式"><a href="#典型的VXLAN组网模式" class="headerlink" title="典型的VXLAN组网模式"></a><strong>典型的VXLAN组网模式</strong></h3><p><strong>1）软件模式：</strong></p>
+<p><img src="https://i.loli.net/2019/06/22/5d0dafc75e03223461.jpg"></p>
+<p>软件模式中vtep功能由vswitch实现，图中物理交换网络是一个L3的网络，实际软件overlay的场景下物理的交换网并不一定要是一个L3的网络，只要物理服务器的ip互相可达即可，当然L3的网络是一个比较好的选择，因为L3的网络扩展性比L2好，L2网络一大就会有各种二层问题的存在，比如广播泛洪、未知单播泛洪，比如TOR的mac问题，这个前文已经讲了很多，这里就不赘述了。</p>
+<p><strong>优点：</strong></p>
+<p>1）硬件交换机的转发平面和控制平面解耦，更加灵活，不受物理设备和厂商的限制；</p>
+<p>2）现有的硬件网络设备无需进行替换。（如果现有物理设备是L2的互联网络也可以使用软件overlay的方式，当然L3互联更佳，overlay的网络还是建议L3的方式）</p>
+<p><strong>缺点：</strong></p>
+<p>1）vSwitch转发性能问题，硬件交换机转发基本都是由ASIC芯片来完成，ASIC芯片是专门为交换机转发而设计的芯片，而vSwitch的转发是由x86的CPU来完成，当vSwitch作为vtep后并且增加4-7层服务外加分布式路由的情况下，性能、可靠性上可能会存在问题；</p>
+<p>2）无法实现虚拟网络和物理服务器网络的共同管理；</p>
+<p>3）如果是用商业的解决方案，则软件层面被厂商绑死，如果选用开源或自研的vswitch，存在一定的难度和风险。</p>
+<p>4）软件overlay容易造成管理上的混乱，特别对于传统行业来说，overlay网络到底是网络运维管还是云平台运维管，会有一些利益冲突。不过这个并不是一个技术问题，在云计算环境下，类似这种问题会越来越多。</p>
+<p>案例：互联网公司用软件overlay的还挺多，下面附上几个的方案简介，设计一些商业解决方案和一些开源的解决方案：</p>
+<p><a href="http://www.sdnap.com/sdn-study/5885.html" target="_blank" rel="noopener">UCloud的“公有云SDN网络实践”分享</a></p>
+<p><a href="http://www.sdnlab.com/14855.html" target="_blank" rel="noopener">浙江电信云资源池引入VxLAN的部署初探（NSX）</a></p>
+<p><strong>2）硬件模式：</strong></p>
+<p><img src="https://i.loli.net/2019/06/22/5d0db03a3bcd890662.jpg"></p>
+<p>硬件模式中vtep功能由物理交换机来实现，硬件overlay解决方案中物理网络<strong>一般都是L3的网络</strong>。</p>
+<p><strong>优点：</strong></p>
+<p>1）硬件交换机作为vtep转发性能比较有保证；</p>
+<p>2）虚拟化网络和物理服务器网络可以统一管理；</p>
+<p>3）向下兼容各种的虚拟化平台（商业或开源）。</p>
+<p><strong>缺点：</strong></p>
+<p>1）各硬件交换机厂商的解决方案难有兼容性，可能会出现被一个厂商锁定的情况；</p>
+<p>2）老的硬件交换机基本上芯片都不支持VxLAN技术，所以要使用vxlan组网，会出现大规模的设备升级；</p>
+<p><strong>案例：</strong>硬件overlay主要是Cisco、华为、H3C这种传统的硬件厂商提供解决方案，下面链接一个华为的的案例：</p>
+<p><a href="http://www.sdnap.com/sdn-technology/6132.html" target="_blank" rel="noopener">美团云携手华为SDN解决方案</a></p>
+<p><strong>3）软硬件混合模式</strong></p>
+<p><img src="https://i.loli.net/2019/06/22/5d0db0632f6bc42809.jpg"></p>
+<p>软硬件混合模式是一种比较折中的解决方案，虚拟化平台上依然使用vSwitch作为vtep，而对于物理服务器使其接入物理的vtep交换机。</p>
+<p><strong>优点：</strong>整合了软、硬件模式的优缺点，是一种比较理想的overlay网络模型；</p>
+<p><strong>缺点：</strong>落地起来架构比较复杂，统一性比较差，硬件交换机和软件交换机同时作为vtep，管理平台上兼容性是个问题。</p>
+<p><strong>案例：</strong>这个解决方案目前一些硬件的交换机厂商会提供（比如华为），还有就是一些研发能力比较强的互联网公司会选择这个方案。</p>
+<p>网络叠加技术作为网络虚拟化在数据层的实现手段，解决了虚拟机迁移范围受到网络架构限制、虚拟机规模受网络规格限制、网络隔离/分离能力限制的问题。同时，支持网络叠加的各种协议、技术正不断演进，VxLAN作为一种典型的叠加协议，最具有代表性。Linux内核3.7已经加入了对VxLAN协议的支持。另外，由IETF工作组提出的网络虚拟化叠加（NVO3）草案也在讨论之中，各大硬件厂商也都在积极参与标准的制定并研发支持网络叠加协议的网络产品，这些都在推动着软件定义网络SDN技术在云数据中心各个业务领域逐步落地。</p>
+<h2 id="Spline-leaf架构下的SDN引入"><a href="#Spline-leaf架构下的SDN引入" class="headerlink" title="Spline-leaf架构下的SDN引入"></a><strong>Spline-leaf架构下的SDN引入</strong></h2><p>从 2003 年开始，随着虚拟化技术的引入，原来三层（three-tier）数据中心中，在二层以pod形式做了隔离的计算、网络和存储资源，形成一种池化的组网模式。这种技术产生了从接入层到核心层的大二层域的需求，如下图所示 。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0db08b6b17627858.jpg"></p>
+<p>虚拟机的引入，使得应用的部署方式越来越分布式，导致东西向流量越来越大。这些流量需要被高效地处理，并且还要保证低的、可预测的延迟。 然而，vPC只能提供两个并行上行链路，因此<strong>三层数据中心架构中的带宽成为了瓶颈</strong>。 三层架构的另一个问题是<strong>服务器到服务器延迟（server-to-server latency）随着流量路径的不同而不同。</strong></p>
+<p>针对以上问题，提出了一种新的数据中心设计，称作基于Clos网络的Spine-and-Leaf架构（Clos network-based Spine-and-Leaf architecture），如下图所示。事实已经证明，这种架构可以提供高带宽、低延迟、非阻塞的服务器到服务器连接，<strong>成为超大规模网络首选。</strong></p>
+<p><img src="https://i.loli.net/2019/06/22/5d0db0c0c1a3f64646.jpg"></p>
+<p>在以上两级Clos架构中，每个低层级的交换机（leaf）都会连接到每个高层级的交换机（spine），形成一个<strong>full-mesh拓扑</strong>。leaf 层由接入交换机组成，用于连接服务器等设备。spine层是网络的骨干，负责将所有的leaf连接起来。 fabric中的每个leaf都会连接到每个spine，如果一个spine挂了，数据中心的吞吐性能只会有轻微的下降。如果某个链路拥塞了，添加一个spine交换机就可以扩展每个leaf的上行链路，增大了leaf和spine之间的带宽，缓解了链路拥塞的问题。如果接入层的端口数量成为了瓶颈，那就直接添加一个新的leaf，然后将其连接到每个spine并做相应的配置即可。<strong>leaf层的接入端口和上行链路都没有瓶颈时，这个架构就实现了无阻塞。</strong></p>
+<p><strong>在Spine-and-Leaf架构中，任意一个服务器到另一个服务器的连接，都会经过相同数量的设备（除非这两个服务器在同一leaf下面），这保证了延迟是可预测的，因为一个包只需要经过一个spine和另一个leaf就可以到达目的端。</strong></p>
+<p>在数据中心的实际应用中，Spline-and-leaf架构又分为<strong>分层解耦架构</strong>和<strong>全融合架构</strong>两种，如下图所示。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0db123413b967489.jpg"></p>
+<p><strong>在分层解耦架构中，业务功能模块化，由不同的叶子节点分别实现。各节点可灵活合并和解耦，Pod分区具备灵活扩展能力。</strong>适用于东西流量预期有显著增长、数据中心规模大、未来高扩展的场景，比如：中国移动私有云部署场景。</p>
+<p><strong>在全融合架构中，业务功能集中由一对核心交换机实现，属于接入+核心的二层架构。</strong>这种架构中，<strong>网络设备少，流量模型简单，维护简单，但扩展性较差。</strong>适用于中小型数据中心、DC规划可预见/扩展性低的场景，比如：各个中小企业的私有云部署场景。</p>
+<p><strong><em>在数据中心中，到底使用大二层还是Spline-and-leaf解决方案，是由服务器的规模决定的，二者之间的区别只是服务器接入能力不同，并不存在谁比谁更先进一说。</em></strong></p>
+<p><img src="https://i.loli.net/2019/06/22/5d0db168c2f3385731.jpg"></p>
+<blockquote>
+<p>大二层架构是由核心层+接入层共两层组成，两台核心交换机做堆叠，作为网关，FW、LB等设备旁挂在网关边上。接入层TOR两两堆叠，可提供2000+台物理服务的接入能力。</p>
+<p>Spline-and-leaf架构是由核心层+汇聚层+接入层共三层组成，两台核心交换机做堆叠，作为网关，FW、LB等设备旁挂在网关边上。Spine层交换机数量为2的倍数，相互独立，不做堆叠。接入层TOR两两堆叠，可提供2000~5000台物理服务的接入能力。</p>
+</blockquote>
+<p>中国移动私有云SDN解决方案技术规范中，对数据中内部的组网架构图要求如下（电信云的要求类似，多了网管CE的部署要求）。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0db195edab866822.jpg"></p>
+<ul>
+<li>虚拟化/裸金属服务器混合场景优先采用混合SDN组网方式，即硬件接入交换机（SDN ToR）和VSW作为VTEP。</li>
+<li>SDN控制器或控制器插件支持南向数据一致性校验和对账。</li>
+<li>SDN控制器支持allowed-address-pairs功能。</li>
+<li>控制器支持OpenFlow+Evpn流表和路由相互转换。</li>
+<li>支持IPv4/IPv6双栈网络服务的自动化部署。</li>
+<li>支持vFW上IPv6防火墙策略的自动化部署。</li>
+<li>Server Leaf和Border leaf采用MC-LAG方式组网，并且由控制器下发MC-LAG相关业务。</li>
+</ul>
+<p>上述技术规范中，<strong>EVPN+OpenFlow双控制面是未来演进方向</strong>。相比OpenFlow单控制面来说，区别如下图所示。</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0db1d1e9b4a86962.jpg"></p>
+<p>在单控制面OpenFlow组网中，<strong>SDN控制器通过OpenFlow给虚拟交换机和物理交换机统一下发流表，虚拟交换机和物理交换机按照流表进行转发。</strong>优点就是OpenFlow灵活性高，SDN控制器和转发设备间可实现解耦。但是缺点很明显，也就是SDN控制器成为瓶颈，收敛性能和稳定性欠佳，不适合大规模资源池网络，最关键的是和已有IP网络的兼容性不好，如检测等特性。</p>
+<p>在双控制面EVPN+OpenFlow组网中，<strong>SDN控制器通过OpenFlow给虚拟交换机下发流表，物理交换机之间通过BGP-EVPN协议建立转发表项。</strong>优点就是可靠性高，兼具OpenFlow的灵活性和EVPN的扩展性，符合未来演进方向，也减少现有设备投资改造费用。缺点就是对控制器要求较高，需要控制器支持EVPN协议，具备OpenFlow流表和EVPN转发表的翻译能力，而且这属于设备商的私有接口部分，只有少数几个厂家支持，比如，华为。</p>
+<p>在实际多机房部署时，具体规划如下图所示</p>
+<p><img src="https://i.loli.net/2019/06/22/5d0db20054c3737805.jpg"></p>
+<ul>
+<li>各个机房通过东西向互联交换机互联。</li>
+<li>每个机房部署一套SDN控制器和云平台，采用硬件分布式或混合分布式SDN方案。</li>
+<li>核心生产区、测试区和DMZ区的服务器统一挂在业务TOR下面。</li>
+<li>所有的SDN控制器和云平台统一部署在管理网络区（POD1内）。</li>
+<li>FC SAN分散部署在各个机房内，分布式存储集中部署在POD7。</li>
+<li>在每个机房内部署东西向防火墙，Internet出口部署南北向防火墙。</li>
+</ul>
+<p>以上就是数据中心层面服务器外部交换网络虚拟化的全部内容，至此网络虚拟化技术理论方面的知识点全部介绍完毕，后续会用一篇Linux原生网络虚拟化实战作为全部虚拟化专题的结束篇。可能有人会提到SDN还没讲，一方面是因为目前还在试点，另一方面是因为SDN涉及面很广，有时间的话我会写个专题，从协议、控制器部署、实际解决方案等专门来介绍SDN。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2019/06/22/服务器外部交换网络虚拟化/" title="服务器外部交换网络虚拟化">https://kkutysllb.cn/2019/06/22/服务器外部交换网络虚拟化/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/电信云/" rel="tag"><i class="fa fa-tag"></i> 电信云</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/22/KVM到底是个啥？/" rel="next" title="KVM到底是个啥？">
+                <i class="fa fa-chevron-left"></i> KVM到底是个啥？
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/24/打造文件实时同步架构之rsync篇/" rel="prev" title="打造文件实时同步架构之rsync篇">
+                打造文件实时同步架构之rsync篇 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据中心内部二、三层交换设备虚拟化"><span class="nav-number">1.</span> <span class="nav-text">数据中心内部二、三层交换设备虚拟化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#物理设备的“多虚一”：VRRP、iStack和虚拟机框"><span class="nav-number">2.</span> <span class="nav-text">物理设备的“多虚一”：VRRP、iStack和虚拟机框</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#VRRP技术"><span class="nav-number">2.1.</span> <span class="nav-text">VRRP技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iStack交换机堆叠技术"><span class="nav-number">2.2.</span> <span class="nav-text">iStack交换机堆叠技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高级STP欺骗：跨设备链路聚合M-LAG"><span class="nav-number">2.3.</span> <span class="nav-text">高级STP欺骗：跨设备链路聚合M-LAG</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#大二层网络的基石VxLAN"><span class="nav-number">3.</span> <span class="nav-text">大二层网络的基石VxLAN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#大二层是个什么鬼？"><span class="nav-number">3.1.</span> <span class="nav-text">大二层是个什么鬼？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Overlay网络常用技术协议"><span class="nav-number">3.2.</span> <span class="nav-text">Overlay网络常用技术协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VxLAN的包封装格式"><span class="nav-number">3.3.</span> <span class="nav-text">VxLAN的包封装格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VxLAN的控制和转发平面"><span class="nav-number">3.4.</span> <span class="nav-text">VxLAN的控制和转发平面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VxLAN的报文转发"><span class="nav-number">3.5.</span> <span class="nav-text">VxLAN的报文转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#典型的VXLAN组网模式"><span class="nav-number">3.6.</span> <span class="nav-text">典型的VXLAN组网模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spline-leaf架构下的SDN引入"><span class="nav-number">4.</span> <span class="nav-text">Spline-leaf架构下的SDN引入</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">932k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">14:07</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/06/22/服务器外部交换网络虚拟化/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

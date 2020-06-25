@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="内存虚拟化概述所谓的内存虚拟化，即如何在多个虚拟机之间共享物理内存以及如何进行动态分配。在《x86架构基础》一文中已经介绍操作系统对物理服务器内存管理的知识，它的本质就是将物理内存地址映射到一段线性地址空间，也有叫逻辑地址空间，应用程序访问内存物理地址是通过段页查询机制完成。而这个线性地址空间或逻辑地址空间本身就是物理内存的虚拟化呈现。在虚拟化环境中，分配给虚拟机内存非常类似于操作系统中关于线性地">
+<meta name="keywords" content="电信云">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算虚拟化之内存虚拟化">
+<meta property="og:url" content="https://kkutysllb.cn/2019/05/18/计算虚拟化之内存虚拟化/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="内存虚拟化概述所谓的内存虚拟化，即如何在多个虚拟机之间共享物理内存以及如何进行动态分配。在《x86架构基础》一文中已经介绍操作系统对物理服务器内存管理的知识，它的本质就是将物理内存地址映射到一段线性地址空间，也有叫逻辑地址空间，应用程序访问内存物理地址是通过段页查询机制完成。而这个线性地址空间或逻辑地址空间本身就是物理内存的虚拟化呈现。在虚拟化环境中，分配给虚拟机内存非常类似于操作系统中关于线性地">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf720f6123725981.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf7229c2feb27866.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf728ab26fc27225.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf72c9c659e24729.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf72f7358ee63929.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf732c5c23754430.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf734451c6887409.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf735c64aa688044.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf73824ce0891613.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf7398dc3fa66352.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/18/5cdf73c2b12e968100.jpg">
+<meta property="og:updated_time" content="2020-06-25T11:38:45.174Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算虚拟化之内存虚拟化">
+<meta name="twitter:description" content="内存虚拟化概述所谓的内存虚拟化，即如何在多个虚拟机之间共享物理内存以及如何进行动态分配。在《x86架构基础》一文中已经介绍操作系统对物理服务器内存管理的知识，它的本质就是将物理内存地址映射到一段线性地址空间，也有叫逻辑地址空间，应用程序访问内存物理地址是通过段页查询机制完成。而这个线性地址空间或逻辑地址空间本身就是物理内存的虚拟化呈现。在虚拟化环境中，分配给虚拟机内存非常类似于操作系统中关于线性地">
+<meta name="twitter:image" content="https://i.loli.net/2019/05/18/5cdf720f6123725981.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2019/05/18/计算虚拟化之内存虚拟化/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>计算虚拟化之内存虚拟化 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/05/18/计算虚拟化之内存虚拟化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">计算虚拟化之内存虚拟化
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-18 10:45:07" itemprop="dateCreated datePublished" datetime="2019-05-18T10:45:07+08:00">2019-05-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-06-25 19:38:45" itemprop="dateModified" datetime="2020-06-25T19:38:45+08:00">2020-06-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV关键技术/" itemprop="url" rel="index"><span itemprop="name">NFV关键技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">8.3k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">8 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="内存虚拟化概述"><a href="#内存虚拟化概述" class="headerlink" title="内存虚拟化概述"></a>内存虚拟化概述</h2><p><strong>所谓的内存虚拟化，即如何在多个虚拟机之间共享物理内存以及如何进行动态分配</strong>。在《x86架构基础》一文中已经介绍操作系统对物理服务器内存管理的知识，它的本质就是将物理内存地址映射到一段线性地址空间，也有叫逻辑地址空间，应用程序访问内存物理地址是通过段页查询机制完成。而这个线性地址空间或逻辑地址空间本身就是物理内存的虚拟化呈现。在虚拟化环境中，分配给虚拟机内存非常类似于操作系统中关于线性地址空间的实现。操作系统负责维护虚页号到实页号的映射，并将这一 映射信息保存到页表（Page Table）。在 x86架构的CPU中，内存管理单元MMU与TLB这两个模块就负责实现并优化虚拟内存的性能。详见《DPDK技术在电信云中最佳实践》系列文章。<a id="more"></a></p>
+<p>一个操作系统对其物理内存存在两个主要的基本认识：<strong>物理地址从0开始</strong>和<strong>内存地址连续性</strong>（至少在一些大的粒度上连续）。</p>
+<p><img src="https://i.loli.net/2019/05/18/5cdf720f6123725981.jpg"></p>
+<p>如上图所示，而VMM与客户机操作系统在对物理内存的认识上存在冲突，这使得真正拥有物理内存的VMM必须对客户机操作系统所访问的内存进行一定程度的虚拟化。换句话说，就是VMM 负责将MMU进行虚拟化，为客户机操作系统提供一段连续的“物理”地址空间，而操作系统本身不会意识到这种变化，仍能够将虚拟机虚拟地址（Guest Virtual Address，GVA）映射到虚拟机物理地址（Guest Physical Address，GPA），但是需要VMM将虚拟机物理地址映射到物理机物理地址（Host Physical Address，HPA）。</p>
+<p>所以，<strong>内存虚拟化的本质就是把物理机的真实物理内存统一管理，包装成多份虚拟的内存给若干虚拟机使用</strong>。内存虚拟化的核心，在于引入一层新的地址空间—<strong>客户机物理地址空间</strong>，客户机以为自己运行在真实的物理地址空间中，实际上它是通过VMM访问真实的物理地址的。在VMM中保存客户机地址空间和物理机地址空间之间的映射表。</p>
+<p><strong>如下图所示：虚拟化系统中包括三层内存地址空间：虚拟机虚拟地址GVA、虚拟机物理地址GPA和物理机物理地址HPA。因此，原先由MMU完成的线性地址到物理地址的映射已经不能满足，必须由VMM接入来完成这三层地址的映射维护和转换。</strong></p>
+<p><img src="https://i.loli.net/2019/05/18/5cdf7229c2feb27866.jpg"></p>
+<ul>
+<li><strong>GVA：</strong>指GuestOS提供给其应用程序使用的线性地址空间。</li>
+<li><strong>GPA：</strong>经VMM抽象的，虚拟机看到的伪物理地址空间。</li>
+<li><strong>HPA：</strong>真实的机器地址，即地址总线上出现的地址信号。</li>
+</ul>
+<p>为了实现上述映射和转换关系，主要有两种解决方案：<strong>软件解决方案—影子页表和硬件解决方案—Intel的EPT和AMD的RVI。</strong></p>
+<h2 id="内存虚拟化软件解决方案"><a href="#内存虚拟化软件解决方案" class="headerlink" title="内存虚拟化软件解决方案"></a>内存虚拟化软件解决方案</h2><h3 id="MMU半虚拟化（MMU-Paravirtualization）这种方式主要为Xen所用"><a href="#MMU半虚拟化（MMU-Paravirtualization）这种方式主要为Xen所用" class="headerlink" title="MMU半虚拟化（MMU Paravirtualization）这种方式主要为Xen所用"></a>MMU半虚拟化（MMU Paravirtualization）这种方式主要为Xen所用</h3><p><strong>MMU半虚拟化主要原理是：</strong></p>
+<p>1）当Guest OS创建新页表时，VMM从维护的空闲内存中为其分配页面并进行注册。后续，Guest OS对该页表的写操作都会陷入VMM进行验证和转换；VMM检查页表中的每一项，确保它们只映射到属于该虚拟机的机器页面，而且不包含对页表页面的可写映射。</p>
+<p>2）然后，VMM会根据其维护的映射关系PA-MA，将页表项中的虚拟机逻辑地址VA替换为相应的机器地址MA。</p>
+<p>3）最后把修改过的页表载入MMU，MMU就可以根据修改过的页表直接完成虚拟地址VA到机器地址MA的转换。</p>
+<p><strong>这种方式的本质是将映射关系VA-MA直接写入Guest OS的页表中，以替换原来的映射VA-PA映射关系。</strong></p>
+<h3 id="影子页表"><a href="#影子页表" class="headerlink" title="影子页表"></a>影子页表</h3><p>相比较MMU半虚，大部分虚拟化厂商在VMM中还使用了一种称为<strong>影子页表（Shadow Page Table）</strong>的技术实现上述功能。对于每个虚拟机的主页表（Primary Page Table），VMM都维持一个影子页表来记录和维护GVA与HPA的映射关系。 影子页表包括以下两种映射关系，如下图所示：</p>
+<p><img src="https://i.loli.net/2019/05/18/5cdf728ab26fc27225.jpg"></p>
+<p><strong>1）GVA&gt;&gt;&gt;GPA，</strong>虚拟机操作系统负责维护从虚拟机逻辑地址到虚拟机物理地址的映射关系，VMM可以从虚拟机主页表中获取这种映射关系。</p>
+<p><strong>2）GPA&gt;&gt;&gt;HPA，</strong>VMM负责维护从虚拟机物理地址到物理机物理地址的映射关系。</p>
+<p>通过这种两级映射的方式，VMM为Guest OS的每个页表维护一个影子页表，并将GVA-HPA的映射关系写入影子页表，Guest OS的页表内容保持不变，然后，VMM将影子页表写入MMU。同时，又对虚拟机可访问的内存边界进行了有效控制。并且，使用TLB缓存影子页表的内容可以大大提高虚拟机问内存的速度。</p>
+<p>影子页表的维护将带来<strong>时间</strong>和<strong>空间</strong>上的较大开销。<strong>时间开销</strong>主要体现在Guest OS构造页表时不会主动通知VMM，VMM必须等到Guest OS发生缺页错误时（必须Guest OS要更新主页表），才会分析缺页原因再为其补全影子页表。而<strong>空间开销</strong>主要体现在VMM需要支持多台虚拟机同时运行，每台虚拟机的 Guest OS通常会为其上运行的每个进程创建一套页表系统，因此影子页表的空间开销会随着进程数量的增多而迅速增大。</p>
+<p>为权衡时间开销和空间开销，现在一般采用<strong>影子页表缓存</strong>（Shadow Page Table Cache）技术，即VMM在内存中维护部分最近使用过的影子页表，只有当影子页表在缓存中找不到时，才构建一个新的影子页表。<strong>当前主要的虚拟化技术都采用了影子页表缓存技术</strong>。</p>
+<h3 id="内存虚拟化的硬件解决方案"><a href="#内存虚拟化的硬件解决方案" class="headerlink" title="内存虚拟化的硬件解决方案"></a>内存虚拟化的硬件解决方案</h3><p>为了解决影子页表导致的上述开销问题，除了使用影子页表缓存技术外（这项技术虽然能避免时间上的一部分开销，但是空间开销还是实实在在存在的）， Intel与AMD公司都针对MMU虚拟化给出了自 的解决方案：Intel公司在Nehalem微架构CPU中推出<strong>扩展页表（Extended Page Table，EPT）</strong>技术；AMD公司在四核皓龙CPU中推出<strong>快速虚拟化索引（Rapid Virtualization Index，RVI）</strong>技术。</p>
+<p>RVI与EPT尽管在具体实现细节上有所不同，但是在设计理念上却完全一致：<strong>通过在物理MMU中保存两个不同的页表，使得内存地址的两次映射都在硬件中完成，进而达到提高性能的目的。</strong>具体来说，MMU中管理管理了两个页表，第一个是GVA &gt;&gt;&gt;GPA，由虚拟机决定；第二个是GPA&gt;&gt;&gt;HPA，对虚拟机透明，由VMM决定。根据这两个映射页表，CPU中的page walker就可以生成最近访问过key-value键值对&lt;GVA，HPA&gt; ，并缓存在TLB中（类似影子页表缓存技术思路）。</p>
+<p>另外，原来在影子页表中由VMM维持的GPA&gt;&gt;&gt;HPA映射关系，则由一组新的数据结构扩展页表（Extended Page Table，也称为Nested Page Table）来保存。由于GPA &gt;&gt;&gt;HPA的映射关系非常定，并在虚拟机创建或修改页表时无需更新，因此VMM在虚拟机更新页表的时候无需进行干涉。VMM也无需参与到虚拟机上下文切换，虚拟机可以自己修改GVA &gt;&gt;&gt;GPA的页表。</p>
+<p>我们以Intel EPT技术为例说明。Intel EPT是Intel VT-x 提供的内存虚拟化支持技术，其基本原理下图所示。在原有的CR3页表地址映射的基础上，EPT引入EPT页表来实现另一次映射。比如：假设客户机页表和EPT页表都是4级页表，CPU完成一次地址转换的基本过程如下：</p>
+<p><img src="https://i.loli.net/2019/05/18/5cdf72c9c659e24729.jpg"></p>
+<p>CPU首先查找客户机CR3寄存器指向的L4页表。客户机CR3寄存器给出的是GPA，所以，CPU通过EPT页表将客户机CR3中的GPA转换为HPA：CPU 首先查找EPT TLB，如果没有相应的记录，就进一步查找EPT页表，如果还没有，CPU则抛出EPT Violation异常交给VMM处理。</p>
+<p>CPU获得L4页表地址（指的是HPA）后，CPU根据GVA和L4页表项的内容来获取L3 页表项的GPA。如果L4页表中GVA对应的表项显示为“缺页”，那么CPU 产生Page Fault，直接交由客户机操作系统处理。获得L3 页表项的GPA后，CPU通过查询EPT页表来将L3的GPA转换为HPA。同理，CPU 会依次完成L2、L1页表的查询，获得GVA所对应的GPA，然后进行最后一次查询EPT页表获得HPA。</p>
+<p>正如上图所示，CPU需要5次查询EPT页表，每次查询都需要4次内存访问。这样，在最坏的情况下总共需要20次内存访问。<strong>EPT硬件通过增大EPT TLB 尽量减少内存访问。</strong></p>
+<h2 id="内存虚拟化管理"><a href="#内存虚拟化管理" class="headerlink" title="内存虚拟化管理"></a>内存虚拟化管理</h2><p>在虚拟化环境中，内存是保证虚拟机工作性能的关键因素。如何尽可能提高虚拟机的性能、提高内存利用率、降低虚拟机上下文切换的内存开销，依然非常复杂，这就引入了<strong>内存虚拟化管理的问题</strong>。像介绍CPU虚拟化管理一样，我们还是通过实例来说明内存的虚拟化管理。以VMware的ESX解决方案为例，在没有出现硬件支持的内存虚拟化技术之前，ESX/ESXi采用影子页表来实现虚拟机的虚拟地址到物理机物理地址的快速转换。当Intel和AMD公司分别推出了EPT与RIV技术之后，ESX/ESXi很快转向硬件支持来提高内存虚拟化的性能。</p>
+<p>在虚拟化内存管理 上，ESX/ESXi实现了主机内存超分配的目标：即<strong>多个虚拟机总的内存分配量大于物理机的实际内存容量</strong>。如下图所示，一个物理内存只有4GB的Host，可以同时运行三个内存配置为2GB的虚拟机。</p>
+<p><img src="https://i.loli.net/2019/05/18/5cdf72f7358ee63929.jpg"></p>
+<p>主机内存超分配功能意味着VMM必须能够有效地回收虚拟机中不断释放的内存，并在有限的内存容量中尽能 地提高内存利用率。因为，Host Memory与Guest Memory并不是一一对应的关系，通过Host Memory超配技术可以实现某一个Host上某一个虚拟机内存大于主机内存，这一点与CPU虚拟化不一样。但是，在执行超配技术时，需要考虑主机性能问题，不能过大。一般的超配限额是主机内存的50%。要实现主机内存超配，必须通过<strong>内存复用</strong>技术实现。目前常用的内存复用技术有：<strong>零页共享技术、内存气球回收技术</strong>和<strong>内存置换技术</strong>三种。</p>
+<h3 id="零页（透明页）共享技术"><a href="#零页（透明页）共享技术" class="headerlink" title="零页（透明页）共享技术"></a>零页（透明页）共享技术</h3><p>当运行多个虚拟机时，有些内存页面的内容很可能是完全一样的，比如：什么数据都没有的零页。这就为虚拟机之间甚至在虚拟机内部提供了共享内存的可能。例如：当几个虚拟机都运行相同的操作系统、相同的应用程序或者包含相同的用户数据时，那些包含相同数据的内存页面完可以被共享。基于这个原理，VMM完全可通过回收冗余数据的内存页面，仅维持一个被多个虚拟机共享的内存拷贝来实现这个功能。</p>
+<p><strong>如下图所示，是华为FusionCompute的零页共享技术示意图：</strong></p>
+<p><img src="https://i.loli.net/2019/05/18/5cdf732c5c23754430.jpg"></p>
+<p><strong>其基本原理是</strong>：用户进程定时扫描虚拟机的的内存数据，如果发现其数据内容全为零，则通过修改PA to MA映射的形式，把其指向一个特定的零页，从而做到在物理内存中只保留一份零页拷贝，虚拟机的所有零页均指向该页，从而达到节省内存资源的目的。当零页数据发生变动时，由Xen动态分配一页内存出来给虚拟机，使修改后的数据有内存页进行存放。因此，对GuestOS来说，整个零页共享技术是完全不感知的。</p>
+<p>而在VMware的ESX解决方案中，也有同样的技术。在VMware ESX/ESXi中，检测页面数据是否冗余是通过<strong>散列</strong>的方法来实现的，如下图所示。</p>
+<p><img src="https://i.loli.net/2019/05/18/5cdf734451c6887409.jpg"></p>
+<p>首先VMM会维持一个全局散列表，其中<strong>每个表项都记录了一个物理页面数据的散列值与页号</strong>。当对某一个虚拟机进行页面共享扫描时，VMM会针对该虚拟机物理页面的数据计算散列值，并在全局散列表 中进行遍历及匹配是否有相同的散列值的表项。<strong>当找到了匹配的表项，还要对页面数据内容逐位比较，以避免由于散列冲突而导致的页面内容不一样的可能性。</strong>一旦确定页面数据完全一致，则会修改逻辑地址到物理地址的映射关系，即<strong>将从逻辑地址对应到包含冗余数据的物理地址的映射关系（上图中虚线所示）改为对应到要被共享物理地址的映射关系，并回收冗余的物理页面</strong>。这一过程对于虚拟机操作系统是完全透明的。因此，<strong>共享页面中含有敏感数据的部分不会在虚拟机之间泄露</strong>。</p>
+<p>当虚拟机对共享页面发生写操作时，通过“写时拷贝”（ Copy-on-Write）技术来实现。 如下图所示：</p>
+<p><img src="https://i.loli.net/2019/05/18/5cdf735c64aa688044.jpg"></p>
+<p>具体来说，任何一个对共享页面的写操作都会引发页面错误（Minor Page Fault）。当VMM捕获到这个错误时，会给发起写操作的虚拟机创建一个该页面的私有拷贝，并将被写的逻辑地址映射到这个私有拷贝页面。这样虚拟机就可以安全地进行写操作，并且不会影响到其他共享该页面的虚拟机。相比于对非共享页面的写操作，尽管这种处理方法的确导致了一些额外的开销，但是却在一定程度上提高了内存页面的利用率。</p>
+<h3 id="内存气球回收技术"><a href="#内存气球回收技术" class="headerlink" title="内存气球回收技术"></a>内存气球回收技术</h3><p><strong>内存气球回收技术也称为内存气泡技术，</strong>基于气球回收法的内存管理机制与页面共享完全不同。在虚拟化环境中，VMM会一次性在虚拟机启动后分配给虚拟机内存，由于虚拟机并没有意识到自己运行于 虚拟化平台上，之后它会一直运行在分配好的内存空间，而不主动释放分配的物理内存给其他虚拟机。因此VMM需要一种机制使得虚拟机能够主动释放空闲内存归还给物理机，再由VMM分配给其他有需求的虚拟机。并且，在内存资源需求紧张时还能从物理机中“拿回”自己释放的那部分内存。 </p>
+<p><strong>如下所示，是华为FusionCompute内存气泡技术示意图：</strong></p>
+<p><img src="https://i.loli.net/2019/05/18/5cdf73824ce0891613.jpg"></p>
+<p><strong>原理如下：</strong>Hypervisor通过利用预装在用户虚拟机中的前端驱动程序，“偷取”Guest OS的内存贡献给VMM，以供其他虚拟机使用，反向时由VMM“偷取”气泡中的内存给特定虚拟机使用。内存气泡本质是将较为空闲的虚拟机内存释放给内存使用率较高的虚拟机，从而提升内存利用率。</p>
+<p>在VMware的ESX解决方案中，也有类似的技术。下图给出了内存释放过程的原理图。</p>
+<p><img src="https://i.loli.net/2019/05/18/5cdf7398dc3fa66352.jpg"></p>
+<p>在上图（a）中，VMM有四个页面被映射到虚拟机的内存页面空间中，其中左侧两个页面被应用程序占用，而另两个被打上星号的页面则是在内存空闲列表中。当VMM要从虚拟机中回收内存时，比如要回收两个内存页面，VMM就会将Balloon驱动的目标膨胀大小设置为两个页面。Balloon驱动获得了目标膨胀值之后，就会在虚拟机内部申请两个页面空间的内存，并如上图（b）所示，调用虚拟机操系统的接口标示这两个页面被“ <strong>钉住</strong>”，即不能再被分配出去。</p>
+<p>内存申请完毕后，Balloon驱动会通知VMM这两个页面的页号，这样VMM就可以找到相应的物理页号并进行回收。在上（b）中虚线就标示了这两个页面从虚拟机分配出去的状态。</p>
+<p>由于被释放的页面在释放前已经在虚拟机的空闲列表中，因此没有进程会对该页面进行读写操作。如果虚拟机的进程接下来要重新访问这些页面，那么VMM可以像平常分配内存一样，再分配新的物理内存给这台虚拟机。当VMM决定收缩气球膨胀大小时，通过设置更小的目标膨胀值，balloon驱动会将已经被“<strong>钉住</strong>” 的页面归还给虚拟机。</p>
+<p>通过气球回收法，尽管虚拟机的负载略微增加，但VMM却成功地将系统内存压力转移到各个虚拟机上。当balloon驱动发起申请内存的请求时，由虚拟机操作系统决定了是否要将虚拟机物理内存换出来满足balloon驱动的申请内存请求。如果虚拟机有充足的空闲内存，那么balloon驱动申请内存并不会对虚拟机的性能造成影响；如果虚拟机内存已经吃紧，那么就需要由虚拟机的操作系统决定换出哪些内存页面，满足balloon驱动的请求。因此，<strong>气球回收法巧妙地利用了各个虚拟机操作系统的内存换页机制来确定哪些页面要被释放给物理机，而不是由VMM来决定</strong>。 </p>
+<p><strong>气球回收法要求虚拟机操作系统必须安装balloon驱动</strong>，在VMware的ESX/ESXi产品中，就是VMware Tool。另外，气球回收法回收内存需要一段时间，不能马上满足系统的需求。</p>
+<h3 id="内存置换技术"><a href="#内存置换技术" class="headerlink" title="内存置换技术"></a>内存置换技术</h3><p>页面共享机制与气球回收法都从不同的角度尽可能地提高虚拟机的内存利用率，从虚拟机中收回可以复用或者空闲的内存。然而这两种方法都不能在短时间内满足系统内存回收的要求：<strong>页面共享依赖于页面的扫描速度，以及是否有页面可共享；气球回收法则取决于虚拟机操作系统对于balloon驱动申请内存的响应时间</strong>。如果这两种温和的方法都不能满足需求，<strong>VMM则会采取内存换出机制，即强制性地从虚拟机中夺回内存，这就是内存置换技术。</strong></p>
+<p><strong>如下所示，是华为FusionCompute和VMware ESX/ESXI的内存置换技术示意图。</strong></p>
+<p><img src="https://i.loli.net/2019/05/18/5cdf73c2b12e968100.jpg"></p>
+<p><strong>原理如下：</strong>通过VMM实现请页功能，这时Guest OS类似进程一样在VMM缺少内存时，能被换出到宿主机磁盘上，也就是将虚拟机长时间未访问的内存内容被置换到存储中，并建立映射，当虚拟机再次访问该内存内容时再置换回来。该方法也对虚拟机透明，即虚拟机不感知。</p>
+<p>具体来说，VMM会在每个虚拟机启动时创建一个单独的换页文件（Swap File）。在必要的时候，VMM会主动将虚拟机的物理内存页面换到这个换页文件上，释放给其他虚拟机使用。内存换出机制是VMM需要在短时间内缓解内存压力的一种有效方法，然而这种方法却很可能严重导致VMM的性能下降。由于VMM对于虚拟机的内存使用状态并不解，且该方法对虚拟机透明，强制内存换出可能触发虚拟机操作系统内部的一些换页机制。举例来说，虚拟机操作系统永远都不会将内核的内存页面换出，而VMM并不知道哪些页正在被内核使用，一旦这些页面被换出，会使得虚拟机性能严重受损。</p>
+<h3 id="内存的回收"><a href="#内存的回收" class="headerlink" title="内存的回收"></a>内存的回收</h3><p>接下来以VMware ESX为例，结合上述三种内存复用技术，介绍内存回收机制。一般来说，ESX会对物理机的空闲内存状态按照空闲内存的百分比设置四种状态，分别是：<strong>高（6%）、平缓（4%）、繁重（2%）和低（1%）</strong>。ESX会按照这四种状态来选择前述三种内存回收机制。</p>
+<p>缺省状态下，ESX会启用页面共享机制，因为页面共享机制能以较小的开销提高内存利用率。何时启用气球回收和换页则取决于当前系统的内存状态。当内存状态处于“高”，很显然此时总的虚拟机内存使用量要小于物理机的内存容量，因此不管虚拟机的内存是否已经被过载分配，VMM都不会使用气球 或者换页的方法回收内存。</p>
+<p>然而，当物理机空闲内存状态下降到了“平缓” 状态，VMM则开始使用气球回收法。事实上，气球回收法是在空闲内存的百分比高于“平缓” 的阈值4%之前启动的，这是因为该方法总是需要一段时间才能在虚拟机内申请到一些内存。通常气球回收法都能够及时将空闲内存比的阈值控制在“平缓”状态之上。</p>
+<p>一旦气球回收法不能够及时回收内存，并且空闲内存下降到“繁重”状态，即空闲内存比低于2%，那么VMM就会再启动内存换出机制强制从虚拟机回收内存。使用这种办法，VMM能够很快回收内存，并将空闲内存比控制回“平缓”状态。</p>
+<p>在最坏的情况下，万一空闲内存状态低于“低”状态，即空闲内存比低于1%，那么VMM会继续使用内存换出法，同时将那些消耗内存值超过内存配置值的虚拟机挂起。</p>
+<p>在某些情况下，VMM可能不会考虑物理机空闲内存状态，而仍然启动物理机内存回收机制。比如，即使整个系统的物理机空闲内存状态为“高”，如果某个虚拟机的内存使用量超过了其指定的内存上限，那么VMM会启动气球回收法，如有必要，也会启动内存换出机制从虚拟机回收内存，直到该虚拟机的内存低于指定的内存上限。</p>
+<h3 id="内存QoS保障"><a href="#内存QoS保障" class="headerlink" title="内存QoS保障"></a>内存QoS保障</h3><p>在虚拟化系统中，内存虚拟化的QoS保障包括两个基本特征：<strong>预留</strong>和<strong>份额</strong>。</p>
+<p><strong>内存预留：</strong>虚拟机预留的最低内存。预留的内存会被VM独占。即，一旦内存被某个虚拟机预留，即使虚拟机实际内存使用量不超过预留量，其它VM也无法抢占该VM的内存空闲资源。即，上述的三种内存复用技术对该虚拟机不生效。</p>
+<p><strong>内存份额：</strong>适用上述三种资源复用场景，按比例分配内存资源。以6G内存规格的主机为例，假设其上运行有3台4G内存规格的虚拟机VMA，VMB，VMC。内存份额分别为20480，20480，40960，那么其内存分配比例为1：1：2。当三台VM内部逐步加压，策略会根据三个虚拟机的份额按比例分配调整内存资源，最终三台虚拟机获得的内存量稳定为1.5G/1.5G/3G。</p>
+<p><strong>同样需要注意一点：内存份额只在各虚拟机发生资源竞争时生效。如没有竞争，则有需求的虚拟机可独占物理内存。</strong></p>
+<p><strong>但是，内存QoS不像CPU QoS一样设置上限？，这是因为分配给虚拟机的内存大小就是其内存上限。</strong></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2019/05/18/计算虚拟化之内存虚拟化/" title="计算虚拟化之内存虚拟化">https://kkutysllb.cn/2019/05/18/计算虚拟化之内存虚拟化/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/电信云/" rel="tag"><i class="fa fa-tag"></i> 电信云</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/15/Linux系统命令-第八篇《进程管理命令》/" rel="next" title="Linux系统命令-第八篇《进程管理命令》">
+                <i class="fa fa-chevron-left"></i> Linux系统命令-第八篇《进程管理命令》
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/25/计算虚拟化之I-O虚拟化/" rel="prev" title="计算虚拟化之I/O虚拟化">
+                计算虚拟化之I/O虚拟化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#内存虚拟化概述"><span class="nav-number">1.</span> <span class="nav-text">内存虚拟化概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存虚拟化软件解决方案"><span class="nav-number">2.</span> <span class="nav-text">内存虚拟化软件解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MMU半虚拟化（MMU-Paravirtualization）这种方式主要为Xen所用"><span class="nav-number">2.1.</span> <span class="nav-text">MMU半虚拟化（MMU Paravirtualization）这种方式主要为Xen所用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#影子页表"><span class="nav-number">2.2.</span> <span class="nav-text">影子页表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存虚拟化的硬件解决方案"><span class="nav-number">2.3.</span> <span class="nav-text">内存虚拟化的硬件解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存虚拟化管理"><span class="nav-number">3.</span> <span class="nav-text">内存虚拟化管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#零页（透明页）共享技术"><span class="nav-number">3.1.</span> <span class="nav-text">零页（透明页）共享技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存气球回收技术"><span class="nav-number">3.2.</span> <span class="nav-text">内存气球回收技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存置换技术"><span class="nav-number">3.3.</span> <span class="nav-text">内存置换技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存的回收"><span class="nav-number">3.4.</span> <span class="nav-text">内存的回收</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存QoS保障"><span class="nav-number">3.5.</span> <span class="nav-text">内存QoS保障</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">932k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">14:07</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/05/18/计算虚拟化之内存虚拟化/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

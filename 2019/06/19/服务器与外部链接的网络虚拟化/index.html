@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="服务器与外部连接的网络虚拟化主要有基于TOR交换机的虚拟交换技术和高性能的计算网络融合技术。基于接入交换机TOR实现的虚拟交换是指某些物理交换机可通过特殊协议，感知虚拟机的存在，在物理交换机层实现虚拟交换，其代表技术就是VEPA和VN-tag。同时，高性能计算网络及其融合技术中Infiniband、FCOE、RoCE等技术旨在用一种连接线将数据中心存储网络和计算网络（互联网络）聚合起来，使服务器可">
+<meta name="keywords" content="电信云">
+<meta property="og:type" content="article">
+<meta property="og:title" content="服务器与外部链接的网络虚拟化">
+<meta property="og:url" content="https://kkutysllb.cn/2019/06/19/服务器与外部链接的网络虚拟化/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="服务器与外部连接的网络虚拟化主要有基于TOR交换机的虚拟交换技术和高性能的计算网络融合技术。基于接入交换机TOR实现的虚拟交换是指某些物理交换机可通过特殊协议，感知虚拟机的存在，在物理交换机层实现虚拟交换，其代表技术就是VEPA和VN-tag。同时，高性能计算网络及其融合技术中Infiniband、FCOE、RoCE等技术旨在用一种连接线将数据中心存储网络和计算网络（互联网络）聚合起来，使服务器可">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d090d97943ef92905.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d090e59c6f8660696.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d090f0675ade78536.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d090fb94590b89863.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d0910fdad3a135154.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d0911c1bf4e865109.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d0912fa79d9362058.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d0913aeb478568261.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d0913fc5e99e73776.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/19/5d0914937d09d45006.jpg">
+<meta property="og:updated_time" content="2020-06-25T11:51:37.113Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="服务器与外部链接的网络虚拟化">
+<meta name="twitter:description" content="服务器与外部连接的网络虚拟化主要有基于TOR交换机的虚拟交换技术和高性能的计算网络融合技术。基于接入交换机TOR实现的虚拟交换是指某些物理交换机可通过特殊协议，感知虚拟机的存在，在物理交换机层实现虚拟交换，其代表技术就是VEPA和VN-tag。同时，高性能计算网络及其融合技术中Infiniband、FCOE、RoCE等技术旨在用一种连接线将数据中心存储网络和计算网络（互联网络）聚合起来，使服务器可">
+<meta name="twitter:image" content="https://i.loli.net/2019/06/19/5d090d97943ef92905.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2019/06/19/服务器与外部链接的网络虚拟化/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>服务器与外部链接的网络虚拟化 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/06/19/服务器与外部链接的网络虚拟化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">服务器与外部链接的网络虚拟化
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-19 00:10:00" itemprop="dateCreated datePublished" datetime="2019-06-19T00:10:00+08:00">2019-06-19</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-06-25 19:51:37" itemprop="dateModified" datetime="2020-06-25T19:51:37+08:00">2020-06-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV关键技术/" itemprop="url" rel="index"><span itemprop="name">NFV关键技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">9.6k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">9 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>服务器与外部连接的网络虚拟化主要有基于<strong>TOR交换机的虚拟交换技术</strong>和<strong>高性能的计算网络融合技术</strong>。基于接入交换机TOR实现的虚拟交换是指某些物理交换机可通过特殊协议，感知虚拟机的存在，在物理交换机层实现虚拟交换，其代表技术就是<strong>VEPA</strong>和<strong>VN-tag</strong>。同时，高性能计算网络及其融合技术中<strong>Infiniband、FCOE、RoCE</strong>等技术旨在<strong>用一种连接线将数据中心存储网络和计算网络（互联网络）聚合起来</strong>，使服务器可以灵活的配置网络端口，简化网络部署。<a id="more"></a></p>
+<h2 id="基于物理交换机的分布式虚拟交换机"><a href="#基于物理交换机的分布式虚拟交换机" class="headerlink" title="基于物理交换机的分布式虚拟交换机"></a><strong>基于物理交换机的分布式虚拟交换机</strong></h2><p>如下图所示，<strong>基于物理交换机实现虚拟交换的思想是将虚拟机的网络流量全部导入接入交换机TOR处理，即使是同一VLAN内的流量也要绕出来，二层的广播和组播都由接入交换机TOR来模拟。</strong></p>
+<p><img src="https://i.loli.net/2019/06/19/5d090d97943ef92905.jpg"></p>
+<p><strong>在TOR上实现虚拟交换功能的代表技术就是VEPA（Virtual Ethernet Port Aggregator）</strong>。VEPA将虚拟机之间的交换行为从服务器内部移出到上联交换机上，当两个处于同一服务器内的虚拟机要交换数据时，从虚拟机A出来的数据帧首先会经过服务器网卡送往上联交换机，上联交换机通过查看帧头中带的MAC地址（虚拟机MAC地址）发现目的主机在同一台物理服务器中，因此又将这个帧送回原服务器，完成寻址转发。该技术<strong>依赖物理交换机支持VEPA，需要虚拟交换机软件、服务器物理网口驱动作联动修改</strong>，<strong>节省了虚拟交换机查表对物理主机CPU资源消耗。</strong>物理交换机转发功能依赖芯片，功能扩展性差，目前只有H3C、HP等少数厂家宣传支持。</p>
+<p>VEPA方案的目标是要将虚拟机之间的交换从服务器内部移出到接入硬件交换机TOR上，<strong>实现虚拟机之间的“硬交换”。</strong>采用这种方法，通常只需要对网卡驱动、VMM桥模块和外部交换机的软件做很小的改动，从而实现低成本，且对当前网卡、交换机、现有以太网报文格式和标准影响最小。</p>
+<p>采用VEPA方案，虚拟机的流量都是通过物理接入层TOR交换机完成，它的访问控制和报文下发策略也是基于物理接入层TOR交换机，因此很好地避免了网络和服务器设备管理边界模糊的难题。<strong>VEPA标准协议VDP还能准确的感知虚拟机的工作状态，当虚拟机发生迁移时，VEPA协议会将与此相关的访问控制和报文下发等策略重新部署到新的接入交换机。</strong></p>
+<p><img src="https://i.loli.net/2019/06/19/5d090e59c6f8660696.jpg"></p>
+<p>如上图所示：采用了VEPA方案之后，位于一台物理机上不同虚拟机之间的网络流量不再只是由虚拟交换机来完成，而是都要通过物理接入层TOR交换机(即使是从同一个网络端口)。有人可能会提出这样的疑问：直接在虚拟机内存中交换数据不是更快，而且节省物理网络资源吗？答案是肯定的，数据转发确实受影响。但是，H3C的解释是：<strong>虚拟交换机有助于实现虚拟网卡与服务器上物理网卡之间的转换，但也增加了原有网络结构的复杂性，产生新的“边界”给管理带来了麻烦。而且虚拟交换机在服务器宕机的情况下也同时不可用了。</strong>（个人觉得这个解释很牵强，但是VEPA对虚拟机热迁移确实很有利）</p>
+<p>VN-tag是由Cisco和VMWare共同提出的一项标准，如下图所示，<strong>其核心思想是在标准以太网帧中增加一段专用的标记—VN-Tag，用以区分不同的VIF，从而识别特定虚拟机的流量。</strong></p>
+<p><img src="https://i.loli.net/2019/06/19/5d090f0675ade78536.jpg"></p>
+<p><strong>如上图，每个虚机对应唯一的VIF。VN-Tag中最重要的内容是一对新地址：dvif_id和svif_id，这个地址空间对应的不是交换机的端口或者IP网段，而是虚机的VIF。VN-Tag通过这一对地址说明了数据帧从何而来，到哪里去。</strong></p>
+<p>当数据帧从虚机流出来后，就被加上一个VN-Tag标签。基于VN-Tag的源地址dvif_id就能区分出产生于不同虚机的流量。一台具备VN-Tag协议栈的接入交换机TOR可以将VN-Tag与虚机的VIF对应起来，这样就形成了一个映射关系。物理机的出口网卡称为NIC，而上联交换机被称为TOR。</p>
+<p><strong>级联是VN-Tag的另一大特点</strong>，NIC对应的TOR不必是直接连接服务器的接入交换机，可以是网络内的任意IP可达的设备。这种设计的好处是，接入层设备往往比较简单，通过级联可以将虚拟机的流量拉高到高端的汇聚甚至核心交换机上，利用汇聚、核心交换机丰富的功能特性对流量进行精细化的管理。IEEE最初将VN-Tag标准称为802.1Qbh，后来改为802.1Br。</p>
+<p><strong>VN-Tag本质上是一种端口扩展技术，需要为以太网报文增加TAG，而对应的端口扩展设备TOR借助报文TAG中的信息，将端口扩展设备上的物理端口映射成上行物理交换机上的一个虚拟端口，并且使用TAG中的信息来实现报文转发和策略控制。</strong></p>
+<p><strong>基于接入交换机TOR实现的虚拟交换，优点是：</strong>节省了虚拟交换机查表对物理主机CPU资源消耗缺点，对于对流量监管能力、安全策略部署能力要求较高的场景（如数据中心）而言，是一种优选的技术方案。<strong>缺点是：</strong>是由于流量从虚拟机上被引入到外部网络，带来了更多网络带宽开销的问题。虚拟机之间报文转发性能低于虚拟交换机，兼容性较差，需要特殊物理交换机，并且需要虚拟交换机软件、服务器物理网口驱动作联动修改，物理交换机转发功能依赖芯片，功能扩展性差。</p>
+<h2 id="InfiniBand技术和协议架构分析"><a href="#InfiniBand技术和协议架构分析" class="headerlink" title="InfiniBand技术和协议架构分析"></a><strong>InfiniBand技术和协议架构分析</strong></h2><p>InfiniBand其实并不是什么新技术。1999年左右，当时IT界的七个大佬Compaq、HP、IBM，Dell、Intel、Microsoft、Sun联合起来成立了<strong>IBTA</strong>(InfiniBand Trade Association)，<strong>将InfiniBand定位于高速的I/O互联网络，旨在通过机外的长连接提供机内总线的I/O性能，同时保证机外互联的可扩展性。</strong>不过出于各种原因，各家巨头在IBTA成立后都纷纷离开，InfiniBand没能得到良好的市场推广，只是在超算和高性能数据库领域有所应用。Cisco在2005年收购Topspin后也拥有了InfiniBand的产品线，但是Cisco后面就没怎么继续研发了。Intel在收购QLogic之后，也没有继续研发InfiniBand，而是推出了自己的OmniPath。目前，InfiniBand的厂商主要就是Mellonax一家，基本上可以算是小圈子里面绝对的霸主了。</p>
+<p>Infiniband大量用于FC/IP SAN、NAS和服务器之间的连接，作为<strong>iSCSI RDMA的存储协议iSER已被IETF标准化</strong>。相比FC的优势主要体现在<strong>性能是FC的3.5倍，Infiniband交换机的延迟是FC交换机的1/10，支持SAN和NAS。</strong></p>
+<p><strong>InfiniBand也是一种分层协议(类似TCP/IP协议)，每层负责不同的功能，下层为上层服务，不同层次相互独立。 IB采用IPv6的报头格式。其数据包报头包括本地路由标识符LRH，全局路由标示符GRH，基本传输标识符BTH等。</strong></p>
+<p><img src="https://i.loli.net/2019/06/19/5d090fb94590b89863.jpg"></p>
+<p><strong>InfiniBand的协议栈如上图所示</strong>。InfiniBand的传输层首部叫做<strong>BTH(Base Transport Header)</strong>，通过<strong>Queue Pair（QP）来定位远端的目标内存</strong>，通过<strong>Partition Key实现内存的访问控制</strong>，通过<strong>Sequence Number实现可靠传输</strong>。InfiniBand提供了对多种(包括可靠/不可靠、基于连接/基于报文)传输类型的支持，不同的传输类型使用不同的<strong>ETH(Extended Transport Header)，ETH紧跟在BTH的后面。传输层和传输层以下都能够卸载到InfiniBand网卡中进行硬件加速。</strong>传输层之上是InfiniBand传输层和用户应用间的映射层<strong>ULP(Upper Level Protocol)</strong>，允许用户应用在不改变程序原有语义的情况下使用底层的InfiniBand网络进行传输。比如：不同类型的应用需要不同的ULP，如TCP/IP应用可通过IPoIB这一ULP来进行适配。而<strong>InfiniBand的原生应用则可以调用InfiniBand所提供的Verbs API直接对InfiniBand网卡进行操作。</strong></p>
+<p><strong>InfiniBand的超低时延得益于以下几点：</strong></p>
+<p>1）InfiniBand交换机都会采用<strong>直通式的转发</strong>，减小了串行化延迟；</p>
+<p>2）使用了先进的、<strong>基于Credit的链路层流控机制</strong>，能够有效地防止丢包与死锁；</p>
+<p>3）提供了<strong>对于RDMA的原生支持</strong>，从而大幅地提高了端点的性能。</p>
+<p>传统服务器网卡的工作依赖于中断或者轮询，数据包从网卡到达应用程序需要经过内核协议栈的处理以及内核态与用户态间的切换，在上述过程中还要对数据包进行反复的拷贝，这些操作不仅对CPU资源造成了巨大的消耗，而且严重地制约了应用的I/O性能（详见DPDK相关介绍文章）。相比之下，RDMA首先作为一种DMA机制，能够直接在网卡的缓冲区和应用内存间进行数据交互，降低了中断或者轮询的频率，旁路掉了内核协议栈，并实现了数据的零拷贝，因此应用的I/O性能得以大幅提升，而被解放出来的CPU则可以用于处理应用本身。另外，<strong>RDMA提供了一组标准的数据操作接口</strong>，使得本端应用能够直接操作远端应用在内存中的数据，即字面所述的“<strong>远程DMA</strong>”。InfiniBand在设计之初即提供了<strong>对于RDMA的支持，是InfiniBand实现超低延时的重要基础。</strong></p>
+<p><strong>InfiniBand的网卡称为CA(Channel Adaptor)</strong>，CA又可分为<strong>服务器端的HCA（Host Channel Adaptor）</strong>和<strong>交换机/存储端的TCA（Target Channel Adaptor）</strong>。<strong>CA不仅实现了InfiniBand的物理层与链路层</strong>，而且能够对InfiniBand的网络层和传输层进行硬件加速，CA的Driver工作在内核中，为ULP或者InfiniBand原生应用提供操作接口。<strong>无论是HCA还是TCA，其实质都是一个主机适配器，它是一个具备一定保护功能的可编程DMA引擎。</strong></p>
+<p><strong>QP(Queue Pair)是CA提供RDMA能力的基础，它可完成应用层的虚拟地址到CA上的物理地址的自动映射，如果两端的应用需要通信，那么双方都要申请CA上的物理资源，并通过相应的QP来完成对CA的操作。</strong>如下图所示，每个QP中都包括<strong>Receive和Send两个Work Queue分别用于数据的收和发</strong>。应用在进行网络通信前，首先需要向CA请求建立一个QP，需要发送数据时通过Work Request将数据作为WQE(Work Queue Entry)投入QP的<strong>Send Queue</strong>，应用需要为WQE指定<strong>AV(Address Vector)</strong>，AV中携带着通信目标的地址信息，以及在通信路径上进行传输所需要的参数。CA根据AV开始进行L4～L2层的处理，封装好包头并从相应的物理端口送出。远端的目标CA收到数据包后，会根据传输层的QP字段将数据放入相应QP的<strong>Receive Queue</strong>中，然后将数据直接移动到相应的应用内存。每当一个WQE处理完毕之后，CA会通过<strong>Completion Queue</strong>发送CQE(Completion Queue Entry)给应用，通知其可以继续进行后面的处理。</p>
+<p><img src="https://i.loli.net/2019/06/19/5d0910fdad3a135154.jpg"></p>
+<p>CA将数据包从物理端口送出后，就进入到了InfiniBand Fabric。子网是InfiniBand Fabric中最重要的概念，<strong>子网内部是二层通信，InfiniBand Switch根据链路层LRH中的DLID完成转发，子网间通信需要进行三层的路由，InfiniBand Router通过网络层GRH中的DGID完成。GRH中的SGID和DGID是端到端不变的，而每经过一次路由，链路层LRH中的SLID和DLID都会逐跳发生变化。</strong>InfiniBand对子网采用了集中式的管理与控制方式，每个子网中至少有一个SM(Subnet Manager)，多个SM间可以互为备份。SM既可以硬件实现也可以软件实现，可以实现在子网的任何一个节点上，包括CA、Switch和Router。子网中每个节点上都有一个SMA(SM Agent)，SM和SMA间通过接口SMI(Subnet Management Interface)来实现子网的管理与控制，<strong>SMI主要提供Get、Set、Trap3种类型的操作。</strong>SMI信道上的控制信令称为SMP(Subnet Management Packet)，SMP的传输需要使用专用的QP0(QP0不可用于传输用户应用的数据)，并且要求放在逻辑链路VL 15上(QoS优先级最高)，保证子网的管理和控制流量能够得到优先传输，而不会被数据流量所阻塞。其子网、交换机与路由器的连接如图下图所示：</p>
+<p><img src="https://i.loli.net/2019/06/19/5d0911c1bf4e865109.jpg"></p>
+<p>最后，对SM的主要功能及相关做一简要说明，如下：</p>
+<p><strong>1）获取节点信息发现并维护拓扑。</strong>SM和SMA间以带内的方式交互SMP，在拓扑发现过程中，交换机上还没有任何转发信息，SMP是没有办法进行传输的。为了解决这个问题，InfiniBand设计了一种专用的控制信令Directed Routed SMP，Directed Routed SMP携带了自身的一次性转发信息，因此可以在交换机上尚未形成LID转发表时在InfiniBand Fabric中进行传输。</p>
+<p><strong>2）为节点分配LID、GID。</strong>对每个CA来说，在出厂时会分配一个<strong>64位全球唯一的GUID(Global Unique Identifier)，不过这个GUID只是用来标识CA的，并不用于二层和三层的转发。</strong>LID和GID是由SM为CA集中分配的，分别用于二层和三层的转发。LID的长度为16位，只在子网本地有效，每个CA可以分配一个或者一段连续的LID(通过LMC实现)，发送数据包时CA可以采用不同的LID，以实现Fabric上的多路径转发。GID的长度为128位，由64位的子网前缀+GUID组成，实际上SM为CA分配的是子网前缀，然后CA自己在本地组合出GID。SM还会维护GUID和LID/GID间的映射关系，用于地址解析。</p>
+<p><strong>3）根据拓扑计算路由。</strong>InfiniBand在计算路由时通常都是<strong>以Up/Down算法</strong>为基础的，Up/Down算法会为链路指定Up或者Down两种方向，路径只允许链路方向从Up转为Down，而不允许从Down转为Up，从而可以避免形成路由环路。</p>
+<p><strong>4）形成LID转发表，并将转发表配置给相应的Switch。</strong>Switch会根据数据包的DLID查找LID转发表，然后找到对应的端口进行转发。由于对转发表采用集中式控制方式，为了防止子网内部产生路由环路，InfiniBand通常的做法是等到所有Switch上的转发表都形成之后，再来激活子网中流量的转发。</p>
+<p>除了SM以外，<strong>每个子网还都需要有一个SA(Subnet Administration)，SA在逻辑上是SM的一部分(物理上两者没有必然的联系)，可以看作是子网的数据库，CA间通信所需的信息(如DLID/DGID、Path MTU等)都由SA完成解析。</strong>InfiniBand中还有一些其他的子网管理组件，比如负责维护端到端QP连接的CM（Connection Management），负责性能检测的PM（Performance Manager），负责板上器件检测的BM（Baseboard Manager）等等。除了SM以外，InfiniBand中其余的管理组件统称为GSM（General Services Manager），子网中每个节点上都有相应的GSA（General Services Agent），GSM和GSA间的接口称为GSI（General Services Interface），GSI信道上的控制信令称为GMP（General Services Management Packet），<strong>GMP的传输也需要使用专用的QP1(QP1不可用于传输用户应用的数据)</strong>，不过和SMP不同的是，<strong>GMP不可以放在逻辑链路VL 15上，也就是说GMP需要和数据流量一起接受流控。</strong></p>
+<h2 id="FCOE技术原理解析"><a href="#FCOE技术原理解析" class="headerlink" title="FCOE技术原理解析"></a><strong>FCOE技术原理</strong>解析</h2><p><strong>FCoE采用增强型以太网作为物理网络传输架构，能够提供标准的光纤通道有效内容载荷</strong>，避免了 TCP/IP协议开销，而且FCoE能够像标准的光纤通道那样为上层软件层（包括操作系统、应用程序和管理工具）服务。</p>
+<p>FCoE可以提供多种光纤通道服务，比如发现、全局名称命名、分区等，而且这些服务都可以像标准的光纤通道那样运作。不过，<strong>由于FCoE不使用TCP/IP协议，因此FCoE数据传输不能使用IP网络。FCoE是专门为低延迟、高性能、二层数据中心网络所设计的网络协议。</strong></p>
+<p>　　</p>
+<p><strong>和标准的光纤通道FC一样，FCoE协议也要求底层的物理传输是无损失的。</strong>因此，国际标准化组织已经开发了针对以太网标准的扩展协议族，尤其是针对无损10Gb以太网的速度和数据中心架构。这些扩展协议族可以进行所有类型的传输。这些针对以太网标准的扩展协议族有个高大上的名字，被国际标准组织称为“<strong>融合型增强以太网（CEE）</strong>”。</p>
+<p>FCoE的做法是使用以太网的帧头代替FC-2P和FC-2M，上层的FC-2V、FC-3和FC-4仍然保留，FCoE协议栈如下图所示。<strong>FCoE将服务器的FC节点称为ENode，FCoE交换机称为FCF。</strong></p>
+<p><img src="https://i.loli.net/2019/06/19/5d0912fa79d9362058.jpg"></p>
+<p>在FCoE网络中，服务器通过一块<strong>CNA网卡同时支撑IP和FC两套协议</strong>，相当于HBA和以太网NIC的合体。<strong>FCoE的以太网类型是0x8906</strong>，其外层MAC地址的写法比较讲究，后续通过具体的通信流程会进行介绍。<strong>外层的VLAN对于FCoE来说同样非常关键，其原因主要有两个</strong>：首先，FCoE流量必须在无损无丢包的以太网链路上进行传输，这完全依赖于PFC和ETS机制，而这两种机制都需要根据VLAN标签来对流量进行分类，因此FCoE流量必须承载在特定的VLAN中。其次，FCF要想实现存储网络内部的虚拟化，需要使用不同的VLAN来承载不同VSAN(Virtual Storage Area Network)的流量。</p>
+<p><strong>那么封装外层以太网时具体该使用哪个VLAN呢？这由是FCoE的控制平面决定。FCoE使用FIP(FCoE Initialization Protocol)作为控制平面协议，其以太网类型为0x8914</strong>。FIP主要负责以下3个工作：</p>
+<p><strong>1）VLAN发现。</strong>FIP在原先VLAN中通过VLAN发现报文，并与邻居协商后续FIP信令和FCoE流量所使用的VLAN，其<strong>缺省值为1002</strong>。</p>
+<p><strong>2）FCF发现。</strong>FCF在所有FCoE VLAN内定期组播发现通告报文，使得当前VLAN内的所有的ENode发现自己。</p>
+<p><strong>3）FLOGI/PLOGI。</strong>与FC中相应过程一样，FCF作为Login Server为ENode分配FCID，同时作为Name Server记录ENode的登录信息。</p>
+<p>经过上述3个阶段后，FCoE网络的初始化工作就完成了，FCoE流量得以无损地在以太网中传输。下面来看一个在多跳FCoE网络中典型的报文转发流程，如下图所示：</p>
+<p><img src="https://i.loli.net/2019/06/19/5d0913aeb478568261.jpg"></p>
+<p>由于FCID是端到端的，因此FCoE报文在经过FCF转发时FCID不会发生变化，而外层的MAC地址会逐跳改写。我们知道IP和MAC是通过ARP协议联系在一起的，那么FCID和MAC该如何映射呢？FCoE为ENode规定了如下的映射方法：<strong>使用FC-MAP填充MAC地址的高24位，低24位填充为FCID，得到FPMA作为自己的以太网地址，而弃用CAN网卡出厂时的MAC地址。</strong>其中，FC-MAP为在FIP的FCF发现阶段中，FCF告诉ENode的信息，每个VSAN内部的ENode都使用相同的FC-MAP，不同的VSAN使用不同的FC-MAP。而对于FCF来说，不进行这种转换，直接使用本机MAC地址FCF-MAC进行外层以太网封装。同一个VSAN内的报文都在同一个VLAN内传输，FCF进行VLAN的MAC地址学习，保证了VSAN间的隔离，不同VLAN的优先级不同，通过PFC和ETS进行差异化的传输控制。</p>
+<p>单跳FCoE的转发更为简单，负责接入的FCF收到FCoE流量后，根据FCID进行寻址，然后直接转换成FC-2的帧格式在FC网络中进行传输。</p>
+<p>当在服务器中部署虚拟机的时候，FCF不再是FCoE接入网络的第一跳，很多FIP的交互过程就实现不了了，而FC网络也面临着这个问题。FC网络给出的解决办法是NPIV/NPV，NPIV部署在服务器中作为ENode和FCF之间的代理，为下挂多个虚拟机的ENode完成FLOGI/PLOGI过程，而NPV则将NPIV的功能放到了以太网交换机上。NPIV/NPV的示意如下图所示。同样，FCoE也可以配合NPIV的工作实现虚拟机的FCoE接入。</p>
+<p><img src="https://i.loli.net/2019/06/19/5d0913fc5e99e73776.jpg"></p>
+<h2 id="RoCE与RoCEv2"><a href="#RoCE与RoCEv2" class="headerlink" title="RoCE与RoCEv2"></a><strong>RoCE与RoCEv2</strong></h2><p>相比于以太网，InfiniBand的优势主要在于以下几点：<strong>带宽总是能够领先一步，链路层具有流控能力，RDMA可以通过旁路内核来加速。</strong>不过，InfiniBand太贵，对运维人员要求也较高。因此，随着10GE的普及，40GE/100GE的推广，以太网的带宽资源不再是瓶颈，而DCB协议族的发展也使得以太网具备了不丢包的传输能力，如果再能够提供对RDMA的支持，那么以太网就会有能力和InfiniBand在HPC领域一较高下了。</p>
+<p>2010年，IBTA制定了RoCE(RDMA over Converged Ethernet)，使用以太网代替了IB的链路层，保留了网络层以及传输层对于RDMA的支持，结合DCB(要求至少10G的端口速率)即可以获得微秒级的传输延迟。不过，<strong>RoCE由于在网络层仍保留着IB的GRH，因此是不能进行IP路由的</strong>。为此，IBTA在2014年又制订了<strong>RoCEv2，在RoCE的基础上将IB的网络层替换为IP，</strong>RoCEv2的流量获得了跨越广域网进行传输的能力，因此RoCEv2又称为RRoCE(Routable RoCE)。下图展示了RoCE技术的演进策略。</p>
+<p><img src="https://i.loli.net/2019/06/19/5d0914937d09d45006.jpg"></p>
+<p>相比于FCoE使用FIP协议作为专有的控制平面<strong>，RoCE和RoCEv2并没有专门设计自己的控制协议。</strong>在InfiniBand中管理和控制的组件多是围绕InfiniBand子网来进行的，由于RoCE、RoCEv2中使用了以太网来替换InfiniBand的链路层，因此自然就没有了InfiniBand子网的概念，SM、SA、PM、BM等组件也就失去了存在的意义，只有传输层上用于端到端协商QP的CM保留了下来。在InfiniBand中，地址分配和解析工作是由SM和SA完成的，去掉了SM和SA后，需要由以太网/IP中相应的机制来进行地址分配和解析。三者地址分配和解析机制如下所示。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>L2的生成/分配</th>
+<th>L3的生成/分配</th>
+<th>L2和L3的解析</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IB</td>
+<td>SM分配LID和LMAC</td>
+<td>默认为0xFE::80+GUID，SM分配GID Prefix，覆盖为GID Prefix+GUID</td>
+<td>Query HCA Verb SA</td>
+</tr>
+<tr>
+<td>RoCE</td>
+<td>以太网MAC</td>
+<td>默认为0xFE::80+GUID</td>
+<td>ARP</td>
+</tr>
+<tr>
+<td>RoCEV2</td>
+<td>以太网MAC</td>
+<td>DHCP或者为静态配置</td>
+<td>ARP</td>
+</tr>
+</tbody>
+</table>
+<p>除了RoCE和RoCEv2以外，还有一种融合的方案是iWARP(RDMA over TCP/IP)，通过将TCP/IP卸载到网卡中也可以实现良好的转发性能。不过，iWARP是一种纯应用层的实现，不属于服务器与外部网络连接虚拟化范畴。</p>
+<p>至此，服务器与外部连接的网络虚拟化典型技术介绍完毕。这一块大部分内容对于传统CT运维人员，甚至是不负责存储运维的IT人员都较有难度，涉及许多存储领域的概念和数据包转发流程等知识点。因此，大家在看博客时，需要借助搜索工具让自己对存储领域的一些知识点有个感性认识后，再来看本篇博文就显得轻松许多。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2019/06/19/服务器与外部链接的网络虚拟化/" title="服务器与外部链接的网络虚拟化">https://kkutysllb.cn/2019/06/19/服务器与外部链接的网络虚拟化/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/电信云/" rel="tag"><i class="fa fa-tag"></i> 电信云</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/16/服务器内部虚拟接入技术/" rel="next" title="服务器内部虚拟接入技术">
+                <i class="fa fa-chevron-left"></i> 服务器内部虚拟接入技术
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/20/SBA架构下的核心网大一统/" rel="prev" title="SBA架构下的核心网大一统">
+                SBA架构下的核心网大一统 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于物理交换机的分布式虚拟交换机"><span class="nav-number">1.</span> <span class="nav-text">基于物理交换机的分布式虚拟交换机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InfiniBand技术和协议架构分析"><span class="nav-number">2.</span> <span class="nav-text">InfiniBand技术和协议架构分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FCOE技术原理解析"><span class="nav-number">3.</span> <span class="nav-text">FCOE技术原理解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RoCE与RoCEv2"><span class="nav-number">4.</span> <span class="nav-text">RoCE与RoCEv2</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">932k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">14:07</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/06/19/服务器与外部链接的网络虚拟化/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="ifconfig：配置或显示网络接口信息ifconfig命令用于配置网卡IP地址等网络参数或显示当前网络的接口状态，其类似于Windows下的ipconfig命令，这两个命令很容易混淆，读者需要区分一下。此外，ifconfig命令在配置网卡信息时必须以root用户的身份来执行。使用ifconfig命令配置网卡信息仅会临时生效，重启网络或服务器配置就会失效。要想配置永久生效，正确的姿势是“编辑配置网">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux系统命令-第九篇《网络管理命令》">
+<meta property="og:url" content="https://kkutysllb.cn/2019/05/25/Linux系统命令-第九篇《网络管理命令》/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="ifconfig：配置或显示网络接口信息ifconfig命令用于配置网卡IP地址等网络参数或显示当前网络的接口状态，其类似于Windows下的ipconfig命令，这两个命令很容易混淆，读者需要区分一下。此外，ifconfig命令在配置网卡信息时必须以root用户的身份来执行。使用ifconfig命令配置网卡信息仅会临时生效，重启网络或服务器配置就会失效。要想配置永久生效，正确的姿势是“编辑配置网">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/05/25/5ce948c28413a32697.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/25/5ce94a18a931965974.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/25/5ce94af8b0a4187954.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/25/5ce94b6a6ac4364705.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/25/5ce94c01ae0ff71667.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/25/5ce94c90227ad34833.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/25/5ce94d0d2045c41932.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/05/25/5ce94d3aee85858500.jpg">
+<meta property="og:updated_time" content="2020-06-25T11:41:25.631Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux系统命令-第九篇《网络管理命令》">
+<meta name="twitter:description" content="ifconfig：配置或显示网络接口信息ifconfig命令用于配置网卡IP地址等网络参数或显示当前网络的接口状态，其类似于Windows下的ipconfig命令，这两个命令很容易混淆，读者需要区分一下。此外，ifconfig命令在配置网卡信息时必须以root用户的身份来执行。使用ifconfig命令配置网卡信息仅会临时生效，重启网络或服务器配置就会失效。要想配置永久生效，正确的姿势是“编辑配置网">
+<meta name="twitter:image" content="https://i.loli.net/2019/05/25/5ce948c28413a32697.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2019/05/25/Linux系统命令-第九篇《网络管理命令》/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Linux系统命令-第九篇《网络管理命令》 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/05/25/Linux系统命令-第九篇《网络管理命令》/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linux系统命令-第九篇《网络管理命令》
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-25 21:51:45" itemprop="dateCreated datePublished" datetime="2019-05-25T21:51:45+08:00">2019-05-25</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-06-25 19:41:25" itemprop="dateModified" datetime="2020-06-25T19:41:25+08:00">2020-06-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux核心命令/" itemprop="url" rel="index"><span itemprop="name">Linux核心命令</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">36k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">33 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="ifconfig：配置或显示网络接口信息"><a href="#ifconfig：配置或显示网络接口信息" class="headerlink" title="ifconfig：配置或显示网络接口信息"></a>ifconfig：配置或显示网络接口信息</h2><p>ifconfig命令用于配置网卡IP地址等网络参数或显示当前网络的接口状态，其类似于Windows下的ipconfig命令，这两个命令很容易混淆，读者需要区分一下。此外，ifconfig命令在配置网卡信息时必须以root用户的身份来执行。使用ifconfig命令配置网卡信息仅会临时生效，重启网络或服务器配置就会失效。要想配置永久生效，正确的姿势是“编辑配置网卡配置文件”。<a id="more"></a></p>
+<p>如果系统中没有ifconfig命令，那就需要安装一下，安装命令为yum-y install net-tools。</p>
+<p>interface为网络接口名，Linux下的网络接口名类似于eth0、eth1和lo等，分别表示第1块网卡、第2块网卡和回环接口。这是个可选项，如果不添加此选项，则显示系统中所有的网卡信息；如果添加此选项，则显示指定的网卡信息。</p>
+<p><strong>语法格式：ifconfig [interface] [option]</strong></p>
+<p><strong>重要参数选项</strong></p>
+<p><img src="https://i.loli.net/2019/05/25/5ce948c28413a32697.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）显示当前系统开启的所有网络接口</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用ifconfig不带任何选项显示所有活动的网络接口</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig</span></span><br><span class="line">docker0: flags=4163  mtu 1500</span><br><span class="line">inet 172.17.0.1  netmask 255.255.0.0  broadcast 172.17.255.255</span><br><span class="line">inet6 fe80::42:56ff:fe71:5647  prefixlen 64  scopeid 0x20</span><br><span class="line">ether 02:42:56:71:56:47  txqueuelen 0  (Ethernet)</span><br><span class="line">RX packets 0  bytes 0 (0.0 B)</span><br><span class="line">RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">TX packets 8  bytes 648 (648.0 B)</span><br><span class="line">TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line">eth0: flags=4163  mtu 1500</span><br><span class="line">inet 192.168.101.81  netmask 255.255.255.0  broadcast 192.168.101.255</span><br><span class="line">inet6 fe80::20c:29ff:fe17:f09e  prefixlen 64  scopeid 0x20</span><br><span class="line">ether 00:0c:29:17:f0:9e  txqueuelen 1000  (Ethernet)</span><br><span class="line">RX packets 84  bytes 9437 (9.2 KiB)</span><br><span class="line">RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">TX packets 112  bytes 11835 (11.5 KiB)</span><br><span class="line">TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line">eth1: flags=4163  mtu 1500</span><br><span class="line">inet 172.0.2.81  netmask 255.255.255.0  broadcast 172.0.2.255</span><br><span class="line">inet6 fe80::20c:29ff:fe17:f0a8  prefixlen 64  scopeid 0x20</span><br><span class="line">ether 00:0c:29:17:f0:a8  txqueuelen 1000  (Ethernet)</span><br><span class="line">RX packets 1  bytes 243 (243.0 B)</span><br><span class="line">RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">TX packets 14  bytes 1008 (1008.0 B)</span><br><span class="line">TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line">eth2: flags=4163  mtu 1500</span><br><span class="line">inet 10.0.5.81  netmask 255.255.255.0  broadcast 10.0.5.255</span><br><span class="line">inet6 fe80::20c:29ff:fe17:f0b2  prefixlen 64  scopeid 0x20</span><br><span class="line">ether 00:0c:29:17:f0:b2  txqueuelen 1000  (Ethernet)</span><br><span class="line">RX packets 1  bytes 243 (243.0 B)</span><br><span class="line">RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">TX packets 14  bytes 1008 (1008.0 B)</span><br><span class="line">TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line">lo: flags=73  mtu 65536</span><br><span class="line">inet 127.0.0.1  netmask 255.0.0.0</span><br><span class="line">inet6 ::1  prefixlen 128  scopeid 0x10</span><br><span class="line">loop  txqueuelen 1000  (Local Loopback)</span><br><span class="line">RX packets 0  bytes 0 (0.0 B)</span><br><span class="line">RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">TX packets 0  bytes 0 (0.0 B)</span><br><span class="line">TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line">veth1f3cf35: flags=4163  mtu 1500</span><br><span class="line">inet6 fe80::483c:5fff:fe03:30fa  prefixlen 64  scopeid 0x20</span><br><span class="line">ether 4a:3c:5f:03:30:fa  txqueuelen 0  (Ethernet)</span><br><span class="line">RX packets 0  bytes 0 (0.0 B)</span><br><span class="line">RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">TX packets 16  bytes 1296 (1.2 KiB)</span><br><span class="line">TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure>
+<p><strong>2）显示指定网卡信息</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 显示网卡eth2的信息</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2</span></span><br><span class="line">eth2: flags=4163  mtu 1500</span><br><span class="line">inet 10.0.5.81  netmask 255.255.255.0  broadcast 10.0.5.255</span><br><span class="line">inet6 fe80::20c:29ff:fe17:f0b2  prefixlen 64  scopeid 0x20</span><br><span class="line">ether 00:0c:29:17:f0:b2  txqueuelen 1000  (Ethernet)</span><br><span class="line">RX packets 2  bytes 501 (501.0 B)</span><br><span class="line">RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">TX packets 14  bytes 1008 (1008.0 B)</span><br><span class="line">TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure>
+<p><strong>3）启动/关闭指定网卡</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 关闭eth2网卡</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2 down</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用-a选项查询关闭状态下的网卡信息</span></span><br><span class="line"><span class="comment"># 网卡flags没有UP项，表示网卡关闭</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig -a eth2</span></span><br><span class="line">eth2: flags=4098  mtu 1500</span><br><span class="line">        inet 10.0.5.81  netmask 255.255.255.0  broadcast 10.0.5.255</span><br><span class="line">        ether 00:0c:29:17:f0:b2  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 12  bytes 1572 (1.5 KiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 14  bytes 1008 (1008.0 B)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 再次启动网卡eth2</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig -a eth2</span></span><br><span class="line">eth2: flags=4163  mtu 1500</span><br><span class="line">        inet 10.0.5.81  netmask 255.255.255.0  broadcast 10.0.5.255</span><br><span class="line">        inet6 fe80::20c:29ff:fe17:f0b2  prefixlen 64  scopeid 0x20</span><br><span class="line">        ether 00:0c:29:17:f0:b2  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 12  bytes 1572 (1.5 KiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 21  bytes 1586 (1.5 KiB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure>
+<p><strong>4）配置网卡ip地址</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询网卡eth2的ip地址信息</span></span><br><span class="line"><span class="comment"># 显示eth2网卡的ip为10.0.5.81</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2</span></span><br><span class="line">eth2: flags=4163  mtu 1500</span><br><span class="line">        inet 10.0.5.81  netmask 255.255.255.0  broadcast 10.0.5.255</span><br><span class="line">        inet6 fe80::20c:29ff:fe17:f0b2  prefixlen 64  scopeid 0x20</span><br><span class="line">        ether 00:0c:29:17:f0:b2  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 13  bytes 1830 (1.7 KiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 22  bytes 1656 (1.6 KiB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改eth2网卡的ip地址为10.0.5.181</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2 10.0.5.181</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2</span></span><br><span class="line">eth2: flags=4163  mtu 1500</span><br><span class="line">        inet 10.0.5.181  netmask 255.0.0.0  broadcast 10.255.255.255</span><br><span class="line">        inet6 fe80::20c:29ff:fe17:f0b2  prefixlen 64  scopeid 0x20</span><br><span class="line">        ether 00:0c:29:17:f0:b2  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 13  bytes 1830 (1.7 KiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 22  bytes 1656 (1.6 KiB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure>
+<p><strong>在实际运维中，除非测试环境，否则不建议这样修改网卡ip地址，因为会引起生产环境网络连接异常。如果要增加对应ip，可以给对应网卡增加子接口的方式实现，见下面示例。</strong></p>
+<p><strong>5）添加网卡子接口，并配置ip地址</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 网卡子接口的格式eth2:0、eth2:1.。。。</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2:0 192.168.101.181/24 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2:0</span></span><br><span class="line">eth2:0: flags=4163  mtu 1500</span><br><span class="line">inet 192.168.101.181  netmask 255.255.255.0  broadcast 192.168.101.255</span><br><span class="line">ether 00:0c:29:17:f0:b2  txqueuelen 1000  (Ethernet)</span><br></pre></td></tr></table></figure>
+<p><strong>6）修改网卡MAC地址</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询eth2的MAC地址为ether 00:0c:29:17:f0:b2</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2</span></span><br><span class="line">eth2: flags=4163  mtu 1500</span><br><span class="line">        inet 10.0.5.181  netmask 255.0.0.0  broadcast 10.255.255.255</span><br><span class="line">        inet6 fe80::20c:29ff:fe17:f0b2  prefixlen 64  scopeid 0x20</span><br><span class="line">        ether 00:0c:29:17:f0:b2  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 22  bytes 4077 (3.9 KiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 22  bytes 1656 (1.6 KiB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用hw选项和网卡类型关键ether修改MAC地址</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2 hw ether 00:AA:BB:CC:DD:EE</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2</span></span><br><span class="line">eth2: flags=4163  mtu 1500</span><br><span class="line">        inet 10.0.5.181  netmask 255.0.0.0  broadcast 10.255.255.255</span><br><span class="line">        inet6 fe80::20c:29ff:fe17:f0b2  prefixlen 64  scopeid 0x20</span><br><span class="line">        ether 00:aa:bb:cc:dd:ee  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 23  bytes 4320 (4.2 KiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 22  bytes 1656 (1.6 KiB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure>
+<p><strong>总结：上述修改在服务器重启后就失效了，要想永久生效，只能修改网卡的配置文件。CentOS系统的网卡配置文件在/etc/sysconfig/network-scripts/下，Ubuntu系统在/etc/network/interfaces中。</strong></p>
+<h2 id="ifup：激活网络接口"><a href="#ifup：激活网络接口" class="headerlink" title="ifup：激活网络接口"></a>ifup：激活网络接口</h2><p>ifup命令用于激活指定的网络接口。ifup命令其实是一个Shell脚本，有Shell基础的读者可以使用which命令来找到这个脚本并读一读。ifup命令可读取配置文件/etc/sysconfig/network和/etc/sysconfig/network-scripts/ifcfg-<configuration>对网络接口进行相应的操作。</configuration></p>
+<p><strong>语法格式：ifup [iface]</strong></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>激活网络接口</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用ifconfig down关闭网络接口eth2，再使用ifup激活</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2 down</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2</span></span><br><span class="line">eth2: flags=4098  mtu 1500</span><br><span class="line">        inet 10.0.5.181  netmask 255.0.0.0  broadcast 10.255.255.255</span><br><span class="line">        ether 00:aa:bb:cc:dd:ee  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 23  bytes 4320 (4.2 KiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 22  bytes 1656 (1.6 KiB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line"></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifup eth2</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig eth2</span></span><br><span class="line">eth2: flags=4163  mtu 1500</span><br><span class="line">        inet 10.0.5.181  netmask 255.0.0.0  broadcast 10.255.255.255</span><br><span class="line">        inet6 fe80::2aa:bbff:fecc:ddee  prefixlen 64  scopeid 0x20</span><br><span class="line">        ether 00:aa:bb:cc:dd:ee  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 23  bytes 4320 (4.2 KiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 35  bytes 2634 (2.5 KiB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure>
+<p><strong>除了激活网卡用ifup外，还有个关闭网卡指令ifdown，用法和ifup类似，请大家自行练习。</strong></p>
+<h2 id="route：显示或管理路由表"><a href="#route：显示或管理路由表" class="headerlink" title="route：显示或管理路由表"></a>route：显示或管理路由表</h2><p>route命令可以显示或管理Linux系统的路由表，route命令设置的路由主要是静态路由。Linux上配置的路由都属于静态路由。静态路由规则是系统管理员使用route命令加入的，也就是通过手动输入的方式来加入的路由规则。动态路由无需手动配置，其路由规则是本机与不同的机器彼此经过路由程序（Routing daemon）相互交换路由规则而来的。</p>
+<p><strong>语法格式：route [option]</strong></p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/05/25/5ce94a18a931965974.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）查看当前系统的路由表信息</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 直接使用route命令就可以查看当前系统的路由表信息</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route</span></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">default         gateway         0.0.0.0         UG    0      0        0 eth0</span><br><span class="line">10.0.0.0        0.0.0.0         255.0.0.0       U     0      0        0 eth2</span><br><span class="line">10.0.5.0        0.0.0.0         255.255.255.0   U     0      0        0 eth2</span><br><span class="line">link-local      0.0.0.0         255.255.0.0     U     1002   0        0 eth0</span><br><span class="line">link-local      0.0.0.0         255.255.0.0     U     1003   0        0 eth1</span><br><span class="line">link-local      0.0.0.0         255.255.0.0     U     1004   0        0 eth2</span><br><span class="line">172.0.2.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0</span><br><span class="line">192.168.101.0   0.0.0.0         255.255.255.0   U     0      0        0 eth0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用-ee选项可以查看更详细的路由表信息</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route -ee</span></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface    MSS   Window irtt</span><br><span class="line">default         gateway         0.0.0.0         UG    0      0        0 eth0     0     0      0</span><br><span class="line">10.0.0.0        0.0.0.0         255.0.0.0       U     0      0        0 eth2     0     0      0</span><br><span class="line">10.0.5.0        0.0.0.0         255.255.255.0   U     0      0        0 eth2     0     0      0</span><br><span class="line">link-local      0.0.0.0         255.255.0.0     U     1002   0        0 eth0     0     0      0</span><br><span class="line">link-local      0.0.0.0         255.255.0.0     U     1003   0        0 eth1     0     0      0</span><br><span class="line">link-local      0.0.0.0         255.255.0.0     U     1004   0        0 eth2     0     0      0</span><br><span class="line">172.0.2.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1     0     0      0</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker   0     0      0</span><br><span class="line">192.168.101.0   0.0.0.0         255.255.255.0   U     0      0        0 eth0     0     0      0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用-n选项可以不进行DNS解析，这样会加快显示</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route -n</span></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">0.0.0.0         192.168.101.2   0.0.0.0         UG    0      0        0 eth0</span><br><span class="line">10.0.0.0        0.0.0.0         255.0.0.0       U     0      0        0 eth2</span><br><span class="line">10.0.5.0        0.0.0.0         255.255.255.0   U     0      0        0 eth2</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1003   0        0 eth1</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1004   0        0 eth2</span><br><span class="line">172.0.2.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0</span><br><span class="line">192.168.101.0   0.0.0.0         255.255.255.0   U     0      0        0 eth0</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>命令结果说明如下：</strong></p>
+<p>Destination：表示网络号，也就是network的意思。</p>
+<p>Gateway：连出网关地址，也就是说该网络是通过该IP连接出去的，如果显示0.0.0.0，则表示该路由是直接由本机传送出去的。如果有IP显示，则表示本条路由必须经过该IP的转接才能连接出去。</p>
+<p>Genmask：表示子网掩码地址，也就是netmask。Destination和Genmask将组合成一个完整的网络地址段。</p>
+<p>Flags：路由标记信息，通常会有下面几种不同的标记：</p>
+<p>​    U（route is up）：表示此路由当前为启动状态。</p>
+<p>​    H（target is a host）：目标路由是一个主机（IP）而非网络。</p>
+<p>​    R（reinstate route for dynamic routing）：使用动态路由时，恢复路由信息标识。</p>
+<p>​    G（use gateway）：表示需要通过外部的主机（gateway）来转接传递数据。</p>
+<p>​    M（modified from routing daemon or redirect）：表示路由已经被修改了。</p>
+<p>​    D（dynamically installed by daemon or redirect）：已经由服务设定为动态路由。</p>
+<p>​    ！（reject route）：这个路由将不会被接受（用来抵挡不安全的网络）。</p>
+<p>Metric：需要经过几个网络节点（hops）才能到达路由的目标网络地址。</p>
+<p>Ref：学习到此路由规则的数目。</p>
+<p>Use：有几个转发数据包学习到了此路由规则。</p>
+<p>Iface：路由对应的网络设备接口。</p>
+</blockquote>
+<p><strong>命令输出结果的第一行是系统的默认网关信息，表示去任何地方（0.0.0.0）都发给192.168.101.2，因为是默认网关，所以放在了第一条，如果不符合任何一条规则就交给默认网关来处理。</strong></p>
+<p><strong>2）删除和添加默认网关</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 显示路由信息</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route -n</span></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">0.0.0.0         192.168.101.2   0.0.0.0         UG    0      0        0 eth0</span><br><span class="line">10.0.0.0        0.0.0.0         255.0.0.0       U     0      0        0 eth2</span><br><span class="line">10.0.5.0        0.0.0.0         255.255.255.0   U     0      0        0 eth2</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1003   0        0 eth1</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1004   0        0 eth2</span><br><span class="line">172.0.2.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0</span><br><span class="line">192.168.101.0   0.0.0.0         255.255.255.0   U     0      0        0 eth0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第一种方式删除默认网关</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route del default</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route -n</span></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">10.0.0.0        0.0.0.0         255.0.0.0       U     0      0        0 eth2</span><br><span class="line">10.0.5.0        0.0.0.0         255.255.255.0   U     0      0        0 eth2</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1003   0        0 eth1</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1004   0        0 eth2</span><br><span class="line">172.0.2.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0</span><br><span class="line">192.168.101.0   0.0.0.0         255.255.255.0   U     0      0        0 eth0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第一种方式添加默认网关</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route add default gw 192.168.101.2</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route -n</span></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">0.0.0.0         192.168.101.2   0.0.0.0         UG    0      0        0 eth0</span><br><span class="line">10.0.0.0        0.0.0.0         255.0.0.0       U     0      0        0 eth2</span><br><span class="line">10.0.5.0        0.0.0.0         255.255.255.0   U     0      0        0 eth2</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1003   0        0 eth1</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1004   0        0 eth2</span><br><span class="line">172.0.2.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0</span><br><span class="line">192.168.101.0   0.0.0.0         255.255.255.0   U     0      0        0 eth0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第二种方式删除默认网关</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route del default gw 192.168.101.2</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route -n</span></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">10.0.0.0        0.0.0.0         255.0.0.0       U     0      0        0 eth2</span><br><span class="line">10.0.5.0        0.0.0.0         255.255.255.0   U     0      0        0 eth2</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1003   0        0 eth1</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1004   0        0 eth2</span><br><span class="line">172.0.2.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0</span><br><span class="line">192.168.101.0   0.0.0.0         255.255.255.0   U     0      0        0 eth0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第二种方式添加默认网关</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route add default gw 192.168.101.2 dev eth0</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route -n</span></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">0.0.0.0         192.168.101.2   0.0.0.0         UG    0      0        0 eth0</span><br><span class="line">10.0.0.0        0.0.0.0         255.0.0.0       U     0      0        0 eth2</span><br><span class="line">10.0.5.0        0.0.0.0         255.255.255.0   U     0      0        0 eth2</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1003   0        0 eth1</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1004   0        0 eth2</span><br><span class="line">172.0.2.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0</span><br><span class="line">192.168.101.0   0.0.0.0         255.255.255.0   U     0      0        0 eth0</span><br></pre></td></tr></table></figure>
+<p><strong>3）配置网络路由</strong></p>
+<p>一般多网段之间互相通信，会希望建立一条优先路由，而不是通过默认网关，这时就可以配置网络路由。还是拿房子作比喻，你现在不是要出门，而是要去卧室或卫生间，去卧室就要经过卧室的门，去卫生间就要经过卫生间的门，这里的卧室和卫生间的门就可以认为是去往某一网段的路由，而不是默认路由（即房子的大门）。在实际工作中也会有类似的需求，即两个不同的内部网络之间互相访问，而不是出网访问。</p>
+<p>由于我们是VMware虚拟机实验环境，因此，我们主要验证虚拟机主机之间互通。主机的网段是192.168.100.0/24，虚拟机网段是192.168.101.0/24。在虚拟机安装完成后，天生就具备和主机进行互通，这是因为VMware虚拟网卡的网关功能实现。为了验证我们的配置，首先需要删除虚拟机上的默认网关，然后添加到主机的静态路由来验证。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 不删除默认网关，虚拟机可以ping主机（我的主机地址是192.168.100.199）</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ping -c 5 192.168.100.199</span></span><br><span class="line">PING 192.168.100.199 (192.168.100.199) 56(84) bytes of data.</span><br><span class="line">64 bytes from 192.168.100.199: icmp_seq=1 ttl=128 time=0.277 ms</span><br><span class="line">64 bytes from 192.168.100.199: icmp_seq=2 ttl=128 time=0.566 ms</span><br><span class="line">64 bytes from 192.168.100.199: icmp_seq=3 ttl=128 time=0.497 ms</span><br><span class="line">64 bytes from 192.168.100.199: icmp_seq=4 ttl=128 time=2.19 ms</span><br><span class="line">64 bytes from 192.168.100.199: icmp_seq=5 ttl=128 time=0.524 ms</span><br><span class="line"></span><br><span class="line">--- 192.168.100.199 ping statistics ---</span><br><span class="line">5 packets transmitted, 5 received, 0% packet loss, time 4004ms</span><br><span class="line">rtt min/avg/max/mdev = 0.277/0.811/2.193/0.698 ms</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除虚拟机默认路由后再次尝试ping主机</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route del default gw 192.168.101.2</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ping -c 5 192.168.100.199</span></span><br><span class="line">connect: Network is unreachable</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加到主机网段的静态路由</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route add -net 192.168.100.0/24 gw 192.168.101.2</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ping -c 5 192.168.100.199</span></span><br><span class="line">PING 192.168.100.199 (192.168.100.199) 56(84) bytes of data.</span><br><span class="line">64 bytes from 192.168.100.199: icmp_seq=1 ttl=128 time=0.736 ms</span><br><span class="line">64 bytes from 192.168.100.199: icmp_seq=2 ttl=128 time=0.466 ms</span><br><span class="line">64 bytes from 192.168.100.199: icmp_seq=3 ttl=128 time=0.690 ms</span><br><span class="line">64 bytes from 192.168.100.199: icmp_seq=4 ttl=128 time=0.416 ms</span><br><span class="line">64 bytes from 192.168.100.199: icmp_seq=5 ttl=128 time=0.467 ms</span><br><span class="line"></span><br><span class="line">--- 192.168.100.199 ping statistics ---</span><br><span class="line">5 packets transmitted, 5 received, 0% packet loss, time 4002ms</span><br><span class="line">rtt min/avg/max/mdev = 0.416/0.555/0.736/0.131 ms</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查询路右边，发现多了一条道192.168.100.0/24网段的静态路由，从eth0网口转发</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route -n</span></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">10.0.5.0        0.0.0.0         255.255.255.0   U     0      0        0 eth2</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1003   0        0 eth1</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1004   0        0 eth2</span><br><span class="line">172.0.2.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0</span><br><span class="line">192.168.100.0   192.168.101.2   255.255.255.0   UG    0      0        0 eth0</span><br><span class="line">192.168.101.0   0.0.0.0         255.255.255.0   U     0      0        0 eth0</span><br></pre></td></tr></table></figure>
+<p><strong>上述的路由配置只是临时的，要想永久生效可以有多种方法，但是建议大家采用如下方式实现：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 新建一个路由配置文件route-eth0</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># touch /etc/sysconfig/network-scripts/route-eth0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加如下内容到配置文件中</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># echo "192.168.100.0/24 via 192.168.101.2" &gt;&gt; /etc/sysconfig/network-scripts/route-eth0</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># cat /etc/sysconfig/network-scripts/route-eth0 </span></span><br><span class="line">192.168.100.0/24 via 192.168.101.2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启网卡或重启系统后永久生效</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># systemctl restart network</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route -n</span></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">0.0.0.0         192.168.101.2   0.0.0.0         UG    0      0        0 eth0</span><br><span class="line">10.0.5.0        0.0.0.0         255.255.255.0   U     0      0        0 eth2</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1003   0        0 eth1</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1004   0        0 eth2</span><br><span class="line">172.0.2.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0</span><br><span class="line">192.168.100.0   192.168.101.2   255.255.255.0   UG    0      0        0 eth0</span><br><span class="line">192.168.101.0   0.0.0.0         255.255.255.0   U     0      0        0 eth0</span><br></pre></td></tr></table></figure>
+<p><strong>4）配置/删除到主机的路由</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加到C7-Server02主机（192.168.101.82）的静态路由，由eth2网口转发</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route add -host 192.168.101.82 dev eth2</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># route -n|tail -1</span></span><br><span class="line">192.168.101.82  0.0.0.0         255.255.255.255 UH    0      0        0 eth2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 尝试trace，查看配置是否生效</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># traceroute -In 192.168.101.82</span></span><br><span class="line">traceroute to 192.168.101.82 (192.168.101.82), 30 hops max, 60 byte packets</span><br><span class="line"> 1  192.168.101.82  0.434 ms  0.484 ms  0.498 ms</span><br></pre></td></tr></table></figure>
+<p><strong>在keepalived或HA高可用服务器对之间使用单独的网卡接心跳线通信时，就会用到以上的主机路由。</strong></p>
+<h2 id="arp：管理系统的arp缓存"><a href="#arp：管理系统的arp缓存" class="headerlink" title="arp：管理系统的arp缓存"></a>arp：管理系统的arp缓存</h2><p>arp命令用于操作本机的arp缓存区，它可以显示arp缓存区中的所有条目、删除指定的条目或者添加静态的IP地址与MAC地址的对应关系。APR主要功能是根据IP地址获取物理地址（MAC地址）。</p>
+<p><strong>语法格式：arp [option]</strong></p>
+<p><strong>重要参数选项</strong></p>
+<p><img src="https://i.loli.net/2019/05/25/5ce94af8b0a4187954.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）显示arp缓存区的所有条目</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]<span class="comment"># arp</span></span><br><span class="line">Address                  HWtype  HWaddress           Flags Mask            Iface</span><br><span class="line">192.168.101.82           ether   00:0c:29:d3:54:c1   C                     eth2</span><br><span class="line">gateway                  ether   00:50:56:f8:93:68   C                     eth0</span><br><span class="line">192.168.101.1            ether   00:50:56:c0:00:08   C                     eth0</span><br><span class="line">10.0.5.82                ether   00:0c:29:d3:54:c1   C                     eth2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用-n选项，以数字ip的形式显示缓存区所有条目</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># arp -n</span></span><br><span class="line">Address                  HWtype  HWaddress           Flags Mask            Iface</span><br><span class="line">192.168.101.82           ether   00:0c:29:d3:54:c1   C                     eth2</span><br><span class="line">192.168.101.2            ether   00:50:56:f8:93:68   C                     eth0</span><br><span class="line">192.168.101.1            ether   00:50:56:c0:00:08   C                     eth0</span><br><span class="line">10.0.5.82                ether   00:0c:29:d3:54:c1   C                     eth2</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>输出结果说明：</strong></p>
+<p>Address：主机地址。</p>
+<p>Hwtype：硬件类型。</p>
+<p>Hwaddress：硬件地址。</p>
+<p>Flags Mask：记录标志，“C”表示arp高速缓存中的条目，“M”表示静态的arp条目。</p>
+<p>Iface：网络接口。</p>
+</blockquote>
+<p><strong>2）绑定静态ip地址和MAC地址</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用-s选项可以绑定主机ip和固定mac地址的映射关系</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># arp -s 192.168.101.254 00:AA:BB:CC:DD:EE</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># arp -n</span></span><br><span class="line">Address                  HWtype  HWaddress           Flags Mask            Iface</span><br><span class="line">192.168.101.82           ether   00:0c:29:d3:54:c1   C                     eth2</span><br><span class="line">192.168.101.2            ether   00:50:56:f8:93:68   C                     eth0</span><br><span class="line">192.168.101.254          ether   00:aa:bb:cc:dd:ee   CM                    eth0</span><br><span class="line">192.168.101.1            ether   00:50:56:c0:00:08   C                     eth0</span><br><span class="line">10.0.5.82                ether   00:0c:29:d3:54:c1   C                     eth2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除绑定关系可以使用选项-d</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># arp -d 192.168.101.254</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># arp -n</span></span><br><span class="line">Address                  HWtype  HWaddress           Flags Mask            Iface</span><br><span class="line">192.168.101.82           ether   00:0c:29:d3:54:c1   C                     eth2</span><br><span class="line">192.168.101.2            ether   00:50:56:f8:93:68   C                     eth0</span><br><span class="line">192.168.101.1            ether   00:50:56:c0:00:08   C                     eth0</span><br><span class="line">10.0.5.82                ether   00:0c:29:d3:54:c1   C                     eth2</span><br></pre></td></tr></table></figure>
+<p><strong>当局域网有arp病毒时，就可以用上述方法绑定MAC地址，以防止中毒。</strong></p>
+<h2 id="netstat：查看网络状态"><a href="#netstat：查看网络状态" class="headerlink" title="netstat：查看网络状态"></a>netstat：查看网络状态</h2><p>netstat命令用于显示本机网络的连接状态、运行端口和路由表等信息。</p>
+<p><strong>语法格式：netstat [option]</strong></p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/05/25/5ce94b6a6ac4364705.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）常用选项组合</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -an选项组合以ip地址的形式显示所有socket的监听信息</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># netstat -an</span></span><br><span class="line">Active Internet connections (servers and established)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State      </span><br><span class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN     </span><br><span class="line">tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN     </span><br><span class="line">tcp        0     52 192.168.101.81:22       192.168.101.1:6481      ESTABLISHED</span><br><span class="line">tcp6       0      0 :::4000                 :::*                    LISTEN     </span><br><span class="line">tcp6       0      0 :::80                   :::*                    LISTEN     </span><br><span class="line">tcp6       0      0 :::22                   :::*                    LISTEN     </span><br><span class="line">tcp6       0      0 ::1:25                  :::*                    LISTEN     </span><br><span class="line">udp        0      0 127.0.0.1:323           0.0.0.0:*                          </span><br><span class="line">udp6       0      0 ::1:323                 :::*                               </span><br><span class="line">Active UNIX domain sockets (servers and established)</span><br><span class="line">Proto RefCnt Flags       Type       State         I-Node   Path</span><br><span class="line">unix  2      [ ACC ]     STREAM     LISTENING     19221    /var/run/vmware/guestServicePipe</span><br><span class="line">unix  2      [ ACC ]     STREAM     LISTENING     27162    /var/run/docker.sock</span><br><span class="line">unix  3      [ ]         DGRAM                    31       /run/systemd/notify</span><br><span class="line">unix  2      [ ]         DGRAM                    33       /run/systemd/cgroups-agent</span><br><span class="line">unix  2      [ ACC ]     STREAM     LISTENING     22569    /var/run/docker.sock</span><br><span class="line">unix  2      [ ACC ]     STREAM     LISTENING     41       /run/systemd/journal/stdout</span><br><span class="line">unix  2      [ ACC ]     STREAM     LISTENING     22571    /run/dbus/system_bus_socket</span><br><span class="line">unix  6      [ ]         DGRAM                    44       /run/systemd/journal/socket</span><br><span class="line">unix  12     [ ]         DGRAM                    46       /dev/<span class="built_in">log</span></span><br><span class="line">。。。</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用-lntup选项组合，查看所有监听连接的端口和进程PID</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># netstat -lntup</span></span><br><span class="line">Active Internet connections (only servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    </span><br><span class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      1038/sshd           </span><br><span class="line">tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      1310/master         </span><br><span class="line">tcp6       0      0 :::4000                 :::*                    LISTEN      1648/docker-proxy   </span><br><span class="line">tcp6       0      0 :::80                   :::*                    LISTEN      1042/httpd          </span><br><span class="line">tcp6       0      0 :::22                   :::*                    LISTEN      1038/sshd           </span><br><span class="line">tcp6       0      0 ::1:25                  :::*                    LISTEN      1310/master         </span><br><span class="line">udp        0      0 127.0.0.1:323           0.0.0.0:*                           645/chronyd         </span><br><span class="line">udp6       0      0 ::1:323                 :::*</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>输出结果说明如下：</strong></p>
+<p>Active Internet connections (servers and established) ：表示活动的TCP/IP网络连接。</p>
+<p>Active UNIX domain sockets (servers and established)：表示活动的unix socket连接。</p>
+<p>Proto：表示socket使用的协议（TCP、UDP、RAW）</p>
+<p>Recv-Q：接收到但还未处理的字节数。</p>
+<p>Send-Q：已经发送，但是还未收到远程主机响应的自己数。</p>
+<p>Local Address：本地主机地址和端口信息。</p>
+<p>Foreign Address：远程主机的地址和端口信息。</p>
+<p>State：socket的状态，通常仅有TCP的状态信息，状态值有ESTABBLISHED、SYN_SENT、SYN_RECV、FIN_WAIT、FIN_WAIT2、TIME_WAIT等。</p>
+</blockquote>
+<p><strong>2）显示当前系统的路由信息</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用-r选项显示系统路由表信息，使用-n选项显示ip地址，不进行DNS解析</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># netstat -rn</span></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface</span><br><span class="line">0.0.0.0         192.168.101.2   0.0.0.0         UG        0 0          0 eth0</span><br><span class="line">10.0.5.0        0.0.0.0         255.255.255.0   U         0 0          0 eth2</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U         0 0          0 eth0</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U         0 0          0 eth1</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U         0 0          0 eth2</span><br><span class="line">172.0.2.0       0.0.0.0         255.255.255.0   U         0 0          0 eth1</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U         0 0          0 docker0</span><br><span class="line">192.168.100.0   192.168.101.2   255.255.255.0   UG        0 0          0 eth0</span><br><span class="line">192.168.101.0   0.0.0.0         255.255.255.0   U         0 0          0 eth0</span><br><span class="line">192.168.101.82  0.0.0.0         255.255.255.255 UH        0 0          0 eth2</span><br></pre></td></tr></table></figure>
+<p><strong>3）显示网卡状态</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用-i选项显示网络接口状态信息</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># netstat -i</span></span><br><span class="line">Kernel Interface table</span><br><span class="line">Iface             MTU    RX-OK RX-ERR RX-DRP RX-OVR    TX-OK TX-ERR TX-DRP TX-OVR Flg</span><br><span class="line">docker0          1500        0      0      0 0             8      0      0      0 BMRU</span><br><span class="line">eth0             1500     8480      0      0 0          4404      0      0      0 BMRU</span><br><span class="line">eth1             1500       24      0      0 0            54      0      0      0 BMRU</span><br><span class="line">eth2             1500       41      0      0 0            60      0      0      0 BMRU</span><br><span class="line">lo              65536       10      0      0 0            10      0      0      0 LRU</span><br><span class="line">vethe5480a8      1500        0      0      0 0            16      0      0      0 BMRU</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>输出结果说明如下：</strong></p>
+<p>Iface：表示网络设备的接口名称。</p>
+<p>MTU：表示最大传输单元，单位为字节。</p>
+<p>RX-OK/TX-OK：表示已经准确无误地接收/发送了多少数据包。</p>
+<p>RX-ERR/TX-ERR：表示接收/发送数据包时产生了多少错误。</p>
+<p>RX-DRP/TX-DRP：表示接收/发送数据包时丢弃了多少数据包。</p>
+<p>RX-OVR/TX-OVR：表示由于误差而遗失了多少数据包。</p>
+<p>Flg：表示接口标记，其中各标记含义具体如下。</p>
+<p>​    L：表示该接口是个回环设备。</p>
+<p>​    B：表示设置了广播地址。</p>
+<p>​    M：表示接收所有数据包。</p>
+<p>​    R：表示接口正在运行。</p>
+<p>​    U：表示接口处于活动状态。</p>
+<p>​    O：表示在该接口上禁用arp。</p>
+<p>​    P：表示一个点到点的连接。</p>
+</blockquote>
+<p><strong>正常情况下，RX-ERR/TX-ERR、RX-DRP/TX-DRP和RX-OVR/TX-OVR的值都应该为0，如果这几个选项的值不为0，并且很大，那么网络质量肯定有问题，网络传输性能也一定会下降。</strong></p>
+<h2 id="ping：测试主机之间网络的连通性"><a href="#ping：测试主机之间网络的连通性" class="headerlink" title="ping：测试主机之间网络的连通性"></a>ping：测试主机之间网络的连通性</h2><p>ping命令可用于测试主机之间网络的连通性。执行ping命令会使用ICMP传输协议，发出要求回应的信息，若远端主机的网络功能没有问题，就会回应该信息，因而可得知该主机运作正常。但是，如果ping不通，不一定是网络问题，也可能是远端主机设置了禁ping功能，就是收到ICMP包不会回应。</p>
+<p><strong>语法格式：ping [option] [destination]</strong></p>
+<p><strong>重要参数选项</strong></p>
+<p><img src="https://i.loli.net/2019/05/25/5ce94c01ae0ff71667.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）测试目标主机的网络连通性</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试openstack官网的连通性</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ping www.openstack.org</span></span><br><span class="line">PING www.openstack.org.cdn.cloudflare.net (104.20.111.33) 56(84) bytes of data.</span><br><span class="line">64 bytes from 104.20.111.33 (104.20.111.33): icmp_seq=1 ttl=128 time=41.8 ms</span><br><span class="line">64 bytes from 104.20.111.33 (104.20.111.33): icmp_seq=2 ttl=128 time=40.7 ms</span><br><span class="line">64 bytes from 104.20.111.33 (104.20.111.33): icmp_seq=3 ttl=128 time=41.0 ms</span><br><span class="line">64 bytes from 104.20.111.33 (104.20.111.33): icmp_seq=6 ttl=128 time=49.0 ms</span><br><span class="line">64 bytes from 104.20.111.33 (104.20.111.33): icmp_seq=7 ttl=128 time=40.2 ms</span><br><span class="line">64 bytes from 104.20.111.33 (104.20.111.33): icmp_seq=8 ttl=128 time=40.9 ms</span><br><span class="line">64 bytes from 104.20.111.33 (104.20.111.33): icmp_seq=9 ttl=128 time=40.9 ms</span><br><span class="line">64 bytes from 104.20.111.33 (104.20.111.33): icmp_seq=10 ttl=128 time=41.7 ms</span><br><span class="line">。。。。</span><br><span class="line"></span><br><span class="line"><span class="comment"># 此时不使用ctrl+c就会一直ping下去</span></span><br><span class="line"><span class="comment"># 使用-c选项，设定ping的次数</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ping -c 3 www.openstack.org</span></span><br><span class="line">PING www.openstack.org.cdn.cloudflare.net (104.20.110.33) 56(84) bytes of data.</span><br><span class="line">64 bytes from 104.20.110.33 (104.20.110.33): icmp_seq=1 ttl=128 time=63.3 ms</span><br><span class="line">64 bytes from 104.20.110.33 (104.20.110.33): icmp_seq=2 ttl=128 time=54.0 ms</span><br><span class="line">64 bytes from 104.20.110.33 (104.20.110.33): icmp_seq=3 ttl=128 time=54.0 ms</span><br><span class="line"></span><br><span class="line">--- www.openstack.org.cdn.cloudflare.net ping statistics ---</span><br><span class="line">3 packets transmitted, 3 received, 0% packet loss, time 5517ms</span><br><span class="line">rtt min/avg/max/mdev = 54.017/57.164/63.387/4.404 ms</span><br></pre></td></tr></table></figure>
+<p>ping命令会显示一个时间作为衡量网络延迟的参数，以判断源主机与目标主机之间网络的质量。ping命令的输出信息中含有TTL值。TTL（Time To Life）称为生存期，它是ICMP报文在网络上的存活时间。不同的操作系统发出的ICMP报文的生存期各不相同，常见的生存期为32、64、128和255等。TTL值反映了ICMP报文所能够经过的路由器数目，每经过一个路由器，路由器都会将其数据包的生存期减去1，如果TTL值变为0，则路由器将不再转发此报文。</p>
+<p><strong>2）用1k的大包测试</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用-s选项可以这是ICMP包的大小</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ping -c 5 -s 1024 www.openstack.org</span></span><br><span class="line">PING www.openstack.org.cdn.cloudflare.net (104.20.110.33) 1024(1052) bytes of data.</span><br><span class="line">1032 bytes from 104.20.110.33 (104.20.110.33): icmp_seq=1 ttl=128 time=55.2 ms</span><br><span class="line">1032 bytes from 104.20.110.33 (104.20.110.33): icmp_seq=2 ttl=128 time=55.6 ms</span><br><span class="line">1032 bytes from 104.20.110.33 (104.20.110.33): icmp_seq=3 ttl=128 time=55.2 ms</span><br><span class="line">1032 bytes from 104.20.110.33 (104.20.110.33): icmp_seq=4 ttl=128 time=55.0 ms</span><br><span class="line">1032 bytes from 104.20.110.33 (104.20.110.33): icmp_seq=5 ttl=128 time=63.0 ms</span><br><span class="line">--- www.openstack.org.cdn.cloudflare.net ping statistics ---</span><br><span class="line">5 packets transmitted, 5 received, 0% packet loss, time 7575ms</span><br><span class="line">rtt min/avg/max/mdev = 55.084/56.875/63.085/3.122 ms</span><br></pre></td></tr></table></figure>
+<h2 id="telnet：远程登录主机"><a href="#telnet：远程登录主机" class="headerlink" title="telnet：远程登录主机"></a>telnet：远程登录主机</h2><p>telnet命令以前是用于登录远程主机，对远程主机进行管理的。但是因为telnet是采用明文传送报文的，其安全性不好，因此现在很多Linux服务器都不开放telnet服务，而是改用更安全的SSH服务了。现在，只有在交换机等网络设备还可能呢会采用telnet登录的方式。<strong>但是，使用telnet命令还可以判断远端服务器的端口是否开放，这是目前telnet命令使用最主要场景。</strong></p>
+<p><strong>语法格式：telnet [option] [host] [port]</strong></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>测试SSH服务端口是否开放</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试192.168.101.83的ssh服务是否开放</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># telnet 192.168.101.83 22  # 22端口就是ssh服务的端口</span></span><br><span class="line">Trying 192.168.101.83...</span><br><span class="line">Connected to 192.168.101.83.</span><br><span class="line">Escape character is <span class="string">'^]'</span>.</span><br><span class="line">SSH-2.0-OpenSSH_7.4   <span class="comment"># &lt;==看到这种结果，就证明SSH服务的22端口已经开放了。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 此时命令行已经挂起了，不能再进行其他操作，Ctrl+C也无法退出。根据提示输入“Ctrl+]”，然后进入telnet命令行，输入quit就能退出。</span></span><br><span class="line">SSH-2.0-OpenSSH_7.4</span><br><span class="line">^]</span><br><span class="line">telnet&gt; quit</span><br><span class="line">Connection closed.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 出现下列情况表示服务未开启或端口被屏蔽无法访问</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># telnet 192.168.101.83 23</span></span><br><span class="line">Trying 192.168.101.83...</span><br><span class="line">telnet: connect to address 192.168.101.83: Connection refused</span><br></pre></td></tr></table></figure>
+<h2 id="wget：命令行下载工具"><a href="#wget：命令行下载工具" class="headerlink" title="wget：命令行下载工具"></a>wget：命令行下载工具</h2><p>wget命令用于从网络上下载某些资料，该命令对于能够连接到互联网的Linux系统，作用非常大，可以直接从网络上下载自己所需要的文件。wget的特点如下：</p>
+<ol>
+<li>支持断点下载功能。</li>
+<li>支持FTP和HTTP下载方式。</li>
+<li>支持代理服务器。</li>
+<li>非常稳定，它在带宽很窄的情况下或不稳定的网络中有很强的适应性。如果是由于网络的原因下载失败，wget会不断地尝试，直到整个文件下载完毕。如果是服务器打断了下载过程，它会再次连接到服务器上从停止的地方继续下载。这对那些从限定了连接时间的服务器上下载大文件非常有用。</li>
+</ol>
+<p><strong>语法格式：wget [option] [url]</strong></p>
+<p><strong>重要选项参数</strong></p>
+<p><img src="https://i.loli.net/2019/05/25/5ce94c90227ad34833.jpg"></p>
+<p><strong>【使用示例】</strong></p>
+<p><strong>1）使用wget下载单个文件</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从阿里云镜像服务器上下载epel源</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># wget http://mirrors.aliyun.com/repo/epel-6.repo</span></span><br><span class="line">--2019-05-04 17:46:56--  http://mirrors.aliyun.com/repo/epel-6.repo</span><br><span class="line">Resolving mirrors.aliyun.com (mirrors.aliyun.com)... 183.201.217.232, 183.201.229.102, 183.201.217.227, ...</span><br><span class="line">Connecting to mirrors.aliyun.com (mirrors.aliyun.com)|183.201.217.232|:80... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 664 [application/octet-stream]</span><br><span class="line">Saving to: ‘epel-6.repo’</span><br><span class="line">100%[======================================================&gt;] 664         --.-K/s   <span class="keyword">in</span> 0s      </span><br><span class="line">2019-05-04 17:46:58 (191 MB/s) - ‘epel-6.repo’ saved [664/664]</span><br></pre></td></tr></table></figure>
+<p><strong>2）指定保存文件名下载</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用-O选项指定本地保存文件名</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># wget -O ~/MyCentOS6-epel.repo http://mirrors.aliyun.com/repo/epel-6.repo</span></span><br><span class="line">--2019-05-04 17:48:38--  http://mirrors.aliyun.com/repo/epel-6.repo</span><br><span class="line">Resolving mirrors.aliyun.com (mirrors.aliyun.com)... 183.201.217.230, 183.201.217.233, 111.48.28.118, ...</span><br><span class="line">Connecting to mirrors.aliyun.com (mirrors.aliyun.com)|183.201.217.230|:80... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 664 [application/octet-stream]</span><br><span class="line">Saving to: ‘/root/MyCentOS6-epel.repo’</span><br><span class="line">100%[======================================================&gt;] 664         --.-K/s   <span class="keyword">in</span> 0s      </span><br><span class="line">2019-05-04 17:48:40 (123 MB/s) - ‘/root/MyCentOS6-epel.repo’ saved [664/664]</span><br></pre></td></tr></table></figure>
+<p><strong>wget默认会以最后一个符合“/”的后面的字符来命名，对于动态链接的下载文件名通常会不正确。为了解决这个问题，我们可以使用参数-O来指定一个文件名。</strong></p>
+<p><strong>3）限速加载</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用--limit-rate选项限定下载速度为10K</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># wget -O ~/mydata/myico.ico --limit-rate=10k https://kkutysllb.cn/favicon.ico</span></span><br><span class="line">--2019-05-04 17:52:22--  https://kkutysllb.cn/favicon.ico</span><br><span class="line">Resolving kkutysllb.cn (kkutysllb.cn)... 185.199.110.153</span><br><span class="line">Connecting to kkutysllb.cn (kkutysllb.cn)|185.199.110.153|:443... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 97780 (95K) [image/vnd.microsoft.icon]</span><br><span class="line">Saving to: ‘/root/mydata/myico.ico’</span><br><span class="line">100%[======================================================&gt;] 97,780      10.0KB/s   <span class="keyword">in</span> 9.5s   </span><br><span class="line">2019-05-04 17:52:34 (10.0 KB/s) - ‘/root/mydata/myico.ico’ saved [97780/97780]</span><br><span class="line">[root@C7-Server01 ~]<span class="comment">#</span></span><br></pre></td></tr></table></figure>
+<p><strong>4）断点续传</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从阿里云镜像仓库下载centos6.10的iso镜像</span></span><br><span class="line"><span class="comment"># 使用-c选项支持断点续传，当下载到5%时，我们手动通过ctrl+c打断</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># wget -c https://mirrors.aliyun.com/centos/6/isos/x86_64/CentOS-6.10-x86_64-bin-DVD1.iso</span></span><br><span class="line">--2019-05-04 17:58:23--  https://mirrors.aliyun.com/centos/6/isos/x86_64/CentOS-6.10-x86_64-bin-DVD1.iso</span><br><span class="line">Resolving mirrors.aliyun.com (mirrors.aliyun.com)... 183.203.69.11, 183.201.217.227, 183.203.69.12, ...</span><br><span class="line">Connecting to mirrors.aliyun.com (mirrors.aliyun.com)|183.203.69.11|:443... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 3991928832 (3.7G) [application/octet-stream]</span><br><span class="line">Saving to: ‘CentOS-6.10-x86_64-bin-DVD1.iso’</span><br><span class="line">5% [==&gt;                                                    ] 223,244,572 11.3MB/s  eta 5m 21s ^C</span><br></pre></td></tr></table></figure>
+<p>再次下载，发现继续从5%开始下载，再次在11%打断，再次继续上次地方下载</p>
+<p><img src="https://i.loli.net/2019/05/25/5ce94d0d2045c41932.jpg"></p>
+<p><strong>5）后台下载</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用-b选项后台下载，同时也可组合-c选项，支持断点续传</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># wget -bc https://mirrors.aliyun.com/centos/7.6.1810/isos/x86_64/CentOS-7-x86_64-DVD-1810.iso</span></span><br><span class="line">Continuing <span class="keyword">in</span> background, pid 3333.</span><br><span class="line">Output will be written to ‘wget-log’.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看下载进度日志文件wget-log</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># tail -f wget-log</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/05/25/5ce94d3aee85858500.jpg"></p>
+<p><strong>6）伪装下载</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用--user-agent选项伪装客户端下载</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># wget --user-agent="Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/534.16 (KHTML, like Gecko) Chrome/10.0.648.204 Safari/534.16" https://kkutysllb.cn/favicon.ico</span></span><br><span class="line">--2019-05-04 18:11:26--  https://kkutysllb.cn/favicon.ico</span><br><span class="line">Resolving kkutysllb.cn (kkutysllb.cn)... 185.199.110.153</span><br><span class="line">Connecting to kkutysllb.cn (kkutysllb.cn)|185.199.110.153|:443... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 97780 (95K) [image/vnd.microsoft.icon]</span><br><span class="line">Saving to: ‘favicon.ico’</span><br><span class="line">100%[======================================================&gt;] 97,780      24.0KB/s   <span class="keyword">in</span> 4.0s   </span><br><span class="line">2019-05-04 18:11:33 (24.0 KB/s) - ‘favicon.ico’ saved [97780/97780]</span><br></pre></td></tr></table></figure>
+<p><strong>有些网站会根据判断代理名称不是浏览器而拒绝你的下载请求，不过你可以通过——user-agent参数进行伪装。</strong></p>
+<p><strong>7）监控网站URL是否正常</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用-T选项设置超时时间，单位为秒</span></span><br><span class="line"><span class="comment"># 使用-q关闭尝试连接的输出</span></span><br><span class="line"><span class="comment"># 使用--tries选项设置重试次数</span></span><br><span class="line"><span class="comment"># 使用--spider选项模拟爬虫方式访问网站</span></span><br><span class="line"><span class="comment"># 最后通过echo $?输出结果判断，如果结果为0就是表示URL正常，否则异常</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># wget -q -T 3 --tries=3 --spider www.sina.com.cn</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># echo $?</span></span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+<p><strong>上述语句常用自动化运维脚本中。</strong></p>
+<p><strong><em>结论：截止目前Linux系统核心命令中网络管理命令基本介绍这么多，还有一些常用的命令工具，如：抓包（tcpdump），监听（nmap）、追踪（traceroute）、配置（ip、nc）、邮件（mail、mailq）等等会放在Linux常用网络工具一文中介绍。</em></strong></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2019/05/25/Linux系统命令-第九篇《网络管理命令》/" title="Linux系统命令-第九篇《网络管理命令》">https://kkutysllb.cn/2019/05/25/Linux系统命令-第九篇《网络管理命令》/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/25/计算虚拟化之I-O虚拟化/" rel="next" title="计算虚拟化之I/O虚拟化">
+                <i class="fa fa-chevron-left"></i> 计算虚拟化之I/O虚拟化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/27/Linux系统命令-第十篇《系统管理命令》/" rel="prev" title="Linux系统命令-第十篇《系统管理命令》">
+                Linux系统命令-第十篇《系统管理命令》 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ifconfig：配置或显示网络接口信息"><span class="nav-number">1.</span> <span class="nav-text">ifconfig：配置或显示网络接口信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ifup：激活网络接口"><span class="nav-number">2.</span> <span class="nav-text">ifup：激活网络接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#route：显示或管理路由表"><span class="nav-number">3.</span> <span class="nav-text">route：显示或管理路由表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#arp：管理系统的arp缓存"><span class="nav-number">4.</span> <span class="nav-text">arp：管理系统的arp缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#netstat：查看网络状态"><span class="nav-number">5.</span> <span class="nav-text">netstat：查看网络状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ping：测试主机之间网络的连通性"><span class="nav-number">6.</span> <span class="nav-text">ping：测试主机之间网络的连通性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#telnet：远程登录主机"><span class="nav-number">7.</span> <span class="nav-text">telnet：远程登录主机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wget：命令行下载工具"><span class="nav-number">8.</span> <span class="nav-text">wget：命令行下载工具</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">932k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">14:07</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/05/25/Linux系统命令-第九篇《网络管理命令》/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>

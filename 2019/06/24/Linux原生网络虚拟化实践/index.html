@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="本篇是虚拟化技术系列最后一片文章（容器技术作为专题单独介绍），介于后续OpenStack的Neutron在利用libvirt构建虚拟化网络服务时，利用了很多Linux虚拟网络功能（Linux内核中的虚拟网络设备以及其他网络功能）。因此，在网络虚拟化的收尾部分，特意安排一篇Linux虚拟网络的基础实践，一方面巩固大家对网络虚拟化的认知，另一方面也为后续学习OpenStack打好基础。下面，就来带大家">
+<meta name="keywords" content="电信云">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux原生网络虚拟化实践">
+<meta property="og:url" content="https://kkutysllb.cn/2019/06/24/Linux原生网络虚拟化实践/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="本篇是虚拟化技术系列最后一片文章（容器技术作为专题单独介绍），介于后续OpenStack的Neutron在利用libvirt构建虚拟化网络服务时，利用了很多Linux虚拟网络功能（Linux内核中的虚拟网络设备以及其他网络功能）。因此，在网络虚拟化的收尾部分，特意安排一篇Linux虚拟网络的基础实践，一方面巩固大家对网络虚拟化的认知，另一方面也为后续学习OpenStack打好基础。下面，就来带大家">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e1d00f5a237937.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e2df2274078453.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e2f95825263133.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e355ee04934514.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e3731b61a65536.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e3934dcba94992.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e3ff2808d82295.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e5fd7f09157174.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e6656350639989.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e68d9034919520.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e6af6c3bd92998.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e6cbb0ab748635.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e6f14e8f678387.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e73ac8a6350129.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e7a926e6297494.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e7ffbbd5e47582.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e86b3a0bf84209.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e8984235e46830.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e8b93b3d745185.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e8f78316127513.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e914a452d47741.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e957464e269449.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e97fb5eb697934.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10e9a968d9b77681.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10ea08d124792954.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10eaa6b8ab112350.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10eb1c828ed42461.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/24/5d10eb4d248e961131.jpg">
+<meta property="og:updated_time" content="2020-06-25T11:53:27.916Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux原生网络虚拟化实践">
+<meta name="twitter:description" content="本篇是虚拟化技术系列最后一片文章（容器技术作为专题单独介绍），介于后续OpenStack的Neutron在利用libvirt构建虚拟化网络服务时，利用了很多Linux虚拟网络功能（Linux内核中的虚拟网络设备以及其他网络功能）。因此，在网络虚拟化的收尾部分，特意安排一篇Linux虚拟网络的基础实践，一方面巩固大家对网络虚拟化的认知，另一方面也为后续学习OpenStack打好基础。下面，就来带大家">
+<meta name="twitter:image" content="https://i.loli.net/2019/06/24/5d10e1d00f5a237937.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2019/06/24/Linux原生网络虚拟化实践/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Linux原生网络虚拟化实践 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2019/06/24/Linux原生网络虚拟化实践/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linux原生网络虚拟化实践
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-24 22:35:56" itemprop="dateCreated datePublished" datetime="2019-06-24T22:35:56+08:00">2019-06-24</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-06-25 19:53:27" itemprop="dateModified" datetime="2020-06-25T19:53:27+08:00">2020-06-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NFV关键技术/" itemprop="url" rel="index"><span itemprop="name">NFV关键技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">13k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">11 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本篇是虚拟化技术系列最后一片文章（容器技术作为专题单独介绍），介于后续OpenStack的Neutron在利用libvirt构建虚拟化网络服务时，利用了很多Linux虚拟网络功能（Linux内核中的虚拟网络设备以及其他网络功能）。因此，在网络虚拟化的收尾部分，特意安排一篇Linux虚拟网络的基础实践，一方面巩固大家对网络虚拟化的认知，另一方面也为后续学习OpenStack打好基础。下面，就来带大家了解一下Linux系统原生的与Neutron密切相关的虚拟网络设备。<a id="more"></a></p>
+<h2 id="Tap"><a href="#Tap" class="headerlink" title="Tap"></a><strong>Tap</strong></h2><p>Tap这个概念大家应该不陌生，Tap交换机总听说过吧，信令平台采集探针数据收敛必备设备，是个纯二层设备。Linux中的tap属于虚拟网络设备，也是个二层虚拟设备。而在linux中所指的“设备”并不是我们实际生产或生活中常见路由器或交换机这类设备，它其实本质上往往是一个数据结构、内核模块或设备驱动这样含义。</p>
+<p><strong>在linux中，tap和tun往往是会被并列讨论，tap位于二层，tun位于三层。</strong>为了说明这一点我们先看看下面linux用于描述tap和tun的数据结构内容：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Struct  tun_strruct  &#123;</span><br><span class="line">Char name [<span class="number">8</span>];      <span class="comment">//设备名称</span></span><br><span class="line">Unsigned  <span class="keyword">long</span>  flags；  <span class="comment">//区分tun和tap的标志位；</span></span><br><span class="line">Struct fasync_struct  *fasync;  <span class="comment">//文件异步调用通知接口</span></span><br><span class="line">Wait_queue_head_t read_wait;  <span class="comment">//消息队列读等待标志</span></span><br><span class="line">Struct net_device dev;   <span class="comment">//定义一个抽象网络设备</span></span><br><span class="line">Struct sk_buff_head txq;  <span class="comment">//定义一个缓存区</span></span><br><span class="line">Struct net_device_stats stats; <span class="comment">//定义一个网卡状态信息结构</span></span><br><span class="line">&#125;；</span><br></pre></td></tr></table></figure>
+<p>从上面的数据结构可以看出，tap和tun的数据结构其实一样的，用来区别两者的其实就是flags。Tap从功能上说，位于二层也就是数据链路层，而二层的主要网络协议包括：</p>
+<ul>
+<li><strong>点对点协议（Point-to-Point Protocol）</strong></li>
+<li><strong>以太网协议（Ethernet）</strong></li>
+<li><strong>高级数据帧链路协议（High-Level Data Link Protocol）</strong></li>
+<li><strong>帧中继（Frame Relay）</strong></li>
+<li><strong>异步传输模式（Asynchronous Transfer Mode）</strong></li>
+</ul>
+<p><strong>而tap只是与以太网协议（Ethernet）对应，所以tap常被称为“虚拟以太网设备” 。</strong>要想使用Linux命令行操作一个tap，首先Linux得有tun模块（Linux使用tun模块实现了tun/tap），检查方法如下所示，输入modinfo tun命令如果有如下输出，就表示Linux内核具备tun模块。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e1d00f5a237937.jpg" alt></p>
+<p>接下来，还要看看Linux内核是否加载tun模块。检查办法就是输入指令lsmod|grep tun，查看是否有如下图所示信息输出。如果有，就表示已加载，否则输入modprobe tun指令进行加载，然后再次输入lsmod|grep tun指令进行确认（<strong>这种加载-确认的操作方式是一种好的操作习惯，要养成！！！</strong>）</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e2df2274078453.jpg" alt></p>
+<p>当我们确认了Linux加载了tun模块后，我们还需要确认Linux是否有操作tun/tap的命令行工具tunctl。在Linux命令行输入tunctl help进行确认。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e2f95825263133.jpg" alt></p>
+<p>如上图所示，如果提示command not found，在CentOS 6.x系统下直接输入yum install -y tunctl安装即可。但是，在CentOS 7.x系统下，需要先指定一个特定仓库，然后按照指定的仓库进行安装，否则会提示找不到tunctl rpm包。代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首先创建一个指定仓库</span></span><br><span class="line">cat &lt;&lt; EOF &gt; /etc/yum.repos.d/nux-misc.repo</span><br><span class="line">&gt; [nux-misc]</span><br><span class="line">&gt; name=Nux Misc</span><br><span class="line">&gt; baseurl=http://li.nux.ro/download/nux/misc/el7/x86_64/</span><br><span class="line">&gt; enabled=0</span><br><span class="line">&gt; gpgcheck=1</span><br><span class="line">&gt; gpgkey=http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro</span><br><span class="line">&gt; EOF</span><br><span class="line"></span><br><span class="line"><span class="comment"># 按照指定仓库进行安装</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># yum -y --enablerepo=nux-misc install tunctl</span></span><br></pre></td></tr></table></figure>
+<p>安装完后，再次执行tunctl help命令后，有如下信息输出，表示安装成功。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e355ee04934514.jpg" alt></p>
+<p>具备了tun和tunctl后，我们就亦可以创建一个tap设备了，创建命令使用-t选项指定创建的tap设备名称。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e3731b61a65536.jpg" alt></p>
+<p>此时，我们输入ip link list或ifconfig命令可以查看到刚才创建的tap设备llb_tap1。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e3934dcba94992.jpg" alt></p>
+<p>通过上面的命令输出，我们发现这个tap设备还没有绑定ip，可以通过执行ip addr或ifconfig命令为该tap设备绑定一个ip地址，我们给它规划一个192.168.1.1/24的地址。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过ip addr命令绑定ip地址</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip addr local 192.168.1.1/24 dev llb_tap1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者使用ifconfig命令绑定ip地址</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig llb_tap1 192.168.1.1/24</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意：上述操作方式，个人推荐第一种，毕竟我们要与时俱进。。。</strong></p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e3ff2808d82295.jpg" alt></p>
+<p>到此为止，一个tap设备就创建完毕了，在OpenStack的Neutron中创建的虚拟网络，虚拟机的vNIC与虚拟交换机之间就是通过一个tap桥接，而这个tap设备就是俗称的<strong>端口组</strong>，所以也就有了同一个端口组内的port归属同一个network的说法。后续通过测试用例，我们会再次讲述tap的用法。</p>
+<h2 id="Namespace"><a href="#Namespace" class="headerlink" title="Namespace"></a><strong>Namespace</strong></h2><p><strong>namespace是Linux虚拟网络的一个重要概念。</strong>传统的Linux的许多资源是全局的，比如进程ID资源。而<strong>namespace的目的首先就是将这些资源进行隔离</strong>。容器技术的两大实现基石之一就是namespace，它主要负责容器虚拟化中资源隔离，另一个就是cgroups，主要负责容器虚拟化中资源的管理。</p>
+<p>在Linux中，可以在一个Host内创建许多namespace，于是那些原本是Linux全局的资源，就<strong>变成了namespace范围内的“全局”资源</strong>，而且不同namespace的资源互相不可见、彼此透明。Linux中会被namespace隔离的全局资源包括：</p>
+<ul>
+<li><strong>uts_ns：</strong>UTS是Unix Timesharing System的简称，包含内核名称、版本、底层体系结构等信息。</li>
+<li><strong>ipc_ns：</strong>所有与进程通信（IPC）有关的信息。</li>
+<li><strong>mnt_ns：</strong>当前装载的文件系统；</li>
+<li><strong>pid_ns：</strong>有关进程的id信息。</li>
+<li><strong>user_ns：</strong>资源配额信息。</li>
+<li><strong>net_ns：</strong>网络信息。</li>
+</ul>
+<p>至于为什么这些全局资源会被隔离，是由Linux全局资源的数据结构定义决定的，如下所示，Linux的全局资源数据结构定在在文件<strong>nsproxy.h</strong>中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Struct nsproxy &#123;</span><br><span class="line">Atomic_t count;</span><br><span class="line">Struct uts_namespace *uts_ns;</span><br><span class="line">Struct ipc_namespace *ipc_ns;</span><br><span class="line">Struct mnt_namespace *mnt_ns;</span><br><span class="line">Struct pid_namespace *pid_ns;</span><br><span class="line">Struct user_namespace *user_ns;</span><br><span class="line">Struct net *net_ns;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>从资源的隔离的角度来说，Linux namespace的示意图如下所示。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e5fd7f09157174.jpg" alt></p>
+<p>上图表明，每个namespace里面将原本是全局资源的进行了隔离，彼此互相不可见。同时在Linux的Host或者每一个VM中，都各自有一套相关的全局资源。借助虚拟化的概念，我们可以将Linux Host的namespace称为root namespace，其它虚拟机namespace称为guest namespace。</p>
+<p><strong>单纯从网络的视角来看，一个namespace提供了一份独立的网络协议栈。包括：网络设备接口、IPv4、IPv6、IP路由、防火墙规则、sockets等。</strong>一个Linux Device，无论是虚拟设备还是物理设备，只能位于一个namespace中，不同namespace的设备之间通过<strong>veth pair</strong>设备进行连接，veth pair设备也是一个虚拟网络设备，可以暂时将其理解为<strong>虚拟网线</strong>，后面会详细介绍。</p>
+<p>Linux中namespace的操作命令是<strong>ip netns</strong>，这个命令的帮助如下所示：</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e6656350639989.jpg" alt></p>
+<p>首先，我们通过ip netns list命令查看一下当前系统的namespace列表信息，由于当前系统没有创建namespace，所以没有任何信息返回。然后，我们通过ip netns add命令添加一个namespace（llb_ns1）。最后，再通过ip netns list命令进行查看，结果如下图所示。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e68d9034919520.jpg" alt></p>
+<p>接下来，我们可以通过ip link set名ing把刚才创建的虚拟tap设备迁移到llb_ns1中去。这时候，我们在root namespace下执行ifconfig命令就找不到llb_tap1设备了。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e6af6c3bd92998.jpg" alt></p>
+<p>我们可以通过ip netns exec [NAME] CMD的方式操作，namespace中的设备，其中NAME参数为namespace名称，CMD是要执行的指令。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e6cbb0ab748635.jpg" alt></p>
+<p>在namespace中给llb_tap1重新绑定ip地址。因为，llb_tap1在root namesapce中绑定的ip归属root namesapce的资源，当llb_tap1更改归属namespace时，原来的资源自然无法使用，必须重新配置。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e6f14e8f678387.jpg" alt></p>
+<p>到此为止，namespace的创建就讲述完了，后续还会根据实例继续讲解其它用法。</p>
+<h2 id="Veth-pair"><a href="#Veth-pair" class="headerlink" title="Veth pair"></a><strong>Veth pair</strong></h2><p>veth pair不是一个设备，而是一对设备，以连接两个虚拟以太端口，类似网线。操作veth pair，需要跟namespace一起配合，不然就没有意义。其实，veth pair设备本质上有三个接口，一端连接linux内核，另两端连接两个tap设备，是一个Y型结构，实现上更像一个HUB。如下图所示：</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e73ac8a6350129.jpg" alt></p>
+<p>两个namespace llb_ns1/llb_ns2中各有一个tap设备，组成veth pair，两者的ip如上图所示，测试两个ip进行互ping。配置代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建veth pair设备</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link add llb_tap1 type veth peer name llb_tap2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建两个namespace：llb_ns1，llb_ns2</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns add llb_ns1</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns add llb_ns2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将veth pair设备两端的两个tap设备移动到对应的namespace中</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set llb_tap1 netns llb_ns1</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set llb_tap2 netns llb_ns2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置两个tap设备的ip地址，并启动</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns1 ifconfig llb_tap1 192.168.1.1/24 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns2 ifconfig llb_tap2 192.168.1.2/24 up</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试两个tap设备互ping</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns1 ping -c 5 192.168.1.2</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns2 ping -c 5 192.168.1.1</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/06/24/5d10e7a926e6297494.jpg" alt></p>
+<p>通过veth pair我们可以连接两个namespace中的两个tap设备，但是veth pair一端只能连接两个tap，如果是三个或多个namespace内的tap要实现互联怎么办？这时候，就只能使用Linux Bridge来完成。</p>
+<h2 id="Linux-Bridge-vSwitch"><a href="#Linux-Bridge-vSwitch" class="headerlink" title="Linux Bridge/vSwitch"></a><strong>Linux Bridge/vSwitch</strong></h2><p>在Linux的网络部分，Bridge和Switch是一个概念。所以，大家把Linux Bridge看做一个交换机来理解就行，也就是2层的一个汇聚设备。Linux实现Bridge功能的是<strong>brctl模块</strong>。在命令行里敲一下brctl，如果能显示相关内容，则表示有此模块，否则还需要安装。安装命令是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@C7-Server01 ~]<span class="comment"># yum install -y bridge-utils</span></span><br></pre></td></tr></table></figure>
+<p>Bridge本身的概念，我们通过一个综合测试用例来讲述Bridge的基本用法，同时也涵盖前面所述的几个概念：tap、namesapce、veth pair。实验拓扑图如下：</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e7ffbbd5e47582.jpg" alt></p>
+<p>上图中，有4个namespace，每个namespace都有一个tap与交换机上一个tap口组成veth pair。这样4个namespace就通过veth pair及Bridge互联起来。配置代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建veth pair设备</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link add llb_tap1 type veth peer name tap1_peer</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link add llb_tap2 type veth peer name tap2_peer</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link add llb_tap3 type veth peer name tap3_peer</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link add llb_tap4 type veth peer name tap4_peer</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建namespace</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns add llb_ns1</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns add llb_ns2</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns add llb_ns3</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns add llb_ns4</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 把tap设备移动到对应namespace中</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set llb_tap1 netns llb_ns1</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set llb_tap2 netns llb_ns2</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set llb_tap3 netns llb_ns3</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set llb_tap4 netns llb_ns4</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建Bridge</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># brctl addbr br1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 把相应的tap设备添加到br1的端口上</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># brctl addif br1 tap1_peer</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># brctl addif br1 tap2_peer</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># brctl addif br1 tap3_peer</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># brctl addif br1 tap4_peer</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置相应tap设备的ip，并启动</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns1 ifconfig llb_tap1 192.168.1.1/24 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns2 ifconfig llb_tap2 192.168.1.2/24 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns3 ifconfig llb_tap3 192.168.1.3/24 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns4 ifconfig llb_tap4 192.168.1.4/24 up</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将Bridge及所有tap设备状态设置为up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set br1 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set tap1_peer up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set tap2_peer up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set tap3_peer up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set tap4_peer up</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 进行互ping测试</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns1 ping -c 3 192.168.1.4</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns3 ping -c 3 192.168.1.2</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns2 ping -c 3 192.168.1.1</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns4 ping -c 3 192.168.1.2</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/06/24/5d10e86b3a0bf84209.jpg" alt></p>
+<h2 id="Router"><a href="#Router" class="headerlink" title="Router"></a><strong>Router</strong></h2><p>Linux创建Router不像Bridge一样有一个直接命令，甚至连间接命令都没有。因为它自身就是一个路由器（Router）。不过Linux默认没有打开路由转发功能。可以用less /proc/sys/net/ipv4/ip_forward这个命令验证。这个命令就是查看一下这个文件（/proc/sys/net/ipv4/ip_forward）的内容。该内容是一个数字。如果是“0”，则表示没有打开路由功能。把“0”修改为“1”，就是打开了Linux的路由转发功能，修改命令为echo “1” &gt; /proc/sys/net/ipv4/ip_forward。这种打开方法，在机器重启以后就会失效了。一劳永逸的方法是修改配置文件“/etc/sysctl.conf”，将net.ipv4.ip_forward=0修改为1，保存后退出即可。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e8984235e46830.jpg" alt></p>
+<p>下面，我们还是通过一个示例来直观感受一下Route的功能。实验拓扑图如下：</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e8b93b3d745185.jpg" alt></p>
+<p>在上图中，llb_ns5/llb_tap5与llb_ns6/llb_tap6不在同一个网段中，中间需要经一个路由器进行转发才能互通。图中的Router是一个示意，其实就是Linux开通了路由转发功能。配置代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建veth pair设备</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link add llb_tap5 type veth peer name tap5_peer</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link add llb_tap6 type veth peer name tap6_peer</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建namespace：llb_ns5、llb_ns6</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns add llb_ns5</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns add llb_ns6</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将tap设备迁移到对应namespace中</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set llb_tap5 netns llb_ns5</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set llb_tap6 netns llb_ns6</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置tap设备ip地址，并启动</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns5 ifconfig llb_tap5 192.168.100.5/24 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns6 ifconfig llb_tap6 192.168.200.5/24 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig tap5_peer 192.168.100.1/24 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig tap6_peer 192.168.200.1/24 up</span></span><br></pre></td></tr></table></figure>
+<p>现在，我们先来做个ping测试，提示网络不可达，如下图所示。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e8f78316127513.jpg" alt></p>
+<p>我们查看下llb_ns5的路由表信息，如下图所示，llb_ns5并没有到达192.168.200.0/24网段的路由表项，因此需要手工进行添加。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e914a452d47741.jpg" alt></p>
+<p>在llb_ns5中添加到192.168.200.0/24网段静态路由信息，同时在llb_ns6中添加到192.168.100.0/24回程路由信息。配置代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在llb_ns5中添加到192.168.200.0/24的静态路由</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns5 route add -net 192.168.200.0 netmask 255.255.255.0 gw 192.168.100.1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 同理，在llb_ns6中添加到192.168.100.0/24的回程路由</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns6 route add -net 192.168.100.0 netmask 255.255.255.0 gw 192.168.200.1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看llb_ns5、llb_ns6的路由信息</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns5 route -ne</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns6 route -ne</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/06/24/5d10e957464e269449.jpg" alt></p>
+<p>再次进行ping尝试，可以ping通，结果如下图所示。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e97fb5eb697934.jpg" alt></p>
+<h2 id="Tun"><a href="#Tun" class="headerlink" title="Tun"></a><strong>Tun</strong></h2><p>在前面tap的时候就介绍过tun和tap其实同一数据结构，只是通过flags标志位来区分。Tap是二层虚拟以太网设备，那么<strong>tun就是三层的点对点的虚拟隧道设备</strong>。也就是说Linux原生支持三层隧道技术。至于什么是隧道技术？在上一篇数据中心的网络虚拟化技术有详细介绍，这里不再赘述。</p>
+<p><strong>Linux一共原生支持5种三层隧道技术，分别是：</strong></p>
+<ul>
+<li><strong>ipip：</strong>IP in IP，在IPv4报文的基础上再封装一个IPv4报文头，属于IPv4 in IPv4。</li>
+<li><strong>GRE：</strong>通用路由封装（Generic Routing Encapsulation），定义在任意一种网络层协议上封装任意一个其他网络层协议的协议，属于IPv4/IPv6 over IPv4。</li>
+<li><strong>sit：</strong>与ipip类似，只不过用IPv4报文头封装一个IPv6报文，属于IPv6 over IPv4。</li>
+<li><strong>isatap：</strong>站内自动隧道寻址协议，一般用于IPv4网络中的IPv6/IPv4节点间的通信。</li>
+<li><strong>vti：</strong>全称是Virtual Tunnel Interface，为IPSec隧道提供一个可路由的接口类型。</li>
+</ul>
+<p>国际惯例，我们还是通过一个具体的测试实例来理解tun。实验拓扑图如下：</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10e9a968d9b77681.jpg" alt></p>
+<p>上图的tun1、tun2，如果我们先忽略的话，剩下的就是我们在前面讲述过的内容。测试用例的第一步，就是使图中的tap7与tap8配置能通，借助上面route的配置，这里我们不再重复。当tap7和tap8配通以后，如果我们不把图中的tun1和tun2暂时当做tun设备，而是当做两个“死”设备（比如当做是两个不做任何配置的网卡），那么这个时候tun1和tun2就像两个孤岛，不仅互相不通，而且跟tap7、tap8也没有关系。因此，我们就需要对tun1、tun2做相关配置，以使这两个两个孤岛能够互相通信。我们以ipip tunnel为例进行配置。</p>
+<p>首先我们要加载ipip模块，Linux默认是没有加载这个模块的。通过命令行lsmod|grep ip进行查看，如果没有加载，可以通过命令modprobe ipip来加载ipip模块。具体过程参见tap部分，这里不再赘述。加载了ipip模块以后，我们就可以创建tun，并且给tun绑定一个ipip隧道。配置代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建veth pair设备</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link add llb_tap7 type veth peer name tap7_peer</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link add llb_tap8 type veth peer name tap8_peer</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建namespace：llb_ns7，llb_ns8</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns add llb_ns7</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns add llb_ns8</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将tap设备移动到对应的namespace</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set llb_tap7 netns llb_ns7</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip link set llb_tap8 netns llb_ns8</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置ip地址，并启动</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns7 ifconfig llb_tap7 192.168.100.6/24 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns8 ifconfig llb_tap8 192.168.200.6/24 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig tap7_peer 192.168.100.1/24 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ifconfig tap8_peer 192.168.200.1/24 up</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置路由和回程路由</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns7 route add -net 192.168.200.0 netmask 255.255.255.0 gw 192.168.100.1</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns8 route add -net 192.168.100.0 netmask 255.255.255.0 gw 192.168.200.1</span></span><br></pre></td></tr></table></figure>
+<p>测试互通，结果如下，表明底层underlay网络可达。</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10ea08d124792954.jpg" alt></p>
+<p>下来，我们创建隧道设备tun，构建overlay网络，代码如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在llb_ns7和llb_ns8中创建tun1、tun2和ipip tunnel</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns7 ip tunnel add tun1 mode ipip remote 192.168.200.6 local 192.168.100.6</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns8 ip tunnel add tun2 mode ipip remote 192.168.100.6 local 192.168.200.6</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 激活tun设备，并配置ip地址</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns7 ip link set tun1 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns8 ip link set tun2 up</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns7 ip addr add 10.10.10.50 peer 10.10.20.50 dev tun1</span></span><br><span class="line">[root@C7-Server01 ~]<span class="comment"># ip netns exec llb_ns8 ip addr add 10.10.20.50 peer 10.10.10.50 dev tun2</span></span><br></pre></td></tr></table></figure>
+<p>互通测试，结果如下：</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10eaa6b8ab112350.jpg" alt></p>
+<p><strong>把上面的命令行脚本中的ipip换成gre，其余不变，就创建了一个gre隧道的tun设备对。</strong>因为我们说tun是一个设备，那么我们可以通过ifconfig这个命令，来看看这个设备的信息，代码如下：</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10eb1c828ed42461.jpg" alt></p>
+<p>可以看到，tun1是一个ipip tunnel的一个端点，IP是10.10.10.50，其对端IP是10.10.20.50。 再看路由表信息，代码如下：</p>
+<p><img src="https://i.loli.net/2019/06/24/5d10eb4d248e961131.jpg" alt></p>
+<p>图中的内容告诉我们，到达目的地10.10.10.50的路由是一个直连路由直接从tun1出去即可，其实tun1和tun2就是overlay网络的VTEP。</p>
+<p>至此，Linux原生网络虚拟化介绍完毕。其实，还有个iptables，一般我们把它理解为Linux的包过滤防火墙，其实当其所属服务器处于网络报转发的中间节点时，它也是一个网络防火墙。它的“防火”机制就是通过一个个链结合策略表完成，而那一个个链其本质就是一个三层的虚拟网络设备。由于篇幅原因，iptables会放在Linux常用运维工具分类中介绍。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2019/06/24/Linux原生网络虚拟化实践/" title="Linux原生网络虚拟化实践">https://kkutysllb.cn/2019/06/24/Linux原生网络虚拟化实践/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/电信云/" rel="tag"><i class="fa fa-tag"></i> 电信云</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/24/打造文件实时同步架构之rsync篇/" rel="next" title="打造文件实时同步架构之rsync篇">
+                <i class="fa fa-chevron-left"></i> 打造文件实时同步架构之rsync篇
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/27/基础正则的五朵金花/" rel="prev" title="基础正则的五朵金花">
+                基础正则的五朵金花 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Tap"><span class="nav-number">1.</span> <span class="nav-text">Tap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Namespace"><span class="nav-number">2.</span> <span class="nav-text">Namespace</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Veth-pair"><span class="nav-number">3.</span> <span class="nav-text">Veth pair</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-Bridge-vSwitch"><span class="nav-number">4.</span> <span class="nav-text">Linux Bridge/vSwitch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Router"><span class="nav-number">5.</span> <span class="nav-text">Router</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tun"><span class="nav-number">6.</span> <span class="nav-text">Tun</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">932k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">14:07</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/06/24/Linux原生网络虚拟化实践/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>
