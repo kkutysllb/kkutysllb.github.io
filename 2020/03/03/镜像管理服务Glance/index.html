@@ -103,32 +103,37 @@
 
 
 
-  <meta name="description" content="概述Telemetry是OpenStack的计量与监控服务，用来获取和保存计量与监控的各种测量值，并根据测量值进行报警。同时这些保存下来的测量值也可以被第三方系统获取，用来做更进一步的分析、处理或展示。早期OpenStack的计量和监控服务由Ceilometer独自完成，将原始计量数据存储在MongoDB中，性能方面可以说是极烂，社区的活跃度也低，基本到了快被放弃的边缘。随着Gnocchi的出现，">
+  <meta name="description" content="概述Glance在OpenStack中主要为实例提供公共镜像服务能力以及镜像/虚拟机快照管理功能，属于OpenStack的核心组件之一，与Swift、Cinder并列OpenStack存储的三驾马车。在实际生产中，Glance本身并不负责大量数据的存储，对镜像的存储主要依赖于后端Swift，一般都是采用对象存储方式。如果后端对象存储采用Swift，则镜像存在Swift中；如果后端存储采用分布式存储">
 <meta name="keywords" content="云计算">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2020-03-03-计量和监控管理服务Telemetry">
-<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/2020-03-03-计量和监控管理服务Telemetry/index.html">
+<meta property="og:title" content="镜像管理服务Glance">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/镜像管理服务Glance/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
-<meta property="og:description" content="概述Telemetry是OpenStack的计量与监控服务，用来获取和保存计量与监控的各种测量值，并根据测量值进行报警。同时这些保存下来的测量值也可以被第三方系统获取，用来做更进一步的分析、处理或展示。早期OpenStack的计量和监控服务由Ceilometer独自完成，将原始计量数据存储在MongoDB中，性能方面可以说是极烂，社区的活跃度也低，基本到了快被放弃的边缘。随着Gnocchi的出现，">
+<meta property="og:description" content="概述Glance在OpenStack中主要为实例提供公共镜像服务能力以及镜像/虚拟机快照管理功能，属于OpenStack的核心组件之一，与Swift、Cinder并列OpenStack存储的三驾马车。在实际生产中，Glance本身并不负责大量数据的存储，对镜像的存储主要依赖于后端Swift，一般都是采用对象存储方式。如果后端对象存储采用Swift，则镜像存在Swift中；如果后端存储采用分布式存储">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ExSJFEjaLoCi.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jWEFdXpeTBnU.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/v7PgO9DgRgeP.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/c8nGYYMQ1Fez.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/FG6h2hBRB0sl.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/PcS51xRBiQVB.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/NjWsVRQjxbko.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HcPBilyMX68F.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/L6FTRP7nM3Jd.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5ievLhgX3Yzo.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/VRC3MQoxq4sc.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/o9KswPsjLACk.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5nskViw0CuuB.png?imageslim">
-<meta property="og:updated_time" content="2020-03-03T15:22:31.153Z">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b2db14195aa594532ce7.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b2ee14195aa5945339aa.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b2fe14195aa59453453c.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b30e14195aa594534eb3.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b32614195aa594535ad6.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b33a14195aa594536682.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b34a14195aa594536f9c.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b35614195aa59453761c.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b36214195aa594537c5b.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b37014195aa5945384d0.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b38014195aa594539804.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b38d14195aa59453a7ad.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b39b14195aa59453b7a0.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b43314195aa59454511c.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b43e14195aa5945457c2.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b44c14195aa594545f87.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b46414195aa594546c0a.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4b47014195aa5945473d8.jpg">
+<meta property="og:updated_time" content="2020-06-25T14:28:09.967Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2020-03-03-计量和监控管理服务Telemetry">
-<meta name="twitter:description" content="概述Telemetry是OpenStack的计量与监控服务，用来获取和保存计量与监控的各种测量值，并根据测量值进行报警。同时这些保存下来的测量值也可以被第三方系统获取，用来做更进一步的分析、处理或展示。早期OpenStack的计量和监控服务由Ceilometer独自完成，将原始计量数据存储在MongoDB中，性能方面可以说是极烂，社区的活跃度也低，基本到了快被放弃的边缘。随着Gnocchi的出现，">
-<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ExSJFEjaLoCi.png?imageslim">
+<meta name="twitter:title" content="镜像管理服务Glance">
+<meta name="twitter:description" content="概述Glance在OpenStack中主要为实例提供公共镜像服务能力以及镜像/虚拟机快照管理功能，属于OpenStack的核心组件之一，与Swift、Cinder并列OpenStack存储的三驾马车。在实际生产中，Glance本身并不负责大量数据的存储，对镜像的存储主要依赖于后端Swift，一般都是采用对象存储方式。如果后端对象存储采用Swift，则镜像存在Swift中；如果后端存储采用分布式存储">
+<meta name="twitter:image" content="https://pic.imgdb.cn/item/5ef4b2db14195aa594532ce7.jpg">
 
 
 
@@ -137,7 +142,7 @@
 
 
 
-  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/2020-03-03-计量和监控管理服务Telemetry/">
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/镜像管理服务Glance/">
 
 
 
@@ -147,7 +152,7 @@
   };
 </script>
 
-  <title>2020-03-03-计量和监控管理服务Telemetry | 一花一菩提，一云一世界</title>
+  <title>镜像管理服务Glance | 一花一菩提，一云一世界</title>
   
 
 
@@ -406,7 +411,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/2020-03-03-计量和监控管理服务Telemetry/">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/镜像管理服务Glance/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kkutysllb">
@@ -423,7 +428,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2020-03-03-计量和监控管理服务Telemetry
+          <h1 class="post-title" itemprop="name headline">镜像管理服务Glance
 
               
             
@@ -449,12 +454,24 @@
                 
               
 
-              <time title="创建时间：2020-03-03 23:14:16 / 修改时间：23:22:31" itemprop="dateCreated datePublished" datetime="2020-03-03T23:14:16+08:00">2020-03-03</time>
+              <time title="创建时间：2020-03-03 18:16:18" itemprop="dateCreated datePublished" datetime="2020-03-03T18:16:18+08:00">2020-03-03</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-06-25 22:28:09" itemprop="dateModified" datetime="2020-06-25T22:28:09+08:00">2020-06-25</time>
               
             
           </span>
@@ -507,7 +524,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">7.6k</span>
+                <span title="本文字数">9.4k</span>
               
 
               
@@ -521,7 +538,7 @@
                 
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
-                <span title="阅读时长">7 分钟</span>
+                <span title="阅读时长">9 分钟</span>
               
             </div>
           
@@ -541,99 +558,221 @@
       
 
       
-        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h2><p>Telemetry是OpenStack的计量与监控服务，用来获取和保存计量与监控的各种测量值，并根据测量值进行报警。同时这些保存下来的测量值也可以被第三方系统获取，用来做更进一步的分析、处理或展示。早期OpenStack的计量和监控服务由Ceilometer独自完成，将原始计量数据存储在MongoDB中，性能方面可以说是极烂，社区的活跃度也低，基本到了快被放弃的边缘。随着Gnocchi的出现，Gnocchi的出现使计量服务不论是在性能还是空间消耗上都有了质的飞跃，功不可没，从而挽救了Ceilometer这个项目。后续，OpenStack社区受自身架构的启发，针对计量和监控这块对Ceilometer项目做了拆分，Ceilometer专门为为OpenStack环境提供一个获取和保存各种测量值的统一框架，明确目标，同时将其告警功能拆分到aodh项目，采集数据存储到gnocchi时间序列数据库，事件相关的服务拆分到panko项目，相关数据仍存储在MongoDB中。因此，现在OpenStack的计量和监控项目就是一个“小帐篷”（“大帐篷”就是OpenStack自身），包括了：Ceilometer、Aodh、Gnocchi和Panko，统称为Telemetry。<a id="more"></a></p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/ExSJFEjaLoCi.png?imageslim" alt="mark"></p>
-<p>Gnocchi是Telemetry项目的中的“灵魂”，是一个多租户时间序列，计量和资源数据库。提供了REST API接口来创建和操作数据，用于超大规模计量数据的存储，同时向操作者和用户提供对度量和资源信息的访问。Gnocchi需要与Ceilometer对接传递计量数据，而Ceilometer作为一个框架，处于核心位置，它像一个漏斗一样，能把OpenStack内部发生的几乎所有的事件都收集起来，为计费和监控以及其它服务提供数据支撑。Ceilometer服务及其剥离出来的服务由四个组件构成，四个组件分工明确，各司其职，使得计量系统结构清晰明了。</p>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h2><p>Glance在OpenStack中主要为实例提供公共镜像服务能力以及镜像/虚拟机快照管理功能，属于OpenStack的核心组件之一，与Swift、Cinder并列OpenStack存储的三驾马车。在实际生产中，Glance本身并不负责大量数据的存储，对镜像的存储主要依赖于后端Swift，一般都是采用对象存储方式。如果后端对象存储采用Swift，则镜像存在Swift中；如果后端存储采用分布式存储ceph，则主要存储在ceph的对象存储rgw模块中。而在我们的实验环境中（考虑大家PC的配置问题），没有部署swift对象存储，因此镜像采用部署Glance服务的节点本地磁盘进行存储。<a id="more"></a></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4b2db14195aa594532ce7.jpg" alt></p>
+<p>Glance首次出现在OpenStack的Bexar版本中，提供发现、注册和检索虚拟机镜像的功能，只依赖于OpenStack的Keystone服务，属于OpenStack八大核心组件之一，为OpenStack的核心项目之一。</p>
+<h2 id="Image的概念"><a href="#Image的概念" class="headerlink" title="Image的概念"></a><strong>Image的概念</strong></h2><p>OpenStack 由 Glance 提供 Image 服务。要理解 Image Service 先得搞清楚什么是 Image 以及为什么要用 Image？在传统 IT 环境下，安装一个系统是要么从安装 CD 从头安装，要么用 Ghost 等克隆工具恢复。这两种方式有如下几个问题：</p>
 <ul>
-<li><strong>Gnocchi：</strong>时间序列数据库，保存计量数据。</li>
-<li><strong>Panko：</strong>事件数据库，保存事件数据。</li>
-<li><strong>Ceilometer：</strong>数据采集服务，采集资源使用量相关数据，并推送到Gnocchi，采集操作事件数据，并推送到Panko。</li>
-<li><strong>Aodh：</strong>告警服务，基于计量和事件数据提供告警通知功能。</li>
+<li>如果要安装的系统多了效率就很低、时间长，工作量大。</li>
+<li>安装完还要进行手工配置，比如安装其他的软件，设置 IP 等</li>
+<li>备份和恢复系统不灵活。</li>
 </ul>
-<h2 id="Ceilometer架构"><a href="#Ceilometer架构" class="headerlink" title="Ceilometer架构"></a><strong>Ceilometer架构</strong></h2><p>Ceilometer框架整体采用了高度可扩展性的设计思想，其逻辑架构如下图所示，Ceilometer通过通知代理和轮询代理获取测量值，经流水线的发布者发布给收集器或外部系统。收集器继而将收到的测量值保存到数据库中，同时，外部系统也可以通过Ceilometer API将测量值送达Ceilometer数据库。Ceilometer告警由告警评估器触发，发送给告警通知器，同时调用Ceilometer API，最终将告警保存到Ceilometer数据库中。此外，告警通知器可以将告警发送给外部系统，外部系统也可以通过Ceilometer API新建告警发送给Ceilometer。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/jWEFdXpeTBnU.png?imageslim" alt="mark"></p>
-<p>Ceilometer可以通过以下3种方式获取测量值数据，其数据采集机制有通知、轮询和REST ful API方式3种：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/v7PgO9DgRgeP.png?imageslim" alt="mark"></p>
+<p>云环境下需要更高效的解决方案，这就是 Image。Image 是一个模板，里面包含了基本的操作系统和其他的软件。举例来说，有家公司需要为每位员工配置一套办公用的系统，一般需要一个 Win7 系统再加 MS office 软件。OpenStack 是这么玩的：先手工安装好这么一个虚机、然后对虚机执行 snapshot，这样就得到了一个 image。当有新员工入职需要办公环境时，立马启动一个或多个该 image 的 instance（虚机）就可以了。在这个过程中，第 1 步跟传统方式类似，需要手工操作和一定时间。但第 2、3 步非常快，全自动化，一般都是秒级别。而且 2、3 步可以循环做。比如公司新上了一套 OA 系统，每个员工的 PC 上都得有客户端软件。那么可以在某个员工的虚机中手工安装好 OA 客户端，然后执行 snapshot ，得到新的 image，以后就直接使用新 image 创建虚机就可以了。另外，snapshot 还有备份的作用，能够非常方便的恢复系统。各位在安装OpenStack时可以通过VMWare的快照（snapshot）来进行备份，每安装完一个服务就备份一次，这样即使后面服务安装出现失误等，且无法调整，就可以通过恢复快照的方式来解决，但是这样也存在一个占用本地磁盘较大的问题。就如下图所示：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4b2ee14195aa5945339aa.jpg" alt></p>
+<p><strong>镜像、实例和规格的关系：</strong></p>
 <ul>
-<li><strong>通知：</strong>所有的OpenStack服务都会在执行了某种操作或者状态变化时发送通知消息到oslo-messaging（OpenStack整体的消息队列框架），一些消息中包含了计量所需要的数据，这部分消息会被Ceilometer的ceilometer-agent-notification服务组件处理，并转化为samples。通知数据采集方式是被动地采集计量数据。</li>
-<li><strong>轮询：</strong>Ceilometer中的服务组件根据配置定期主动地通过OpenStack服务的API或者其他辅助工具（如Hypervisors）去远端或本地的不同服务实体中获取所需要的计量数据；Ceilometer的轮询机制通过3种类型的代理实现，即ceilometer-agent-central、ceilometer-agent-compute和ceilometer-agent-ipmi服务组件。每种代理使用不同的轮询插件（pollster）从不同的命名空间来收集数据。</li>
-<li><strong>REST ful API：</strong>用户可以通过调用RESTful API直接把利用其他方式获取的任意测量数据送达给Ceilometer。</li>
+<li>用户可以从同一个镜像启动任意数量的实例。</li>
+<li>每个启动的实例都是基于镜像的一个副本，实例上的任何修改都不会影响到镜像。</li>
+<li>启动实例时，必须指定一个规格，实例按照规格使用资源。</li>
 </ul>
-<p>Ceilometer通过以上3种方法获取到测量值数据后，会把它转化为符合某种标准格式的数据采样（Sample）通过内部总线发送给Notification agent。然后Notification Agent根据用户定义的Pipeline来对数据采样进行转换（Transform）和发布（Publish）。如果根据Pipeline的定义，这个数据采样（Sample）最后被发布给Collector的话，Collector会把这个数据采样保存在数据库中。Ceilometer的计量数据经过数据采集（agent）、数据处理（流水线数据转换及发布）、数据存储（collector）几个步骤，各个步骤有着各自的处理流程。</p>
-<h2 id="Ceilometer计量数据采集和转换发布机制"><a href="#Ceilometer计量数据采集和转换发布机制" class="headerlink" title="Ceilometer计量数据采集和转换发布机制"></a><strong>Ceilometer计量数据采集和转换发布机制</strong></h2><p>Ceilometer的各个服务中，负责计量数据采集的服务组件有4个，分别是agent-notification、agent-central、agent-compute、agent-ipmi。其采集数据的方式各有不同，主要分为Poll和Push两种方式，如下图所示，Poll即轮询方式，主动采集数据，Push即通知方式，被动获取数据。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/c8nGYYMQ1Fez.png?imageslim" alt="mark"></p>
+<p>在创建Glance服务管理的Image时，需要指定Image的容器格式container format和磁盘格式disk format，其含义具体如下：</p>
 <ul>
-<li><p><strong>agent-notification</strong>服务采用Push方式被动获取数据，即通过监听OpenStack通知总线（Notification Bus）上的通知消息来获取数据。OpenStack中各个模块在执行了某种操作或者状态变化时都会推送通知信息到oslo-messaging消息框架。agent-notification通过访问这个消息队列服务框架，获取相关通知信息，并进一步转化为采样数据的格式。agent-notification服务的运行流程如下：</p>
-<p><strong>Step1：</strong>解析Pipeline配置文件得到Pipeline定义。</p>
-<p><strong>Step2：</strong>调用stevedore库，载入所有的notification listener插件。</p>
-<p><strong>Step3：</strong>对每一个notification listener插件通过oslo.messaging库构造其对应的oslo.messaging库的notification listener对象，并且启动此对象监听通知消息。</p>
-<p><strong>Step4：</strong>当通知总线上有某个notification listener插件所感兴趣的通知到达时，所对应的notification listener插件就会被agent-notification调用，根据此通知消息构造出采样值Sample，然后根据Pipeline中的定义将此采样值转换和发布出去。</p>
-</li>
-<li><p><strong>agent-central</strong>服务可以部署在任何节点上，通常部署在控制节点上，它用来和远程的各种不同的实体和服务进行通信，获取不同的测量值。agent-central主要通过调用各OpenStack服务的REST API来获取OpenStack服务的各种信息，以及通过SNMP来获取Hardware资源的信息，通过kwapi来收集设备能耗数据。</p>
-</li>
-<li><p><strong>agent-compute</strong>服务需要部署在运行nova-compute服务的计算节点上，主要用来收集计算节点上的虚拟机实例的计量数据，在每一个计算节点上都要运行这个服务组件。agent-compute主要是用来和Hypervisor进行通信，通过调用Hypervisor的API来获取相关测量值，需要定期Poll轮询收集信息。</p>
-</li>
-<li><p><strong>agent-ipmi</strong>服务需要部署在支持IPMI的计算节点上，该计算节点需要安装ipmitool工具。agent-ipmi服务通过ipmitool收集本机IPMI传感器（Sensor）的数据，以及Intel Node Manager的数据。</p>
-</li>
-<li><p>agent-central、agent-compute、agent-ipmi都属于Polling代理，Polling代理的作用是根据Pipeline的定义，周期性地调用不同的Pollster插件去轮询获得Pipeline中定义的测量值，再根据Pipeline的定义，对这些采样值进行转换和发布。各种不同的Polling代理的运行流程基本类似，如下：</p>
-<p><strong>Step1：</strong>调用stevedore库，获取属于本Agent的所有Pollster插件。</p>
-<p><strong>Step2：</strong>创建PartitionCoordinator类实例对象，加入一个partition group，并创建一个定时器用来周期性地发送心跳消息。</p>
-<p><strong>Step3：</strong>解析Pipeline配置文件得到Pipeline的定义，并根据解析的结果创建一个或多个不同的PollingTask和所对应的定时器。由于所有采样频率相同的Pipeline都会在同一个PollingTask里处理，所以每个PollingTask都由某个特定频率的定时器驱动，在某一个线程中被执行。</p>
-<p><strong>Step4：</strong>由定时器驱动的PollingTask会周期性地调用其所包含的各种Pollster，由这些Pollster获取测量数据，然后根据Pipeline的定义，把获取的测量取样值交给Transformer转换后，再由Publisher发布。</p>
-</li>
+<li><strong>disk format：</strong>是虚拟机镜像文件的磁盘格式，不同的虚拟化厂商有不同的格式，用来标明虚拟机磁盘镜像包含的信息，可以设置的镜像磁盘格式有：raw，vhd ，vmdk，vdi， iso ，qcow2 ，aki ，ami ，ari等。</li>
 </ul>
-<p>Ceilometer的计量数据处理采用了Pipeline机制。Ceilometer适用于不同应用场景下的测量数据，采样频率可能有不同的要求，例如：用于计费的数据采用频率比较低，一般为10~30min，而用来监控的数据采用的频率就会比较高，一般会达到1~10s。除此之外，对于测量数据的发布方式，不同应用场景也有不同的要求，对于计费数据要求数据采样值不能丢失，而对于用来监控的数据则要求不那么严格。为此，Ceilometer引入了Pipeline的概念来解决采样频率和发布方式的问题。Pipeline由源（Source）和目标（Sink）两部分组成。源中定义了需要测量哪些数据、数据的采样频率、在哪些端点上进行数据采样，以及这些数据的目标。目标中定义了获得的数据要经过哪些Transformer进行数据转换，并且最终交由哪些Publisher发布。Ceilometer中同时允许有多个Pipeline，每个Pipeline都有自己的源和目标，这就解决了不同采样频率、不同发布方式的问题。Ceilometer的数据处理流程如下图所示：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/FG6h2hBRB0sl.png?imageslim" alt="mark"></p>
-<p>Transformer可以针对一个或者多个同一种类的数据采样值进行各种不同的操作，例如改变单位、聚合计算等，最终转换成一个或者多个其他不同种类的测量数据。通过Transformer转换后的数据最终会交由Pipeline定义中的Publisher进行数据发布，不同的Publisher发布的数据可以有不同的数据接收者，可以是Ceilometer的collector服务，也可以是外部系统。</p>
-<p>Ceilometer获得的测量数据通过Pipeline发布后，需要有一个数据接收者获得这些数据并且保存下来，以便对数据进行进一步的处理。Ceilometer的collector服务就是用来接收这些测量数据的，并最终持久化到存储介质中。collector服务可以配置一个或多个dispatcher，对于每一个collector所接收到的采样数据，collector会调用所有配置的dispatcher，由这些dispatcher来决定如何处理数据。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/PcS51xRBiQVB.png?imageslim" alt="mark"></p>
-<p>Ceilometer支持4种不同的数据库后台：MongoDB、MySQL、PostgreSQL和Hbase。不同的数据库后台，所支持的功能和性能有所不同，比如采用MongoDB作为后台数据库，除了一般的最大值、最小值、平均值、累加总和、总数之外，还支持求标准方差和求基数两个操作。虽然Ceilometer的默认后台数据库是MySQL，但是历史上一般建议在实际生产环境中采用MongoDB为后台数据库。由于性能等方面的原因，目前Telemetry社区建议使用Gnocchi代替上面所说的数据库来保存采样数据。</p>
-<h2 id="aodh、panko和gnocchi"><a href="#aodh、panko和gnocchi" class="headerlink" title="aodh、panko和gnocchi"></a><strong>aodh、panko和gnocchi</strong></h2><p>在OpenStack Liberty版本中，为了适应更灵活的部署方案，Telemetry社区把Ceilometer项目中和报警相关的功能剥离出来，成立了一个新的项目Aodh，主要是提供基于Ceilometer所获取的测量值或者Event事件进行报警的功能。Aodh的基本体系结构主要由以下几种服务构成，每种服务都是可水平扩展（scale out）的。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/NjWsVRQjxbko.png?imageslim" alt="mark"></p>
+<table>
+<thead>
+<tr>
+<th><strong>镜像磁盘格式</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>raw</td>
+<td>一种非结构化的镜像磁盘格式</td>
+</tr>
+<tr>
+<td>vhd</td>
+<td>VMware，Xen，Microsoft，VirtualBox等使用的常见磁盘格式</td>
+</tr>
+<tr>
+<td>vhdx</td>
+<td>vhd格式的增强版本，支持更大的磁盘容量和其他功能</td>
+</tr>
+<tr>
+<td>vmdk</td>
+<td>常见的磁盘镜像格式</td>
+</tr>
+<tr>
+<td>vdi</td>
+<td>Virtual Box和QEMU支持的磁盘格式</td>
+</tr>
+<tr>
+<td>iso</td>
+<td>光盘（例如CDROM）的存档格式</td>
+</tr>
+<tr>
+<td>qcow2</td>
+<td>QEMU支持的磁盘格式，支持动态扩展和写时复制</td>
+</tr>
+<tr>
+<td>aki</td>
+<td>Amazon Kernel Image</td>
+</tr>
+<tr>
+<td>ari</td>
+<td>Amazon Ramdisk Image</td>
+</tr>
+<tr>
+<td>ami</td>
+<td>Amazon Machine Image</td>
+</tr>
+</tbody>
+</table>
 <ul>
-<li><strong>API：</strong>主要提供面向用户的RESTful API接口服务。</li>
-<li><strong>Alarm Evaluator：</strong>用来周期性的检查除了event类型之外其他警告器（Alarm）相关的告警条件是否满足。</li>
-<li><strong>Alarm Listener：</strong>根据消息总线（Notification Bus）上面的Event事件消息，来检查相对应的event类型的警告器（Alarm）告警条件是否满足。</li>
-<li><strong>Alarm Notifier：</strong>当警告器的告警条件满足时，执行用户定义的动作。</li>
+<li><strong>container format：</strong>是指虚拟机镜像是以一种什么样的文件格式存放，同时包含实际虚拟机有关的metadata格式。container format有以下几种：bare，ovf ，aki， ari ，ami等。</li>
 </ul>
-<p>对于每一种警告器的状态，在新建或者修改警告器的时候，都可以为其设置不同的报警动作。当Alarm Evaluator周期性检查警告器状态时，或者当Alarm Listener接收到相关的Event事件并进行检查后，如果发现当前警告器状态有对应的报警动作，那么它会通过Alarm Notifier服务来调用相应的报警动作。</p>
-<p>在OpenStack Newton版本中，Telemetry社区把Ceilometer关于Event事件部分的API移到了Panko项目中。目前，Event事件的产生和保存仍旧是由Ceilometer负责，但是对于从后台数据库中读取Event事件的API service 被移到了Panko项目中（Ceilometer API中与Event相关的API目前还保留着）。Panko主要接收来自Ceilometer的事件数据，并提供查询接口。其主要组件只有一个：panko-api:，用于提供事件数据的插入和查询接口。</p>
-<p>Gnocchi接收来自Ceilometer的原始计量数据，进行聚合运算后保存到持久化后端。Gnocchi中保存与资源使用量相关的计量数据，为了提高检索效率，额外将计量数据的元数据信息单独存储。另外由于从原始输入数据到最终存储的聚合数据，需要进行大量计算，为了缓冲输入与处理间的速率，引入缓存后端。因此Gnocchi中涉及三种存储后端：</p>
+<table>
+<thead>
+<tr>
+<th><strong>镜像容器格式</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ovf</td>
+<td>开放式虚拟机磁盘格式， 由Vmware发起， 目前已被多种虚拟化设备支持。</td>
+</tr>
+<tr>
+<td>bare</td>
+<td>这表示镜像没有container或者元数据。</td>
+</tr>
+<tr>
+<td>aki</td>
+<td>Amazon Kernel Image</td>
+</tr>
+<tr>
+<td>ari</td>
+<td>Amazon Ramdisk Image</td>
+</tr>
+<tr>
+<td>ami</td>
+<td>Amazon Machine Image</td>
+</tr>
+</tbody>
+</table>
+<p>镜像不仅有存储的磁盘格式和容器格式，同时还有访问权限，主要有四种：</p>
 <ul>
-<li><strong>索引后端：</strong>存储计量对象和采集项的基础属性，比如对象类型（虚拟机、硬盘、网络）、原始资源uuid等。索引数据量不大，一半用MySQL。</li>
-<li><strong>聚合数据后端：</strong>存储经过聚合计算的计量数据，比如cpu使用率的平均值、最大值、最小值等。推荐用Ceph，可以支持多实例共享数据。</li>
-<li><strong>传入数据后端：</strong>保存来自Ceilometer的原始计量数据。默认与聚合后端一致，推荐使用Redis。</li>
+<li><strong>public：</strong>公共的，可以被所有的tenant使用；</li>
+<li><strong>private：</strong>私有的，只能被owner的tenant使用；</li>
+<li><strong>shared：</strong>共享的，一种非公有的Image，可以被其owner共享给其他tenant使用；</li>
+<li><strong>protected：</strong>受保护的，不能被非管理员以外的用户删除；</li>
 </ul>
-<p>gnocchi的主要组件如下：</p>
+<h2 id="Glance的架构"><a href="#Glance的架构" class="headerlink" title="Glance的架构"></a><strong>Glance的架构</strong></h2><p>Glance 使用C/S架构，提供REST API，用户可以通过API执行对服务的请求，其架构在OpenStack版本的演进中发生了一定的变化，主要有V1和V2两个版本。在老版本（V1）的Glance架构中，主要通过glance-api、glance-registry、glance-DB、image-store四个组件构成，glance-api和glance-registry同时提供WSGI接口，只是glance-api对外，glance-registry只能被内部调用。如下图所示，各个组件的功能如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4b2fe14195aa59453453c.jpg" alt></p>
 <ul>
-<li><strong>gnocchi-api：</strong>提供数据传入接口，接收原始计量数据，并将它们保存到传入数据后端。同时提供聚合计量数据的查询接口，从聚合数据后端读取计量数据返回给用户。</li>
-<li><strong>gnocchi-metricd：</strong>从传入数据后端读取原始计量数据，进行聚合计算，然后将聚合数据保存到聚合数据后端。</li>
+<li><strong>glance-api：</strong>接收REST ful的API请求，通过其他组件（glance-registry和image-store）来完成镜像的CRUD操作。</li>
+<li><strong>glance-registry：</strong>负责镜像的元数据管理，与glance-DB交互，完成存储或获取镜像的元数据。</li>
+<li><strong>glance-DB：</strong>通过关系型数据库组件提供镜像管理、控制数据及元数据的存储功能，在开源解决方案中采用MySQL数据库实现glance-DB，在华为的解决方案中采用GuassDB实现glance-DB。</li>
+<li><strong>image-store：</strong>本质上是一个存储接口层，可以异构对接不同的后端存储，将镜像数据通过该接口层持久化存储在后端存储中。</li>
 </ul>
-<h2 id="Telemetry操作实战"><a href="#Telemetry操作实战" class="headerlink" title="Telemetry操作实战"></a><strong>Telemetry操作实战</strong></h2><p><strong>步骤1：</strong>执行以下指令，查看归档策略</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack metric archive-policy list</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HcPBilyMX68F.png?imageslim" alt="mark"></p>
-<p>归档策略指定计量数据的聚合计算方式，包括聚合方法（mean、min、max、sum、std、count），和计量数据的统计时间粒度、数据点数。根据时间粒度和统计点数可以确定计量的时间跨度，根据一个数据点的大小在0.05 bytes~8.04 bytes，就可以确定一个metric需要使用的存储空间大小。Gnocchi内置了bool、low、medium、high四种归档策略。</p>
-<p><strong>步骤2：</strong>执行以下指令，查看归档策略规则：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack metric archive-policy-rule list</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/L6FTRP7nM3Jd.png?imageslim" alt="mark"></p>
-<p>归档策略的作用单位是计量项（metric），上述默认规则将所有metric关联到low策略，metric使用通配符匹配。</p>
-<p><strong>步骤3：</strong>执行以下指令，查看资源列表：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack metric resource list --<span class="built_in">limit</span> 10</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5ievLhgX3Yzo.png?imageslim" alt="mark"></p>
-<p>资源就是对于OpenStack各个项目中的逻辑资源，比如实例、端口、镜像、卷等。</p>
-<p><strong>步骤4：</strong>执行以下指令，查看metric列表：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack metric metric list --<span class="built_in">limit</span> 10</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/VRC3MQoxq4sc.png?imageslim" alt="mark"></p>
-<p>Metric是资源统计的基本单位，一个资源会有多个metrics，比如实例资源有cpu_util、memory.usage、disk.root.size等。</p>
-<p><strong>步骤5：</strong>执行以下指令，查看metric列表：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack metric measures show 00b09a5c-3c7f-445e-b885-872db5d80b2b</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/o9KswPsjLACk.png?imageslim" alt="mark"></p>
-<p>Measures就是Gnocchi中最终保存的计量数据，即每个metric的数据点。</p>
-<p><strong>步骤6：</strong>执行以下指令，创建告警：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack alarm create --name cpu_high --<span class="built_in">type</span> gnocchi_resources_threshold --description <span class="string">'Instance Running HOT'</span> --metric cpu_util --threshold 65 --comparison-operator ge --aggregation-method mean --granularity 300 --resource-id 07b49533-64fd-4e53-a6c7-9824c03e043a --resource-type instance --alarm-action <span class="string">'log://'</span> --ok-action <span class="string">'log://'</span></span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5nskViw0CuuB.png?imageslim" alt="mark"></p>
-<p>这里设置触发器状态变为alarm和ok时都执行log动作，即记录到aodh-notifier日志中。可以将log://替换为外部告警接口，触发邮件、短信等通知，或者heat的扩容接口，实现服务自动扩容。</p>
-<p>—————————————————————– 结束 ——————————————————————————</p>
+<p>而在新版本（V2）中，Glance的架构发生了一定的变化，在源代码中仍然保留glance-registry函数的入口点（这也是为什么我们在配置glance的服务时，仍需配置glance-registry.conf的原因），但是实际实现时将glance-registry的功能整合到了glance-api中，通过在glance-api中提供一个registry共享层来实现镜像元数据的数据库存取。新版本OpenStack的Glance镜像管理服务的架构如下，<strong>镜像的元数据主要包括：镜像资源的访问策略Policy，镜像资源的规格、镜像资源的存储位置等信息。</strong></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4b30e14195aa594534eb3.jpg" alt></p>
+<ul>
+<li><strong>glance-client：</strong>任何使用glance服务的应用程序，接收API请求，发起操作认证并调用glance-api。</li>
+<li><strong>glance-api：</strong>通过REST ful对外开放API接口提供镜像管理功能，并接收镜像管理的相关API操作请求。</li>
+<li><strong>glance-domain-controller：</strong>管理Glance的内部服务组件，分层实现特定的任务，如认证（Auth）、事件通知（Notifier）、策略控制（Policy）和数据库连接等。</li>
+<li><strong>registry-layer：</strong>实现glance-domain-controller与DAL之间的安全访问控制。</li>
+<li><strong>DAL（DataBase-Abstraction-Layer）：</strong>提供glance-domain-controller、registry-layer与glance-DB之间的统一API接口，实现glance-domain-controller、registry-layer对glance-DB的安全访问。</li>
+<li><strong>glance-DB：</strong>在所有组件之间共享，存放镜像的管理、配置数据及元数据。</li>
+<li><strong>Glance Store Drivers：</strong>就是image store，本质上是一个存储接口层，负责与外部异构存储后端或本地文件系统的交互，持久化存储镜像文件。</li>
+</ul>
+<p>了解了V1和V2版本的glance架构，这里需要重点了解下Glance服务的缓存机制。Glance服务提供缓存机制主要是为了解决节点扩容后带来多个节点同时提供镜像管理服务带来的镜像服务性能问题。其原理就是通过glance-api提供缓存机制，就是在glance-api服务节点存放一份原始镜像的拷贝，本质上是为了实现api服务器的数量扩展，提高为同一个镜像提供服务的效率。<strong>这里需要说明一下，网上针对glance服务提供缓存的位置有两种说法：一是将镜像缓存到计算节点；二是将镜像缓存到glance-api节点。从官网的如下描述我理解是第二种方式-</strong>—This local image cache is transparent to the end user – in other words, the end user doesn’t know that the Glance API is streaming an image file from its local cache or from the actual backend storage system。但是，在创建虚拟机时，nova-compute会将镜像缓存拷贝一份到计算节点，便于后续再次创建同样镜像的虚拟机时可以利用本地存储的镜像完成（通过镜像ID识别是否同一镜像的虚拟机）。上述镜像的缓存对用户是不可见的，用户并不知道使用的是本地缓存的镜像还是后端存储的镜像。镜像的缓存服务开关、缓存大小和缓存周期可通过命令行配置，命令行操作缓存的指令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">glance-cache-pruner --image_cache_max_size= * &lt;===控制cache总量的大小，周期性的运行</span><br><span class="line">glance-cache-cleaner &lt;===清理状态异常的cache文件</span><br><span class="line">glance-cache-manage --host=&lt;HOST&gt; queue-image &lt;IMAGE_ID&gt; &lt;===预取某些热门镜像到新增的api节点中</span><br><span class="line">glance-cache-manage --host=&lt;HOST&gt; delete-cached-image &lt;IMAGE_ID&gt; &lt;===手动删除image cache来释放空间</span><br></pre></td></tr></table></figure>
+<h2 id="Glance的状态机"><a href="#Glance的状态机" class="headerlink" title="Glance的状态机"></a><strong>Glance的状态机</strong></h2><p>镜像Image在虚拟机实例的全生命周期管理中，也是有各种不同的状态的。类似Nova服务管理虚拟机的各种状态，Cinder负责管理Volume的各种状态，Glance负责管理Image的各种状态。下图就是创建镜像时，Image的不同状态之间的转换图。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4b32614195aa594535ad6.jpg" alt></p>
+<p>在Glance中有两种状态机，一种是镜像状态，另一种是任务状态。镜像状态表示镜像在数据库中的各种状态，任务状态表示操作镜像的各种任务的状态，两种状态结合的上图状态机流程图表示了镜像在不同任务的不同时期的一种状态形式，只有任务执行成功success时的active状态的镜像才能被正常使用。</p>
+<p><strong>任务状态包括pending、processor、success、failure</strong>四种，其具体含义如下：</p>
+<ul>
+<li><strong>pending：</strong>表示任务被挂起</li>
+<li><strong>processor：</strong>表示任务正在执行中</li>
+<li><strong>success：</strong>表示任务执行成功</li>
+<li><strong>failure：</strong>表示任务失败</li>
+</ul>
+<p><strong>镜像状态包括queued、saving、uploadding、importing、active、deactive、killed、deleted、pending_delete</strong>九种，其具体含义如下：</p>
+<ul>
+<li><strong>queued：</strong>已在glance-registry中保留镜像的标识符，但镜像数据未上传，镜像大小未初始化。</li>
+<li><strong>saving：</strong>镜像的原始数据正在上传到glance中。</li>
+<li><strong>uploading：</strong>对镜像调用了import data-put请求。</li>
+<li><strong>importing：</strong>导入镜像过程中，但镜像尚未就绪。</li>
+<li><strong>active：</strong>镜像创建完成，可以使用。</li>
+<li><strong>deactived：</strong>禁止任务非管理员用户访问镜像，即镜像去激活。</li>
+<li><strong>killed：</strong>镜像上传时出错，镜像不可用。</li>
+<li><strong>deleted：</strong>glance保留了镜像的信息，但不能被使用，一定时间后自动清理镜像信息。</li>
+<li><strong>pending_delete：</strong>类似deleted，此时glance尚未删除镜像的数据，处于该状态的镜像可以恢复。</li>
+</ul>
+<p>例如上图中，当发起创建一个镜像任务Create image时，首先在glance-registry中保存镜像的标识符，但此时镜像文件还未上传，镜像大小还未初始化（Queued），此时任务状态为processor。下一步将初始化镜像的元数据并保存到数据库中，并开始上传镜像（saving），此时任务状态仍为processor。镜像上传如果成功，此时镜像状态转换为active，任务状态为success，镜像可以正常使用；镜像上传如果失败，此时镜像状态为killed，任务状态为failure。同时根据用户的操作镜像的状态和任务状态有不同的表现形式：用户如果选择重新上传，则镜像状态转为queued，任务状态转为processor，即重新开始上传；用户如果选择删除镜像，则镜像状态变为deleted，任务状态为success，表示镜像删除成功。同时，在镜像上传过程中，即saving态时，也可以选择删除镜像，此时镜像状态直接变为deleted，任务状态变为success时，表示镜像删除成功。同理，镜像的导入过程与创建过程类似，只是镜像状态不包含saving态，只有importing态，这里不再赘述。</p>
+<h3 id="OpenStack不同操作系统类型镜像的制作"><a href="#OpenStack不同操作系统类型镜像的制作" class="headerlink" title="OpenStack不同操作系统类型镜像的制作"></a><strong>OpenStack不同操作系统类型镜像的制作</strong></h3><p>OpenStack中虚拟机使用的镜像并不是我们平时装系统使用的iso光盘文件，而是经过裁剪后的适合各个云主机使用公共模板img，且支持加入个性化化定制任务和软件。获取与OpenStack兼容的虚拟机映像的最简单方法是下载别人已经创建的虚拟机映像，最简单的Glance镜像制作方法是下载系统供应商官方发布的OpenStack镜像文件，官方发布的OpenStack大多数镜像预安装了cloud-init包，支持SSH密钥对登录和用户数据注入功能，下图表示了OpenStack官方镜像支持的主流操作系统类型。镜像的具体下载链接，请参考OpenStack社区网站：<a href="https://docs.openstack.org/image-guide/obtain-images.html。" target="_blank" rel="noopener">https://docs.openstack.org/image-guide/obtain-images.html。</a></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4b33a14195aa594536682.jpg" alt></p>
+<p>但是，有时候官方下载的镜像的并不符合我们的实际需要，比如我们想要安装一些预置软件或脚本。一种简单的方法是将官方镜像进行改造，然后再生成新的模板文件，这种方法虽然简单，但是我们无法完全掌握镜像具体包含哪些工具和软件，存在一定的安全风险。另一种方法就是我们自己手动创建镜像，这样我们自己可以定义安装哪些软件和定制哪些脚本，并自行设定镜像生成的云主机的访问权限等等。下面就以创建一个ubuntu18.04镜像为例，简单说明一下手动创建镜像的流程，并介绍几种常用镜像制作工具。</p>
+<ul>
+<li><strong>Step1：</strong>使用virt-manager创建一个Ubuntu 18.04虚拟机并安装系统</li>
+<li><strong>Step2：</strong>登录虚拟机并安装cloud-init，sudo apt install cloud-init</li>
+<li><strong>Step3：</strong>在虚拟机内部，停止虚拟机，sudo shutdown -h now（或init 0）</li>
+<li><strong>Step4：</strong>预清理虚拟机，在KVM宿主机上执行virt-sysprep -d VM_ID</li>
+<li><strong>Step5：</strong>释放虚拟机定义，在KVM宿主机上执行virsh undefine VM_ID</li>
+<li><strong>Step6：</strong>制作镜像，在KVM宿主机上执行qemu-img create or qemu-img convert</li>
+<li><strong>Step7：</strong>上传镜像，在OpenStack控制节点上执行 openstack image create</li>
+</ul>
+<p>按照上面的步骤，就可以创建各种操作类型各类虚拟机，具体指令的差异由安装的镜像操作系统决定。需要注意一点，在制作windows操作系统类型虚拟机时，需要额外安装virtio驱动，但这不是OpenStack的原因引起的，而是KVM虚拟化解决方案要求的。virtio是一种IO的半虚拟化解决方案，在KVM虚拟机中一般要求磁盘IO使用virtio的半虚拟化驱动，有时网卡的IO也要求使用virtio的半虚拟化驱动，目的就是提高IO虚拟化后的性能。而windows操作系统自身并不支持virtio驱动，因此需要额外安装第三方驱动。</p>
+<p>除了上面手工制作OpenStack的镜像外，开源社区还提供了一些镜像制作工具，用于快速批量制作镜像。常见的工具有以下几种：</p>
+<ul>
+<li><strong>Diskimage-builder：</strong>自动化磁盘映像创建工具，可以制作Fedora，Red Hat Enterprise Linux，Ubuntu，Debian，CentOS和openSUSE镜像，示例：disk-image-create ubuntu VM</li>
+<li><strong>Packer：</strong>使用Packer制作的镜像，可以适配到不同云平台，适合使用多个云平台的用户，一种兼具图形化和指令集的制作工具。</li>
+<li><strong>virt-builder：</strong>快速创建新虚拟机的工具，可以在几分钟或更短的时间内创建各种用于本地或云用途的虚拟机镜像，其本质上是利用一个已存在的虚拟机作为模板，快速创建一个新的虚拟机。</li>
+</ul>
+<h2 id="Glance镜像管理实战"><a href="#Glance镜像管理实战" class="headerlink" title="Glance镜像管理实战"></a><strong>Glance镜像管理实战</strong></h2><p><strong>步骤1：</strong>执行以下命令，查看已上传的镜像列表，OpenStack上传镜像的默认保存位置在/var/lib/glance/images目录下，上传后保存的镜像文件名为镜像的id值</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ll /var/lib/glance/images/</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4b34a14195aa594536f9c.jpg" alt></p>
+<p><strong>步骤2：</strong>执行以下命令，查看上传镜像的详细信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qemu-img info /var/lib/glance/images/3d1a7c9b-d954-4a52-bb80-bd2682972de3</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4b35614195aa59453761c.jpg" alt></p>
+<p><strong>步骤3：</strong>执行以下命令，创建镜像“kk_img”，镜像格式为“QCOW2”，镜像设置为“Private”和“Protected”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image create --disk-format qcow2 --container-format bare --min-disk 1 --min-ram 128 --private --protected --file ~/cirros-0.4.0-x86_64-disk.img kk_img</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4b36214195aa594537c5b.jpg" alt></p>
+<p><strong>步骤4：</strong>执行以下命令，查看刚创建镜像“kk_img”的详细信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image show kk_img</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4b37014195aa5945384d0.jpg" alt></p>
+<p><strong>步骤5：</strong>执行以下命令，将镜像“kk_img”设置为public和unprotected状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image <span class="built_in">set</span> --public --unprotected kk_img</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4b38014195aa594539804.jpg" alt></p>
+<p><strong>步骤6：</strong>执行以下命令，将镜像“kk_img”设置为共享状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image <span class="built_in">set</span> --shared kk_img</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4b38d14195aa59453a7ad.jpg" alt></p>
+<p><strong>步骤7：</strong>执行以下命令，将镜像“kk_img”加入项目kkproject中，并查看镜像的状态信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image add project cfa6d427-f6e2-48c0-91da-0365101da223 fa23a9822e8449239d8f9d7befbabc75</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4b39b14195aa59453b7a0.jpg" alt></p>
+<p><strong>步骤8：</strong>执行以下命令，在普通用户kkutysllb登录情况，接收共享镜像“kk_img”，再次观察权限上的变化</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image <span class="built_in">set</span> --accept cfa6d427-f6e2-48c0-91da-0365101da223</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4b43314195aa59454511c.jpg" alt></p>
+<p><strong>步骤9：</strong>执行以下命令，查看vmdk格式的Ubuntu18.04镜像详细信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qemu-img info bionic-server-cloudimg-amd64.vmdk</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4b43e14195aa5945457c2.jpg" alt></p>
+<p><strong>步骤10：</strong>执行以下命令，将vmdk格式的Ubuntu18.04镜像转换为qcow2格式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qemu-img convert -f vmdk -O qcow2 -c -p bionic-server-cloudimg-amd64.vmdk bionic-server-cloudimg-amd64.qcow2</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4b44c14195aa594545f87.jpg" alt></p>
+<p><strong>步骤11：</strong>执行以下命令，上传bionic-server-cloudimg-amd64.qcow2镜像，命名为ubuntu-18.04-s，镜像状态设为public和unprotected</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image create --disk-format qcow2 --container-format bare --min-disk 1 --min-ram 128 --public --unprotected --file ~/bionic-server-cloudimg-amd64.qcow2 ubuntu-18.04<span class="_">-s</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4b46414195aa594546c0a.jpg" alt></p>
+<p><strong>步骤12：</strong>执行以下命令，将镜像ubuntu-18.04-s导出保存到本地磁盘</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack image save --file ubuntu-18.04-s.qcow2 ubuntu-18.04<span class="_">-s</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4b47014195aa5945473d8.jpg" alt></p>
+<h2 id="思考："><a href="#思考：" class="headerlink" title="思考："></a><strong>思考：</strong></h2><p><strong>1、请分析镜像导入任务过程中，镜像状态变化过程及任务状态的变化过程？</strong></p>
+<p><strong>2、将激活状态的镜像去激活再次激活时，请分析镜像状态的变化过程及任务状态变化过程。那么将激活态的镜像直接删除，此时镜像状态和任务状态的变化流程如何？</strong></p>
+<p><strong>3、将镜像设置为private和protected时 ，有哪些限制？将镜像改为public和unprotected后，限制上有哪些变化？将镜像改为shared后，限制上有哪些变化？</strong></p>
+<p><strong>4、普通用户是否可以创建public状态的镜像？为什么？shared状态的镜像呢？又为什么？</strong></p>
+<p><strong>5、创建一个虚拟机实例时，实例是如何从镜像启动的（多磁盘场景下，即实例有vda、vdb、vdc三块虚拟磁盘，其中vda是系统盘，vdb是临时盘、vdc是数据盘）？删除虚拟机实例时，实例关联的惊险会怎么样？（答出glance、nova、cinder的大致交互流程即可）</strong></p>
 
       
     </div>
@@ -707,7 +846,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="https://kkutysllb.cn/2020/03/03/2020-03-03-计量和监控管理服务Telemetry/" title="2020-03-03-计量和监控管理服务Telemetry">https://kkutysllb.cn/2020/03/03/2020-03-03-计量和监控管理服务Telemetry/</a>
+    <a href="https://kkutysllb.cn/2020/03/03/镜像管理服务Glance/" title="镜像管理服务Glance">https://kkutysllb.cn/2020/03/03/镜像管理服务Glance/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -733,8 +872,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/03/03/2020-03-03-资源编排管理服务Heat/" rel="next" title="2020-03-03-资源编排管理服务Heat">
-                <i class="fa fa-chevron-left"></i> 2020-03-03-资源编排管理服务Heat
+              <a href="/2020/03/03/认证管理服务Keystone/" rel="next" title="认证管理服务Keystone">
+                <i class="fa fa-chevron-left"></i> 认证管理服务Keystone
               </a>
             
           </div>
@@ -742,6 +881,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/03/计算管理服务Nova/" rel="prev" title="计算管理服务Nova">
+                计算管理服务Nova <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -977,7 +1120,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ceilometer架构"><span class="nav-number">2.</span> <span class="nav-text">Ceilometer架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ceilometer计量数据采集和转换发布机制"><span class="nav-number">3.</span> <span class="nav-text">Ceilometer计量数据采集和转换发布机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#aodh、panko和gnocchi"><span class="nav-number">4.</span> <span class="nav-text">aodh、panko和gnocchi</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Telemetry操作实战"><span class="nav-number">5.</span> <span class="nav-text">Telemetry操作实战</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Image的概念"><span class="nav-number">2.</span> <span class="nav-text">Image的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Glance的架构"><span class="nav-number">3.</span> <span class="nav-text">Glance的架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Glance的状态机"><span class="nav-number">4.</span> <span class="nav-text">Glance的状态机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OpenStack不同操作系统类型镜像的制作"><span class="nav-number">4.1.</span> <span class="nav-text">OpenStack不同操作系统类型镜像的制作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Glance镜像管理实战"><span class="nav-number">5.</span> <span class="nav-text">Glance镜像管理实战</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考："><span class="nav-number">6.</span> <span class="nav-text">思考：</span></a></li></ol></div>
             
 
           </div>
@@ -1173,7 +1316,7 @@
   
     <script>
   window.livereOptions = {
-    refer: '2020/03/03/2020-03-03-计量和监控管理服务Telemetry/'
+    refer: '2020/03/03/镜像管理服务Glance/'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];

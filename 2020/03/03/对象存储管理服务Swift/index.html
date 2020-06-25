@@ -106,49 +106,49 @@
   <meta name="description" content="概述Swift 最初是由Rackspace公司开发的高可用分布式对象存储服务，并于2010年贡献给OpenStack开源社区作为其最初的核心子项目之一，为其Nova子项目提供虚机镜像存储服务。Swift构筑在比较便宜的标准硬件存储基础设施之上，无需采用 RAID（磁盘冗余阵列），通过在软件层面引入一致性散列技术和数据冗余性，牺牲一定程度的数据一致性来达到高可用性和可伸缩性，支持多租户模式、容器和对">
 <meta name="keywords" content="云计算">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2020-03-03-对象存储管理服务Swift">
-<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/2020-03-03-对象存储管理服务Swift/index.html">
+<meta property="og:title" content="对象存储管理服务Swift">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/对象存储管理服务Swift/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
 <meta property="og:description" content="概述Swift 最初是由Rackspace公司开发的高可用分布式对象存储服务，并于2010年贡献给OpenStack开源社区作为其最初的核心子项目之一，为其Nova子项目提供虚机镜像存储服务。Swift构筑在比较便宜的标准硬件存储基础设施之上，无需采用 RAID（磁盘冗余阵列），通过在软件层面引入一致性散列技术和数据冗余性，牺牲一定程度的数据一致性来达到高可用性和可伸缩性，支持多租户模式、容器和对">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/eXgvoqetXXi3.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/r4LhC3i8QYrX.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/TiO0sCArTDgc.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Yw6HfKYVog2M.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/sFOetcv9tT1w.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/8r0V0t3EB3Xa.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/oMMVuQIpkSSj.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/yW2KU5KbUmyw.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/CGulS0if1iCQ.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kuSw0d1Tspqp.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HmpQQgeMPJ2u.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/3PGUd1RFHpOU.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/QNCeAtELmw2Y.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/P34KqkClv3es.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/romKwLeVMCMH.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/uBrqfqxxnNtQ.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Amlz3fwX3Miz.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/zidN0sjSTiHH.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/MAnrmpV6CoIq.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/49M8VA8AdiJc.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/feUzea4oDl5F.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5H0rNjTpAznt.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/2bIEz65umR1j.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/bnU9G5veXO2l.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/oWjg9i8SILoE.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/sP4X2kuk2fxY.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/8KmcOV53I1BB.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/E8oCJLMk2PGG.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/F0Kr0heXiiNX.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/53Qz67SiG7pV.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/y6j8kJKjjHTF.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/e2OCCWOGQIDv.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/wMdosQBOx1Ln.png?imageslim">
-<meta property="og:updated_time" content="2020-03-03T15:00:09.786Z">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a9ff14195aa5944d182e.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4aa0e14195aa5944d238c.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4aa2414195aa5944d3367.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4aa3e14195aa5944d4652.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4aa4e14195aa5944d518f.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4aa6014195aa5944d5e81.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4aa6e14195aa5944d69bd.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4aad514195aa5944db5c4.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4aaf814195aa5944dced8.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ab0514195aa5944dd7d4.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ab1414195aa5944de424.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ab2714195aa5944df350.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ab3514195aa5944dff3c.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ab4814195aa5944e0ffc.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ab6914195aa5944e284b.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ab7814195aa5944e332a.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ab8614195aa5944e3e03.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4aba214195aa5944e53e7.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4abc314195aa5944e6cf7.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4abd514195aa5944e7af2.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4abe314195aa5944e853b.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ac0114195aa5944e9c6f.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ac1814195aa5944eacc9.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ac2414195aa5944eb545.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ac3214195aa5944ebf5b.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ac4014195aa5944ec97f.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ac4e14195aa5944ed4be.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ac5d14195aa5944ee06a.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ac6b14195aa5944eec4b.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ac7914195aa5944ef723.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ac8714195aa5944f019b.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4ac9514195aa5944f0b3c.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4aca314195aa5944f15b3.jpg">
+<meta property="og:updated_time" content="2020-06-25T13:54:53.430Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2020-03-03-对象存储管理服务Swift">
+<meta name="twitter:title" content="对象存储管理服务Swift">
 <meta name="twitter:description" content="概述Swift 最初是由Rackspace公司开发的高可用分布式对象存储服务，并于2010年贡献给OpenStack开源社区作为其最初的核心子项目之一，为其Nova子项目提供虚机镜像存储服务。Swift构筑在比较便宜的标准硬件存储基础设施之上，无需采用 RAID（磁盘冗余阵列），通过在软件层面引入一致性散列技术和数据冗余性，牺牲一定程度的数据一致性来达到高可用性和可伸缩性，支持多租户模式、容器和对">
-<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/eXgvoqetXXi3.png?imageslim">
+<meta name="twitter:image" content="https://pic.imgdb.cn/item/5ef4a9ff14195aa5944d182e.jpg">
 
 
 
@@ -157,7 +157,7 @@
 
 
 
-  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/2020-03-03-对象存储管理服务Swift/">
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/对象存储管理服务Swift/">
 
 
 
@@ -167,7 +167,7 @@
   };
 </script>
 
-  <title>2020-03-03-对象存储管理服务Swift | 一花一菩提，一云一世界</title>
+  <title>对象存储管理服务Swift | 一花一菩提，一云一世界</title>
   
 
 
@@ -426,7 +426,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/2020-03-03-对象存储管理服务Swift/">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/对象存储管理服务Swift/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kkutysllb">
@@ -443,7 +443,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2020-03-03-对象存储管理服务Swift
+          <h1 class="post-title" itemprop="name headline">对象存储管理服务Swift
 
               
             
@@ -469,12 +469,24 @@
                 
               
 
-              <time title="创建时间：2020-03-03 22:33:12 / 修改时间：23:00:09" itemprop="dateCreated datePublished" datetime="2020-03-03T22:33:12+08:00">2020-03-03</time>
+              <time title="创建时间：2020-03-03 22:33:12" itemprop="dateCreated datePublished" datetime="2020-03-03T22:33:12+08:00">2020-03-03</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-06-25 21:54:53" itemprop="dateModified" datetime="2020-06-25T21:54:53+08:00">2020-06-25</time>
               
             
           </span>
@@ -562,10 +574,10 @@
 
       
         <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h2><p>Swift 最初是由Rackspace公司开发的高可用分布式对象存储服务，并于2010年贡献给OpenStack开源社区作为其最初的核心子项目之一，为其Nova子项目提供虚机镜像存储服务。Swift构筑在比较便宜的标准硬件存储基础设施之上，无需采用 RAID（磁盘冗余阵列），通过在软件层面引入一致性散列技术和数据冗余性，牺牲一定程度的数据一致性来达到高可用性和可伸缩性，支持多租户模式、容器和对象读写操作，适合解决互联网的应用场景下<strong>非结构化数据存储</strong>问题。Swift在OpenStack系统中不依赖于任何服务，可以独立部署为其他系统提供分布式对象存储服务。而在OpenStack的应用中，其Proxy Server往往由Keystone节点兼任，由Keystone来完成服务访问的安全认证。<a id="more"></a></p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/eXgvoqetXXi3.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a9ff14195aa5944d182e.jpg" alt></p>
 <p>Swift是业务提供时，使用普通的服务器来构建冗余的、可扩展的分布式对象存储集群，存储容量可达PB级。通过统一REST API进行友好访问，不仅易于扩展，且无中心数据库，避免单点故障或单点性能瓶颈。Swift主要通过<strong>Account、Container</strong>和<strong>Object</strong>三个表单结构来完成存储对象的存储、查询、获取和上传等功能，通过数据存储的多副本机制实现数据的高可用。其中，Object是最小存储表单，代表实际存储的数据，三个表单的对应关系为为：<strong>Account 1:m Container 1:m Object</strong>。</p>
 <h2 id="Swift的架构和组件"><a href="#Swift的架构和组件" class="headerlink" title="Swift的架构和组件"></a><strong>Swift的架构和组件</strong></h2><p>Swift的架构是一种完全对称、面向资源的分布式系统架构，所有组件都可扩展，避免因单点失效而影响整个系统运转。通信方式采用非阻塞式 I/O 模式，提高了系统吞吐和响应能力，如下图所示。系统架构整体上采用分层的理念设计，共分为两层：<strong>访问层</strong>和<strong>存储层</strong>。Controller的Ring以上部分属于访问层，接收外部REST API的访问，实现负载均衡和访问安全验证，并定位对象数据的存储的位置。后端的Server部分属于存储层，用来分别存储不同的对象数据：Account、Container和Object。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/r4LhC3i8QYrX.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4aa0e14195aa5944d238c.jpg" alt></p>
 <p>上图Swift的架构中的一些关键组件服务需要说明，包括：</p>
 <ul>
 <li><strong>代理服务（Proxy Server）：</strong>对外提供对象服务 API，会根据环（Ring）的信息来查找服务地址并转发用户请求至相应的账户、容器或者对象服务；由于采用无状态的 REST请求协议，可以进行横向扩展来均衡负载。</li>
@@ -587,7 +599,7 @@
 </ul>
 <h2 id="Swift中的数据结构原理"><a href="#Swift中的数据结构原理" class="headerlink" title="Swift中的数据结构原理"></a><strong>Swift中的数据结构原理</strong></h2><h3 id="一致性哈希算法"><a href="#一致性哈希算法" class="headerlink" title="一致性哈希算法"></a><strong>一致性哈希算法</strong></h3><p>Swift中最重要的算法就是一致性哈希（Consistent Hashing），它是Swift实现海量数据存储，并能实现数据均衡度和可扩展性兼容的保证，可以不过分的认为一致性哈希算法是所有分布式存储的灵魂，不仅Swift中有它的影子，在开源分布式存储Ceph以及华为分布式存储FusionStorage中同样有它的影子。在面对海量级别的对象，需要存放在成千上万台服务器和硬盘设备上，首先要解决寻址问题，即如何将对象均匀地分布到这些设备地址上。这也是Swift中的一致性哈希首先要解决的问题，算法的基本思路是：<strong>通过计算可将对象均匀分布到虚拟空间的虚拟节点上，在增加或删除节点时可大大减少需移动的数据量；虚拟空间大小通常采用 2 的 n 次幂，便于进行高效的移位操作；然后通过独特的数据结构 Ring（环）再将虚拟节点映射到实际的物理存储设备上，完成寻址过程。</strong></p>
 <p>一致性哈希算法（Consistent Hashing）最早在论文《Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web》中被提出。简单来说，一致性哈希将整个哈希值空间组织成一个虚拟的圆环（其实就是一个线性队列），如假设某哈希函数H的值空间为0-2^32-1（即哈希值是一个32位无符号整形），整个哈希空间环如下图（1），整个空间按顺时针方向组织，0和2^32-1在零点中方向重合。下一步将各个服务器使用Hash进行一个哈希，具体可以选择服务器的ip或主机名作为关键字进行哈希，这样每台机器就能确定其在哈希环上的位置，这里假设将4台服务器使用ip地址哈希后在环空间的位置如下图（2）。接下来定位数据访问到相应服务器的算法：将数据key使用相同的函数Hash计算出哈希值，并映射此数据在环上的位置，从此位置沿环顺时针旋转，第一台遇到的服务器就是其应该存储到的服务器。例如我们有Object A、Object B、Object C、Object D四个数据对象，经过哈希计算后，在环空间上的位置如下图（3），根据一致性哈希算法，数据A会被定为到Node A上，B被定为到Node B上，C被定为到Node C上，D被定为到Node D上。现假设Node C不幸宕机，从图（3）中可以看到此时对象A、B、D不会受到影响，只有C对象被重定位到Node D。一般的，在一致性哈希算法中，如果一台服务器不可用，则受影响的数据仅仅是此服务器到其环空间中前一台服务器（即沿着逆时针方向行走遇到的第一台服务器）之间数据，其它不会受到影响。如果在系统中增加一台服务器Node X，如下图（4）所示：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/TiO0sCArTDgc.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4aa2414195aa5944d3367.jpg" alt></p>
 <p>此时对象Object A、B、D不受影响，只有对象C需要重定位到新的Node X 。一般的，在一致性哈希算法中，如果增加一台服务器，则受影响的数据仅仅是新服务器到其环空间中前一台服务器（即沿着逆时针方向旋转遇到的第一台服务器）之间数据，其它数据也不会受到影响。因此，一致性哈希算法对于节点的增减都只需重定位环空间中的一小部分数据，具有较好的容错性和可扩展性。在实际生产部署时，往往通过虚拟节点代替物理节点，并增加虚拟节点到物理节点的映射来确保即使服务器数量很少也能做到数据均匀分布存储。即对每一个服务节点计算多个哈希，每个计算结果位置都放置一个此服务节点，称为<strong>虚拟节点</strong>。具体做法可以在服务器ip或主机名的后面增加编号来实现。这样即使在只有2台物理节点的场景下，可以为每台服务器计算3个虚拟节点，结果分别为“Node A#1”、“Node A#2”、“Node A#3”、“Node B#1”、“Node B#2”、“Node B#3”的哈希值，于是形成六个虚拟节点。同时数据定位算法不变，只是多了一步虚拟节点到实际节点的映射，例如定位到“Node A#1”、“Node A#2”、“Node A#3”三个虚拟节点的数据均定位到Node A上，这样就解决了服务节点少时数据倾斜的问题。在实际应用中，通常将虚拟节点数设置为32甚至更大，比如华为的FusionStorage的虚拟节点数为固定值3600。</p>
 <h3 id="数据一致性模型（Consistency-Model）"><a href="#数据一致性模型（Consistency-Model）" class="headerlink" title="数据一致性模型（Consistency Model）"></a><strong>数据一致性模型（Consistency Model）</strong></h3><p>Swift中数据一致性策略放弃严格一致性，而采用最终一致性模型（Eventual Consistency），来达到高可用性和无限水平扩展能力。为了实现这一目标，Swift采用 Quorum仲裁协议(Quorum 有法定投票人数的含义)，定义如下：</p>
 <ul>
@@ -603,9 +615,9 @@
 <li><strong>计算分区号的位移(part_shift整数)</strong></li>
 </ul>
 <p>在Swift中主要有三种环（Ring）：<strong>Account Ring、Container Ring 、Object Ring</strong>，<strong>其分别对应Swift的三种数据模型：Account、Container和Object。</strong>三种数据模型的层次关系如下图，<strong>共设三层逻辑结构：Account/Container/Object（即账户/容器/对象)，每层节点数均没有限制，可以任意扩展。</strong></p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Yw6HfKYVog2M.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4aa3e14195aa5944d4652.jpg" alt></p>
 <p><strong>环（Ring）的数据结构实现原理如下图所示：</strong></p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/sFOetcv9tT1w.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4aa4e14195aa5944d518f.jpg" alt></p>
 <p>层次结构 account/container/object 作为键，使用 MD5 散列算法得到一个散列值，对该散列值的前 4 个字节进行右移操作得到分区索引号，移动位数由上面的 part_shift设置指定；按照分区索引号在分区到设备映射表（replica2part2dev_id）里查找该对象所在分区的对应的所有设备编号，这些设备会被尽量选择部署在不同区域（zone）内，区域只是个抽象概念，它可以是某台机器，某个机架，甚至数据中心的机群，以提供最高级别的冗余性，建议至少部署 5 个区域；权重参数是个相对值，可以来根据磁盘的大小来调节，权重越大表示可分配的空间越多，可部署更多的分区。</p>
 <h2 id="Swift中存储的实现"><a href="#Swift中存储的实现" class="headerlink" title="Swift中存储的实现"></a><strong>Swift中存储的实现</strong></h2><h3 id="Swift中的数据存储过程"><a href="#Swift中的数据存储过程" class="headerlink" title="Swift中的数据存储过程"></a>Swift中的数据存储过程</h3><p>当收到一个需要保存的object的PUT请求时，Proxy server 会执行如下的操作流程：</p>
 <p>1）首先根据其完整的对象路径（/account[/container[/object]]）计算其哈希值，哈希值的长度取决于集群中分区的总数（虚拟节点的总数）。</p>
@@ -614,20 +626,18 @@
 <p>4）依次尝试连接这些服务的端口，如果有一半的服务无法连接，则拒绝该请求。</p>
 <p>5）尝试创建对象，存储服务会将对象以文件形式保存到某个磁盘上。（Object server 在完成文件存储后会异步地调用 container service 去更新container数据库）</p>
 <p>6）在3份副本拷贝中有两份被成功写入后， Proxy Server就会向客户端返回成功。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/8r0V0t3EB3Xa.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4aa6014195aa5944d5e81.jpg" alt></p>
 <p>当Proxy server收到一个获取object的GET请求时，它所执行的操作前四步同前面的PUT请求，主要功能就是确定存放所有replica的所有磁盘，而在第五步时，Proxy Server会排序这些存储节点，尝试连接第一个，如果成功，则将二进制数据返回客户端；如果不成功，则尝试下一个，直到成功或者都失败。</p>
 <p>总体来说该过程简单直接，这也符合Swift的总体设计风格。在上面的数据结构原理部分，我们介绍了Swift中数据的映射机制和具体操作。那么在集群中的每一台存储节点上，Swift是如何实现Account、Container、Object的具体存储呢？</p>
 <h3 id="Swift中存储实现分析"><a href="#Swift中存储实现分析" class="headerlink" title="Swift中存储实现分析"></a><strong>Swift中存储实现分析</strong></h3><p>在Storage node上运行着Linux系统并使用了XFS文件系统，逻辑上使用一致性哈希算法将固定总数的partition映射到每个Storage node上，每个Data也使用同样的哈希算法映射到Partition上，其层次结构如下图所示：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/oMMVuQIpkSSj.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4aa6e14195aa5944d69bd.jpg" alt></p>
 <p>以我们的一台storage node computer1为例，该device的文件路径挂载到/srv/node/sdc，目录结构如下所示：</p>
-<p>root@computer1:/srv/node/sdc# ls</p>
-<p>accounts async_pending containers objects quarantined tmp</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@computer1:/srv/node/sdc<span class="comment"># ls</span></span><br><span class="line">accounts async_pending containers objects quarantined tmp</span><br></pre></td></tr></table></figure>
 <p>其中<strong>accounts、containers、objects分别是账号、容器、对象的存储目录，async_pending是异步待更新目录，quarantined是隔离目录，tmp是临时目录</strong>。</p>
 <p>在objects目录下存放的是各个partition目录，其中每个partition目录是由若干个suffix_path名的目录和一个hashes.pkl文件组成，suffix_path目录下是由object的hash_path名构成的目录，在hash_path目录下存放了关于object的数据和元数据，object存储目录的层次结构如下图所示。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/yW2KU5KbUmyw.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4aad514195aa5944db5c4.jpg" alt></p>
 <p>其中，hashes.pkl是存放在每个partition中的一个2进制pickle化文件。例如：</p>
-<p>root@computer1:/srv/node/sdc/objects/100000# ls</p>
-<p>8bd hashes.pkl</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@computer1:/srv/node/sdc/objects/100000<span class="comment"># ls</span></span><br><span class="line">8bd hashes.pkl</span><br></pre></td></tr></table></figure>
 <p>通过ipython读取这个pkl文件返回结果如下红色字体所示，其中‘8bd’是suffix_dir，而9e99c8eedaa3197a63f685dd92a5b4b8则是该partition下数据的md5哈希值。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="keyword">with</span> open(<span class="string">'hashes.pkl'</span>, <span class="string">'rb'</span>) <span class="keyword">as</span> fp:</span><br><span class="line"></span><br><span class="line">  ...:   <span class="keyword">import</span> pickle</span><br><span class="line"></span><br><span class="line">  ...:   hashes = pickle.load(fp)</span><br><span class="line"></span><br><span class="line">  ...:  </span><br><span class="line"></span><br><span class="line">  ...:  </span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: hashes</span><br><span class="line"></span><br><span class="line">Out[<span class="number">2</span>]: &#123;<span class="string">'8bd'</span>: <span class="string">'9e99c8eedaa3197a63f685dd92a5b4b8'</span>&#125;</span><br></pre></td></tr></table></figure>
 <p>object的存储路径由object server进程内部称为DiskFile类初始化时产生，过程如下：</p>
@@ -636,12 +646,12 @@
 <p>3）连结path/devcie/storage_directory(DATADIR, partition,name_ hash)生成数据存储路径datadir。</p>
 <p>4）调用normalize_timestamp函数生成“16位.5位”的时间戳+扩展名的格式生成对象名称。</p>
 <p>例如，某object的存储路径为：/srv/node/sdc/objects/19892/ab1/136d0ab88371e25e16663fbd2ef42ab1/1320050752.09979.data，其中每个目录分别表示：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/CGulS0if1iCQ.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4aaf814195aa5944dced8.jpg" alt></p>
 <p>Object的数据存放在后缀为.data的文件中，它的metadata存放在以后缀为.meta的文件中，将被删除的Object以一个0字节后缀为.ts的文件存放。</p>
 <p>在accounts目录下存放的是各个partition，而每个partition目录是由若干个suffix_path目录组成，suffix_path目录下是由account的hash名构成的目录，在hash目录下存放了关于account的sqlite db，account存储目录的层次结构如下图所示。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/kuSw0d1Tspqp.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ab0514195aa5944dd7d4.jpg" alt></p>
 <p>account使用AccountController类来生成path，其过程与object类似，唯一的不同之处在于，account的db命名调用hash_path(account)来生成，而不是使用时间戳的形式。例如，某account的db存储路径为：/srv/node/sdc/accounts/20443/ac8/c7a5e0f94b23b79345b6036209f9cac8/ c7a5e0f94b23b79345b6036209f9cac8.db，其中每个目录分别表示：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/HmpQQgeMPJ2u.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ab1414195aa5944de424.jpg" alt></p>
 <p>在account的db文件中，包含了account_stat、container、incoming_sync 、outgoing_sync 4张表。</p>
 <ul>
 <li><strong>表account_stat：</strong>记录关于account的信息，如名称、创建时间、container数统计等等。比如，其中account表示account名称，created_at表示创建时间，put_timestamp表示put request的时间戳，delete_timestamp表示delete request的时间戳，container_count为countainer的计数，object_count为object的计数，bytes_used表示已使用的字节数，hash表示db文件的hash值，id表示统一标识符，status表示account是否被标记为删除，status_changed_at表示状态修改时间，metadata表示account的元数据。</li>
@@ -656,42 +666,42 @@
 <h2 id="Swift存储服务部署和实战"><a href="#Swift存储服务部署和实战" class="headerlink" title="Swift存储服务部署和实战"></a><strong>Swift存储服务部署和实战</strong></h2><p>正常来说，Swift服务部署至少需要3节点，但是我们实验环境首先机器配置原因，因此在控制节点新增两块硬盘/dev/sdc、/dev/sdd作为对象存储的后端存储设备，也就不考虑对象存储的性能和平衡性了。同时，Swift服务部署成功后，需要将Glance的镜像存储后端由本地文件系统改为对象存储，同时新增cinder-backup服务，其后端也对接对象存储Swift，以此来模拟实际生产环境。</p>
 <h3 id="控制节点部署预置环境"><a href="#控制节点部署预置环境" class="headerlink" title="控制节点部署预置环境"></a><strong>控制节点部署预置环境</strong></h3><p>1）创建swift用户</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack user create --domain default --password-prompt swift</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/3PGUd1RFHpOU.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ab2714195aa5944df350.jpg" alt></p>
 <p>2）给swift用户添加admin角色</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack role add --project service --user swift admin</span><br></pre></td></tr></table></figure>
 <p>3）创建swift服务实体</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openstack service create --name swift --description <span class="string">"OpenStack Object Storage"</span> object-store</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/QNCeAtELmw2Y.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ab3514195aa5944dff3c.jpg" alt></p>
 <p>4）创建对象存储服务API端点：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">openstack endpoint create --region RegionOne object-store public http://rocky-controller:8080/v1/AUTH_%\(project_id\)s</span><br><span class="line"></span><br><span class="line">openstack endpoint create --region RegionOne object-store internal http://rocky-controller:8080/v1/AUTH_%\(project_id\)s</span><br><span class="line"></span><br><span class="line">openstack endpoint create --region RegionOne object-store admin http://rocky-controller:8080/v1</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/P34KqkClv3es.png?imageslim" alt="mark"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">openstack endpoint create --region RegionOne object-store public http://rocky-controller:8080/v1/AUTH_%\(project_id\)s</span><br><span class="line">openstack endpoint create --region RegionOne object-store internal http://rocky-controller:8080/v1/AUTH_%\(project_id\)s</span><br><span class="line">openstack endpoint create --region RegionOne object-store admin http://rocky-controller:8080/v1</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4ab4814195aa5944e0ffc.jpg" alt></p>
 <p>5）安装软件包</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install openstack-swift-proxy python-swiftclient python-keystoneclient python-keystonemiddleware memcached -y</span><br></pre></td></tr></table></figure>
 <p>6）从对象存储源仓库获取代理服务配置文件</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -o /etc/swift/proxy-server.conf https://opendev.org/openstack/swift/raw/branch/stable/stein/etc/proxy-server.conf-sample</span><br></pre></td></tr></table></figure>
 <p>7）编辑/etc/swift/proxy-server.conf文件并完成以下操作：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#配置绑定端口，用户和配置目录：</span></span><br><span class="line">[DEFAULT]</span><br><span class="line">bind_port = 8080</span><br><span class="line">user = swift</span><br><span class="line">swift_dir = /etc/swift</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#在该[pipeline:main]部分中，删除tempurl和 tempauth模块并添加authtoken和keystoneauth 模块</span></span><br><span class="line">[pipeline:main]</span><br><span class="line">pipeline = catch_errors gatekeeper healthcheck proxy-logging cache container_sync bulk ratelimit authtoken keystoneauth container-quotas account-quotas slo dlo versioned_writes proxy-logging proxy-server</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#在该[app:proxy-server]部分中，启用自动帐户创建：</span></span><br><span class="line">[app:proxy-server]</span><br><span class="line">use = egg:swift<span class="comment">#proxy</span></span><br><span class="line">account_autocreate = True</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#在该[filter:keystoneauth]部分中，配置操作员角色：</span></span><br><span class="line">[filter:keystoneauth]</span><br><span class="line">use = egg:swift<span class="comment">#keystoneauth</span></span><br><span class="line">operator_roles = admin,user</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"><span class="comment">#在该[filter:authtoken]部分中，配置身份服务访问(注释掉或删除该[filter:authtoken] 部分中的任何其他选项)：</span></span><br><span class="line">[filter:authtoken]</span><br><span class="line">paste.filter_factory = keystonemiddleware.auth_token:filter_factory</span><br><span class="line">www_authenticate_uri = http://rocky-controller:5000</span><br><span class="line">auth_url = http://rocky-controller:5000</span><br><span class="line">memcached_servers = rocky-controller:11211</span><br><span class="line">auth_type = password</span><br><span class="line">project_domain_id = default</span><br><span class="line">user_domain_id = default</span><br><span class="line">project_name = service</span><br><span class="line">username = swift</span><br><span class="line">password = swift</span><br><span class="line">delay_auth_decision = True</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#在该[filter:cache]部分中，配置memcached位置：</span></span><br><span class="line">[filter:cache]</span><br><span class="line">use = egg:swift<span class="comment">#memcache</span></span><br><span class="line">memcache_servers = rocky-controller:11211</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#配置绑定端口，用户和配置目录：</span></span><br><span class="line">[DEFAULT]</span><br><span class="line">bind_port = 8080</span><br><span class="line">user = swift</span><br><span class="line">swift_dir = /etc/swift</span><br><span class="line"></span><br><span class="line"><span class="comment">#在该[pipeline:main]部分中，删除tempurl和 tempauth模块并添加authtoken和keystoneauth 模块</span></span><br><span class="line">[pipeline:main]</span><br><span class="line">pipeline = catch_errors gatekeeper healthcheck proxy-logging cache container_sync bulk ratelimit authtoken keystoneauth container-quotas account-quotas slo dlo versioned_writes proxy-logging proxy-server</span><br><span class="line"></span><br><span class="line"><span class="comment">#在该[app:proxy-server]部分中，启用自动帐户创建：</span></span><br><span class="line">[app:proxy-server]</span><br><span class="line">use = egg:swift<span class="comment">#proxy</span></span><br><span class="line">account_autocreate = True</span><br><span class="line"></span><br><span class="line"><span class="comment">#在该[filter:keystoneauth]部分中，配置操作员角色：</span></span><br><span class="line">[filter:keystoneauth]</span><br><span class="line">use = egg:swift<span class="comment">#keystoneauth</span></span><br><span class="line">operator_roles = admin,user</span><br><span class="line"></span><br><span class="line"><span class="comment">#在该[filter:authtoken]部分中，配置身份服务访问(注释掉或删除该[filter:authtoken] 部分中的任何其他选项)：</span></span><br><span class="line">[filter:authtoken]</span><br><span class="line">paste.filter_factory = keystonemiddleware.auth_token:filter_factory</span><br><span class="line">www_authenticate_uri = http://rocky-controller:5000</span><br><span class="line">auth_url = http://rocky-controller:5000</span><br><span class="line">memcached_servers = rocky-controller:11211</span><br><span class="line">auth_type = password</span><br><span class="line">project_domain_id = default</span><br><span class="line">user_domain_id = default</span><br><span class="line">project_name = service</span><br><span class="line">username = swift</span><br><span class="line">password = swift</span><br><span class="line">delay_auth_decision = True</span><br><span class="line"></span><br><span class="line"><span class="comment">#在该[filter:cache]部分中，配置memcached位置：</span></span><br><span class="line">[filter:cache]</span><br><span class="line">use = egg:swift<span class="comment">#memcache</span></span><br><span class="line">memcache_servers = rocky-controller:11211</span><br></pre></td></tr></table></figure>
 <h3 id="存储节点部署预置环境（控制节点兼任）"><a href="#存储节点部署预置环境（控制节点兼任）" class="headerlink" title="存储节点部署预置环境（控制节点兼任）"></a><strong>存储节点部署预置环境（控制节点兼任）</strong></h3><p>1）安装支持实用程序包：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install xfsprogs rsync</span><br></pre></td></tr></table></figure>
 <p>2）格式化/dev/sdc和/dev/sdd设备为XFS文件系统：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/romKwLeVMCMH.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ab6914195aa5944e284b.jpg" alt></p>
 <p>3）创建挂载点目录结构：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /srv/node/sdc</span><br><span class="line">mkdir -p /srv/node/sdd</span><br></pre></td></tr></table></figure>
 <p>4）编辑/etc/fstab文件并将以下内容添加到其中，设置开机自动挂载</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"/dev/sdc /srv/node/sdc xfs noatime,nodiratime,nobarrier,logbufs=8 0 2"</span> &gt;&gt; /etc/fstab</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"/dev/sdd /srv/node/sdd xfs noatime,nodiratime,nobarrier,logbufs=8 0 2"</span> &gt;&gt; /etc/fstab</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/uBrqfqxxnNtQ.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ab7814195aa5944e332a.jpg" alt></p>
 <p>5）挂载安装设备</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -a</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Amlz3fwX3Miz.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ab8614195aa5944e3e03.jpg" alt></p>
 <p>6）创建或编辑/etc/rsyncd.conf文件以包含以下内容：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">uid = swift</span><br><span class="line">gid = swift</span><br><span class="line"></span><br><span class="line"><span class="built_in">log</span> file = /var/<span class="built_in">log</span>/rsyncd.log</span><br><span class="line">pid file = /var/run/rsyncd.pid</span><br><span class="line"></span><br><span class="line">address = 10.28.101.81 <span class="comment">#存储节点上管理网络的IP地址</span></span><br><span class="line"></span><br><span class="line">[account]</span><br><span class="line">max connections = 2</span><br><span class="line">path = /srv/node/</span><br><span class="line"><span class="built_in">read</span> only = False</span><br><span class="line">lock file = /var/lock/account.lock</span><br><span class="line"></span><br><span class="line">[container]</span><br><span class="line">max connections = 2</span><br><span class="line">path = /srv/node/</span><br><span class="line"><span class="built_in">read</span> only = False</span><br><span class="line">lock file = /var/lock/container.lock</span><br><span class="line"> </span><br><span class="line">[object]</span><br><span class="line">max connections = 2</span><br><span class="line">path = /srv/node/</span><br><span class="line"><span class="built_in">read</span> only = False</span><br><span class="line">lock file = /var/lock/object.lock</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">uid = swift</span><br><span class="line">gid = swift</span><br><span class="line"><span class="built_in">log</span> file = /var/<span class="built_in">log</span>/rsyncd.log</span><br><span class="line">pid file = /var/run/rsyncd.pid</span><br><span class="line">address = 10.28.101.81 <span class="comment">#存储节点上管理网络的IP地址</span></span><br><span class="line"></span><br><span class="line">[account]</span><br><span class="line">max connections = 2</span><br><span class="line">path = /srv/node/</span><br><span class="line"><span class="built_in">read</span> only = False</span><br><span class="line">lock file = /var/lock/account.lock</span><br><span class="line"></span><br><span class="line">[container]</span><br><span class="line">max connections = 2</span><br><span class="line">path = /srv/node/</span><br><span class="line"><span class="built_in">read</span> only = False</span><br><span class="line">lock file = /var/lock/container.lock</span><br><span class="line"> </span><br><span class="line">[object]</span><br><span class="line">max connections = 2</span><br><span class="line">path = /srv/node/</span><br><span class="line"><span class="built_in">read</span> only = False</span><br><span class="line">lock file = /var/lock/object.lock</span><br></pre></td></tr></table></figure>
 <p>7）启动rsyncd服务并将其配置为在系统引导时启动</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> rsyncd.service &amp;&amp; systemctl start rsyncd.service &amp;&amp; systemctl status rsyncd.service</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/zidN0sjSTiHH.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4aba214195aa5944e53e7.jpg" alt></p>
 <p>8）安装软件包</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install openstack-swift-account openstack-swift-container openstack-swift-object</span><br></pre></td></tr></table></figure>
 <p>9）从对象存储源仓库获取记帐，容器和对象服务配置文件：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -o /etc/swift/account-server.conf https://opendev.org/openstack/swift/raw/branch/stable/stein/etc/account-server.conf-sample</span><br><span class="line"></span><br><span class="line">curl -o /etc/swift/container-server.conf https://opendev.org/openstack/swift/raw/branch/stable/stein/etc/container-server.conf-sample</span><br><span class="line"></span><br><span class="line">curl -o /etc/swift/object-server.conf https://opendev.org/openstack/swift/raw/branch/stable/stein/etc/object-server.conf-sample</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -o /etc/swift/account-server.conf https://opendev.org/openstack/swift/raw/branch/stable/stein/etc/account-server.conf-sample</span><br><span class="line">curl -o /etc/swift/container-server.conf https://opendev.org/openstack/swift/raw/branch/stable/stein/etc/container-server.conf-sample</span><br><span class="line">curl -o /etc/swift/object-server.conf https://opendev.org/openstack/swift/raw/branch/stable/stein/etc/object-server.conf-sample</span><br></pre></td></tr></table></figure>
 <p>10）编辑/etc/swift/account-server.conf 文件并完成以下操作：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#在[DEFAULT]节中，配置绑定IP地址，绑定端口，用户，配置目录和挂载点目录：</span></span><br><span class="line">[DEFAULT]</span><br><span class="line">bind_ip = 10.28.101.81   <span class="comment">#&lt;===为存储节点上管理网络的IP地址</span></span><br><span class="line">bind_port = 6202</span><br><span class="line">user = swift</span><br><span class="line">swift_dir = /etc/swift</span><br><span class="line">devices = /srv/node</span><br><span class="line">mount_check = True</span><br><span class="line"></span><br><span class="line"><span class="comment">#在该[pipeline:main]部分中，启用相应的模块：</span></span><br><span class="line">[pipeline:main]</span><br><span class="line">pipeline = healthcheck recon account-server</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在该[filter:recon]部分中，配置recon（米）缓存目录：</span></span><br><span class="line">[filter:recon]</span><br><span class="line">use = egg:swift<span class="comment">#recon</span></span><br><span class="line">recon_cache_path = /var/cache/swift</span><br></pre></td></tr></table></figure>
 <p>11）/etc/swift/container-server.conf文件并完成以下操作：</p>
@@ -710,12 +720,12 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">swift-ring-builder account.builder add --region 1 --zone 1 --ip 10.28.101.81 --port 6202 --device sdc --weight 100</span><br><span class="line">swift-ring-builder account.builder add --region 1 --zone 1 --ip 10.28.101.81 --port 6202 --device sdd --weight 100</span><br><span class="line">swift-ring-builder container.builder add --region 1 --zone 1 --ip 10.28.101.81 --port 6201 --device sdc --weight 100</span><br><span class="line">swift-ring-builder container.builder add --region 1 --zone 1 --ip 10.28.101.81 --port 6201 --device sdd --weight 100</span><br><span class="line">swift-ring-builder object.builder add --region 1 --zone 1 --ip 10.28.101.81 --port 6200 --device sdc --weight 100</span><br><span class="line">swift-ring-builder object.builder add --region 1 --zone 1 --ip 10.28.101.81 --port 6200 --device sdd --weight 100</span><br></pre></td></tr></table></figure>
 <p>4）验证环内容</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">swift-ring-builder account.builder</span><br><span class="line">swift-ring-builder container.builder</span><br><span class="line">swift-ring-builder object.builder</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/MAnrmpV6CoIq.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4abc314195aa5944e6cf7.jpg" alt></p>
 <p>5）重新平衡环</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">swift-ring-builder account.builder rebalance</span><br><span class="line">swift-ring-builder container.builder rebalance</span><br><span class="line">swift-ring-builder object.builder rebalance</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/49M8VA8AdiJc.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4abd514195aa5944e7af2.jpg" alt></p>
 <p>6）分配环的配置文件到每个swift的存储节点，将生成的副本account.ring.gz，container.ring.gz以及 object.ring.gz文件复制到/etc/swift每个存储节点和运行代理服务的任何其他节点上目录。（我们环境控制节点兼任swift存储节点）</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/feUzea4oDl5F.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4abe314195aa5944e853b.jpg" alt></p>
 <p>7）从Object Storage源仓库获取swift.conf配置文件</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -o /etc/swift/swift.conf https://opendev.org/openstack/swift/raw/branch/stable/stein/etc/swift.conf-sample</span><br></pre></td></tr></table></figure>
 <p>8）编辑/etc/swift/swift.conf 文件并完成以下操作</p>
@@ -726,39 +736,39 @@
 <p>11）在控制器节点和运行代理服务的任何其他节点上，启动对象存储代理服务（包括其依赖项）并将其配置为在系统引导时启动：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> openstack-swift-proxy.service memcached.service &amp;&amp; systemctl start openstack-swift-proxy.service memcached.service</span><br></pre></td></tr></table></figure>
 <p>12）在存储节点上，启动对象存储服务并将其配置为在系统引导时启动：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> openstack-swift-account.service openstack-swift-account-auditor.service openstack-swift-account-reaper.service openstack-swift-account-replicator.service</span><br><span class="line"></span><br><span class="line">systemctl start openstack-swift-account.service openstack-swift-account-auditor.service openstack-swift-account-reaper.service openstack-swift-account-replicator.service</span><br><span class="line"></span><br><span class="line">systemctl status openstack-swift-account.service openstack-swift-account-auditor.service openstack-swift-account-reaper.service openstack-swift-account-replicator.service</span><br><span class="line"></span><br><span class="line">systemctl <span class="built_in">enable</span> openstack-swift-container.service openstack-swift-container-auditor.service openstack-swift-container-replicator.service openstack-swift-container-updater.service</span><br><span class="line"></span><br><span class="line">systemctl start openstack-swift-container.service openstack-swift-container-auditor.service openstack-swift-container-replicator.service openstack-swift-container-updater.service</span><br><span class="line"></span><br><span class="line">systemctl status openstack-swift-container.service openstack-swift-container-auditor.service openstack-swift-container-replicator.service openstack-swift-container-updater.service</span><br><span class="line"></span><br><span class="line">systemctl <span class="built_in">enable</span> openstack-swift-object.service openstack-swift-object-auditor.service openstack-swift-object-replicator.service openstack-swift-object-updater.service</span><br><span class="line"></span><br><span class="line">systemctl start openstack-swift-object.service openstack-swift-object-auditor.service openstack-swift-object-replicator.service openstack-swift-object-updater.service</span><br><span class="line"></span><br><span class="line">systemctl status openstack-swift-object.service openstack-swift-object-auditor.service openstack-swift-object-replicator.service openstack-swift-object-updater.service</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> openstack-swift-account.service openstack-swift-account-auditor.service openstack-swift-account-reaper.service openstack-swift-account-replicator.service</span><br><span class="line">systemctl start openstack-swift-account.service openstack-swift-account-auditor.service openstack-swift-account-reaper.service openstack-swift-account-replicator.service</span><br><span class="line">systemctl status openstack-swift-account.service openstack-swift-account-auditor.service openstack-swift-account-reaper.service openstack-swift-account-replicator.service</span><br><span class="line">systemctl <span class="built_in">enable</span> openstack-swift-container.service openstack-swift-container-auditor.service openstack-swift-container-replicator.service openstack-swift-container-updater.service</span><br><span class="line">systemctl start openstack-swift-container.service openstack-swift-container-auditor.service openstack-swift-container-replicator.service openstack-swift-container-updater.service</span><br><span class="line">systemctl status openstack-swift-container.service openstack-swift-container-auditor.service openstack-swift-container-replicator.service openstack-swift-container-updater.service</span><br><span class="line">systemctl <span class="built_in">enable</span> openstack-swift-object.service openstack-swift-object-auditor.service openstack-swift-object-replicator.service openstack-swift-object-updater.service</span><br><span class="line">systemctl start openstack-swift-object.service openstack-swift-object-auditor.service openstack-swift-object-replicator.service openstack-swift-object-updater.service</span><br><span class="line">systemctl status openstack-swift-object.service openstack-swift-object-auditor.service openstack-swift-object-replicator.service openstack-swift-object-updater.service</span><br></pre></td></tr></table></figure>
 <h3 id="glance后端配置为swift"><a href="#glance后端配置为swift" class="headerlink" title="glance后端配置为swift"></a><strong>glance后端配置为swift</strong></h3><p>1）修改glance-api.conf的[glance_store]部分如下：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/5H0rNjTpAznt.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ac0114195aa5944e9c6f.jpg" alt></p>
 <p>2）重启glancea服务</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart openstack-glance-*</span><br></pre></td></tr></table></figure>
 <p>3）验证：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 上传镜像cirros</span></span><br><span class="line">openstack image create --public --disk-format qcow2 --container-format bare --file cirros-0.4.0-x86_64-disk.img cirros_swift</span><br></pre></td></tr></table></figure>
 <p># 查看swift的容器，如下：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/2bIEz65umR1j.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ac1814195aa5944eacc9.jpg" alt></p>
 <p># 查看glance-img容器下对象数据</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/bnU9G5veXO2l.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ac2414195aa5944eb545.jpg" alt></p>
 <p># 与新创建的cirros_img的id进行对比</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/oWjg9i8SILoE.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ac3214195aa5944ebf5b.jpg" alt></p>
 <p># 在Horizon中验证</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/sP4X2kuk2fxY.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ac4014195aa5944ec97f.jpg" alt></p>
 <h3 id="配置cinder-backup使用swift作为后端"><a href="#配置cinder-backup使用swift作为后端" class="headerlink" title="配置cinder-backup使用swift作为后端"></a><strong>配置cinder-backup使用swift作为后端</strong></h3><p>1）安装cinder-backup组件</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install openstack-cinder -y</span><br></pre></td></tr></table></figure>
 <p>2）编辑/etc/cinder/cinder.conf文件，完成如下配置：（注释掉的是NFS的backup后端）</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/8KmcOV53I1BB.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ac4e14195aa5944ed4be.jpg" alt></p>
 <p>3）重启cinder相关服务</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart openstack-cinder-*</span><br></pre></td></tr></table></figure>
 <p>4）验证：</p>
 <p># 查看当前cinder服务</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/E8oCJLMk2PGG.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ac5d14195aa5944ee06a.jpg" alt></p>
 <p># 创建一个卷swift_test_volume01</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/F0Kr0heXiiNX.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ac6b14195aa5944eec4b.jpg" alt></p>
 <p># 创建该卷的备份卷swift_test_backup_volume01</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/53Qz67SiG7pV.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ac7914195aa5944ef723.jpg" alt></p>
 <p># 查看当前swift容器</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/y6j8kJKjjHTF.png?imageslim" alt="mark"></p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/e2OCCWOGQIDv.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ac8714195aa5944f019b.jpg" alt></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4ac9514195aa5944f0b3c.jpg" alt></p>
 <p># 删除源卷，从备份卷恢复</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/wMdosQBOx1Ln.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4aca314195aa5944f15b3.jpg" alt></p>
 <h2 id="思考："><a href="#思考：" class="headerlink" title="思考："></a><strong>思考：</strong></h2><p><strong>1、swift中ring对应华为分布式存储FusionStorage原理中哪个算法？其作用是什么？开源ceph实现同样功能是否也采用一致性hash算法？</strong></p>
 <p><strong>2、swift中的zone对应分布式存储的哪个进程？作用是什么？</strong></p>
 <p><strong>3、一致性hash中的vNode在华为FusionStorage和中兴Ceph中分别取值为多少？其所起的作用是什么？</strong></p>
@@ -839,7 +849,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="https://kkutysllb.cn/2020/03/03/2020-03-03-对象存储管理服务Swift/" title="2020-03-03-对象存储管理服务Swift">https://kkutysllb.cn/2020/03/03/2020-03-03-对象存储管理服务Swift/</a>
+    <a href="https://kkutysllb.cn/2020/03/03/对象存储管理服务Swift/" title="对象存储管理服务Swift">https://kkutysllb.cn/2020/03/03/对象存储管理服务Swift/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -865,8 +875,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/03/03/2020-03-03-块存储管理服务Cinder/" rel="next" title="2020-03-03-块存储管理服务Cinder">
-                <i class="fa fa-chevron-left"></i> 2020-03-03-块存储管理服务Cinder
+              <a href="/2020/03/03/块存储管理服务Cinder/" rel="next" title="块存储管理服务Cinder">
+                <i class="fa fa-chevron-left"></i> 块存储管理服务Cinder
               </a>
             
           </div>
@@ -875,8 +885,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/03/03/2020-03-03-资源编排管理服务Heat/" rel="prev" title="2020-03-03-资源编排管理服务Heat">
-                2020-03-03-资源编排管理服务Heat <i class="fa fa-chevron-right"></i>
+              <a href="/2020/03/03/资源编排管理服务Heat/" rel="prev" title="资源编排管理服务Heat">
+                资源编排管理服务Heat <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -1309,7 +1319,7 @@
   
     <script>
   window.livereOptions = {
-    refer: '2020/03/03/2020-03-03-对象存储管理服务Swift/'
+    refer: '2020/03/03/对象存储管理服务Swift/'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];

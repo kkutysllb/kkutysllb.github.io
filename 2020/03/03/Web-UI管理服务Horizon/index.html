@@ -103,24 +103,37 @@
 
 
 
-  <meta name="description" content="概述缓存系统在OpenStack集群部署中有着非常重要的应用，在开源OpenStack的解决方案中一共使用了两种分布式缓存技术，一种是用于前端API服务访问的Memcache缓存，另一种就是用于后端计量和告警信息上报的Redis缓存。无论是Memcache缓存还是Redis缓存，均是一种分布式缓存。所谓分布式缓存，就是指缓存服务可以部署多个相互独立的服务器节点上，可以彼此分散独立存取数据，减少单节">
+  <meta name="description" content="概述OpenStack的用户界面由两部分组成：一是Web界面，二是Shell CLI界面。Horizon负责展现Web仪表盘，用户可以通过浏览器直接操作、管理、运维OpenStack的一些功能。由于OpenStack项目队伍不断壮大，Danshboard并不能展现所有的OpenStack功能，因此，最新的功能一般会先开发Shell命令行，也就是将CLI（Command Line Interface">
 <meta name="keywords" content="云计算">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2020-03-03-中间件分布式缓存Memcache和Redis">
-<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/index.html">
+<meta property="og:title" content="Web UI管理服务Horizon">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/03/Web-UI管理服务Horizon/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
-<meta property="og:description" content="概述缓存系统在OpenStack集群部署中有着非常重要的应用，在开源OpenStack的解决方案中一共使用了两种分布式缓存技术，一种是用于前端API服务访问的Memcache缓存，另一种就是用于后端计量和告警信息上报的Redis缓存。无论是Memcache缓存还是Redis缓存，均是一种分布式缓存。所谓分布式缓存，就是指缓存服务可以部署多个相互独立的服务器节点上，可以彼此分散独立存取数据，减少单节">
+<meta property="og:description" content="概述OpenStack的用户界面由两部分组成：一是Web界面，二是Shell CLI界面。Horizon负责展现Web仪表盘，用户可以通过浏览器直接操作、管理、运维OpenStack的一些功能。由于OpenStack项目队伍不断壮大，Danshboard并不能展现所有的OpenStack功能，因此，最新的功能一般会先开发Shell命令行，也就是将CLI（Command Line Interface">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/I9ekUo8D42DH.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Idtaxk8yWcu6.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/V9JQA8Gipqj2.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/m6sxxegXy5o3.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/eiMCG194h29S.png?imageslim">
-<meta property="og:updated_time" content="2020-03-04T00:53:06.366Z">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a7ff14195aa5944b9e9a.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a80e14195aa5944bab90.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a81b14195aa5944bb584.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a83014195aa5944bc59e.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a83e14195aa5944bd002.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a85214195aa5944be04f.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a86214195aa5944bede0.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a87114195aa5944bf7ca.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a88014195aa5944c0259.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a88e14195aa5944c0be4.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a8a314195aa5944c1a65.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a8b214195aa5944c242a.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a8c214195aa5944c303b.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a8d314195aa5944c3de3.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a8e114195aa5944c4ace.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a8f014195aa5944c57bb.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a90014195aa5944c6383.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a90f14195aa5944c6e6e.jpg">
+<meta property="og:updated_time" content="2020-06-25T13:39:38.251Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2020-03-03-中间件分布式缓存Memcache和Redis">
-<meta name="twitter:description" content="概述缓存系统在OpenStack集群部署中有着非常重要的应用，在开源OpenStack的解决方案中一共使用了两种分布式缓存技术，一种是用于前端API服务访问的Memcache缓存，另一种就是用于后端计量和告警信息上报的Redis缓存。无论是Memcache缓存还是Redis缓存，均是一种分布式缓存。所谓分布式缓存，就是指缓存服务可以部署多个相互独立的服务器节点上，可以彼此分散独立存取数据，减少单节">
-<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200303/I9ekUo8D42DH.png?imageslim">
+<meta name="twitter:title" content="Web UI管理服务Horizon">
+<meta name="twitter:description" content="概述OpenStack的用户界面由两部分组成：一是Web界面，二是Shell CLI界面。Horizon负责展现Web仪表盘，用户可以通过浏览器直接操作、管理、运维OpenStack的一些功能。由于OpenStack项目队伍不断壮大，Danshboard并不能展现所有的OpenStack功能，因此，最新的功能一般会先开发Shell命令行，也就是将CLI（Command Line Interface">
+<meta name="twitter:image" content="https://pic.imgdb.cn/item/5ef4a7ff14195aa5944b9e9a.jpg">
 
 
 
@@ -129,7 +142,7 @@
 
 
 
-  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/">
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/03/Web-UI管理服务Horizon/">
 
 
 
@@ -139,7 +152,7 @@
   };
 </script>
 
-  <title>2020-03-03-中间件分布式缓存Memcache和Redis | 一花一菩提，一云一世界</title>
+  <title>Web UI管理服务Horizon | 一花一菩提，一云一世界</title>
   
 
 
@@ -398,7 +411,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/03/Web-UI管理服务Horizon/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kkutysllb">
@@ -415,7 +428,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2020-03-03-中间件分布式缓存Memcache和Redis
+          <h1 class="post-title" itemprop="name headline">Web UI管理服务Horizon
 
               
             
@@ -441,7 +454,7 @@
                 
               
 
-              <time title="创建时间：2020-03-03 17:00:03" itemprop="dateCreated datePublished" datetime="2020-03-03T17:00:03+08:00">2020-03-03</time>
+              <time title="创建时间：2020-03-03 17:07:48" itemprop="dateCreated datePublished" datetime="2020-03-03T17:07:48+08:00">2020-03-03</time>
             
 
             
@@ -458,7 +471,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2020-03-04 08:53:06" itemprop="dateModified" datetime="2020-03-04T08:53:06+08:00">2020-03-04</time>
+                <time title="修改时间：2020-06-25 21:39:38" itemprop="dateModified" datetime="2020-06-25T21:39:38+08:00">2020-06-25</time>
               
             
           </span>
@@ -511,7 +524,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">11k</span>
+                <span title="本文字数">5k</span>
               
 
               
@@ -525,7 +538,7 @@
                 
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
-                <span title="阅读时长">10 分钟</span>
+                <span title="阅读时长">5 分钟</span>
               
             </div>
           
@@ -545,45 +558,60 @@
       
 
       
-        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>缓存系统在OpenStack集群部署中有着非常重要的应用，在开源OpenStack的解决方案中一共使用了两种分布式缓存技术，一种是用于前端API服务访问的Memcache缓存，另一种就是用于后端计量和告警信息上报的Redis缓存。无论是Memcache缓存还是Redis缓存，均是一种分布式缓存。所谓分布式缓存，就是指缓存服务可以部署多个相互独立的服务器节点上，可以彼此分散独立存取数据，减少单节点的数据存取压力，但是各节点之间的数据并非要求一定保持一致性。大多数的OpenStack服务都会使用Memcache或Redis缓存系统存储如Token等临时数据，缓存技术的应用场景一般都是应用在有大并发访问需求的地方，比如使用Web服务的门户网站，淘宝、京东等购物网站等等。<strong>缓存系统可以认为是基于内存的数据库</strong>，相对于后端大型生产数据库MySQL等，基于内存的缓存系统能够提供快速的数据访问操作，从而提高客户端的数据请求访问，并降低后端数据库的访问压力，避免了访问重复数据时数据库查询所带来的频繁磁盘IO和大型关系表查询时的时间开销。<a id="more"></a></p>
-<h2 id="Memcache分布式缓存"><a href="#Memcache分布式缓存" class="headerlink" title="Memcache分布式缓存"></a><strong>Memcache分布式缓存</strong></h2><p>Memcache利用系统内存对客户端经常进行反复读写和访问的数据进行缓存，来减轻后端数据库的访问负载和提高客户端的数据访问效率。Memcache中缓存的数据经过HASH之后被存放到位于内存上的HASH表内，而HASH表中的数据以Key-Value的形式存放。在Memcache集群中，Memcache客户端的API通过32Bit的循环冗余校验码（CRC-32）将存储数据的键值对进行HASH计算后，存储到不同的Memcached节点服务器上，而当Memcached服务器节点的物理内存剩余空间不足时，Memcached将使用最近<strong>最少使用算法（LRU，LeastRecentlyUsed）</strong>对最近不活跃的数据进行清理，从而腾出多余的内存空间供缓存服务使用。在OpenStack的集群部署中，大部分子项目都会用到内存缓存系统进行客户端访问数据的缓存，从而提高访问速率并减轻数据库的负载压力。</p>
-<p>Memcache缓存系统在工作流程的设计上比较简单，其<strong>主要思想就是Memcache的客户端根据用户访问请求中的Key，到Memcached服务器的内存HASH表中获取对应此Key的Value，Memcache客户端取到值之后直接返回给用户，而不用再到数据库中进行数据查询。当然，内存HASH表中不可能预知和存储全部客户端需要的Key-Value值对，因此，如果在Memcache服务器中没有找到与请求中的Key对应的Value，则转向后端数据库进行查询，并将查询到的Value与Key进行HASH后存入Memcached服务器中，从而保证曾经存储过的数据一定能被查询到，并将数据库中查询到的数据缓存到Memcache服务器中，从而提高下一次缓存查询的命中率，</strong>其工作流程如下图所示。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/I9ekUo8D42DH.png?imageslim" alt="mark"></p>
-<p>上述流程中，Memcache的整个工作流程被分为七步实现，但是并非每次查询都需要经历七个步骤，这需要根据是否在缓存中命中请求Key对应的Value来决定。具体流程如下：</p>
-<p><strong>1~2：</strong>用户终端向Web服务器发起请求（Web服务器中部署有Memcache客户端），Web服务器中的Memcache客户端向Memcached服务器发起查询请求，查询目标为用户请求中包含的Key所对应的Value。</p>
-<p><strong>1~2~3~7：</strong>如果Memcache客户端在Memcached服务器中查询到与请求Key对应的Value，则直接返回结果，本次数据查询过程结束，即整个过程不会访问数据库。</p>
-<p><strong>1~2~4~5~7~6：</strong>如果经过步骤1和2没有查询到数据，则表明Memcached服务器没有缓存请求中的Key对应的Value，即本次缓存查询未命中，但是查询到此并不结束，而是转向数据库中继续查询该值，并将查询到的数据返回给客户端，同时将该数据缓存到Memcached服务器的HASH表中，以便客户端再次发起相同请求时，该值在Memcached服务器中能够直接命中，而无需再次查询数据库。</p>
-<p><strong>需要注意的是：</strong>当数据库中存放的永久数据发生更新时，Memcached服务器中缓存的值也需要同时更新。如果Memcached服务器中分配给Memcached使用的内存空间耗尽，则Memcache缓存系统将使用LRU算法和数据的到期失效策略清理非活跃的冷数据，在这个过程中，已达到策略设置中的保存期限的数据将会首先被清除，然后再清除最近最少使用的数据。</p>
-<p><strong>由于Memcache缓存系统中的每个Memcached服务器节点独立存取数据，彼此之间不存在数据的镜像同步机制</strong>，因此，如果某一个Memcached服务节点故障或者重启，则该Memcached节点上缓存在内存中的全部数据均会丢失，丢失缓存数据后，访问将无法在缓存中命中任何Key，所有Key的访问都需要到数据库重新查询一遍，同时将查询的数据再缓存到Memcached服务器的内存缓存中，即Memcached服务器每重启一次，其储存的数据就要被重新缓存一次。同时，Memcache缓存系统以Key-Value为单元进行数据存储，能够存储的数据Key尺寸大小为250字节，能够存储的Value尺寸大小为1MB，超过这个值不允许存储。并且Memcache缓存系统的内存存储单元是按照Chunk来分配的，这意味着不可能所有存储的Value数据大小都正好等于一个Chunk的大小，因此必然会造成内存数据碎片而浪费存储空间。</p>
-<p>Memcache集群的配置极为简单，服务器端只需运行Memcached服务，客户端只需在应用程序的配置文件中指定要访问的Memcached服务器节点IP地址和端口组成的列表。因为Memcache集群无需在Memcached服务器端进行配置，数据的分布存储完全取决于Memcache客户端的节点选取算法。如下图所示，当应用程序向Memcache集群存储数据时，Memcache客户端会根据请求存储数据的Key-Value值对，利用一定算法从Memcached集群存储节点中选取某一个Memcached服务器节点来存储数据，当算法选定该节点后，对应Key的Value就会被存储到该节点中。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/Idtaxk8yWcu6.png?imageslim" alt="mark"></p>
-<p>Memcache客户端在选取缓存节点时所采用的算法对数据的最终存储位置有着决定性的作用，而节点选取算法也是Memcache缓存系统中最重要的部分。在通常使用时，Memcache缓存系统中最常使用的两个算法分别是<strong>余数HASH算法</strong>和<strong>一致性HASH算法</strong>。</p>
-<p><strong>余数HASH算法就是将需要存储的Key-Value值对的Key字符通过HASH算法后得到HASH Code，这里的HASH Code是一个数字，而HASH算法的作用就是将一个字符串通过HASH后得到一个数值。通常，相同的字符串经过相同的HASH算法后一定会得到相同的HASH Code，因此，存储和提取相同Key的Memcached目标节点一定是同一个节点。</strong>比如Key经过HASH之后得到的HASH Code为100，Memcache集群缓存系统中有3个Memcached节点，那么余数HASH就是将HASH Code 100除以节点数目3，然后取余得到的结果，这里结果为1，这样选取到的Memcached服务器节点为编号为1，即Memcached1节点。因为不同的Key值得到的HASH Code是不同的，这样取余后得到的结果是比较随机均匀的，数据就会随机存储到不同的Memcached服务器节点上，因此，如果在一个系统架构中，Memcached服务器节点数目比较固定，使用过程中无需扩容节点，则余数HASH算法可以很好地满足Memcache集群中的节点选取过程。然后，当需要扩容节点时，比如当增加3个Memcached节点后，现在Memcached服务器节点数目为6，HASH Code仍然为100，可余数HASH的结果却为2，而不是之前的1，即Memcache客户端在提取这个Key的值Value时，算法将会路由到Memcached2节点去，但是扩容之前该Key的Value是存储在Memcached1节点中的，因此客户端将不能在缓存系统命中此Key。</p>
-<p>为了解决这种扩容引起的缓存命中失效问题，引入一致性HASH算法。其实，引入一致性HASH并不能完全解决缓存命中失效的问题，但是可以大大降低缓存命中失效发生的概率，而且随着缓存节点数量逐渐增多，这种缓存命中失效带来的IO瓶颈问题几乎可以忽略不计。一致性HASH通过将Memcached节点和Key字符串HASH后放到一个HASH环上，然后Key字符串的HASH值再以顺时针的方式找到距其最近的节点HASH值，该节点HASH值对应的节点便是Key的Value存储节点（一致性HASH在分布式存储部分会详细讲解，这里简单提一下）。当集群中增加缓存节点，只有HASH Code靠近增加节点HASH值的数据会受影响，其余节点仍保持原来的缓存映射关系，所以一致性HASH相比余数HASH在节点变化的场景下，缓存命中失效的概率要低很多。对于Memcache缓存系统而言，究竟选择余数HASH还是一致性HASH，需要根据Memcache缓存系统的实际使用情况而定。</p>
-<p>如前所述，Memcache集群只能解决数据访问的瓶颈问题，并不能解决数据的高可用问题。如果要<strong>实现Memcache集群的数据HA，就必须借助第三方工具来实现。Memcache缓存系统最常使用的HA方式是Memcached节点代理，其中最常使用的代理软件为Magent</strong>。通过Magent缓存代理，可以防止缓存系统的单点故障，同时将缓存代理服务器配置为主备模式，即可实现代理服务器的高可用。在配置有Magent代理的Memcache缓存系统中，当客户端发起缓存数据请求时，客户端将首先连接到缓存代理服务器，然后缓存代理服务器再连接到Memcached服务器，Magent缓存代理服务器可以连接多台后端Memcached服务器，进而可以将相同的缓存数据同时存储到多个Memcached服务器，最终实现缓存数据的同步存储。如下图所示，实现Memcache服务的数据HA非常简单，只需在两台同样配置的服务器上分别安装memcache和magent软件，稍做简单配置即可实现Magent代理的高可用缓存系统。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/V9JQA8Gipqj2.png?imageslim" alt="mark"></p>
-<h2 id="Redis分布式缓存"><a href="#Redis分布式缓存" class="headerlink" title="Redis分布式缓存"></a><strong>Redis分布式缓存</strong></h2><p>Redis，俗称远程字典服务器（Remote Dictionary Server，Redis），是一款由ANSI C语言编写、遵守BSD协议、支持网络访问、基于系统内存的开源软件，同时，Redis也是支持日志型和Key-Value键值对类型数据持久化的数据库。由于Redis中存储的Value值类型可以是字符串（String）、哈希（HASH）、列表（List）、集合（Sets）和有序集合（Sorted Sets）等类型，因此<strong>Redis通常也被称为数据结构服务器</strong>。在Redis中，这些数据类型都支持Push/Pop、Add/Remove以及针对集合的交集、并集和差集等丰富的数据操作，并且这些操作都具有保持数据一致性的原子性，而且Redis还支持各种不同的数据排序方式。</p>
-<p>与Memcache缓存系统类似，为了保证高效的数据存取效率，Redis的数据都被缓存在内存中，但是Redis与Memcache在处理数据存储方式上有很大的差异，即Redis默认会周期性地把缓存中更新的数据写入磁盘进行永久保存，并将对缓存数据的修改操作追加到日志文件中，由于Redis本质上就是一个基于内存的数据库，因此Redis具备很多如日志记录等通用数据库的共性。<strong>Redis为了实现数据高可用，其利用已存入磁盘中的数据在不同节点之间进行同步操作，从而实现了Master-Slave模式的主从数据高可用，Redis的数据可以从Master服务器向任意数量的Slave服务器上进行同步。</strong></p>
-<p><strong>在Redis缓存系统中，并非所有通过Redis客户端写入的数据都永久性地存储在物理内存中，这是Redis和Memcache缓存系统最为明显的区别，Redis会定期性地将物理内存中的数据写入磁盘，其原理类似内存虚拟化技术中内存置换技术。Redis实现了用虚拟内存（VM，Virtual Memory）机制来扩充逻辑可用的内存空间，当Redis认为物理内存空间使用量达到某个预设值时，Redis将自动进行内存页的交换（Page Swap）操作，从而将缓存中的数据写入磁盘中。</strong></p>
-<p><strong>Redis的VM机制使得Redis可以存储超过系统本身物理内存大小的数据，但是，这并不意味着可以无限减小物理内存并不断增加虚拟内存以满足Redis的整体内存需求</strong>，主要有以下3点约束：</p>
-<p>1）Redis将全部的Key保存在物理内存中，从而可以快速命中Key，并且由于Redis在读取数据时只在物理内存中进行Key的索引，找到Key之后再到物理内存或者虚拟内存中读取对应的Value，因此为Redis预留的物理内存空间至少要满足Key的存储。</p>
-<p>2）过度地减小为Redis预留的物理内存空间，会使得Redis频繁发生Swap操作，极大降低Redis的数据稳定性，并对Redis的数据访问造成响应缓慢等影响。</p>
-<p>3）在Redis将内存中的数据交换到磁盘的时候，提供访问服务的Redis主线程和进行交换操作的子线程会共享这部分内存空间，所以如果此时有请求要更新这部分内存空间的数据，则Redis将会阻塞这个请求操作，直到子线程完成Swap操作后才可以进行数据的更新修改。</p>
-<p>上述的第三点约束是一种默认情况下的机制，即Redis会使用阻塞方式来使I/O请求等待Swap操作将全部所需的Value数据块读回内存，然后才进行下一步操作。这种机制在小量访问对数据访问的影响可以忽略，但是在大并发场景下，其影响直接造成客户体验变差。因此，在大并发场景下，需要配置Redis的IO线程池来解决，使得Redis并发进行磁盘到物理内存的数据读回操作，减少IO阻塞时间。</p>
-<p>在Redis节点重新启动之后，丢失的缓存数据会从磁盘重新加载或者从日志文件中重新恢复，与Memcache相比，天生具备数据持久化功能。<strong>针对两种不同的缓存数据恢复方式，Redis提供了两种数据持久化的方式，分别是Redis数据库方式（RDB，Redis DataBase）和日志文件方式（AOF，Append Only File）</strong>。RDB持久化方式就是将Redis缓存数据进行周期性的快照，并将其写入磁盘等永久性存储介质中，而AOF采用的是与RDB完全不一样的数据持久化方式，在AOF方式下，Redis会将所有对缓存数据库进行数据更新的指令全部记录到日志文件中，待Redis重新启动时，Redis将会把日志文件中的数据更新指令从头到尾重复执行一遍，这是一个重现数据变更的过程，当执行到日志文件末尾时即可实现缓存数据的恢复，AOF恢复方式与DB2数据库的redo日志回滚恢复方式原理类似。在实际的Redis使用过程中，RDB和AOF这两种数据持久化方式可以同时使用，并且这也是官方推荐的数据持久化方式，在两种方式同时开启的情况下，如果Redis数据库重新启动，则会优先采用AOF方式来进行数据恢复，这是因为AOF方式对数据恢复的完整性要高于RDB方式（RDB因为是周期性存储快照数据，所以数据完整性至少丢失一个快照存取周期）。</p>
-<p>在Redis3.0版本发行之前，Redis自身并不具备集群高可用功能，尽管Redis3.0中增加了Redis的Cluster功能，但是，使用Redis Cluster功能的用户相对还是很少，其可靠性和稳定性相对来说还需要进一步验证。目前，针对Redis的集群高可用功能，更多的是借助第三方负载均衡和集群管理软件（Pacemaker+HAProxy/Keepalived）来实现或者是通过对Redis进行二次开发来实现。在借助第三方负载均衡和集群管理软件的方案中，通过负载均衡软件的VRRP协议创建虚拟IP资源以对外提供高可用的Redis虚拟IP，并通过集群管理软件创建Redis的Master-Slave多状态资源，当Redis的Master节点故障后，通过集群管理软件的资源管理功能，利用Redis的Agent脚本将Slave节点提升为Master，同时虚拟IP迁移到新的Master节点继续对外提供服务。</p>
-<p><strong>Redis主从模式的集群能够实现数据高可用的关键，是Redis提供的数据Replication功能</strong>，即数据能够在Redis的主从节点之间进行复制，从而保证了数据的高可用性。其复制是异步复制，在复制的过程中，Master节点是非阻塞的，不会受到Slave节点数据同步的影响，在Slave进行同步的时候，Master继续提供高效的内存数据查询服务。同时，在复制的过程中，Slave节点也是非阻塞的。在数据同步时，通过配置可以允许Slave节点利用之前的数据集提供查询功能活着此时返回一个错误，并提示数据正在同步中。但是不管怎么设置，在Slave同步完成之后，Slave节点的陈旧数据将会被删除，新同步来的数据将会被加载到内存，而在这个删除与加载的过程中，Slave的访问是暂时被禁止的。Redis的Replication功能除了数据冗余之外，还可以将数据的只读查询分散到多个Slave节点，以让Slave节点来负责这类数据的排序操作。</p>
-<p>在Redis的Master-Slave集群模式下，如果配置了一个或多个Slave节点并将其连接到Master节点，则不管Slave节点是第一次连接Master还是重新连接到Master，当连接完成之后，Slave都会发送一个同步命令给Master，Master接到命令后开始在后台进行内存数据快照，并将在快照期间对当前缓存数据进行更新的命令全部缓存起来。当Master上的数据以RDB方式保存完成后，Master将该RDB数据文件传送给Slave，Slave将数据文件写入本地磁盘，然后再将这些来自Master的RDB数据文件加载到内存中，之后Master将数据快照期间缓存的命令发送给Slave，Slave依次执行这些数据变更命令，使得每次同步操作后都能确保自身数据与Master节点缓存数据的一致性。当Slave与Master的连接因某些原因断开后，Slave会自动与Master重新建立连接。如果Master同时收到多个Slave发送的数据同步请求，则Master仅会对缓存数据做一次快照保存，然后将保存的RDB数据文件发送给多个Slave节点。当同步中的Slave与Master断开又重新连接后，Slave将会重新发送同步全部数据的请求，但是从Redis2.8开始，重新连接的Slave可以通过断点续传功能仅同步上次未完成同步的数据请求，其机制是Master和所有的Slave将同步操作的日志记录到内存文件中，同时还记录了数据同步的偏移量和Master此时的运行标志（Run ID），如果数据同步过程被断开，Slave将会重新连接并请求Master继续同步。此时，如果Master的Run ID还没有改变，并且设置的同步偏移量在同步日志中可用，那么同步操作将会从中断点继续同步，如果不能满足这两个条件，则数据同步操作只能重新开始。此外，如果Master的Run ID没有保存到磁盘上，则无法进行续传同步。如果Master节点的磁盘I/O性能较差，而不同的Slave节点不在同一时间点发生同步请求，则数据同步过程必然增加Master的工作负载。为了解决这个问题，<strong>Redis2.8.18中提出了无盘复制（Diskless Replication）的设计</strong>，在这种模式下，Master直接将RDB文件传送到Slave节点，而无须再在本机上进行I/O操作，无盘复制技术的提出极大提升了Master在数据同步复制过程中的响应效率。</p>
-<h2 id="Redis-Cluster集群技术"><a href="#Redis-Cluster集群技术" class="headerlink" title="Redis Cluster集群技术"></a><strong>Redis Cluster集群技术</strong></h2><p>上面提到Redis Cluster是Redis官方在3.0版本以后推出一种集群技术，作为官方的重点推荐，虽然其可靠性和稳定性还有待验证，但是不影响我们理解其工作原理和机制。Redis Cluster是Redis的分布式实现，RedisCluster在设计之初就考虑到了去中心化的问题，因此集群中不存在任何中心控制节点，每一个节点都是功能对等的集群成员，每个节点除了保存有自己的配置元数据外，还保存着整个集群的状态信息。由于每个集群节点之间彼此互联，并且随时保持活动连接，客户端只需连接到集群中的任一个节点，便可获取到存储在其他节点上的数据。机制示意图如下：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/m6sxxegXy5o3.png?imageslim" alt="mark"></p>
-<p>Redis Cluster中的各个节点之间保持相互连接，并且彼此之间可以通信，客户端随意连接到任何一个集群节点就能将整个Redis集群作为一个整体来访问，同时客户端也无需知道Redis Cluster将其提交的数据存入哪个Redis节点中，数据存储完全由Redis Cluster根据自己的算法来决定。在Redis Cluster中，数据被分散存储到不同的Redis节点上，Redis Cluster并没有采用一致性HASH来分配数据存放到不同的节点，而是采用了一种称为<strong>哈希槽（HASH Slot）</strong>的技术来分配数据。Redis Cluster默认将存储空间分配为16384 Slots，每个节点承担其中的一部分Slots。如果Redis需要扩充Redis节点数，只需重新分配每个节点的槽位。当客户端通过SET命令来保存一个Key-Value键值的时候，Redis Cluster<strong>会采用CRC16（Key）对16384取模来决定该Key应该被存储到哪个Slots中</strong>，具体的计算公式就为：<strong>slot_num=CRC（’Key_name’）％16384</strong>。假设通过公式计算得到的Slot_num为14201，则数据会被存储在14201槽位对应的节点上。为了保证数据的高可用，Redis Cluster用到了Master-Slave的主从数据复制模式，即为每个Master都设置一个或多个Slave，Master负责数据存取，而Slave负责数据的同步复制，当Master故障时，其中的某个Slave会被提升为Master。假设集群中有A、B、C三个主节点，同时分别为其设置了A1、B1、C1三个Slave节点，此时如果B节点故障，则集群会将B1节点选取为Master节点继续提供服务，当B节点恢复之后，它就变成了B1的Slave节点。当然，如果B和B1同时故障，则集群B就不可用了。</p>
-<h2 id="Redis在OpenStack中的应用"><a href="#Redis在OpenStack中的应用" class="headerlink" title="Redis在OpenStack中的应用"></a><strong>Redis在OpenStack中的应用</strong></h2><p>在OpenStack开源云的计费项目Ceilometer中，当进行规模化集群部署时，通常使用Redis插件来为运行在控制节点集群上的多个Ceilometer Agents提供协调机制，Redis插件使用具有Redis后端的Tooz库来为Agents提供一组轮询使用的资源集。在部署了Redis插件之后，Ceilometer Agents的部署可以分布到每个控制节点上，并且这些分布的Agents将会自动加入协调组（Coordination Group）中，在这种分布式集群部署中，通常使用Pacemaker创建Redis-server资源以监控Redis插件进程的运行状态，同时插件会自动配置Redis-sentinel进程来监控Redis集群状态，而Redis-sentinel的主要作用是当Redis集群的Master节点故障时，通过一定的机制重新选取新的Master节点，同时将Ceilometer的代理重新定向到新的Master节点，并进行Redis集群节点之间的数据同步。</p>
-<p>在OpenStack集群高可用部署中，Redis被用作Ceilometer组件的分布式协调组后端缓存，同时集合集群资源管理软件Pacemaker，将Redis配置为Pacemaker的资源以实现Redis-server的高可用Master-Slave模式。此外，还需要为Redis集群配置一个高可用IP地址，高可用IP可以通过Pacemaker的虚拟IP资源实现。在三节点的OpenStack控制节点集群架构中，将其中一个控制节点作为Redis的Master节点，另外两个控制节点作为Redis的Slave节点，Redis和Ceilometer的Central agent在三个控制节点中的部署拓扑如下所示：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200303/eiMCG194h29S.png?imageslim" alt="mark"></p>
-<p>在集成Pacemaker的集群中，Redis服务被配置成为Pacemaker的多状态资源，即Master/Salve资源组。通过Pacemaker配置的Redis高可用Master/Slave集群中，controller01为Redis的Master节点，controller02和controller03为Redis的Slave节点，同时Redis对外提供服务的虚拟IP地址运行在Master节点，这是通过Pacemaker的Colocation约束设置的，即<strong>Redis的VIP只会运行在Master节点上</strong>。如果Redis的Master节点故障，则Pacemaker将会从两个Slave节点中重新选举一个Mastre节点，而VIP也会相应地自动移动。</p>
-<p>总的来说，memcache缓存技术主要用来存储见到key-value格式的数据，如OpenStack各个服务的API交互数据。如果需要缓存数据类型多样、数据可靠性高的场景，如OpenStack的ceilometer服务提供的计量和告警等数据，则采用Redis这种支持数据持久化且支持多种数据结构的缓存技术更加合适。</p>
-<h2 id="思考："><a href="#思考：" class="headerlink" title="思考："></a><strong>思考：</strong></h2><p><strong>1、Memcache技术的服务端口号是多少？在OpenStack的最小系统配置下（keystone、nova、neutron、cinder、glance、horizon），控制节点最少需要开启多少个memcache服务进程？</strong></p>
-<p><strong>2、nova服务至少需要开启多少个memcache服务进程？</strong></p>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>OpenStack的用户界面由两部分组成：一是Web界面，二是Shell CLI界面。Horizon负责展现Web仪表盘，用户可以通过浏览器直接操作、管理、运维OpenStack的一些功能。由于OpenStack项目队伍不断壮大，Danshboard并不能展现所有的OpenStack功能，因此，最新的功能一般会先开发Shell命令行，也就是将CLI（Command Line Interface）提供给Linux用户操作。<a id="more"></a></p>
+<p>在OpenStack的7个核心服务中，Horizon服务本质上就是一个Web Server，基于Django框架开发的，与Keystone服务一样，需要与其他提供业务的服务（计算nova、存储cinder、网络neutron等）进行全互联。如下图所示，如果将OpenStack的7个核心服务分为三层，从上到下依次是<strong>入口层、业务层</strong>和<strong>认证层</strong>。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a7ff14195aa5944b9e9a.jpg" alt></p>
+<p>Horizon服务最早出现OpenStack的Essex版本中，提供基于Web的控制界面，使得云管理员和租户/用户能够可视化的管理OpenStack的服务和资源。Horizon唯一依赖的服务就是Keystone认证服务，同时还可以与其他服务结合使用，例如镜像服务、计算服务、网络服务等。并且，Horizon还可以在独立服务（比如对象存储中）的环境中单独使用。</p>
+<h2 id="REST-ful与WSGI介绍"><a href="#REST-ful与WSGI介绍" class="headerlink" title="REST ful与WSGI介绍"></a><strong>REST ful与WSGI介绍</strong></h2><p>OpenStack各个项目都提供了API接口服务，通过endpoint提供访问URL。无论我们通过Horizon访问OpenStack的服务和资源，还是通过命令行CLI访问OpenStack的服务和资源，其本质都是通过各服务/资源的API的endpoint进行访问，即均是基于HTTP/HTTPS协议的Web服务访问。而这些API接口都是基于一种叫做“REST ful”的架构。RESTful是目前流行的一种互联网软件架构，<strong>REST（Representational State Transfer）就是表述状态转移的意思。</strong></p>
+<p>RESTful架构的一个核心概念是<strong>“资源”</strong>（resource）。从RESTful的角度看，网络里的任何东西都是资源，它可以是一段文本、一张图片、一首歌曲、一种服务等，每个资源都对应一个特定的URL（统一资源定位符）并用它进行标示，访问这个URL就可以获得这个资源。资源可以有多种具体表现形式，也就是资源的“表述”（representation），例如，一张图片可以使用JPEG格式，也可以使用PNG格式。URL只是代表了资源的实体，并不能代表它的表现形式。客户端和服务端之间进行互动传递的就只是资源的表述，我们上网的过程就是调用资源的URL，获取它不同表现形式的过程。这个互动只能使用无状态协议HTTP，也就是说，服务端必须保存所有的状态，客户端可以使用HTTP的几个基本操作，包括GET（获取）、POST（创建）、PUT（更新）、DELETE（删除），使服务端上的资源发生状态转化（State Transfer），也就是所谓的“表述性状态转移”。</p>
+<p>OpenStack各个项目都提供了RESTful架构的API作为对外提供的接口，而RESTful架构的核心是资源与资源上的操作，也就是说，OpenStack定义了很多的资源，并实现了针对这些资源的各种操作函数。OpenStack的API服务进程接收到客户端的HTTP请求时，一个所谓的“路由”模块会将请求的URL转换成相应的资源，并路由到合适的操作函数上。这个所谓的路由模块Routes源自于对Rails（Ruby on Rails）路由系统的重新实现，采用MVC（Model-View-Controller）模式，收到浏览器发出的HTTP请求后，路由系统会将这个请求指派到对应的Controller。RESTful只是设计风格而不是标准，Web服务中通常使用基于HTTP的符合RESTful风格的API。而WSGI（Web Server Gateway Interface，Web服务器网关接口）则是Python语言中所定义的Web服务器和Web应用程序或框架之间的通用接口标准。</p>
+<p>WSGI，顾名思义就是Web服务器网关接口。所有客户端访问Web服务，都需要经过该网关接口进行转发。而Web应用的本质就是客户端发送一个HTTP的请求，服务器收到请求生成一个HTML文档，服务器将该HTML文档作为HTTP响应的Body发送给客户端，客户端从HTTP响应的Body体中提取内容并显示出来。像这类生成HTML，接受HTTP请求、解析HTTP请求、发送HTTP响应等代码如果由我们自己来写，则需要耗费大量的时间和精力。正确的做法是底层代码由专门的服务器软件实现，需要一个统一的接口，让程序员专心编写业务层面的代码，这个接口就是WSGI。</p>
+<p><strong>WSGI有两方：服务器方和应用程序方</strong>，如下图所示：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a80e14195aa5944bab90.jpg" alt></p>
+<p><strong>1）服务器方：</strong>其调用应用程序，给应用程序提供环境信息和回调函数，这个回调函数用来将应用程序设置的HTTP Header和Status等信息传递给服务器方。</p>
+<p><strong>2）应用程序：</strong>用来生成返回的Header、Body和Status，以便返回给服务器方。</p>
+<p>从名称上看，WSGI是一个网关，作用就是在协议之间进行转换。换句话说，WSGI就是一座桥梁，桥梁的一端称为服务端或者网关端，另一端称为应用端或者框架端。当处理一个WSGI请求时，服务端为应用端提供上下文信息和一个回调函数，应用端处理完请求后，使用服务端所提供的回调函数返回相对应请求的响应。</p>
+<p>WSGI的服务方和应用程序之间还可以加入Middleware中间件，从服务端方面看，中间件就是一个WSGI应用；从应用端方面看，中间件则是一个WSGI服务器。这个中间件可以将客户端的HTTP请求，路由给不同的应用对象，然后将应用处理后的结果返回给客户端。如下图示，我们也可以将WSGI中间件理解为服务端和应用端交互的一层包装，经过不同中间件的包装，便具有不同的功能，比如URL路由分发，再比如权限认证。这些不同中间件的组合便形成了WSGI的框架，比如Paste。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a81b14195aa5944bb584.jpg" alt></p>
+<p>OpenStack使用Paste的Deploy组件（<a href="http://pythonpaste.org/deploy/）来完成WSGI服务器和应用的构建，每个项目源码的etc目录下都有一个Paste配置文件，比如Nova中的etc/nova/api-paste.ini，部署时，这些配置文件会被复制到系统/etc/" target="_blank" rel="noopener">http://pythonpaste.org/deploy/）来完成WSGI服务器和应用的构建，每个项目源码的etc目录下都有一个Paste配置文件，比如Nova中的etc/nova/api-paste.ini，部署时，这些配置文件会被复制到系统/etc/</a><project>/目录下。Paste Deploy的工作便是基于这些配置文件。除了Routes与Paste Deploy外，OpenStack中另一个与WSGI密切相关的是WebOb（<a href="http://webob.org/）。WebOb通过对WSGI的请求与响应进行封装，来简化WSGI应用的编写。" target="_blank" rel="noopener">http://webob.org/）。WebOb通过对WSGI的请求与响应进行封装，来简化WSGI应用的编写。</a></project></p>
+<p>WebOb中两个最重要的对象，<strong>一是webob.Request</strong>，对WSGI请求的environ参数进行封装；<strong>一是webob.Response</strong>，包含了标准WSGI响应的所有要素。此外，还有<strong>一个webob.exc对象</strong>，针对HTTP错误代码进行封装。除了这3个对象，<strong>WebOb提供了一个修饰符（decorator），即webob.dec.wsgify</strong>，以便可以不使用原始的WSGI参数和返回格式，而全部使用WebOb替代。</p>
+<p>除了Paste提供的WSGI框架外，为了解决Paste组合框架的Restful API代码过于臃肿，导致项目的可维护性变差的弊端。一些OpenStack的新项目选了Pecan框架来实现Restful API。Pecan是一个轻量级的WSGI网络框架，其设计并不想解决Web世界的所有问题，而是主要集中在对象路由和Restful支持上，并不提供对话（session）和数据库支持，用户可以自由选择其他模块与之组合。</p>
+<h2 id="Horizon服务的实操体验"><a href="#Horizon服务的实操体验" class="headerlink" title="Horizon服务的实操体验"></a><strong>Horizon服务的实操体验</strong></h2><p><strong>Step1：</strong>使用浏览器登录OpenStack Dashboard：<a href="http://rocky-controller/dashboard/，输入**域名，用户名**和**密码**，单击“Sign" target="_blank" rel="noopener">http://rocky-controller/dashboard/，输入**域名，用户名**和**密码**，单击“Sign</a> In”，进入管理员视图Overview主界面。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a83014195aa5944bc59e.jpg" alt></p>
+<p><strong>Step2</strong>：登录成功后，默认进入项目概览页面，如下：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a83e14195aa5944bd002.jpg" alt></p>
+<p>后面，将以发放一个简单的cirros虚拟机实例为例，来帮助大家快速熟悉OpenStack Dashboard的基本操作界面。</p>
+<p>首先，要创建一个虚拟机VM实例，需要完成虚拟机规格的定义，在左侧导航栏，选择“Admin &gt; Compute &gt; Flavors”，进入规格列表，单击页面右上角的“Create Flavor”。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a85214195aa5944be04f.jpg" alt></p>
+<p>弹出创建规格对话框，输入如下信息：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a86214195aa5944bede0.jpg" alt></p>
+<p>然后，需要创建虚拟机VM实例挂载的网络信息，其本质上就是创建虚拟机的虚拟网卡（后面Neutron部分会讲）。在左侧导航栏，选择“Admin &gt; Network &gt; Networks”，进入网络列表，单击页面右上角的“Create Network”。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a87114195aa5944bf7ca.jpg" alt></p>
+<p>在Network标签页面，填入如下信息，然后点击Next。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a88014195aa5944c0259.jpg" alt></p>
+<p>在Subnet标签页，填写如下信息，然后点击Next。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a88e14195aa5944c0be4.jpg" alt></p>
+<p>在Subnet Details页面，填写如下信息，然后点击Create按钮。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a8a314195aa5944c1a65.jpg" alt></p>
+<p>由于虚拟机VM实例所需要的镜像cirros在安装Glance服务时已经完成上传，因此完成上述虚拟机VM实例所需的最小资源配置后，下面就可以通过页面拉起一个虚拟机VM实例。</p>
+<p><strong>Step1：</strong>在左侧导航栏，选择“Project &gt; Compute &gt; Instances”，进入虚拟机实例列表，单击页面右上角的“Launch Instance”。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a8b214195aa5944c242a.jpg" alt></p>
+<p><strong>Step2</strong>：弹出发放实例对话框，在“Details”页签，输入虚拟机实例的名称“Web_Srv01”，其他保持默认，单击“Next”。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a8c214195aa5944c303b.jpg" alt></p>
+<p><strong>Step3</strong>：在“Source”页签，“Create New Volume”下方选择“No”，单击“Available” 下方列表中cirros镜像（环境安装完成后，系统默认创建的测试镜像）的上传箭头，“Allocated”下方列表中将显示选择的镜像，其他保持默认，单击“Next”。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a8d314195aa5944c3de3.jpg" alt></p>
+<p><strong>Step4：</strong>在“Flavor”页签，单击“Available”下方列表中刚刚创建的规格“Flavor_web”的上传箭头 ，“Allocated”下方列表中将显示选择的规格，单击“Launch Instance”，完成虚拟机实例的创建。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a8e114195aa5944c4ace.jpg" alt></p>
+<p><strong>Step5：</strong>返回虚拟机实例列表，查看创建的虚拟机实例的状态，等待状态变为“Active”，表示虚拟机VM实例启动成功。</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a8f014195aa5944c57bb.jpg" alt></p>
+<p><strong>Step6：</strong>单击虚拟机实例名称“Web_Srv01”，进入虚拟机实例概览页面，可查看虚拟机实例的详细信息，如下所示：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a90014195aa5944c6383.jpg" alt></p>
+<p><strong>Step7：</strong>单击“Console”页签，可进入虚拟机实例的终端页面，如下所示：</p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a90f14195aa5944c6e6e.jpg" alt></p>
+<p>以上，就是通过Horizon服务利用Web页面可视化创建一个虚拟机VM实例的全过程。通过上图中Interface页签，log页签还可以查看虚拟机VM实例的网卡信息及操作日志。同时，Horizon页面不仅用来创建虚机，还可以创建Domain、Project、User、UserGroup、Network、Glance、Volume等资源，在后续各服务的实操环节会有展示。</p>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a><strong>思考</strong></h2><p><strong>1、注销admin用户，通过普通用户登录后，观察Project的Overview视图与admin用户下的Overview视图的区别，并分析之间产生差异的原因？</strong></p>
+<p><strong>2、尝试通过命令行CLI的方式完成上述虚拟机VM实例创建的操作。**</strong>（提示：命令行的用法可以通过openstack &lt;资源类型名&gt; &lt;动作&gt; –help方式查看帮助获得，比如：虚机资源类型名为server，网络资源类型名为network，子网资源类型名为subnet，镜像资源类型名为image，规格资源类型名为flavor等等）**</p>
+<p><strong>3、如果在创建虚拟机VM实例的过程中，选择镜像时要求创建卷，那么所创建的VM实例的系统盘由哪个服务创建？</strong></p>
 
       
     </div>
@@ -657,7 +685,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="https://kkutysllb.cn/2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/" title="2020-03-03-中间件分布式缓存Memcache和Redis">https://kkutysllb.cn/2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/</a>
+    <a href="https://kkutysllb.cn/2020/03/03/Web-UI管理服务Horizon/" title="Web UI管理服务Horizon">https://kkutysllb.cn/2020/03/03/Web-UI管理服务Horizon/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -683,8 +711,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/" rel="next" title="2020-03-02-中间件消息队列服务RabbitMQ">
-                <i class="fa fa-chevron-left"></i> 2020-03-02-中间件消息队列服务RabbitMQ
+              <a href="/2020/03/03/中间件分布式缓存Memcache和Redis/" rel="next" title="中间件分布式缓存Memcache和Redis">
+                <i class="fa fa-chevron-left"></i> 中间件分布式缓存Memcache和Redis
               </a>
             
           </div>
@@ -693,8 +721,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/03/03/2020-03-03-Web-UI管理服务Horizon/" rel="prev" title="2020-03-03-Web UI管理服务Horizon">
-                2020-03-03-Web UI管理服务Horizon <i class="fa fa-chevron-right"></i>
+              <a href="/2020/03/03/认证管理服务Keystone/" rel="prev" title="认证管理服务Keystone">
+                认证管理服务Keystone <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -931,7 +959,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Memcache分布式缓存"><span class="nav-number">2.</span> <span class="nav-text">Memcache分布式缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis分布式缓存"><span class="nav-number">3.</span> <span class="nav-text">Redis分布式缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-Cluster集群技术"><span class="nav-number">4.</span> <span class="nav-text">Redis Cluster集群技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis在OpenStack中的应用"><span class="nav-number">5.</span> <span class="nav-text">Redis在OpenStack中的应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考："><span class="nav-number">6.</span> <span class="nav-text">思考：</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#REST-ful与WSGI介绍"><span class="nav-number">2.</span> <span class="nav-text">REST ful与WSGI介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Horizon服务的实操体验"><span class="nav-number">3.</span> <span class="nav-text">Horizon服务的实操体验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考"><span class="nav-number">4.</span> <span class="nav-text">思考</span></a></li></ol></div>
             
 
           </div>
@@ -1127,7 +1155,7 @@
   
     <script>
   window.livereOptions = {
-    refer: '2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/'
+    refer: '2020/03/03/Web-UI管理服务Horizon/'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];

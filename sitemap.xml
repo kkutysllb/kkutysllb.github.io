@@ -2,6 +2,90 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://kkutysllb.cn/2020/03/03/%E8%B5%84%E6%BA%90%E7%BC%96%E6%8E%92%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Heat/</loc>
+    
+    <lastmod>2020-06-25T15:28:02.864Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://kkutysllb.cn/2020/03/03/%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Neutron/</loc>
+    
+    <lastmod>2020-06-25T15:20:31.462Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://kkutysllb.cn/2020/03/03/%E8%AE%A4%E8%AF%81%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Keystone/</loc>
+    
+    <lastmod>2020-06-25T14:54:34.528Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://kkutysllb.cn/2020/03/03/%E5%9D%97%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Cinder/</loc>
+    
+    <lastmod>2020-06-25T14:40:51.215Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://kkutysllb.cn/2020/03/03/%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Glance/</loc>
+    
+    <lastmod>2020-06-25T14:28:09.967Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://kkutysllb.cn/2020/03/03/%E8%AE%A1%E7%AE%97%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Nova/</loc>
+    
+    <lastmod>2020-06-25T14:19:21.158Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://kkutysllb.cn/2020/03/03/%E8%AE%A1%E9%87%8F%E5%92%8C%E7%9B%91%E6%8E%A7%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Telemetry/</loc>
+    
+    <lastmod>2020-06-25T14:00:40.324Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://kkutysllb.cn/2020/03/03/%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Swift/</loc>
+    
+    <lastmod>2020-06-25T13:54:53.430Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://kkutysllb.cn/2020/03/03/%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98Memcache%E5%92%8CRedis/</loc>
+    
+    <lastmod>2020-06-25T13:42:52.297Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://kkutysllb.cn/2020/03/03/Web-UI%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Horizon/</loc>
+    
+    <lastmod>2020-06-25T13:39:38.251Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://kkutysllb.cn/2020/03/02/%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%9C%8D%E5%8A%A1RabbitMQ/</loc>
+    
+    <lastmod>2020-06-25T13:33:16.698Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://kkutysllb.cn/2020/06/25/OpenStack-Rocky%E7%89%88%E6%9C%AC%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2%EF%BC%88%E5%90%AB%E5%BC%80%E6%BA%90NFV%EF%BC%89/</loc>
+    
+    <lastmod>2020-06-25T13:23:24.839Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://kkutysllb.cn/2020/03/01/OpenStack%E6%A6%82%E8%BF%B0/</loc>
     
     <lastmod>2020-06-25T13:14:30.736Z</lastmod>
@@ -432,90 +516,6 @@
     <loc>https://kkutysllb.cn/2018/08/31/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BC%80%E5%A7%8B%E5%86%99%E5%8D%9A%E5%AE%A2%EF%BC%9F/</loc>
     
     <lastmod>2020-06-25T10:51:54.158Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://kkutysllb.cn/2020/03/01/2020-03-01-CentOS-7%E6%89%8B%E5%8A%A8%E9%83%A8%E7%BD%B2Openstack-Rocky%E7%89%88%E6%9C%AC%E7%AC%94%E8%AE%B0%EF%BC%88%E5%90%AB%E5%BC%80%E6%BA%90NFVO-VNFM%EF%BC%89/</loc>
-    
-    <lastmod>2020-06-25T05:08:24.372Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://kkutysllb.cn/2020/03/03/2020-03-03-%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98Memcache%E5%92%8CRedis/</loc>
-    
-    <lastmod>2020-03-04T00:53:06.366Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://kkutysllb.cn/2020/03/03/2020-03-03-%E8%AE%A1%E9%87%8F%E5%92%8C%E7%9B%91%E6%8E%A7%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Telemetry/</loc>
-    
-    <lastmod>2020-03-03T15:22:31.153Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://kkutysllb.cn/2020/03/03/2020-03-03-%E8%B5%84%E6%BA%90%E7%BC%96%E6%8E%92%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Heat/</loc>
-    
-    <lastmod>2020-03-03T15:13:50.959Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://kkutysllb.cn/2020/03/03/2020-03-03-%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Swift/</loc>
-    
-    <lastmod>2020-03-03T15:00:09.786Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://kkutysllb.cn/2020/03/03/2020-03-03-%E5%9D%97%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Cinder/</loc>
-    
-    <lastmod>2020-03-03T14:32:51.302Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://kkutysllb.cn/2020/03/03/2020-03-03-%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Neutron/</loc>
-    
-    <lastmod>2020-03-03T13:20:07.189Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://kkutysllb.cn/2020/03/03/2020-03-03-%E8%AE%A1%E7%AE%97%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Nova/</loc>
-    
-    <lastmod>2020-03-03T12:39:21.314Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://kkutysllb.cn/2020/03/03/2020-03-03-%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Glance/</loc>
-    
-    <lastmod>2020-03-03T10:31:46.977Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://kkutysllb.cn/2020/03/03/2020-03-03-%E8%AE%A4%E8%AF%81%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Keystone/</loc>
-    
-    <lastmod>2020-03-03T09:49:25.913Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://kkutysllb.cn/2020/03/03/2020-03-03-Web-UI%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1Horizon/</loc>
-    
-    <lastmod>2020-03-03T09:23:50.219Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://kkutysllb.cn/2020/03/02/2020-03-02-%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%9C%8D%E5%8A%A1RabbitMQ/</loc>
-    
-    <lastmod>2020-03-01T16:17:30.646Z</lastmod>
     
   </url>
   

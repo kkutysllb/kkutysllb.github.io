@@ -106,42 +106,42 @@
   <meta name="description" content="概述OpenStack是由Nova、Neutron、Cinder等多个组件构成的开源云计算项目，各组件之间通过REST接口进相互通信和彼此调用，而组件之间的REST接口调用，是建立在基于高级消息队列协议（AdvancedMessageQueueProtocol，AMQP）上的RPC通信。在OpenStack中，AMQP Broker（可以是Qpid Broker，也可以是RabbitMQ Brok">
 <meta name="keywords" content="云计算">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2020-03-02-中间件消息队列服务RabbitMQ">
-<meta property="og:url" content="https://kkutysllb.cn/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/index.html">
+<meta property="og:title" content="中间件消息队列服务RabbitMQ">
+<meta property="og:url" content="https://kkutysllb.cn/2020/03/02/中间件消息队列服务RabbitMQ/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
 <meta property="og:description" content="概述OpenStack是由Nova、Neutron、Cinder等多个组件构成的开源云计算项目，各组件之间通过REST接口进相互通信和彼此调用，而组件之间的REST接口调用，是建立在基于高级消息队列协议（AdvancedMessageQueueProtocol，AMQP）上的RPC通信。在OpenStack中，AMQP Broker（可以是Qpid Broker，也可以是RabbitMQ Brok">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/TuHomnveYICk.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/q4PhV0IJedYz.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/1uuidxvSy3jq.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/4z0qQ8QJccq4.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/Pqx1RBsCsYSp.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/qMugcYjPeKea.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/0AXlMvj7dBGY.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/yytpQMWeUkwI.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/7ow5j9p9PiR4.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/EVkykmoPYWIo.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/LYkO22AfsQ44.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/jnWdoCzbWgmb.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/mVnY7x0BhLyH.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/3HwQgizFzOvp.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/a7xWk1oPueHW.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/mpLKS1WWfFGx.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/wzW0sa1k7WLY.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/M2Vi3cVazt3P.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/3LjtqFXRA15d.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/msBLuPrWthUp.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/kO64BRmCx1Jl.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/93uRXP3iJU9g.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/3m8oOBIBqHYn.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/Ctn9zT4qKQOw.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/jfG7pegVyang.png?imageslim">
-<meta property="og:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/l9FoAwNFS8Pg.png?imageslim">
-<meta property="og:updated_time" content="2020-03-01T16:17:30.646Z">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a5ab14195aa59449ce6a.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a5c514195aa59449e0c3.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a5d814195aa59449ed80.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a5ec14195aa59449fa95.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a60014195aa5944a0975.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a61114195aa5944a1849.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a62314195aa5944a25e0.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a64a14195aa5944a45ee.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a65914195aa5944a5283.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a66c14195aa5944a605a.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a67c14195aa5944a6d87.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a68e14195aa5944a7aae.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a69c14195aa5944a86d5.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a6ae14195aa5944a951d.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a6bb14195aa5944a9f6b.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a6c814195aa5944aab11.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a6d514195aa5944ab922.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a6e314195aa5944ac59e.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a6f514195aa5944ad2c4.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a70214195aa5944ade22.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a71414195aa5944aeb87.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a72014195aa5944af5cc.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a74314195aa5944b0fa1.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a75914195aa5944b1f7b.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a76d14195aa5944b2fbd.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/5ef4a77914195aa5944b390c.jpg">
+<meta property="og:updated_time" content="2020-06-25T13:33:16.698Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2020-03-02-中间件消息队列服务RabbitMQ">
+<meta name="twitter:title" content="中间件消息队列服务RabbitMQ">
 <meta name="twitter:description" content="概述OpenStack是由Nova、Neutron、Cinder等多个组件构成的开源云计算项目，各组件之间通过REST接口进相互通信和彼此调用，而组件之间的REST接口调用，是建立在基于高级消息队列协议（AdvancedMessageQueueProtocol，AMQP）上的RPC通信。在OpenStack中，AMQP Broker（可以是Qpid Broker，也可以是RabbitMQ Brok">
-<meta name="twitter:image" content="http://q6icfngd4.bkt.clouddn.com/blog/20200302/TuHomnveYICk.png?imageslim">
+<meta name="twitter:image" content="https://pic.imgdb.cn/item/5ef4a5ab14195aa59449ce6a.jpg">
 
 
 
@@ -150,7 +150,7 @@
 
 
 
-  <link rel="canonical" href="https://kkutysllb.cn/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/">
+  <link rel="canonical" href="https://kkutysllb.cn/2020/03/02/中间件消息队列服务RabbitMQ/">
 
 
 
@@ -160,7 +160,7 @@
   };
 </script>
 
-  <title>2020-03-02-中间件消息队列服务RabbitMQ | 一花一菩提，一云一世界</title>
+  <title>中间件消息队列服务RabbitMQ | 一花一菩提，一云一世界</title>
   
 
 
@@ -419,7 +419,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/03/02/中间件消息队列服务RabbitMQ/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kkutysllb">
@@ -436,7 +436,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2020-03-02-中间件消息队列服务RabbitMQ
+          <h1 class="post-title" itemprop="name headline">中间件消息队列服务RabbitMQ
 
               
             
@@ -462,12 +462,24 @@
                 
               
 
-              <time title="创建时间：2020-03-02 00:02:05 / 修改时间：00:17:30" itemprop="dateCreated datePublished" datetime="2020-03-02T00:02:05+08:00">2020-03-02</time>
+              <time title="创建时间：2020-03-02 00:02:05" itemprop="dateCreated datePublished" datetime="2020-03-02T00:02:05+08:00">2020-03-02</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-06-25 21:33:16" itemprop="dateModified" datetime="2020-06-25T21:33:16+08:00">2020-06-25</time>
               
             
           </span>
@@ -566,16 +578,16 @@
 <h2 id="RabbitMQ中的基本概念"><a href="#RabbitMQ中的基本概念" class="headerlink" title="RabbitMQ中的基本概念"></a><strong>RabbitMQ中的基本概念</strong></h2><p>RabbitMQ用Erlang语言开发，是AMQP的开源实现。在RabbitMQ的部署使用和故障排除过程中，将会接触到很多RabbitMQ的基础概念，了解和掌握这些概念，是使用RabbitMQ为集群系统提供消息服务的基础。</p>
 <h3 id="Connection和Channel"><a href="#Connection和Channel" class="headerlink" title="Connection和Channel"></a><strong>Connection和Channel</strong></h3><p><strong>ConnectionFactory、Connection和Channel都是RabbitMQ对外提供的API中最基本的对象。</strong>Connection是RabbitMQ的Socket连接，本质上是一个TCP协议连接，消息的生产者Producer和消费者Consumer都通过Connection建立的TCP链接连接到RabbitMQ Server，因此RabbitMQ服务启动时的初始化过程就是创建一个Connection的连接，而ConnnectionFactory是Connection对象的工厂函数，用来初始化Connection对象。Channel是客户端与RabbitMQ交互消息最重要的一个接口，客户端大部分的业务操作是在Channel这个API接口中完成的，包括定义Queue和Exchange、绑定Queue与Exchange、发布消息等操作。Channel本质上是一个虚拟连接，它建立在TCP连接中，数据流动都是在Channel中进行，通常，程序启动后首先建立TCP连接，接着就是建立Channel对象。RabbitMQ使用Channel而不直接使用TCP，就是因为TCP的建立和拆除系统开销过大，容易引起消息队列系统瓶颈。</p>
 <h3 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a><strong>Queue</strong></h3><p>Queue是RabbitMQ的内部对象，用于存储消息，Queue可以看成是存储消息的容器。消息的生产者与消费者之间可以是一对多或者多对多的关系，即多个消费者可以订阅同一个Queue，这时，<strong>Queue中的消息会被平均分摊给多个消费者进行处理，而不是每个消费者都收到所有的消息并处理</strong>。如下图所示：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/TuHomnveYICk.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a5ab14195aa59449ce6a.jpg" alt></p>
 <h3 id="Message-Acknowledgment"><a href="#Message-Acknowledgment" class="headerlink" title="Message Acknowledgment"></a><strong>Message Acknowledgment</strong></h3><p>RabbitMQ会要求消费者在处理完消息后发送一个回执应答给RabbitMQ Broker，RabbitMQ收到消息回执（Message-Acknowledgment）后才将该消息从Queue中移除。如果RabbitMQ没有收到回执并检测到消费者与RabbitMQ Broker的连接断开，则RabbitMQ会将该消息发送给其他消费者（如果存在多个消费者）继续处理。<strong>RabbitMQ的消息处理过程中并不存在Timeout的概念</strong>，即一个消费者处理消息所花的时间再长，只要其连接还存在，RabbitMQ就不会将该消息发送给其他消费者。这种情况会产生另外一个问题，如果开发人员在处理完业务逻辑后，忘记发送回执给RabbitMQ，这将会导致Queue中堆积的消息越来越多，而消费者重新连接到RabbitMQ后会重复消费这些消息并重复执行业务逻辑。因此，<strong>在处理完业务逻辑后一定要向RabbitMQ发送应答回执，否则会造成应用系统存在重大BUG</strong>。</p>
 <h3 id="Message-Durability"><a href="#Message-Durability" class="headerlink" title="Message Durability"></a><strong>Message Durability</strong></h3><p>如果希望即使在RabbitMQ服务重启的情况下，消息也不会丢失，则可以<strong>将Queue与Message均做持久化设置，即MessageDurability</strong>，这样便可保证绝大部分情况下RabbitMQ的消息不会丢失。但是，消息持久化方法依然解决不了小概率丢失消息事件的发生，如RabbitMQ服务器已经接收到生产者的消息，但还没来得及持久化该消息时RabbitMQ服务器就断电了，如果需要解决这种小概率事件下的消息丢失情况，那么就要用到事务RabbitMQ的高级功能或者将RabbitMQ部署为高可用集群。</p>
 <h3 id="Prefetch-Count"><a href="#Prefetch-Count" class="headerlink" title="Prefetch Count"></a><strong>Prefetch Count</strong></h3><p>如果有多个消费者同时订阅同一个Queue中的消息，Queue中的消息会被平分给多个消费者。这时如果每个消费者处理消息的时间不同，就有可能会导致某些消费者一直处于繁忙状态，而另外一些消费者因为处理能力较强而很快就处理完并一直处于空闲状态。要解决这一情况以提高整个消息系统的消息处理效率，可以设置预获取数目（PrefetchCount）来限制Queue每次发送给某个消费者的消息数，默认PrefetchCount=1，则Queue每次给每个消费者发送一条消息，消费者处理完这条消息后Queue会再给该消费者发送下一条消息。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/q4PhV0IJedYz.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a5c514195aa59449e0c3.jpg" alt></p>
 <h3 id="Exchange"><a href="#Exchange" class="headerlink" title="Exchange"></a><strong>Exchange</strong></h3><p>消息投递过程实际上是生产者将消息发送到Exchange，由Exchange将符合转发规则的消息路由到一个或多个Queue中，而将不符合规则的消息直接丢弃。从功能实现上来看，Exchange的功能就像一个路由器，符合路由规则的数据则转发到对应的目标地址，其他数据则被拒绝或者丢弃。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/1uuidxvSy3jq.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a5d814195aa59449ed80.jpg" alt></p>
 <h3 id="Routing-Key"><a href="#Routing-Key" class="headerlink" title="Routing Key"></a><strong>Routing Key</strong></h3><p>RoutingKey定义了消息的路由规则，但是，RoutingKey需要与ExchangeType和BindingKey共同使用才能最终决定消息投递到哪个队列中。在实际使用中，ExchangeType与BindingKey通常为预先设定值，而消息生产者在发送消息给Exchange时，需为消息设定相应的RoutingKey，便可决定消息应该投递到哪个Queue。通常，<strong>RabbitMQ为RoutingKey设定的长度限制为255字节。</strong></p>
 <h3 id="Binding和BindingKey"><a href="#Binding和BindingKey" class="headerlink" title="Binding和BindingKey"></a><strong>Binding和BindingKey</strong></h3><p>Binding是RabbitMQ中将Exchange与Queue关联起来的操作，绑定的过程需要用到消息的RoutingKey和绑定自身的BindingKey。BindingKey代表了Queue与Exchange之间的对应关系。消息生产者将消息发送给Exchange时，通常会给消息指定一个RoutingKey。在Exchange中，如果BindingKey与RoutingKey相匹配，则带有该RoutingKey的消息将会被路由到BindingKey所对应的Queue中，即实现了消息到特定队列的投递过程。但是，消息到队列的投递另一个决定因素就是Exchange Type，投递过程会因Exchange Type的不同而有所不同。根据Exchange Type类型不同，在绑定多个Queue到同一个Exchange的时候，Binding操作允许使用相同的BindingKey，也可以不使用BindingKey。比如：在Fanout类型的Exchange中，绑定操作就不会用到BindingKey，而是将消息路由到所有绑定到该Exchange的Queue中。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/4z0qQ8QJccq4.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a5ec14195aa59449fa95.jpg" alt></p>
 <h3 id="Exchange-Type"><a href="#Exchange-Type" class="headerlink" title="Exchange Type"></a><strong>Exchange Type</strong></h3><p>RabbitMQ使用不同的交换器类型来将不同的消息投递到特定的队列中，不同类型的交换器使用不同的方式进行消息投递，常用的ExchangeType有<strong>Fanout、Direct、Topic</strong>和<strong>Headers</strong>四种。</p>
 <ul>
 <li><strong>Fanout类型：</strong>会把所有发送到该Exchange的消息直接投递到所有与它绑定的Queue中，其功能就像路由交换中的广播，主要作用就是将多个Queue绑定到同一个Exchange中，从而实现消息生产者与队列之间一对多的对应关系。在Fanout类型的Exchange中，消息到队列的投递过程并不依赖消息的RoutingKey和Binding的BindingKey，Exchange仅起到消息传递的作用。</li>
@@ -589,16 +601,16 @@
 </ol>
 </li>
 </ul>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/Pqx1RBsCsYSp.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a60014195aa5944a0975.jpg" alt></p>
 <p>如上图所示，RoutingKey为“quick.orange.rabbit”的消息会被Exchange同时路由到Q1与Q2队列，因为根据BindingKey的匹配规则，Q1与Q2的BindingKey均与此RoutingKey匹配。RoutingKey为“lazy.brown.fox”的消息只会被路由到Q2队列，因为BindingKey中的“#”字符匹配零个或多个单词，只有Q2中的BindingKey匹配此消息的RoutingKey。同样，根据匹配规则，RoutingKey为“lazy.orange.fox”的消息只会被路由到Q1队列。RoutingKey为“lazy.pink.rabbit”的消息尽管与Q2的两个BindingKey都匹配，但是此消息只会投递给Q2一次。当消息的RoutingKey为“quick.brown.fox”、“orange”或“quick.orange.male.rabbit”时，由于没有任何匹配的BindingKey规则，这些消息将会被Exchange丢弃。</p>
 <p><strong>Topic是一种推送-订阅（Pub-Sub，Publish-Subscribe）模式的模糊路由匹配，由于Topic类型的Exchange具有灵活自动的匹配模式，其在OpenStack的应用场景中是使用最多的Exchange类型。</strong></p>
 <ul>
 <li><strong>Headers类型：</strong>Headers类型的Exchange不依赖于RoutingKey和BindingKey的匹配规则来路由消息，而是根据消息内容中的Headers属性来进行Queue选择。在Headers类型的Exchange中，在绑定Queue与Exchange时通常会设定一组Key-Value键值对，而当消息发送到Exchange时，RabbitMQ会提取此消息的Headers值（其值也是一个Key-Value键值对），并对比其中的键值对是否完全匹配Queue与Exchange绑定时设定的键值对，如果完全匹配则消息会路由到该Queue，否则不会路由到该Queue。该类型交换机并不常见。</li>
 </ul>
 <h3 id="Remote-Procedure-Call"><a href="#Remote-Procedure-Call" class="headerlink" title="Remote Procedure Call"></a><strong>Remote Procedure Call</strong></h3><p>在实际的应用场景中，用户很可能需要进行某些同步处理，因此需要同步等待客户端将用户发送的消息处理完成后再进行下一步处理，而这相当于远程过程调用（RPC，Remote Procedure Call），RabbitMQ也支持远程过程调用RPC。<strong>RabbitMQ中实现RPC的机制为：</strong>消息生产者在发送消息时，在消息的属性（AMQP协议中定义了14种消息属性，这些属性会随着消息一起发送）中设置两个值，分别为<strong>ReplyTo</strong>和<strong>CorrelationId</strong>。其中，ReplyTo的值是一个Queue名称，用于告诉消息的消费客户端消息处理完成后将应答消息发送到指定的这个Queue中，CorrelationId表示此次请求的标识号，客户端处理完成后需要将此属性一并返还，消息发送端将根据返回值中的这个id值来判断执行成功或失败的是已经发送出去的那条消息。消息接收客户端收到消息并处理，处理完消息后，将会生成一条应答消息到ReplyTo指定的Queue，同时带上CorrelationId属性，消息发送端之前已订阅了ReplyTo指定的Queue，因此可以从中接收客户端的应答消息，并根据其中的CorrelationId属性分析哪条请求已经被执行，然后根据执行结果进行后续的业务处理。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/qMugcYjPeKea.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a61114195aa5944a1849.jpg" alt></p>
 <h2 id="RabbitMQ的工作原理和集群配置"><a href="#RabbitMQ的工作原理和集群配置" class="headerlink" title="RabbitMQ的工作原理和集群配置"></a><strong>RabbitMQ的工作原理和集群配置</strong></h2><p>RabbitMQ是AMQP的一个开源实现，其主要作用是在分布式集群中进行功能组件之间的异步消息传递，简单的描述就是消息生产者将带有RoutingKey的消息发送至交换器Exchange，Exchange使用BindingKey与Queue进行绑定，然后Exchange将RoutingKey与BindingKey进行匹配对比，并将匹配的消息投递至对应的Queue中。如下图所示：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/0AXlMvj7dBGY.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a62314195aa5944a25e0.jpg" alt></p>
 <p>1）客户端连接至消息队列服务器Broker，在TCP连接中建立一个虚拟Channel。</p>
 <p>2）客户端声明一个Exchange，并设置相关属性。</p>
 <p>3）客户端声明一个Queue，并设置相关属性。</p>
@@ -634,11 +646,11 @@
 <p>从RabbitMQ3.6开始，RabbitMQ新增了ha-sync-batch-size参数，使得显式的队列同步在速度上有了极大提升，显示队列同步可以有两种实现方式，即<strong>手工同步</strong>和<strong>自动同步</strong>。如果队列被配置为自动同步，则不论新的Slave节点何时加入集群，集群中的队列都会被自动同步到新增的Slave节点。但是，同步过程中的消息队列相应地会变迟钝，这种响应变慢的过程会一直持续到队列同步完成为止。队列自动同步的设置很简单，只需在Policy的镜像设置中指定ha-sync-mode参数，使其值为automatic即可。<strong>ha-sync-mode</strong>参数允许的值是manual和automatic，如果不显式指定automatic，则其值默认为manual。同时，默认情况下，队列在镜像时对消息进行逐条同步，而在RabbitMQ3.6之后，新增了批量同步参数<strong>ha-sync-batch-size</strong>，用户通过设置该参数的值，即可实现批量同步消息，默认值为1。</p>
 <p>RabbitMQ可以工作在<strong>Active/Passive</strong>或者<strong>Active/1active</strong>模式的集群中。当RabbitMQ集群运行在Active/Passive模式时，如果Active节点故障，则正常运行时由Active节点持久化写入磁盘中的消息队列可以被Passive节点恢复。当然，在Active/Passive模式下，如果Active节点的消息队列没有进行持久化操作，则Active节点故障后位于其上的消息就会丢失，尽管Passive节点可以重新提供消息服务，但是之前未被取走的消息却已无法恢复，因此Active/Passive模式下的消息队列必须进行持久化操作。Active/Passive模式的另一可能的问题是，当Active节点故障，并需要提升Passive节点为Active节点以恢复和接管消息时，RabbitMQ集群的消息服务可能会出现短暂中断。<strong>Active/1active高可用模式的本质是将RabbitMQ集群中的队列在集群节点上实现彼此镜像</strong>，在Active/1active模式下，集群中的某一RabbitMQ节点故障后，RabbitMQ服务会自动切换到其他节点，并使用该节点上的镜像队列继续提供消息服务，从而实现消息系统的服务高可用性。在部署OpenStack的高可用集群中，推荐部署的RabbitMQ高可用模式便是Active/1active高可用集群模式。</p>
 <h2 id="RabbitMQ在OpenStack中的应用分析"><a href="#RabbitMQ在OpenStack中的应用分析" class="headerlink" title="RabbitMQ在OpenStack中的应用分析"></a><strong>RabbitMQ在OpenStack中的应用分析</strong></h2><p>在实际应用中，RabbitMQ Broker位于OpenStack的任意两个组件之间，OpenStack的任意两个组件通过RabbitMQ Broker进行松耦合通信。更准确地说，OpenStack的各个组件之间通过远程过程调用RPC来实现彼此的通信，并且组件间的RPC消息传递是基于RabbitMQ的推送-订阅（Publish/Subscribe）模式实现的。OpenStack在消息传递过程中使用到的交换器Exchange的类型主要是Direct、Fanout和Topic类型。OpenStack组件之间关系示意如下图所示：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/yytpQMWeUkwI.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a64a14195aa5944a45ee.jpg" alt></p>
 <p>在OpenStack中，默认使用kombu（一种实现了AMQP协议的Python函数库）连接到RabbitMQ服务器，因为消息的收发者都需要一个连接到RabbitMQ服务器的Connetion对象。以nova为例，在Nova的各个连接到RabbitMQ Broker的组件中，其中某个组件可能是消息的发送者Publisher，如Nova-api和Nova-scheduler，也可能是消息的接收者Consumer，如Nova-compute和Nova-network（现已被Neutron代替，但是不影响我们理解AMQP交互）。此外，某个组件在不同的时刻既可以是Publisher，也可以是Consumer。组件发送消息有两种方式，即<strong>同步调用（RPC.CALL）</strong>和<strong>异步调用（RPC.CAST）</strong>，当Nova发起RPC.CALL调用的时候，Nova-api充当的就是消息的Consumer，否则是消息的Publisher。</p>
 <p>在启动Nova的服务时，初始化函数会创建两个队列，其中的一个队列用于接收<strong>RoutingKey格式为“NODE-TYPE.NODE-ID”</strong>的消息，如compute.node1，其中的compute表示该节点为计算节点；另一个队列用于接收R<strong>outingKey格式为”NODE-TYPE”格式的消息</strong>，如compute。比如当Nova的客户端发送“nova stop instance_name”命令到Nova-api时，Nova-api就会将此命令以消息形式投递到第一种队列中（具体消息的路由投递由Exchange操作），从而通过RoutingKey中的NODE-ID（节点主机名）找到目标计算节点，并将命令转发到此Hypervisor主机上以进行实例的停止操作。</p>
 <p>在实际应用中，Nova的各个功能模块根据其逻辑功能可以划分为两类，即<strong>Invoker组件</strong>和<strong>Worker组件</strong>。其中Invoker组件的主要功能是向消息队列中发送系统请求消息，如Nova-api和Nova-Scheduler通常属于Invoker；而Worker模块则负责从消息队列中提取Invoker模块发送的消息并向其返回应答消息，如Nova-Compute和Nova-Network通常属于Worker。<strong>Invoker通过RPC.CALL和RPC.CAST两个进程发送系统请求消息，然后Worker从消息队列中接收消息，并对RPC.CALL做出应答响应，</strong>如下图所示：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/7ow5j9p9PiR4.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a65914195aa5944a5283.jpg" alt></p>
 <ul>
 <li><strong>Topic Publisher：</strong>该对象在Nova中的组件发起RPC.CALL调用时创建，消息发送出去之后便结束，生命周期短暂，主要用于将消息发送到队列系统中，每个Topic Publisher都会连接到Topic类型的Exchange中。</li>
 <li><strong>Direct Consumer：</strong>该对象创建于RPC.CALL调用之后，专门用来接收RPC.CALL调用返回的应答消息，接收到应答消息后便结束。每个Direct Consumer连接到一个以msg_id为BindingKey的专有队列中，同时该队列绑定到一个只接收消息的RoutingKey为msg_id的交换器Exchange中，而这个消息的msg_id被封装在Topic Publisher发出的消息中，并且是由一个专门的UUID生成器所生成。</li>
@@ -648,13 +660,13 @@
 <p>以Nova客户端发出创建实例请求为例，实例的创建过程伴随着Nova组件之间的消息传递，Topic Publisher（Nova-api）会将消息发送至NODE-TYPE（这里节点类型为compute）的共享队列中，从而全部Topic Consumer（全部运行Nova-compute的节点）都可以提取到共享队列的消息。如果客户端发出的是针对已有实例的Update、Reboot、Stop和Start等操作，由于消息必须转发到拥有该实例的某个特定计算节点上，因此Topic Publisher（Nova-api）会将消息转发至NOTE-TYPE.HOST（compute.hostname）的专有队列中。</p>
 <p>在Openstack的Nova项目中，主要通过两种RPC调用来实现消息传递，即<strong>RPC.CALL和RPC.CAST</strong>。</p>
 <p><strong>1）RPC.CALL属于请求/响应类型的调用</strong>，当请求发送出去以后，需要等待执行结果的响应，这类调用需要指定执行请求的目标对象节点，并等待目标返回的执行结果。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/EVkykmoPYWIo.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a66c14195aa5944a605a.jpg" alt></p>
 <p>Step1：初始化一个TopicPublisher，用以将发送消息到RabbitMQ的消息队列。此外，在发送消息之前，需要初始化一个DirectConsumer并以msg_id作为Direct类型Exchange的名称，用于等待消息执行后的应答响应。</p>
 <p>Step2：请求消息被Exchange路由到NODE-TYPE.HOST消息队列，然后，订阅了此队列的相应服务节点（Nova中为compute节点）上的Topic-Consumer会从该队列中获取消息。</p>
 <p>Step3：TopicConsumer从队列中提取消息后，服务结点根据消息内容（调用函数及参数）调用相应函数完成消息请求处理，处理完成之后，DirectPublisher被初始化，并根据请求消息msg_id，将应答消息发送到相应的Exchange和消息队列中。</p>
 <p>Step4：应答消息被位于发起RPC.CALL调用方的DirectConsumer获取到，RPC.CALL调用过程完成。</p>
 <p><strong>2）RPC.CAST属于单向RPC请求</strong>，即只将请求发送出去，无须等待返回执行结果。因此，RPC.CAST调用不关心请求由哪个服务节点完成，只需将请求发送到消息队列即可，而接收消息的队列通常为共享队列，该队列中的消息可以被某一类型的多个节点（如Nova中的全部计算节点）接收。</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/LYkO22AfsQ44.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a67c14195aa5944a6d87.jpg" alt></p>
 <p>Step1：Invoker初始化TopicPublisher，并将消息发送到RabbitMQ消息服务器中。</p>
 <p>Step2：RabbitMQ的交换器将消息转发到NODE-TYPE类型的共享消息队列中，并被相应服务节点（Nova中为Compute节点）的TopicConsumer获取。</p>
 <p>Step3：TopicConsumer提取到订阅队列的消息后，Woker便开始处理消息请求，至此，RPC.CAST的过程已经完成，Invoker不会再等待Woker返回请求消息执行后的结果。</p>
@@ -662,32 +674,32 @@
 <p><strong>Step1：</strong> kvm-server01、kvm-server02、kvm-server03三个节点首先停止服务：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop rabbitmq-server.service</span><br></pre></td></tr></table></figure>
 <p><strong>Step2：</strong>将kvm-server01的erlang.cookie拷贝到kvm-server02和kvm-server03节点上：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/jnWdoCzbWgmb.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a68e14195aa5944a7aae.jpg" alt></p>
 <p><strong>Step3：</strong>重启三个节点的rabbitmq服务</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart rabbitmq-server.service</span><br></pre></td></tr></table></figure>
 <p><strong>Step4：</strong>待各个节点的RabbitMQ-server服务启动完成后，便创建了三个独立的RabbitMQ Broker，即每个节点是一个独立的RabbitMQ Broker，通过RabbitMQctl命令行工具可以验证各个节点的Broker的运行状态：</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/mVnY7x0BhLyH.png?imageslim" alt="mark"></p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/3HwQgizFzOvp.png?imageslim" alt="mark"></p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/a7xWk1oPueHW.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a69c14195aa5944a86d5.jpg" alt></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a6ae14195aa5944a951d.jpg" alt></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a6bb14195aa5944a9f6b.jpg" alt></p>
 <p><strong><em># 为了实现一个三节点的RabbitMQ集群，通常的做法是首先创建一个两节点的集群，然后再通过新增节点的形式扩展至三节点集群</em></strong></p>
 <p><strong>Step5</strong>：停止kvm-server02上的服务，完成如下操作，并观察节点的服务状态</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl stop_app</span><br><span class="line"></span><br><span class="line">rabbitmqctl join_cluster rabbit@kvm-server01</span><br><span class="line"></span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/mpLKS1WWfFGx.png?imageslim" alt="mark"></p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/wzW0sa1k7WLY.png?imageslim" alt="mark"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl stop_app</span><br><span class="line">rabbitmqctl join_cluster rabbit@kvm-server01</span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4a6c814195aa5944aab11.jpg" alt></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a6d514195aa5944ab922.jpg" alt></p>
 <p><strong>Step6</strong>：停止kvm-server03上的服务，完成如下操作，并观察节点的服务状态</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl stop_app</span><br><span class="line"></span><br><span class="line">rabbitmqctl join_cluster rabbit@kvm-server02</span><br><span class="line"></span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/M2Vi3cVazt3P.png?imageslim" alt="mark"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl stop_app</span><br><span class="line">rabbitmqctl join_cluster rabbit@kvm-server02</span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4a6e314195aa5944ac59e.jpg" alt></p>
 <p>至此，三节点的RabbitMQ集群创建完毕，如上图通过RabbitMQctl命令行工具在任何一个节点上均可验证RabbitMQ集群的运行状态，并且在正常情况下，在任一节点上所看到的集群状态应该是一致的。从节点的集群状态输出中可以看到，每个RabbitMQBroker节点都加入到了集群中，并且集群由三个节点组成，每个节点上都正在运行RabbitMQ服务，并且节点默认都是磁盘类型的节点。</p>
 <h3 id="集群节点的启停"><a href="#集群节点的启停" class="headerlink" title="集群节点的启停"></a>集群节点的启停</h3><p>在一个正在运行的RabbitMQ集群中，可以将任何一个或多个节点停止，并且集群中剩下的节点将会正常运行而不会受到某个节点停止的影响。而当停止的节点重新启动后，该节点又会自动加入集群，集群状态自动恢复正常。</p>
 <p><strong>Step1：</strong>在kvm-server01节点上，执行如下操作，停止服务</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl stop</span><br></pre></td></tr></table></figure>
 <p><strong>Step2：</strong>在kvm-server02和kvm-server03上观察集群的状态</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/3LjtqFXRA15d.png?imageslim" alt="mark"></p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/msBLuPrWthUp.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a6f514195aa5944ad2c4.jpg" alt></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a70214195aa5944ade22.jpg" alt></p>
 <p><strong>Step3：</strong>重新启动kvm-server01上的服务，并再次观察kvm-server02和kvm-server03节点上集群运行状态</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-server -detached</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/kO64BRmCx1Jl.png?imageslim" alt="mark"></p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/93uRXP3iJU9g.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a71414195aa5944aeb87.jpg" alt></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a72014195aa5944af5cc.jpg" alt></p>
 <p>可以看到，当重新启动kvm-server01节点后，kvm-server01节点会自动加入集群运行，三节点集群状态自动恢复如初，即集群中三个集群成员都在运行，并可同时对外提供消息服务。在RabbitMQ全部集群节点均被停止并需重新重启时，有两点需要特别指出：</p>
 <ul>
 <li><strong>如果整个RabbitMQ集群中的节点都停止，则重启时应该根据节点停止顺序的逆序重新启动节点</strong>。如果首先启动的不是最后停止的节点，则启动过程中会给出30s的等待时间，以等待最后停止的节点变为运行状态，如果在30s内最后停止节点仍然未能激活，则节点启动过程就以失败告终。而<strong>如果最后停止的节点无法启动，则可以使用forget_Cluster_node命令将该节点从集群中移除</strong>，forget_Cluster_node命令的具体使用方式可以参考RabbitMQctl命令行工具的帮助页面。</li>
@@ -695,19 +707,19 @@
 </ul>
 <h3 id="集群节点的移除"><a href="#集群节点的移除" class="headerlink" title="集群节点的移除"></a><strong>集群节点的移除</strong></h3><p>在正常运行的RabbitMQ集群中，当一个节点再也无须加入RabbitMQ集群并作为其成员节点运行的时候，就需要将此节点从集群中移除。要移除集群节点，首先需要停止该节点的RabbitMQ应用，然后重置节点，最后重启该节点的RabbitMQ应用。</p>
 <p><strong>Step1：</strong>执行如下操作，将kvm-server03节点从集群中移除，移除后的节点将作为一个独立节点提供服务</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl stop_app</span><br><span class="line"></span><br><span class="line">rabbitmqctl reset</span><br><span class="line"></span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl stop_app</span><br><span class="line">rabbitmqctl reset</span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
 <p><strong>Step2：</strong>观察三个节点的运行状态</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/3m8oOBIBqHYn.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a74314195aa5944b0fa1.jpg" alt></p>
 <p>可见，在移除kvm-server03后，集群中只有kvm-server01和kvm-server02两个节点，同时kvm-server03节点中只有一个RabbitMQ Broker在运行。如果集群中某个节点已经失去了响应，且不能通过正常方式将其移除，则可以在本地节点通过forget_Cluster_node命令以远程移除的方式来将此节点从集群中移除。</p>
 <p><strong>Step3：</strong>在kvm-server01节点上停止服务，并在kvm-server02上将kvm-server01节点强制移除</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># server01</span></span><br><span class="line"></span><br><span class="line">rabbitmqctl stop_app</span><br><span class="line"></span><br><span class="line"><span class="comment"># server02</span></span><br><span class="line"></span><br><span class="line">rabbitmqctl forget_cluster_node rabbit@kvm-server01</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># server01</span></span><br><span class="line">rabbitmqctl stop_app</span><br><span class="line"></span><br><span class="line"><span class="comment"># server02</span></span><br><span class="line">rabbitmqctl forget_cluster_node rabbit@kvm-server01</span><br></pre></td></tr></table></figure>
 <p><strong>Step4：</strong>kvm-server01在本地节点以远程方式从集群中移除后，其仍然会认为自己还属于集群节点，因此在启动本地kvm-server01节点的RabbitMQ应用时会报错，在重启之前将其重置即可解决</p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/Ctn9zT4qKQOw.png?imageslim" alt="mark"></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># server01</span></span><br><span class="line"></span><br><span class="line">rabbitmqctl reset</span><br></pre></td></tr></table></figure>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/jfG7pegVyang.png?imageslim" alt="mark"></p>
-<p><img src="http://q6icfngd4.bkt.clouddn.com/blog/20200302/l9FoAwNFS8Pg.png?imageslim" alt="mark"></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a75914195aa5944b1f7b.jpg" alt></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># server01</span></span><br><span class="line">rabbitmqctl reset</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.imgdb.cn/item/5ef4a76d14195aa5944b2fbd.jpg" alt></p>
+<p><img src="https://pic.imgdb.cn/item/5ef4a77914195aa5944b390c.jpg" alt></p>
 <p>如果此时将kvm-server03以同样办法从集群移除，则三个节点将恢复独立运行状态。但是kvm-server02仍然保存有集群的状态信息，即kvm-server02仍然还是集群成员，只不过集群有且只有kvm-server02一个成员。而kvm-server01和kvm-server03已经重新初始化为独立的RabbitMQ Broker，因此这两个节点不会保存任何集群信息，而如果要将kvm-server02也重新初始化为独立的RabbitMQ Broker，需要完成如下操作：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># server02</span></span><br><span class="line"></span><br><span class="line">rabbitmqctl stop_app</span><br><span class="line"></span><br><span class="line">rabbitmqctl reset</span><br><span class="line"></span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># server02</span></span><br><span class="line">rabbitmqctl stop_app</span><br><span class="line">rabbitmqctl reset</span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
 <h2 id="思考："><a href="#思考：" class="headerlink" title="思考："></a><strong>思考：</strong></h2><p><strong>1、在OpenStack中哪些服务之间交互使用了消息队列机制？哪些场景在哪些服务之间或子服务之间的RPC.CALL的调用关系？哪些场景在哪些服务之间或子服务之间是RPC.CAST的调用关系？（从虚拟机全生命周期管理的场景举例即可）</strong></p>
 <p><strong>2、在请详细描述一下虚拟机实例销毁流程中，Nova各个组件之间的RPC调用流程？</strong></p>
 <p><strong>3、在OpenStack中哪些服务或子服务之间没有使用消息队列的交互机制？（从keystone、glance、nova、neutron、cinder、ceilometer、heat等服务中举例即可）</strong></p>
@@ -784,7 +796,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="https://kkutysllb.cn/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/" title="2020-03-02-中间件消息队列服务RabbitMQ">https://kkutysllb.cn/2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/</a>
+    <a href="https://kkutysllb.cn/2020/03/02/中间件消息队列服务RabbitMQ/" title="中间件消息队列服务RabbitMQ">https://kkutysllb.cn/2020/03/02/中间件消息队列服务RabbitMQ/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -820,8 +832,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/03/03/2020-03-03-中间件分布式缓存Memcache和Redis/" rel="prev" title="2020-03-03-中间件分布式缓存Memcache和Redis">
-                2020-03-03-中间件分布式缓存Memcache和Redis <i class="fa fa-chevron-right"></i>
+              <a href="/2020/03/03/中间件分布式缓存Memcache和Redis/" rel="prev" title="中间件分布式缓存Memcache和Redis">
+                中间件分布式缓存Memcache和Redis <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -1254,7 +1266,7 @@
   
     <script>
   window.livereOptions = {
-    refer: '2020/03/02/2020-03-02-中间件消息队列服务RabbitMQ/'
+    refer: '2020/03/02/中间件消息队列服务RabbitMQ/'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];
