@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言本文以制作CentOS7.4镜像为例，介绍手动制作OpenStack镜像详细步骤，解释每一步这么做的原因。镜像上传到OpenStack glance，支持以下几个功能：  支持密码注入功能(nova     boot时通过–admin-pass参数指定设置初始密码） 支持根分区自动调整(根分区自动调整为flavor disk大小，而不是原始镜像分区大小) 支持动态修改密码(使用nova">
+<meta name="keywords" content="云计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="经验篇01-手工制作OpenStack的CentOS7镜像">
+<meta property="og:url" content="https://kkutysllb.cn/2020/07/02/经验篇01-手工制作OpenStack的CentOS7镜像/index.html">
+<meta property="og:site_name" content="一花一菩提，一云一世界">
+<meta property="og:description" content="前言本文以制作CentOS7.4镜像为例，介绍手动制作OpenStack镜像详细步骤，解释每一步这么做的原因。镜像上传到OpenStack glance，支持以下几个功能：  支持密码注入功能(nova     boot时通过–admin-pass参数指定设置初始密码） 支持根分区自动调整(根分区自动调整为flavor disk大小，而不是原始镜像分区大小) 支持动态修改密码(使用nova">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2020/07/02/o7mnlzBHIFwfvck.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/02/RK9s8NrUjQ1SlGb.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/02/opEaPLZGFxINRK1.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/02/I4CYjQBAfwipF1X.png">
+<meta property="og:updated_time" content="2020-07-02T12:31:59.197Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="经验篇01-手工制作OpenStack的CentOS7镜像">
+<meta name="twitter:description" content="前言本文以制作CentOS7.4镜像为例，介绍手动制作OpenStack镜像详细步骤，解释每一步这么做的原因。镜像上传到OpenStack glance，支持以下几个功能：  支持密码注入功能(nova     boot时通过–admin-pass参数指定设置初始密码） 支持根分区自动调整(根分区自动调整为flavor disk大小，而不是原始镜像分区大小) 支持动态修改密码(使用nova">
+<meta name="twitter:image" content="https://i.loli.net/2020/07/02/o7mnlzBHIFwfvck.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一花一菩提，一云一世界" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://kkutysllb.cn/2020/07/02/经验篇01-手工制作OpenStack的CentOS7镜像/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>经验篇01-手工制作OpenStack的CentOS7镜像 | 一花一菩提，一云一世界</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45d7282259ecad100b2fe7e379853e80";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一花一菩提，一云一世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">佛系ICT人士技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/07/02/经验篇01-手工制作OpenStack的CentOS7镜像/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">经验篇01-手工制作OpenStack的CentOS7镜像
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-07-02 20:00:14 / 修改时间：20:31:59" itemprop="dateCreated datePublished" datetime="2020-07-02T20:00:14+08:00">2020-07-02</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">5.7k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">5 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h2><p>本文以制作CentOS7.4镜像为例，介绍手动制作OpenStack镜像详细步骤，解释每一步这么做的原因。镜像上传到OpenStack glance，支持以下几个功能：</p>
+<ul>
+<li>支持密码注入功能(nova     boot时通过–admin-pass参数指定设置初始密码）</li>
+<li>支持根分区自动调整(根分区自动调整为flavor disk大小，而不是原始镜像分区大小)</li>
+<li>支持动态修改密码(使用nova     set-password命令可以修改管理员密码)</li>
+</ul>
+<p>手动制作镜像非常麻烦和耗时，本文后面会介绍一个专门用于自动化构建镜像的项目DIB，通过DIB只需要在命令行上指定elements即可制作镜像，省去了重复下载镜像、启动虚拟机配置镜像的繁杂步骤。<a id="more"></a></p>
+<h2 id="宿主机操作"><a href="#宿主机操作" class="headerlink" title="宿主机操作"></a><strong>宿主机操作</strong></h2><h3 id="1、部署KVM-Hypeevisor模块"><a href="#1、部署KVM-Hypeevisor模块" class="headerlink" title="1、部署KVM Hypeevisor模块"></a>1、部署KVM Hypeevisor模块</h3><p>详见本站KVM虚拟化部分文章。</p>
+<h3 id="2、下载CentOS7镜像"><a href="#2、下载CentOS7镜像" class="headerlink" title="2、下载CentOS7镜像"></a>2、下载CentOS7镜像</h3><p>访问官方镜像地址下载，注意选择中国的镜像源，相对国外镜像下载速度更快（也可以选择阿里云、网易或清华的镜像源下载，自行百度:-），进入后选择版本为7.4.1708，在isos目录下下载x86_64的Minimal镜像，如果网速不给力，最好不要选择下载Netinstall镜像，因为这会在安装时联网下载大量的软件包，重新安装时需要重新下载这些软件包。</p>
+<h3 id="3、创建KVM虚拟机磁盘"><a href="#3、创建KVM虚拟机磁盘" class="headerlink" title="3、创建KVM虚拟机磁盘"></a>3、创建KVM虚拟机磁盘</h3><p>首先创建一个qcow2格式镜像文件，用于虚拟机的根磁盘，大小10G就够了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qemu-img create -f qcow2 /kvm/img/centos.qcow2 10G <span class="comment"># create disk image</span></span><br></pre></td></tr></table></figure>
+<h3 id="4、使用以下命令创建KVM虚拟机"><a href="#4、使用以下命令创建KVM虚拟机" class="headerlink" title="4、使用以下命令创建KVM虚拟机"></a>4、使用以下命令创建KVM虚拟机</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">virt-install --name centos7 \</span><br><span class="line">--ram 2048 --vcpus 1 \</span><br><span class="line">--os-type linux --os-variant rhel7 --arch=x86_64 \</span><br><span class="line">--network network=default,model=virtio \</span><br><span class="line">--disk path=/kvm/img/centos.qcow2,format=qcow2 \</span><br><span class="line">--cdrom=/kvm/iso/CentOS-7.iso \</span><br><span class="line">--graphics vnc,listen=0.0.0.0 --noautoconsole</span><br></pre></td></tr></table></figure>
+<h3 id="5、查询虚拟机VNC的端口号，通过VNC方式图形化安装虚拟机，注意：选择手动磁盘分区，且只分一个根分区"><a href="#5、查询虚拟机VNC的端口号，通过VNC方式图形化安装虚拟机，注意：选择手动磁盘分区，且只分一个根分区" class="headerlink" title="5、查询虚拟机VNC的端口号，通过VNC方式图形化安装虚拟机，注意：选择手动磁盘分区，且只分一个根分区"></a>5、查询虚拟机VNC的端口号，通过VNC方式图形化安装虚拟机，<em>注意：选择手动磁盘分区，且只分一个根分区</em></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh vncdisplay &lt;vm_name or vm_id&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2020/07/02/o7mnlzBHIFwfvck.png" alt="image.png"></p>
+<hr>
+<p><strong><em>图形化安装CentOS虚拟机，选择手动分区，且只分一个根分区</em></strong></p>
+<p><img src="https://i.loli.net/2020/07/02/RK9s8NrUjQ1SlGb.png" alt="image.png"></p>
+<p>配置完成后就可以开始安装了，在CONFIGURATION中设置root临时密码，只需要暂时记住这个临时密码，制作完后cloud-init会重新设置root初始密码。大约几分钟后，即可自动完成安装配置工作，最后点击右下角的reboot重启退出虚拟机。<strong><em>注意：reboot后，kvm虚拟机不会重启，需要手动通过以下指令完成虚拟机重启。</em></strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh start centos7</span><br></pre></td></tr></table></figure>
+<h2 id="虚拟机操作"><a href="#虚拟机操作" class="headerlink" title="虚拟机操作"></a><strong>虚拟机操作</strong></h2><h3 id="1、配置Guest-OS"><a href="#1、配置Guest-OS" class="headerlink" title="1、配置Guest OS"></a>1、配置Guest OS</h3><p>安装好系统后，需要进行配置才能作为glance镜像使用。在上面启动虚拟机后，通过root用户登录。如果云主机需要支持root ssh远程登录，需要开启root远程ssh登录功能，修改配置文件/etc/ssh/sshd_config并修改PermitRootLogin值为yes（CentOS7系统默认开启），重启ssh服务生效:</p>
+<p>systemctl restart sshd</p>
+<p><strong>需要注意：</strong></p>
+<ul>
+<li><strong><em>生产环境不建议开启密码登录功能，使用密钥登录更安全。</em></strong></li>
+<li><strong><em>生产环境不建议开启root远程登录。</em></strong></li>
+</ul>
+<h3 id="2、安装acpid软件包，并设置开机启动服务"><a href="#2、安装acpid软件包，并设置开机启动服务" class="headerlink" title="2、安装acpid软件包，并设置开机启动服务"></a>2、安装acpid软件包，并设置开机启动服务</h3><p>acpid是一个用户空间的服务进程, 用来处理电源相关事件,比如将kernel中的电源事件转发给应用程序，告诉应用程序安全的退出，防止应用程序异常退出导致数据损坏。libvirt可以通过向guest虚拟机发送acpid事件触发电源操作，使虚拟机安全关机、重启等操作，相对于强制执行关闭电源操作更安全。通过acpid事件发送开关机信号即我们经常所说的软重启或者软关机。用户执行重启或者关机操作时，OpenStack会首先尝试调用libvirt的shutdown方法，即软关机。当软关机执行失败或者超时(默认120秒)，则会调动libvirt的destroy方法，即强制关机，因此如果虚拟机关机或者重启很慢，很可能是acpid没有正常运行。为了使虚拟机进程安全退出，减少数据损坏风险，尽量使用软操作，硬操作可能导致程序崩溃或者数据丢失。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y acpid &amp;&amp; systemctl <span class="built_in">enable</span> acpid</span><br></pre></td></tr></table></figure>
+<h3 id="3、配置nova-console-log功能"><a href="#3、配置nova-console-log功能" class="headerlink" title="3、配置nova console log功能"></a>3、配置nova console log功能</h3><p>当操作系统内核崩溃时会报出内核系统crash出错信息，通常启动的时候一闪而过, 而此时系统还没有起来，不能通过远程工具(比如ssh)进入系统查看，我们可以通过配置grub，把这些日志重定向到Serial Console中，这样我们就可以通过Serial console来访问错误信息，以供分析和排错使用。修改配置文件/etc/default/grub，设置GRUB_CMDLINE_LINUX如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GRUB_CMDLINE_LINUX=<span class="string">"crashkernel=auto console=tty0 console=ttyS0,115200n8"</span></span><br></pre></td></tr></table></figure>
+<p>通过这个配置，内核信息会以115200的波特率同时发送到tty0和ttyS0串行端口设备。libvirt可以通过一个普通文件模拟这个串行端口，这样内核产生的日志发到ttyS0，实际上写到console.log文件中。在OpenStack环境中，可以通过openstack console log show命令进行查看日志进行排错。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">serial</span> <span class="attr">type</span>=<span class="string">'file'</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">source</span> <span class="attr">path</span>=<span class="string">'/var/lib/nova/instances/99579ce1-f4c4-4031-a56c-68e85a3d037a/console.log'</span>/&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">target</span> <span class="attr">port</span>=<span class="string">'0'</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">serial</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="4、安装qemu-guest-agent软件包，并设置开机启动"><a href="#4、安装qemu-guest-agent软件包，并设置开机启动" class="headerlink" title="4、安装qemu-guest-agent软件包，并设置开机启动"></a>4、安装qemu-guest-agent软件包，并设置开机启动</h3><p>qemu-guest-agent是运行在虚拟机内部的一个服务，libvirt会在本地创建一个unix socket，模拟为虚拟机内部的一个串口设备，从而实现了宿主机与虚拟机通信，这种方式不依赖于TCP/IP网络，实现方式简单方便。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">channel</span> <span class="attr">type</span>=<span class="string">'unix'</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">source</span> <span class="attr">mode</span>=<span class="string">'bind'</span> <span class="attr">path</span>=<span class="string">'/var/lib/libvirt/qemu/org.qemu.guest_agent.0.instance-00003c2c.sock'</span>/&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">target</span> <span class="attr">type</span>=<span class="string">'virtio'</span> <span class="attr">name</span>=<span class="string">'org.qemu.guest_agent.0'</span>/&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">address</span> <span class="attr">type</span>=<span class="string">'virtio-serial'</span> <span class="attr">controller</span>=<span class="string">'0'</span> <span class="attr">bus</span>=<span class="string">'0'</span> <span class="attr">port</span>=<span class="string">'1'</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">channel</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>如上宿主机的socket文件为org.qemu.guest_agent.0.instance-00003c2c.sock，在虚拟机内部为/dev/virtio-ports/org.qemu.guest_agent.0。通过这种方式，宿主机可以发送指令写到socket文件中，虚拟机内部的qemu-guest-agent会轮询查看这个串行设备是否有指令，一旦接收到指令就可以执行对应的脚本，从而实现了宿主机控制虚拟机执行命令的功能，其中最常用的指令就是通过libvirt修改虚拟机密码，用法举例如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh <span class="built_in">set</span>-user-password instance-00000028 --user root --password 123123</span><br></pre></td></tr></table></figure>
+<p><em>为了支持OpenStack平台动态修改虚拟机密码功能，我们需要手动安装qemu-guest-agent，并设置开机启动：</em></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y qemu-guest-agent &amp;&amp; systemctl <span class="built_in">enable</span> qemu-guest-agent</span><br></pre></td></tr></table></figure>
+<p><em>修改/etc/sysconfig/qemu-ga配置文件:</em></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TRANSPORT_METHOD=<span class="string">"virtio-serial"</span></span><br><span class="line">DEVPATH=<span class="string">"/dev/virtio-ports/org.qemu.guest_agent.0"</span></span><br><span class="line">LOGFILE=<span class="string">"/var/log/qemu-ga/qemu-ga.log"</span></span><br><span class="line">PIDFILE=<span class="string">"/var/run/qemu-ga.pid"</span></span><br><span class="line">BLACKLIST_RPC=<span class="string">""</span></span><br><span class="line">FSFREEZE_HOOK_ENABLE=0</span><br></pre></td></tr></table></figure>
+<p><em>通过以下脚本，可以查看qemu-guest-agent支持的指令，<strong>注意：确认包含guest-set-user-password指令，支持修改管理员密码。</strong></em></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh qemu-agent-command <span class="variable">$vm_name</span> <span class="string">'&#123;"execute":"guest-info"&#125;'</span> | python -m json.tool | grep <span class="string">'name'</span> | cut -d <span class="string">':'</span> -f 2 | tr -d <span class="string">'",'</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2020/07/02/opEaPLZGFxINRK1.png" alt="image.png"></p>
+<h3 id="5、配置zeroconf"><a href="#5、配置zeroconf" class="headerlink" title="5、配置zeroconf"></a>5、配置zeroconf</h3><p>zeroconf是一种古老的自动网络配置技术，在没有DHCP服务的年代，所有服务器都需要网管手动配置IP、hostname等，非常麻烦，zeroconf正好解决了这个问题，不过目前通常都通过DHCP获取地址了。但是，一些操作系统仍然会开启这个服务，当DHCP获取IP失败时，会尝试通过zeroconf配置。zeroconf启动时会自动创建一条路由169.254.0.0/16，而虚拟机访问metadata服务的地址正好是169.254.169.254，如果启动了zeroconf服务，由于路由冲突，虚拟机不能通过169.254.169.254路由到网络节点的metadata服务了。OpenStack虚拟机通常都是通过DHCP获取IP的，因此我们并不需要zeroconf服务。为了虚拟机能够访问metadata服务，我们必须禁止zeroconf服务。具体配置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"NOZEROCONF=yes"</span> &gt;&gt; /etc/sysconfig/network</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"NETWORKING=yes"</span> &gt;&gt; /etc/sysconfig/network</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2020/07/02/I4CYjQBAfwipF1X.png" alt="image.png"></p>
+<h3 id="6、安装cloud-init"><a href="#6、安装cloud-init" class="headerlink" title="6、安装cloud-init"></a>6、安装cloud-init</h3><p>cloud-init是虚拟机第一次启动时执行的脚本，主要负责从metadata服务中拉取配置信息，完成虚拟机的初始化工作，比如设置主机名、初始化密码以及注入密钥等。手动安装cloud-init并设置开机启动如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y cloud-init &amp;&amp; systemctl <span class="built_in">enable</span> cloud-init</span><br></pre></td></tr></table></figure>
+<p>注意：cloud-init的配置文件默认不允许通过root用户登录，且不允许通过用户名/密码的方式登录，只允许通过秘钥方式。因此，可以通过修改配置文件/etc/cloud-init/cloud.cfg如下选项改变上述情况：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">disable_root: 0</span><br><span class="line">ssh_pwauth:  0</span><br></pre></td></tr></table></figure>
+<p>同时，在init_modules下添加：- resolv-conf选项</p>
+<h3 id="7、安装growpart"><a href="#7、安装growpart" class="headerlink" title="7、安装growpart"></a>7、安装growpart</h3><p>虚拟机制作镜像时指定了根分区大小（比如我们设置为10GB），为了使虚拟机能够自动调整为flavor disk指定的根磁盘大小，即自动扩容, 我们需要安装glowpart(老版本叫growroot)并完成以下配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install -y epel-release</span><br><span class="line">yum install -y cloud-utils-growpart</span><br><span class="line">rpm -qa kernel | sed <span class="string">'s/^kernel-//'</span> | xargs -I &#123;&#125; dracut -f /boot/initramfs-&#123;&#125;.img &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p><em>完成以上工作后，我们的镜像配置基本结束，删除一些无用文件，清理history命令后执行关机：</em></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shutdown -h now</span><br></pre></td></tr></table></figure>
+<h2 id="宿主机操作-1"><a href="#宿主机操作-1" class="headerlink" title="宿主机操作"></a><strong>宿主机操作</strong></h2><h3 id="1、移除本地信息"><a href="#1、移除本地信息" class="headerlink" title="1、移除本地信息"></a>1、移除本地信息</h3><p>在宿主机上运行以下命名，移除宿主机信息，比如mac地址等。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virt-sysprep -d centos</span><br></pre></td></tr></table></figure>
+<h3 id="2、压缩镜像"><a href="#2、压缩镜像" class="headerlink" title="2、压缩镜像"></a>2、压缩镜像</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virt-sparsify --compress <span class="variable">$kvname</span>.qcow2 <span class="variable">$kvname</span>-.qcow2</span><br></pre></td></tr></table></figure>
+<p><strong>注意：上述指令提示不成功，请安装libguestfs-tools工具</strong></p>
+<h3 id="3、通过openstack命令上传镜像"><a href="#3、通过openstack命令上传镜像" class="headerlink" title="3、通过openstack命令上传镜像"></a>3、通过openstack命令上传镜像</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">openstack image create <span class="string">"centos7.4"</span> \</span><br><span class="line"> --file centos7.4-.qcow2 \</span><br><span class="line"> --disk-format qcow2 --container-format bare \</span><br><span class="line"> --property hw_qemu_guest_agent=yes \</span><br><span class="line"> --public</span><br></pre></td></tr></table></figure>
+<p><strong>注意：参数 –property hw_qemu_guest_agent=yes 是启动qemu-ga功能，重置密码使用</strong></p>
+<p><strong><em>#重置密码方法：</em></strong></p>
+<p><strong>#1、在计算节点</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">virsh list</span><br><span class="line">virsh <span class="built_in">set</span>-user-password &lt;vm_name or vm_id&gt; --user root --password 123123</span><br></pre></td></tr></table></figure>
+<p><strong>#2、在控制节点,按提示输入2次密码</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nova <span class="built_in">set</span>-password vm-ID</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2020/07/02/经验篇01-手工制作OpenStack的CentOS7镜像/" title="经验篇01-手工制作OpenStack的CentOS7镜像">https://kkutysllb.cn/2020/07/02/经验篇01-手工制作OpenStack的CentOS7镜像/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/云计算/" rel="tag"><i class="fa fa-tag"></i> 云计算</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/06/25/OpenStack-Rocky版本环境部署（含开源NFV）/" rel="next" title="OpenStack Rocky版本环境部署（含开源NFV）">
+                <i class="fa fa-chevron-left"></i> OpenStack Rocky版本环境部署（含开源NFV）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="kkutysllb">
+            
+              <p class="site-author-name" itemprop="name">kkutysllb</p>
+              <p class="site-description motion-element" itemprop="description">容易走的路是下坡路<br>总是不经意间装个X得罪一票人</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">75</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/kkutysllb" title="GitHub &rarr; https://github.com/kkutysllb" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:linbrid772233@gmail.com" title="E-Mail &rarr; mailto:linbrid772233@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-e-mail"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2243838583?is_all=1" title="Weibo &rarr; https://weibo.com/u/2243838583?is_all=1" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/tang-xi-yao-43/activities" title="Zhihu &rarr; https://www.zhihu.com/people/tang-xi-yao-43/activities" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#宿主机操作"><span class="nav-number">2.</span> <span class="nav-text">宿主机操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、部署KVM-Hypeevisor模块"><span class="nav-number">2.1.</span> <span class="nav-text">1、部署KVM Hypeevisor模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、下载CentOS7镜像"><span class="nav-number">2.2.</span> <span class="nav-text">2、下载CentOS7镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、创建KVM虚拟机磁盘"><span class="nav-number">2.3.</span> <span class="nav-text">3、创建KVM虚拟机磁盘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、使用以下命令创建KVM虚拟机"><span class="nav-number">2.4.</span> <span class="nav-text">4、使用以下命令创建KVM虚拟机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、查询虚拟机VNC的端口号，通过VNC方式图形化安装虚拟机，注意：选择手动磁盘分区，且只分一个根分区"><span class="nav-number">2.5.</span> <span class="nav-text">5、查询虚拟机VNC的端口号，通过VNC方式图形化安装虚拟机，注意：选择手动磁盘分区，且只分一个根分区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟机操作"><span class="nav-number">3.</span> <span class="nav-text">虚拟机操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、配置Guest-OS"><span class="nav-number">3.1.</span> <span class="nav-text">1、配置Guest OS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、安装acpid软件包，并设置开机启动服务"><span class="nav-number">3.2.</span> <span class="nav-text">2、安装acpid软件包，并设置开机启动服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、配置nova-console-log功能"><span class="nav-number">3.3.</span> <span class="nav-text">3、配置nova console log功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、安装qemu-guest-agent软件包，并设置开机启动"><span class="nav-number">3.4.</span> <span class="nav-text">4、安装qemu-guest-agent软件包，并设置开机启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、配置zeroconf"><span class="nav-number">3.5.</span> <span class="nav-text">5、配置zeroconf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6、安装cloud-init"><span class="nav-number">3.6.</span> <span class="nav-text">6、安装cloud-init</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7、安装growpart"><span class="nav-number">3.7.</span> <span class="nav-text">7、安装growpart</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#宿主机操作-1"><span class="nav-number">4.</span> <span class="nav-text">宿主机操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、移除本地信息"><span class="nav-number">4.1.</span> <span class="nav-text">1、移除本地信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、压缩镜像"><span class="nav-number">4.2.</span> <span class="nav-text">2、压缩镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、通过openstack命令上传镜像"><span class="nav-number">4.3.</span> <span class="nav-text">3、通过openstack命令上传镜像</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kkutysllb</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">937k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">14:12</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2020/07/02/经验篇01-手工制作OpenStack的CentOS7镜像/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+</body>
+</html>
