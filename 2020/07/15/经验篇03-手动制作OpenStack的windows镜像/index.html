@@ -103,17 +103,36 @@
 
 
 
-  <meta name="description" content="容易走的路是下坡路总是不经意间装个X得罪一票人">
-<meta name="keywords" content="5G，SDN&#x2F;NFV，云计算，大数据，自动化运维，Linux，Python，机器学习">
-<meta property="og:type" content="website">
-<meta property="og:title" content="一花一菩提，一云一世界">
-<meta property="og:url" content="https://kkutysllb.cn/tags/电信云/page/2/index.html">
+  <meta name="description" content="前言前面两篇文章介绍手动制作OpenStack的Linux操作系统镜像的方法，本篇文章介绍手动制作OpenStack的Windows操作系统镜像的方法。由于Windows的官方镜像iso文件中并不包含virio驱动，且需要Cloudbase-init软件包进行OpenStack的Windows镜像初始化配置。因此，我们可以提前下载好上述上述文件，并且将Cloudbase-init文件打包成.iso">
+<meta name="keywords" content="云计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="经验篇03-手动制作OpenStack的windows镜像">
+<meta property="og:url" content="https://kkutysllb.cn/2020/07/15/经验篇03-手动制作OpenStack的windows镜像/index.html">
 <meta property="og:site_name" content="一花一菩提，一云一世界">
-<meta property="og:description" content="容易走的路是下坡路总是不经意间装个X得罪一票人">
+<meta property="og:description" content="前言前面两篇文章介绍手动制作OpenStack的Linux操作系统镜像的方法，本篇文章介绍手动制作OpenStack的Windows操作系统镜像的方法。由于Windows的官方镜像iso文件中并不包含virio驱动，且需要Cloudbase-init软件包进行OpenStack的Windows镜像初始化配置。因此，我们可以提前下载好上述上述文件，并且将Cloudbase-init文件打包成.iso">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/24SP7IGiJzHKVOT.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/WGFDhwRL3AfNOUq.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/KO7vSerPsmGdVgy.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/9qHKd6GTbN8Plu3.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/2v8q3K6WfwsBd1z.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/dKma5I192bWASZN.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/9sZaSNmfd8L6HrP.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/u8NqdWP1CVEI5L2.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/Q8bZtdJkOcwqN7U.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/6Tp7syMDub3hH8m.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/tkviQCVjrMc27zA.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/78cU1jhXwgfd3HG.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/J8e5zvWlDx9P6pq.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/BD7TxKpaZnd9lSC.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/eRTYkoJPGCbwrZc.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/jElYuiykoKLN6DQ.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/15/31t2q64SoFuBITr.png">
+<meta property="og:updated_time" content="2020-07-15T14:50:55.728Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一花一菩提，一云一世界">
-<meta name="twitter:description" content="容易走的路是下坡路总是不经意间装个X得罪一票人">
+<meta name="twitter:title" content="经验篇03-手动制作OpenStack的windows镜像">
+<meta name="twitter:description" content="前言前面两篇文章介绍手动制作OpenStack的Linux操作系统镜像的方法，本篇文章介绍手动制作OpenStack的Windows操作系统镜像的方法。由于Windows的官方镜像iso文件中并不包含virio驱动，且需要Cloudbase-init软件包进行OpenStack的Windows镜像初始化配置。因此，我们可以提前下载好上述上述文件，并且将Cloudbase-init文件打包成.iso">
+<meta name="twitter:image" content="https://i.loli.net/2020/07/15/24SP7IGiJzHKVOT.png">
 
 
 
@@ -122,7 +141,7 @@
 
 
 
-  <link rel="canonical" href="https://kkutysllb.cn/tags/电信云/page/2/">
+  <link rel="canonical" href="https://kkutysllb.cn/2020/07/15/经验篇03-手动制作OpenStack的windows镜像/">
 
 
 
@@ -132,7 +151,7 @@
   };
 </script>
 
-  <title>标签: 电信云 | 一花一菩提，一云一世界</title>
+  <title>经验篇03-手动制作OpenStack的windows镜像 | 一花一菩提，一云一世界</title>
   
 
 
@@ -190,7 +209,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 	
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -266,7 +285,7 @@
         
         
           
-          <li class="menu-item menu-item-tags menu-item-active">
+          <li class="menu-item menu-item-tags">
 
     
     
@@ -371,320 +390,349 @@
           
             
 
-    
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-    
-
-  
-
-
           
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+    
+
+  
+
   
   
   
-  <div class="post-block tag">
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>电信云<small>标签</small>
-        </h1>
-      </div>
-
-      
-        
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://kkutysllb.cn/2020/07/15/经验篇03-手动制作OpenStack的windows镜像/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kkutysllb">
+      <meta itemprop="description" content="容易走的路是下坡路<br>总是不经意间装个X得罪一票人">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一花一菩提，一云一世界">
+    </span>
+
+    
+      <header class="post-header">
+
         
-          <a class="post-title-link" href="/2019/05/25/计算虚拟化之I-O虚拟化/" itemprop="url">
-            
-              <span itemprop="name">计算虚拟化之I/O虚拟化</span>
-            
-          </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">经验篇03-手动制作OpenStack的windows镜像
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-25T21:35:24+08:00" content="2019-05-25">
-          05-25
-        </time>
-      </div>
+              
+            
+          </h1>
+        
 
-    </header>
-  </article>
+        <div class="post-meta">
+          <span class="post-time">
 
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-07-15 17:08:43 / 修改时间：22:50:55" itemprop="dateCreated datePublished" datetime="2020-07-15T17:08:43+08:00">2020-07-15</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OpenStack/" itemprop="url" rel="index"><span itemprop="name">OpenStack</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">3.2k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">3 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/05/18/计算虚拟化之内存虚拟化/" itemprop="url">
-            
-              <span itemprop="name">计算虚拟化之内存虚拟化</span>
-            
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-18T10:45:07+08:00" content="2019-05-18">
-          05-18
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+      
 
       
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/05/13/计算虚拟化之CPU虚拟化/" itemprop="url">
-            
-              <span itemprop="name">计算虚拟化之CPU虚拟化</span>
-            
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-13T17:17:34+08:00" content="2019-05-13">
-          05-13
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/05/11/计算虚拟化概述/" itemprop="url">
-            
-              <span itemprop="name">计算虚拟化概述</span>
-            
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-11T10:36:29+08:00" content="2019-05-11">
-          05-11
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/05/03/虚拟化技术基础/" itemprop="url">
-            
-              <span itemprop="name">虚拟化技术基础</span>
-            
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-03T14:02:14+08:00" content="2019-05-03">
-          05-03
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/05/01/DPDK技术栈在电信云中的最佳实践（三）/" itemprop="url">
-            
-              <span itemprop="name">DPDK技术栈在电信云中的最佳实践（三）</span>
-            
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-01T11:37:51+08:00" content="2019-05-01">
-          05-01
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/05/01/DPDK技术栈在电信云中的最佳实践（二）/" itemprop="url">
-            
-              <span itemprop="name">DPDK技术栈在电信云中的最佳实践（二）</span>
-            
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-01T11:15:45+08:00" content="2019-05-01">
-          05-01
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/04/29/未来网络如何重构/" itemprop="url">
-            
-              <span itemprop="name">未来网络如何重构</span>
-            
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-04-29T10:20:57+08:00" content="2019-04-29">
-          04-29
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/04/21/x86架构基础/" itemprop="url">
-            
-              <span itemprop="name">x86架构基础</span>
-            
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-04-21T16:10:21+08:00" content="2019-04-21">
-          04-21
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/04/19/中国移动NovoNet2020/" itemprop="url">
-            
-              <span itemprop="name">中国移动NovoNet2020</span>
-            
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-04-19T11:14:23+08:00" content="2019-04-19">
-          04-19
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h2><p>前面两篇文章介绍手动制作OpenStack的Linux操作系统镜像的方法，本篇文章介绍手动制作OpenStack的Windows操作系统镜像的方法。由于Windows的官方镜像iso文件中并不包含virio驱动，且需要Cloudbase-init软件包进行OpenStack的Windows镜像初始化配置。因此，我们可以提前下载好上述上述文件，并且将Cloudbase-init文件打包成.iso文件，通过光驱挂载的方式挂载给Windows的KVM虚拟机。</p>
+<p>virtio驱动下载的地址为：<a href="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso" target="_blank" rel="noopener">https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso</a></p>
+<p>Cloudbase-init软件包的下载地址为：<a href="https://cloudbase.it/downloads/CloudbaseInitSetup_Stable_x64.msi" target="_blank" rel="noopener">https://cloudbase.it/downloads/CloudbaseInitSetup_Stable_x64.msi</a></p>
+<a id="more"></a>
+<h2 id="宿主机操作"><a href="#宿主机操作" class="headerlink" title="宿主机操作"></a><strong>宿主机操作</strong></h2><h3 id="1、创建windows的kvm虚拟机的虚拟磁盘"><a href="#1、创建windows的kvm虚拟机的虚拟磁盘" class="headerlink" title="1、创建windows的kvm虚拟机的虚拟磁盘"></a><strong>1</strong>、创建windows的kvm虚拟机的虚拟磁盘</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qemu-img create -f qcow2 win7.qcow2 20G</span><br></pre></td></tr></table></figure>
+<h3 id="2、创建windows的kvm虚拟机"><a href="#2、创建windows的kvm虚拟机" class="headerlink" title="2、创建windows的kvm虚拟机"></a><strong>2</strong>、创建windows的kvm虚拟机</h3><p># 启动时添加如下参数，同时挂载3个光驱到系统，以便开机后能够一次性完成个性化配置、网卡驱动更新、cloudbase安装。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">virt-install --name=win7 --ram 4096 --cpu=host --vcpus 4 \</span><br><span class="line"> --os-type windows --os-variant win7 \</span><br><span class="line"> --disk win7.qcow2,device=disk,bus=virtio \</span><br><span class="line"> --disk cn_windows_server_2012_r2_datacenter_with_update_x64_dvd_4048415.iso,device=cdrom,bus=ide \</span><br><span class="line"> --disk virtio-win-0.1.126.iso,device=cdrom,bus=ide \</span><br><span class="line"> --disk CloudbaseInitSetup_0.9.11_x64.iso,device=cdrom,bus=ide \</span><br><span class="line"> --network network=default,model=virtio \</span><br><span class="line"> --graphics vnc,listen=0.0.0.0 --noautoconsole</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2020/07/15/24SP7IGiJzHKVOT.png" alt="image.png"></p>
+<h3 id="3、安装系统"><a href="#3、安装系统" class="headerlink" title="3、安装系统"></a><strong>3</strong>、安装系统</h3><p>通过VNC方式图像化安装，虚拟机占用的vnc端口号可以通过以下指令查询：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh vncdisplay &lt;vm_name or vm_id&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2020/07/15/WGFDhwRL3AfNOUq.png" alt="image.png"></p>
+<h2 id="虚拟机操作"><a href="#虚拟机操作" class="headerlink" title="虚拟机操作"></a><strong>虚拟机操作</strong></h2><h3 id="1、磁盘驱动添加"><a href="#1、磁盘驱动添加" class="headerlink" title="1、磁盘驱动添加"></a><strong>1</strong>、磁盘驱动添加</h3><p>由于windows并不自带openstack的驱动，系统启动后无法识别到硬盘，需要手动加载virtio驱动；并且网卡驱动也需要使用virtio驱动。因为前面启动虚拟机时已经挂载了virtio镜像，这里可以直接到计算机里面全安装。</p>
+<p><strong>#</strong> <strong>点击 加载驱动程序–浏览–光驱vortio-win-0.1.</strong>71, 定位到viostorw7\amd64 <strong>:</strong></p>
+<p><img src="https://i.loli.net/2020/07/15/KO7vSerPsmGdVgy.png" alt="image.png"></p>
+<p><img src="https://i.loli.net/2020/07/15/9qHKd6GTbN8Plu3.png" alt="image.png"></p>
+<p><img src="https://i.loli.net/2020/07/15/2v8q3K6WfwsBd1z.png" alt="image.png"></p>
+<p><img src="https://i.loli.net/2020/07/15/dKma5I192bWASZN.png" alt="image.png"></p>
+<p><strong>#</strong> 点击下一步，开始安装磁盘的virtio驱动</p>
+<p><img src="https://i.loli.net/2020/07/15/9sZaSNmfd8L6HrP.png" alt="image.png"></p>
+<p><img src="https://i.loli.net/2020/07/15/u8NqdWP1CVEI5L2.png" alt="image.png"></p>
+<h3 id="2、安装网卡驱动"><a href="#2、安装网卡驱动" class="headerlink" title="2、安装网卡驱动"></a><strong>2</strong>、安装网卡驱动</h3><p>系统安装完成后，通过virsh指令再次启动windows虚拟机完成安装前的初始配置，包括：用户名、密码、时区、key等信息。然后通过配置的用户名/密码登录系统。在设备管理的以太网控制器上右键，选择更新驱动程序。</p>
+<p><img src="https://i.loli.net/2020/07/15/Q8bZtdJkOcwqN7U.png" alt="image.png"></p>
+<p>浏览到光驱下面的NetKVM，选则w7\amd64，然后选择下一步安装网卡驱动程序</p>
+<p><img src="https://i.loli.net/2020/07/15/6Tp7syMDub3hH8m.png" alt="image.png"></p>
+<h3 id="3、关闭windows防火墙"><a href="#3、关闭windows防火墙" class="headerlink" title="3、关闭windows防火墙"></a><strong>3</strong>、关闭windows防火墙</h3><p>快捷键“Win + R”调出运行栏，输入gpedit.msc，回车。选择管理模板-网络-网络链接-windows防火墙</p>
+<p><img src="https://i.loli.net/2020/07/15/tkviQCVjrMc27zA.png" alt="image.png"></p>
+<p>修改windows防火墙中标准配置文件和域配置文件中保护所有网络连接信息如下：</p>
+<p><img src="https://i.loli.net/2020/07/15/78cU1jhXwgfd3HG.png" alt="image.png"></p>
+<h3 id="4、只允许administrator用户登录，删除安装创建的普通用户"><a href="#4、只允许administrator用户登录，删除安装创建的普通用户" class="headerlink" title="4、只允许administrator用户登录，删除安装创建的普通用户"></a><strong>4</strong>、只允许administrator用户登录，删除安装创建的普通用户</h3><p><strong>1）设置administrtor用户的密码</strong></p>
+<p>在管理–本地用户和组中，本地用户中找到Administrator用户，右键选中Administrator用户，选择设置密码</p>
+<p><img src="https://i.loli.net/2020/07/15/J8e5zvWlDx9P6pq.png" alt="image.png"></p>
+<p><strong>2）右键选中Administrator用户，选择属性，设置如下：</strong></p>
+<p><img src="https://i.loli.net/2020/07/15/BD7TxKpaZnd9lSC.png" alt="image.png"></p>
+<p><strong>3）删除安装创建的普通用户</strong></p>
+<p><img src="https://i.loli.net/2020/07/15/eRTYkoJPGCbwrZc.png" alt="image.png"></p>
+<h3 id="5、安装cloudbase-init"><a href="#5、安装cloudbase-init" class="headerlink" title="5、安装cloudbase-init"></a><strong>5</strong>、安装cloudbase-init</h3><p>打开cloudbase-init光驱，右键选择“安装”，如下：</p>
+<p><img src="https://i.loli.net/2020/07/15/jElYuiykoKLN6DQ.png" alt="image.png"></p>
+<p>按照默认安装步骤进行设置安装，最后完成时记得勾选如下设置，然后cloudbase-init会自动清理环境。</p>
+<p><img src="https://i.loli.net/2020/07/15/31t2q64SoFuBITr.png" alt="image.png"></p>
+<p><strong><em>配置Cloudbase-init工具说明：</em></strong></p>
+<ol>
+<li>在cloudbase-init安装路径的配置文件“C:\Program      Files\Cloudbase      Solutions\Cloudbase-Init\conf\cloudbase-init.conf”的最后一行，增加配置项“netbios_host_name_compatibility=false”，使Windows系统的hostname长度支持到63个字符。说明：NetBIOS长度受Windows系统本身的限制还只支持小于等于15个字符。</li>
+<li>在cloudbase-init安装路径的配置文件“C:\Program      Files\Cloudbase      Solutions\Cloudbase-Init\conf\cloudbase-init.conf”中增加配置项“metadata_services=cloudbaseinit.metadata.services.httpservice.HttpService”，配置agent访问openstack数据源。（可选）当cloudbase-init为0.9.12及以上版本时，用户可以自定义配置密码长度。在cloudbase-init安装路径的配置文件“C:\Program      Files\Cloudbase      Solutions\Cloudbase-Init\conf\cloudbase-init.conf”里修改配置项“user_password_length”的值，完成密码长度的自定义配置。（可选）选择密码注入方式首次登录时，系统默认强制用户修改登录密码，若用户根据个人意愿，不需要修改首次登陆使用的登录密码时，可关闭此功能。在cloudbase-init安装路径的配置文件“C:\Program      Files\Cloudbase      Solutions\Cloudbase-Init\conf\cloudbase-init.conf”配置里增加配置项“first_logon_behaviour=no”。</li>
+<li>为了防止镜像中DHCP租期过长导致创建的云服务器无法正确的获取地址，用户需要释放当前的DHCP地址。</li>
+<li>在windows命令行中，执行以下命令释放当前的DHCP地址。</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipconfig /release</span><br></pre></td></tr></table></figure>
+<h2 id="宿主机操作-1"><a href="#宿主机操作-1" class="headerlink" title="宿主机操作"></a><strong>宿主机操作</strong></h2><h3 id="1、压缩镜像"><a href="#1、压缩镜像" class="headerlink" title="1、压缩镜像"></a><strong>1</strong>、压缩镜像</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virt-sparsify --compress <span class="variable">$kvname</span>.qcow2 <span class="variable">$kvname</span>-.qcow2</span><br></pre></td></tr></table></figure>
+<p>注意：上述指令提示不成功，请安装libguestfs-tools工具</p>
+<h3 id="2、上传镜像"><a href="#2、上传镜像" class="headerlink" title="2、上传镜像"></a><strong>2</strong>、上传镜像</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">openstack image create <span class="string">"win7-kk"</span> \</span><br><span class="line">  --file win7.qcow2 \</span><br><span class="line">  --disk-format qcow2 --container-format bare \</span><br><span class="line">  --property hw_qemu_guest_agent=yes \</span><br><span class="line">  --public</span><br></pre></td></tr></table></figure>
+<p><strong><em>注意：参数 –property hw_qemu_guest_agent=yes 是启动qemu-ga功能，重置密码使用。用法详见前两篇CentOS和Ubuntu镜像制作文章。</em></strong></p>
 
       
     </div>
 
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+	
+	<div>
+	
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+	
+	</div>
+	
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="kkutysllb 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="kkutysllb 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>kkutysllb</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://kkutysllb.cn/2020/07/15/经验篇03-手动制作OpenStack的windows镜像/" title="经验篇03-手动制作OpenStack的windows镜像">https://kkutysllb.cn/2020/07/15/经验篇03-手动制作OpenStack的windows镜像/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/云计算/" rel="tag"><i class="fa fa-tag"></i> 云计算</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/09/经验篇02-手工制作OpenStack的Ubuntu16-04镜像/" rel="next" title="经验篇02-手工制作OpenStack的Ubuntu16.04镜像">
+                <i class="fa fa-chevron-left"></i> 经验篇02-手工制作OpenStack的Ubuntu16.04镜像
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/tags/电信云/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/tags/电信云/">1</a><span class="page-number current">2</span><a class="page-number" href="/tags/电信云/page/3/">3</a><a class="extend next" rel="next" href="/tags/电信云/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 
+  </div>
 
 
           </div>
           
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjY0Ni8xOTE5Mw=="></div>
+    </div>
+
+  
+
+
 
         </div>
         
@@ -705,8 +753,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <div class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -871,6 +928,23 @@
         </div>
       </div>
 
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#宿主机操作"><span class="nav-number">2.</span> <span class="nav-text">宿主机操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、创建windows的kvm虚拟机的虚拟磁盘"><span class="nav-number">2.1.</span> <span class="nav-text">1、创建windows的kvm虚拟机的虚拟磁盘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、创建windows的kvm虚拟机"><span class="nav-number">2.2.</span> <span class="nav-text">2、创建windows的kvm虚拟机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、安装系统"><span class="nav-number">2.3.</span> <span class="nav-text">3、安装系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟机操作"><span class="nav-number">3.</span> <span class="nav-text">虚拟机操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、磁盘驱动添加"><span class="nav-number">3.1.</span> <span class="nav-text">1、磁盘驱动添加</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、安装网卡驱动"><span class="nav-number">3.2.</span> <span class="nav-text">2、安装网卡驱动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、关闭windows防火墙"><span class="nav-number">3.3.</span> <span class="nav-text">3、关闭windows防火墙</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、只允许administrator用户登录，删除安装创建的普通用户"><span class="nav-number">3.4.</span> <span class="nav-text">4、只允许administrator用户登录，删除安装创建的普通用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、安装cloudbase-init"><span class="nav-number">3.5.</span> <span class="nav-text">5、安装cloudbase-init</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#宿主机操作-1"><span class="nav-number">4.</span> <span class="nav-text">宿主机操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、压缩镜像"><span class="nav-number">4.1.</span> <span class="nav-text">1、压缩镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、上传镜像"><span class="nav-number">4.2.</span> <span class="nav-text">2、上传镜像</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
       
 
       
@@ -1043,6 +1117,10 @@
 
 
   
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
 
   
 
@@ -1053,6 +1131,23 @@
 
   
 
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2020/07/15/经验篇03-手动制作OpenStack的windows镜像/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
 
 
   
