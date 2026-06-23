@@ -327,7 +327,7 @@
 
       let data;
       try {
-        data = await loadYAML('./_data/projects.yml');
+        data = await loadYAML('./data/projects.yml');
       } catch (err) {
         document.getElementById('engines-container').innerHTML =
           `<div style="color:var(--fg-dim);padding:32px">数据加载失败：${err.message}</div>`;
@@ -348,7 +348,7 @@
       ));
       const releasesMap = {};
       await Promise.all([...releaseFiles].map(async f => {
-        releasesMap[f] = await loadJSON(`./_data/releases/${f}`);
+        releasesMap[f] = await loadJSON(`./data/releases/${f}`);
       }));
 
       // 引擎

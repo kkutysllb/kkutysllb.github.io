@@ -13,7 +13,7 @@ kkutysllb 的开源作品集与产品下载入口。
 
 ## 数据驱动
 
-所有展示内容由 `_data/projects.yml` 驱动，新增产品仅需追加一段 YAML，无需改代码。
+所有展示内容由 `data/projects.yml` 驱动，新增产品仅需追加一段 YAML，无需改代码。
 
 ### 新增一个产品
 
@@ -48,7 +48,7 @@ engines:
 
 ## Release 自动同步
 
-`.github/workflows/sync-releases.yml` 每 6 小时（或手动）从 GitHub Releases 拉取最新版本与下载链接，写入 `_data/releases/*.json`。
+`.github/workflows/sync-releases.yml` 每 6 小时（或手动）从 GitHub Releases 拉取最新版本与下载链接，写入 `data/releases/*.json`。
 
 要在 `repos.txt` 中加新仓库：
 
@@ -93,9 +93,9 @@ vercel dev
 ```
 KReleaseWeb/
 ├── index.html                       # 主页面
-├── _data/
-│   ├── projects.yml                 # 项目数据（唯一需要手工维护的文件）
-│   └── releases/                    # 自动同步产物（不要手工编辑）
+├── data/                          # ⚠️ 注意：不能用 _data（GitHub Pages/Jekyll 会隐藏 _ 开头目录）
+│   ├── projects.yml                # 项目数据（唯一需要手工维护的文件）
+│   └── releases/                   # 自动同步产物（不要手工编辑）
 │       ├── qingqi.json
 │       └── kk-oclaw.json
 ├── assets/

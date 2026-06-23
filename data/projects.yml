@@ -75,7 +75,7 @@ products:
         label_en: Desktop
         channels:
           - type: github_release
-            releases_file: kk-oclaw.json   # _data/releases/kk-oclaw.json
+            releases_file: kk-oclaw.json   # data/releases/kk-oclaw.json
             platforms:
               - name: macOS (Apple Silicon)
                 file_glob: "*-arm64-mac*"

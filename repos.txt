@@ -1,6 +1,6 @@
 # repos.txt — 同步 GitHub Releases 数据用
 # 格式：<releases_file> <owner/repo>
-#   - releases_file：写入 _data/releases/ 下的文件名（不含 .json）
+#   - releases_file：写入 data/releases/ 下的文件名（不含 .json）
 #   - owner/repo：GitHub 仓库路径
 
 qingqi      kkutysllb/QingQi

@@ -21,7 +21,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mkdir -p _data/releases
+          mkdir -p data/releases
 
           while IFS= read -r line; do
             # 跳过空行和注释
@@ -31,8 +31,8 @@ jobs:
             read -r key repo <<< "$line"
             [ -z "$key" ] || [ -z "$repo" ] && continue
 
-            echo "→ Syncing ${repo} → _data/releases/${key}.json"
-            out="_data/releases/${key}.json"
+            echo "→ Syncing ${repo} → data/releases/${key}.json"
+            out="data/releases/${key}.json"
 
             # 拉取最新 release；失败则保留占位
             if gh api "repos/${repo}/releases/latest" > "${out}.tmp" 2>/dev/null; then
@@ -66,7 +66,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add _data/releases/
+          git add data/releases/
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
