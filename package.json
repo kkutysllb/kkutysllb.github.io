@@ -1,0 +1,19 @@
+{
+  "name": "kkutysllb-release-web",
+  "private": true,
+  "version": "0.1.0",
+  "description": "kkutysllb 的开源作品集与下载入口",
+  "scripts": {
+    "dev": "python3 -m http.server 4173",
+    "preview": "python3 -m http.server 4173"
+  },
+  "keywords": [
+    "kkutysllb",
+    "qingqi",
+    "qiongqi",
+    "kk-oclaw",
+    "release",
+    "github-pages"
+  ],
+  "license": "MIT"
+}

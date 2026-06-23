@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="kkutysllb 的开源作品集：穷奇引擎 (QiongQi) 与基于它构建的产品。" />
+  <title>kkutysllb — 开源作品集</title>
+  <link rel="icon" href="./assets/avatar.svg" />
+  <link rel="stylesheet" href="./assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+</head>
+<body>
+  <div class="container">
+
+    <!-- 顶部导航 -->
+    <nav class="nav">
+      <a class="brand" href="./index.html">
+        <img src="./assets/avatar.svg" alt="avatar" />
+        <span id="brand-name">kkutysllb</span>
+      </a>
+      <div class="links">
+        <a id="nav-github" href="https://github.com/kkutysllb" target="_blank" rel="noopener">GitHub</a>
+        <a href="#engines">引擎</a>
+        <a href="#products">产品</a>
+      </div>
+    </nav>
+
+    <!-- Hero 区 -->
+    <section class="hero">
+      <h1 id="hero-title">构建真正能落地的工具</h1>
+      <p class="tagline" id="hero-tagline">高 Token ROI 的本地 AI 工具链</p>
+      <p class="bio" id="hero-bio"></p>
+    </section>
+
+    <!-- 引擎区块：每个引擎一张大卡片，下方挂载其产品 -->
+    <section class="section" id="engines">
+      <div class="section-title">
+        <h2>基础引擎</h2>
+        <span class="count" id="engines-count"></span>
+      </div>
+      <div id="engines-container"></div>
+    </section>
+
+    <!-- 独立项目区块（若有） -->
+    <section class="section" id="products" style="display:none">
+      <div class="section-title">
+        <h2>独立项目</h2>
+        <span class="count" id="standalone-count"></span>
+      </div>
+      <div class="standalone-grid" id="standalone-container"></div>
+    </section>
+
+    <footer class="footer">
+      <div>© <span id="footer-year"></span> kkutysllb · 本页源码遵循 MIT 协议</div>
+      <div class="links">
+        <a href="https://github.com/kkutysllb" target="_blank" rel="noopener">GitHub</a>
+        <a id="footer-feed" href="https://github.com/kkutysllb" target="_blank" rel="noopener">Releases</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script type="module">
+    // ============================================================
+    // 工具函数
+    // ============================================================
+
+    /** 读取 YAML 数据 */
+    async function loadYAML(url) {
+      const text = await fetch(url).then(r => r.text());
+      return jsyaml.load(text);
+    }
+
+    /** 读取 release JSON 数据（可能未生成，做空对象容错） */
+    async function loadJSON(url) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) return { assets: [] };
+        return await res.json();
+      } catch (_) {
+        return { assets: [] };
+      }
+    }
+
+    /** 把 glob 模式转成正则 */
+    function globToRegex(glob) {
+      const escaped = glob.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+      return new RegExp(`^${escaped}$`);
+    }
+
+    /** 在 release assets 中匹配 file_glob */
+    function matchAsset(assets, glob) {
+      if (!assets || !Array.isArray(assets)) return null;
+      const re = globToRegex(glob);
+      return assets.find(a => re.test(a.name)) || null;
+    }
+
+    /** 格式化字节大小 */
+    function fmtSize(bytes) {
+      if (!bytes) return '';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      let i = 0; let n = bytes;
+      while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
+      return `${n.toFixed(n < 10 ? 1 : 0)} ${units[i]}`;
+    }
+
+    /** 复制文本到剪贴板 */
+    function copyText(text) {
+      navigator.clipboard?.writeText(text).catch(() => {});
+    }
+
+    // ============================================================
+    // 渲染器
+    // ============================================================
+
+    function renderHero(profile) {
+      document.getElementById('hero-title').textContent = profile.name_zh || profile.name;
+      document.getElementById('hero-tagline').textContent = profile.tagline_zh || profile.tagline || '';
+      document.getElementById('hero-bio').textContent = profile.bio_zh || profile.bio || '';
+    }
+
+    function renderInstallCmds(engine) {
+      if (!engine.install || engine.install.length === 0) return '';
+      return engine.install.map(item => `
+        <div class="install-cmd">
+          <code>${item.command}</code>
+          <span class="copy" data-copy="${item.command}">复制</span>
+        </div>
+      `).join('');
+    }
+
+    function renderFeatures(features) {
+      if (!features || features.length === 0) return '';
+      return `
+        <div class="features">
+          ${features.map(f => `
+            <div class="feature">
+              <div class="t">${f.title}</div>
+              <div class="d">${f.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    /** 渲染下载列表（github_release 渠道） */
+    function renderReleaseChannel(channel, releases) {
+      const platforms = channel.platforms || [];
+      const rows = platforms.map(plat => {
+        const asset = matchAsset(releases.assets, plat.file_glob);
+        const platIcon = plat.icon
+          ? `<img src="./assets/platforms/${plat.icon}.svg" alt="${plat.icon}" />`
+          : '';
+        if (asset) {
+          return `
+            <div class="dl-row">
+              <span class="plat">${platIcon}${plat.name}</span>
+              <a class="btn primary" href="${asset.browser_download_url}" target="_blank" rel="noopener">
+                下载 · ${fmtSize(asset.size)}
+              </a>
+            </div>
+          `;
+        }
+        return `
+          <div class="dl-row">
+            <span class="plat">${platIcon}${plat.name}</span>
+            <span class="disabled">尚未发布</span>
+          </div>
+        `;
+      }).join('');
+
+      const version = releases.tag_name ? `<code>${releases.tag_name}</code>` : '';
+      return `
+        <div class="dl-list">
+          ${version ? `<div style="font-size:12px;color:var(--fg-dim);margin-bottom:6px">最新版本：${version}</div>` : ''}
+          ${rows}
+          ${releases.html_url ? `<a class="repo-link" href="${releases.html_url}" target="_blank" rel="noopener">查看全部历史版本 →</a>` : ''}
+        </div>
+      `;
+    }
+
+    /** 渲染下载列表（repo_preview 渠道） */
+    function renderPreviewChannel(channel) {
+      return `
+        <div class="dl-list">
+          <div class="dl-row">
+            <span class="plat">${channel.label}</span>
+            <a class="btn primary" href="${channel.url}" target="_blank" rel="noopener">查看</a>
+          </div>
+          ${channel.note ? `<div style="font-size:12px;color:var(--fg-dim)">${channel.note}</div>` : ''}
+        </div>
+      `;
+    }
+
+    /** 渲染单个产品卡片 */
+    function renderProduct(product, releasesMap) {
+      const versions = product.versions || [];
+      // 默认激活第一个版本
+      const versionData = versions.map((v, idx) => ({ v, idx }));
+
+      return `
+        <div class="product" style="--accent-bar: ${product.color || '#fff'}">
+          <div class="head">
+            <img src="${product.icon}" alt="${product.name}" />
+            <h4>${product.name}</h4>
+            <span class="repo">${product.repo}</span>
+          </div>
+          <p class="tagline">${product.tagline || ''}</p>
+
+          ${versions.length > 0 ? `
+            <div class="version-tabs" data-product="${product.id}">
+              ${versionData.map(({ v, idx }) => `
+                <div class="tab ${idx === 0 ? 'active' : ''}" data-version-idx="${idx}">
+                  ${v.label}
+                </div>
+              `).join('')}
+            </div>
+            <div class="version-bodies">
+              ${versionData.map(({ v, idx }) => `
+                <div class="version-body" data-version-idx="${idx}" style="${idx === 0 ? '' : 'display:none'}">
+                  ${renderVersionChannels(product, v, releasesMap)}
+                </div>
+              `).join('')}
+            </div>
+          ` : '<div style="font-size:13px;color:var(--fg-dim)">即将推出</div>'}
+
+          <a class="repo-link" href="${product.homepage}" target="_blank" rel="noopener">${product.repo} →</a>
+        </div>
+      `;
+    }
+
+    function renderVersionChannels(product, version, releasesMap) {
+      return version.channels.map(ch => {
+        if (ch.type === 'github_release') {
+          const releases = releasesMap[ch.releases_file] || { assets: [] };
+          return renderReleaseChannel(ch, releases);
+        }
+        if (ch.type === 'repo_preview') {
+          return renderPreviewChannel(ch);
+        }
+        return '';
+      }).join('');
+    }
+
+    /** 渲染引擎卡片（含其下挂载的产品） */
+    function renderEngine(engine, children, releasesMap) {
+      return `
+        <div class="engine">
+          <div class="engine-head">
+            <img class="icon" src="${engine.icon}" alt="${engine.name}" />
+            <div style="flex:1">
+              <h3>${engine.name} <span style="color:var(--fg-dim);font-size:14px;font-weight:400">· ${engine.name_en}</span></h3>
+              <p class="sub">${engine.tagline || ''}</p>
+              <p class="desc">${engine.description || ''}</p>
+              <div class="engine-actions">
+                <a class="btn primary" href="${engine.homepage}" target="_blank" rel="noopener">查看仓库</a>
+              </div>
+              ${renderInstallCmds(engine)}
+            </div>
+          </div>
+
+          ${renderFeatures(engine.features)}
+
+          ${children.length > 0 ? `
+            <div class="products-sub">
+              <div class="label">基于 ${engine.name} 构建的产品 · ${children.length}</div>
+              <div class="products-grid">
+                ${children.map(p => renderProduct(p, releasesMap)).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function renderStandalone(items) {
+      return items.map(p => `
+        <div class="product" style="--accent-bar: ${p.color || '#fff'}">
+          <div class="head">
+            <img src="${p.icon}" alt="${p.name}" />
+            <h4>${p.name}</h4>
+            <span class="repo">${p.repo}</span>
+          </div>
+          <p class="tagline">${p.tagline || ''}</p>
+          <a class="repo-link" href="${p.homepage}" target="_blank" rel="noopener">${p.repo} →</a>
+        </div>
+      `).join('');
+    }
+
+    // ============================================================
+    // 事件绑定
+    // ============================================================
+
+    function bindEvents() {
+      // 版本切换
+      document.body.addEventListener('click', (e) => {
+        const tab = e.target.closest('.version-tabs .tab');
+        if (!tab) return;
+        const tabsRoot = tab.parentElement;
+        const productId = tabsRoot.dataset.product;
+        const idx = tab.dataset.versionIdx;
+        tabsRoot.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const productRoot = tabsRoot.closest('.product');
+        productRoot.querySelectorAll('.version-body').forEach(b => {
+          b.style.display = (b.dataset.versionIdx === idx) ? '' : 'none';
+        });
+      });
+
+      // 复制安装命令
+      document.body.addEventListener('click', (e) => {
+        const c = e.target.closest('.copy');
+        if (!c) return;
+        copyText(c.dataset.copy);
+        const orig = c.textContent;
+        c.textContent = '已复制';
+        setTimeout(() => { c.textContent = orig; }, 1200);
+      });
+    }
+
+    // ============================================================
+    // 主流程
+    // ============================================================
+
+    async function main() {
+      document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+      let data;
+      try {
+        data = await loadYAML('./_data/projects.yml');
+      } catch (err) {
+        document.getElementById('engines-container').innerHTML =
+          `<div style="color:var(--fg-dim);padding:32px">数据加载失败：${err.message}</div>`;
+        return;
+      }
+
+      const { profile, engines, products, standalone } = data;
+
+      // Hero
+      renderHero(profile);
+
+      // 预加载所有 release 数据
+      const releaseFiles = new Set();
+      products.forEach(p => (p.versions || []).forEach(v =>
+        (v.channels || []).forEach(c => {
+          if (c.type === 'github_release' && c.releases_file) releaseFiles.add(c.releases_file);
+        })
+      ));
+      const releasesMap = {};
+      await Promise.all([...releaseFiles].map(async f => {
+        releasesMap[f] = await loadJSON(`./_data/releases/${f}`);
+      }));
+
+      // 引擎
+      document.getElementById('engines-count').textContent = `${engines.length} engines`;
+      const enginesContainer = document.getElementById('engines-container');
+      enginesContainer.innerHTML = engines.map(engine => {
+        const children = products.filter(p => p.parent === engine.id);
+        return renderEngine(engine, children, releasesMap);
+      }).join('');
+
+      // Standalone
+      if (standalone && standalone.length > 0) {
+        document.getElementById('products').style.display = '';
+        document.getElementById('standalone-count').textContent = `${standalone.length} projects`;
+        document.getElementById('standalone-container').innerHTML = renderStandalone(standalone);
+      }
+
+      bindEvents();
+    }
+
+    main();
+  </script>
+</body>
+</html>

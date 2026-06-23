@@ -1,0 +1,101 @@
+# 个人主页项目数据
+# 数据模型遵循：
+#   engines    -> 基础引擎列表（独立仓库，仅作 SDK/运行时）
+#   products   -> 派生产品列表（必须通过 parent 挂在某引擎下）
+#   standalone -> 独立项目列表（不挂任何引擎）
+#
+# 扩展规则：新增产品只需在 products 追加一段；新增版本在产品的 versions 数组追加。
+# 新增引擎在 engines 追加。所有前端渲染自动按 parent 归类。
+
+profile:
+  name: kkutysllb
+  name_zh: 空山
+  tagline: 高 Token ROI 的本地 AI 工具链
+  tagline_zh: 高 Token ROI 的本地 AI 工具链
+  bio_zh: |
+    我把 QiongQi（穷奇）作为底层 Agent 运行时，
+    在它之上构建面向真实开发场景的产品。
+    这一页是我目前公开的引擎和产品的总入口。
+  bio_en: |
+    I build production tools on top of QiongQi, a local agent runtime
+    focused on token ROI. This page is the entry point to my public
+    engines and products.
+  avatar: /assets/avatar.svg
+  links:
+    github: https://github.com/kkutysllb
+
+engines:
+  - id: qingqi
+    name: 穷奇引擎
+    name_en: QiongQi
+    tagline: 高 Token ROI 的本地 Agent 运行时
+    tagline_en: High Token ROI local agent runtime
+    description: |
+      QiongQi 是一个独立的 TypeScript 包，启动本地 HTTP/SSE 服务作为 GUI 与 agent loop 之间的唯一边界。
+      核心理念是让每一个 token 尽量花在需求、代码、决策和结果上，
+      而不是重复的工具 schema、失控的工具输出和已经能被缓存复用的前缀。
+    icon: /assets/qingqi.svg
+    color: "#41D1AB"
+    repo: kkutysllb/QingQi
+    homepage: https://github.com/kkutysllb/QingQi
+    install:
+      - type: git
+        label: 克隆源码
+        command: git clone https://github.com/kkutysllb/QingQi.git
+      - type: npm
+        label: 作为依赖
+        command: npm install @kkutysllb/qingqi
+    features:
+      - title: Cache-first Agent Loop
+        desc: immutable prompt prefix、append-only session log、bounded TTL/LRU cache
+      - title: Token Economy
+        desc: 稳定前缀、规范化 schema、DeepSeek 原生缓存命中统计
+      - title: HTTP/SSE 边界
+        desc: GUI 与运行时之间清晰的进程边界，便于多端复用
+      - title: MCP 渐进发现
+        desc: mcp_search / mcp_describe / mcp_call，按需加载工具
+
+products:
+  - id: kk-oclaw
+    name: kk_OClaw
+    name_en: kk_OClaw
+    parent: qingqi
+    tagline: 桌面 + Web 双端的 Agent 产品
+    tagline_en: Desktop & web agent product
+    description: |
+      kk_OClaw 是基于 QiongQi 引擎构建的第一款公开产品。
+      同时提供桌面端安装包与 Web 演示版，覆盖 macOS / Windows / Linux。
+    icon: /assets/kk-oclaw.svg
+    color: "#F7A072"
+    repo: kkutysllb/kk_OClaw
+    homepage: https://github.com/kkutysllb/kk_OClaw
+    versions:
+      - id: desktop
+        label: 桌面端
+        label_en: Desktop
+        channels:
+          - type: github_release
+            releases_file: kk-oclaw.json   # _data/releases/kk-oclaw.json
+            platforms:
+              - name: macOS (Apple Silicon)
+                file_glob: "*-arm64-mac*"
+                icon: apple
+              - name: macOS (Intel)
+                file_glob: "*-mac.zip"
+                icon: apple
+              - name: Windows
+                file_glob: "*.exe"
+                icon: windows
+              - name: Linux
+                file_glob: "*.AppImage"
+                icon: linux
+      - id: web
+        label: Web 端
+        label_en: Web
+        channels:
+          - type: repo_preview
+            label: 查看 Web 源码与演示
+            url: https://github.com/kkutysllb/kk_OClaw#web
+            note: Web 端代码在主仓库中，可查看 README 中的演示预览
+
+standalone: []

@@ -1,0 +1,75 @@
+name: Sync GitHub Releases
+
+on:
+  # 每 6 小时同步一次
+  schedule:
+    - cron: '0 */6 * * *'
+  # 允许手动触发
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync latest release per repo
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p _data/releases
+
+          while IFS= read -r line; do
+            # 跳过空行和注释
+            [ -z "$line" ] && continue
+            [[ "$line" =~ ^# ]] && continue
+            # 格式：<releases_file> <owner/repo>
+            read -r key repo <<< "$line"
+            [ -z "$key" ] || [ -z "$repo" ] && continue
+
+            echo "→ Syncing ${repo} → _data/releases/${key}.json"
+            out="_data/releases/${key}.json"
+
+            # 拉取最新 release；失败则保留占位
+            if gh api "repos/${repo}/releases/latest" > "${out}.tmp" 2>/dev/null; then
+              # 裁剪字段，只保留前端需要的
+              node -e '
+                const fs = require("fs");
+                const r = JSON.parse(fs.readFileSync(process.argv[1]));
+                const out = {
+                  tag_name: r.tag_name,
+                  name: r.name,
+                  published_at: r.published_at,
+                  html_url: r.html_url,
+                  assets: (r.assets || []).map(a => ({
+                    name: a.name,
+                    browser_download_url: a.browser_download_url,
+                    size: a.size
+                  }))
+                };
+                fs.writeFileSync(process.argv[2], JSON.stringify(out, null, 2));
+              ' "${out}.tmp" "${out}"
+              rm -f "${out}.tmp"
+              echo "  ✓ ${repo} → ${out}"
+            else
+              echo "  ! ${repo} no release, keeping placeholder"
+              # 若占位不存在则创建
+              [ -f "${out}" ] || echo '{"_placeholder":true,"assets":[]}' > "${out}"
+            fi
+          done < repos.txt
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _data/releases/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore(releases): sync from GitHub Releases"
+            git push
+          fi
