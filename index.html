@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="kkutysllb 的开源作品集：穷奇引擎 (QiongQi) 与基于它构建的产品。" />
-  <title>kkutysllb — 开源作品集</title>
+  <meta name="description" content="kkutysllb 的作品集：QiongQi（穷奇）—— 独立多 Agent 框架，cache-first、去中心化编排的 HTTP/SSE 引擎，以及基于它构建的产品。" />
+  <title>kkutysllb · QiongQi — 独立多 Agent 框架</title>
   <link rel="icon" href="./assets/avatar.svg" />
   <link rel="stylesheet" href="./assets/style.css" />
   <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
@@ -27,8 +27,8 @@
 
     <!-- Hero 区 -->
     <section class="hero">
-      <h1 id="hero-title">构建真正能落地的工具</h1>
-      <p class="tagline" id="hero-tagline">高 Token ROI 的本地 AI 工具链</p>
+      <h1 id="hero-title">穷奇非凶，乃破局之锐</h1>
+      <p class="tagline" id="hero-tagline">独立多 Agent 框架 · 骨架不变，血肉万变</p>
       <p class="bio" id="hero-bio"></p>
     </section>
 
@@ -114,8 +114,8 @@
     // ============================================================
 
     function renderHero(profile) {
-      document.getElementById('hero-title').textContent = profile.name_zh || profile.name;
-      document.getElementById('hero-tagline').textContent = profile.tagline_zh || profile.tagline || '';
+      document.getElementById('hero-title').textContent = profile.tagline_zh || profile.tagline || '';
+      document.getElementById('hero-tagline').textContent = profile.name + ' · 独立多 Agent 框架';
       document.getElementById('hero-bio').textContent = profile.bio_zh || profile.bio || '';
     }
 

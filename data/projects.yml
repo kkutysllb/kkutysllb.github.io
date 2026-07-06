@@ -10,56 +10,82 @@
 profile:
   name: kkutysllb
   name_zh: 空山
-  tagline: 高 Token ROI 的本地 AI 工具链
-  tagline_zh: 高 Token ROI 的本地 AI 工具链
+  tagline: 穷奇非凶，乃破局之锐
+  tagline_zh: 穷奇非凶，乃破局之锐
   bio_zh: |
-    我把 QiongQi（穷奇）作为底层 Agent 运行时，
-    在它之上构建面向真实开发场景的产品。
-    这一页是我目前公开的引擎和产品的总入口。
+    我是空山，QiongQi（穷奇）的创作者。
+    
+    QiongQi 是一个领域中立的独立多 Agent 框架，
+    以 cache-first、去中心化编排的 HTTP/SSE 引擎为骨架，
+    搭配可插拔的技能与工具体系，面向不同行业组装为生产力工具。
+    
+    核心理念是提高每一 token 的 ROI ——
+    避免重复工具 schema、失控工具输出、畸形历史和任何可以命中却错过的稳定前缀。
+    
+    此页面是我公开的引擎与产品的总入口。
   bio_en: |
-    I build production tools on top of QiongQi, a local agent runtime
-    focused on token ROI. This page is the entry point to my public
-    engines and products.
+    I build QiongQi — a domain-neutral, independent multi-agent framework
+    with a cache-first, decentralized orchestration HTTP/SSE engine.
+    
+    This page is the entry point to my public engines and products.
   avatar: /assets/avatar.svg
   links:
     github: https://github.com/kkutysllb
 
 engines:
-  - id: qingqi
+  - id: qiongqi
     name: 穷奇引擎
     name_en: QiongQi
-    tagline: 高 Token ROI 的本地 Agent 运行时
-    tagline_en: High Token ROI local agent runtime
+    tagline: 独立多 Agent 框架 · 骨架不变，血肉万变
+    tagline_en: Independent Multi-Agent Framework
     description: |
-      QiongQi 是一个独立的 TypeScript 包，启动本地 HTTP/SSE 服务作为 GUI 与 agent loop 之间的唯一边界。
-      核心理念是让每一个 token 尽量花在需求、代码、决策和结果上，
-      而不是重复的工具 schema、失控的工具输出和已经能被缓存复用的前缀。
+      QiongQi（穷奇）是一个领域中立的独立多 Agent 框架，
+      以 cache-first、去中心化编排的 HTTP/SSE 引擎为骨架，
+      搭配可插拔的技能与工具体系，面向不同行业组装为生产力工具。
+
+      核心目标：提高每一 token 的 ROI。避免重复工具 schema、失控工具输出、
+      畸形历史、无效重试，以及任何可以命中却错过的稳定前缀。
+
+      当前能力包括 classic / evented turn orchestration、
+      声明式 loop engineering（LoopRunner 解释 LoopPlan phases，
+      并通过 Evaluator 做有界 retry）、HTTP/SSE API、A2A task lifecycle、
+      Skill/MCP/Web/Memory/Delegation provider、attachments/artifacts、
+      hybrid SQLite+JSONL storage、Prometheus metrics、
+      structured access logs、OpenTelemetry HTTP tracing，
+      以及工具输出预算、bash command audit、virtual path、
+      terminal-state guard 等运行治理能力。
+
+      采用 pnpm monorepo 多包结构，共 18 个独立 npm 包（@qiongqi/* 作用域）。
     icon: /assets/qingqi.svg
     color: "#41D1AB"
-    repo: kkutysllb/QingQi
-    homepage: https://github.com/kkutysllb/QingQi
+    repo: kkutysllb/QiongQi
+    homepage: https://github.com/kkutysllb/QiongQi
     install:
       - type: git
         label: 克隆源码
-        command: git clone https://github.com/kkutysllb/QingQi.git
-      - type: npm
-        label: 作为依赖
-        command: npm install @kkutysllb/qingqi
+        command: git clone https://github.com/kkutysllb/QiongQi.git && cd QiongQi && pnpm install && pnpm -r run build
+      - type: pnpm
+        label: Monorepo 构建
+        command: pnpm install && pnpm -r run build && node scripts/flatten-dist.mjs
     features:
       - title: Cache-first Agent Loop
-        desc: immutable prompt prefix、append-only session log、bounded TTL/LRU cache
-      - title: Token Economy
-        desc: 稳定前缀、规范化 schema、DeepSeek 原生缓存命中统计
-      - title: HTTP/SSE 边界
-        desc: GUI 与运行时之间清晰的进程边界，便于多端复用
-      - title: MCP 渐进发现
-        desc: mcp_search / mcp_describe / mcp_call，按需加载工具
+        desc: immutable prompt prefix、append-only session log、bounded TTL/LRU cache、DeepSeek 原生缓存命中统计，最大化 token ROI
+      - title: 去中心化编排
+        desc: classic / evented 双模式 orchestrator，支持 A2A task lifecycle 与 SSE 订阅，异步任务提交与轮询
+      - title: 声明式 Loop Engineering
+        desc: LoopRunner 解释 LoopPlan phases，Evaluator 做有界 retry，灵活可配的 turn 级控制流
+      - title: 多 Provider 体系
+        desc: Skill / MCP / Web / Memory / Delegation 五大 provider，mcp_search / mcp_describe / mcp_call 渐进式工具发现与加载
+      - title: 运行治理
+        desc: 工具输出预算控制、bash command audit、virtual path 隔离、terminal-state guard、结构化 access log
+      - title: 生产可观测
+        desc: Prometheus metrics（token/cache/A2A task/存储诊断）、OpenTelemetry HTTP tracing、health/ready 探针、hybrid SQLite+JSONL 存储
 
 products:
   - id: kk-oclaw
     name: kk_OClaw
     name_en: kk_OClaw
-    parent: qingqi
+    parent: qiongqi
     tagline: 桌面 + Web 双端的 Agent 产品
     tagline_en: Desktop & web agent product
     description: |

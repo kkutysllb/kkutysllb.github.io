@@ -5,7 +5,7 @@ kkutysllb 的开源作品集与产品下载入口。
 ## 它展示什么
 
 - **基础引擎**（独立仓库，仅作 SDK/运行时）
-  - [QiongQi / 穷奇引擎](https://github.com/kkutysllb/QingQi)
+  - [QiongQi / 穷奇引擎](https://github.com/kkutysllb/QiongQi)
 - **基于 QiongQi 构建的产品**
   - [kk_OClaw](https://github.com/kkutysllb/kk_OClaw) — 桌面端 + Web 端
 
@@ -21,7 +21,7 @@ kkutysllb 的开源作品集与产品下载入口。
 products:
   - id: my-new-app
     name: My New App
-    parent: qingqi              # 挂在哪个引擎下
+    parent: qiongqi              # 挂在哪个引擎下
     tagline: 一句话简介
     repo: kkutysllb/my-new-app
     homepage: https://github.com/kkutysllb/my-new-app
@@ -53,7 +53,7 @@ engines:
 要在 `repos.txt` 中加新仓库：
 
 ```
-qingqi          kkutysllb/QingQi
+qiongqi         kkutysllb/QiongQi
 kk-oclaw        kkutysllb/kk_OClaw
 my-new-app      kkutysllb/my-new-app
 ```
@@ -96,7 +96,7 @@ KReleaseWeb/
 ├── data/                          # ⚠️ 注意：不能用 _data（GitHub Pages/Jekyll 会隐藏 _ 开头目录）
 │   ├── projects.yml                # 项目数据（唯一需要手工维护的文件）
 │   └── releases/                   # 自动同步产物（不要手工编辑）
-│       ├── qingqi.json
+│       ├── qiongqi.json
 │       └── kk-oclaw.json
 ├── assets/
 │   ├── style.css                    # 样式
