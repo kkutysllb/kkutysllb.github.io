@@ -1,9 +1,63 @@
 {
-  "_placeholder": true,
-  "_note": "此文件由 .github/workflows/sync-releases.yml 自动生成。首次运行后会被真实数据覆盖。",
-  "tag_name": null,
-  "name": null,
-  "published_at": null,
-  "html_url": "https://github.com/kkutysllb/KCoder/releases",
-  "assets": []
+  "tag_name": "v0.1.1",
+  "name": "KCoder 0.1.1",
+  "published_at": "2026-07-05T08:39:38Z",
+  "html_url": "https://github.com/kkutysllb/KCoder/releases/tag/v0.1.1",
+  "assets": [
+    {
+      "name": "KCoder-0.1.1-linux-x86_64.AppImage",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.1/KCoder-0.1.1-linux-x86_64.AppImage",
+      "size": 146423756
+    },
+    {
+      "name": "KCoder-0.1.1-mac-arm64.dmg",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.1/KCoder-0.1.1-mac-arm64.dmg",
+      "size": 140347376
+    },
+    {
+      "name": "KCoder-0.1.1-mac-arm64.dmg.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.1/KCoder-0.1.1-mac-arm64.dmg.blockmap",
+      "size": 147287
+    },
+    {
+      "name": "KCoder-0.1.1-mac-arm64.zip",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.1/KCoder-0.1.1-mac-arm64.zip",
+      "size": 142519393
+    },
+    {
+      "name": "KCoder-0.1.1-mac-x64.dmg",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.1/KCoder-0.1.1-mac-x64.dmg",
+      "size": 148014785
+    },
+    {
+      "name": "KCoder-0.1.1-mac-x64.dmg.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.1/KCoder-0.1.1-mac-x64.dmg.blockmap",
+      "size": 154877
+    },
+    {
+      "name": "KCoder-0.1.1-mac-x64.zip",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.1/KCoder-0.1.1-mac-x64.zip",
+      "size": 150307316
+    },
+    {
+      "name": "KCoder-0.1.1-win-x64.exe",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.1/KCoder-0.1.1-win-x64.exe",
+      "size": 135479499
+    },
+    {
+      "name": "KCoder-0.1.1-win-x64.exe.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.1/KCoder-0.1.1-win-x64.exe.blockmap",
+      "size": 127758
+    },
+    {
+      "name": "latest-linux.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.1/latest-linux.yml",
+      "size": 390
+    },
+    {
+      "name": "latest-mac.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.1/latest-mac.yml",
+      "size": 814
+    }
+  ]
 }
