@@ -56,6 +56,8 @@ jobs:
               rm -f "${out}.tmp"
               echo "  ✓ ${repo} → ${out}"
             else
+              # 清理 if 条件重定向产生的 .tmp 残留（重定向在 if 求值前就执行了）
+              rm -f "${out}.tmp"
               echo "  ! ${repo} no release, keeping placeholder"
               # 若占位不存在则创建
               [ -f "${out}" ] || echo '{"_placeholder":true,"assets":[]}' > "${out}"
