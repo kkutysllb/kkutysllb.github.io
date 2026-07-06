@@ -2,7 +2,6 @@
 # 数据模型遵循：
 #   engines    -> 基础引擎列表（独立仓库，仅作 SDK/运行时）
 #   products   -> 派生产品列表（必须通过 parent 挂在某引擎下）
-#   standalone -> 独立项目列表（不挂任何引擎）
 #
 # 扩展规则：新增产品只需在 products 追加一段；新增版本在产品的 versions 数组追加。
 # 新增引擎在 engines 追加。所有前端渲染自动按 parent 归类。
@@ -189,5 +188,3 @@ products:
               - name: Linux
                 file_glob: "*.AppImage"
                 icon: linux
-
-standalone: []

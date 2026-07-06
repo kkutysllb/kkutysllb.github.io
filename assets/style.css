@@ -343,12 +343,6 @@ code {
 }
 .repo-link:hover { color: var(--fg); }
 
-/* ----- Standalone 卡片 ----- */
-.standalone-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-}
 
 /* ----- Footer ----- */
 .footer {

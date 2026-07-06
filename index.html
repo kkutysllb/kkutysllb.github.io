@@ -21,7 +21,6 @@
       <div class="links">
         <a id="nav-github" href="https://github.com/kkutysllb" target="_blank" rel="noopener">GitHub</a>
         <a href="#engines">引擎</a>
-        <a href="#products">产品</a>
       </div>
     </nav>
 
@@ -42,15 +41,6 @@
         <span class="count" id="engines-count"></span>
       </div>
       <div id="engines-container"></div>
-    </section>
-
-    <!-- 独立项目区块（若有） -->
-    <section class="section" id="products" style="display:none">
-      <div class="section-title">
-        <h2>独立项目</h2>
-        <span class="count" id="standalone-count"></span>
-      </div>
-      <div class="standalone-grid" id="standalone-container"></div>
     </section>
 
     <footer class="footer">
@@ -276,20 +266,6 @@
       `;
     }
 
-    function renderStandalone(items) {
-      return items.map(p => `
-        <div class="product" style="--accent-bar: ${p.color || '#fff'}">
-          <div class="head">
-            <img src="${p.icon}" alt="${p.name}" />
-            <h4>${p.name}</h4>
-            <span class="repo">${p.repo}</span>
-          </div>
-          <p class="tagline">${p.tagline || ''}</p>
-          <a class="repo-link" href="${p.homepage}" target="_blank" rel="noopener">${p.repo} →</a>
-        </div>
-      `).join('');
-    }
-
     // ============================================================
     // 事件绑定
     // ============================================================
@@ -337,7 +313,7 @@
         return;
       }
 
-      const { profile, engines, products, standalone } = data;
+      const { profile, engines, products } = data;
 
       // Hero
       renderHero(profile);
@@ -361,13 +337,6 @@
         const children = products.filter(p => p.parent === engine.id);
         return renderEngine(engine, children, releasesMap);
       }).join('');
-
-      // Standalone
-      if (standalone && standalone.length > 0) {
-        document.getElementById('products').style.display = '';
-        document.getElementById('standalone-count').textContent = `${standalone.length} projects`;
-        document.getElementById('standalone-container').innerHTML = renderStandalone(standalone);
-      }
 
       bindEvents();
     }
