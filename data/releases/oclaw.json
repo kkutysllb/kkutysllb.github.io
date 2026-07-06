@@ -1,63 +1,63 @@
 {
-  "tag_name": "v0.1.8",
-  "name": "0.1.8",
-  "published_at": "2026-07-06T01:30:33Z",
-  "html_url": "https://github.com/kkutysllb/OClaw/releases/tag/v0.1.8",
+  "tag_name": "v0.1.9",
+  "name": "0.1.9",
+  "published_at": "2026-07-06T14:51:04Z",
+  "html_url": "https://github.com/kkutysllb/OClaw/releases/tag/v0.1.9",
   "assets": [
     {
-      "name": "kkoclaw-desktop-0.1.8.x86_64.rpm",
-      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.8/kkoclaw-desktop-0.1.8.x86_64.rpm",
-      "size": 248499025
+      "name": "kkoclaw-desktop-0.1.9.x86_64.rpm",
+      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.9/kkoclaw-desktop-0.1.9.x86_64.rpm",
+      "size": 248535805
     },
     {
-      "name": "kkoclaw-desktop_0.1.8_amd64.deb",
-      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.8/kkoclaw-desktop_0.1.8_amd64.deb",
-      "size": 247917314
+      "name": "kkoclaw-desktop_0.1.9_amd64.deb",
+      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.9/kkoclaw-desktop_0.1.9_amd64.deb",
+      "size": 247939502
     },
     {
       "name": "latest-linux.yml",
-      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.8/latest-linux.yml",
+      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.9/latest-linux.yml",
       "size": 522
     },
     {
       "name": "latest-mac.yml",
-      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.8/latest-mac.yml",
+      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.9/latest-mac.yml",
       "size": 499
     },
     {
       "name": "latest.yml",
-      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.8/latest.yml",
+      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.9/latest.yml",
       "size": 339
     },
     {
-      "name": "OClaw-0.1.8-arm64-mac.zip",
-      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.8/OClaw-0.1.8-arm64-mac.zip",
-      "size": 288296219
+      "name": "OClaw-0.1.9-arm64-mac.zip",
+      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.9/OClaw-0.1.9-arm64-mac.zip",
+      "size": 288295680
     },
     {
-      "name": "OClaw-0.1.8-arm64-mac.zip.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.8/OClaw-0.1.8-arm64-mac.zip.blockmap",
-      "size": 300509
+      "name": "OClaw-0.1.9-arm64-mac.zip.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.9/OClaw-0.1.9-arm64-mac.zip.blockmap",
+      "size": 300226
     },
     {
-      "name": "OClaw-0.1.8-arm64.dmg",
-      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.8/OClaw-0.1.8-arm64.dmg",
-      "size": 292136336
+      "name": "OClaw-0.1.9-arm64.dmg",
+      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.9/OClaw-0.1.9-arm64.dmg",
+      "size": 292331142
     },
     {
-      "name": "OClaw-0.1.8-arm64.dmg.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.8/OClaw-0.1.8-arm64.dmg.blockmap",
-      "size": 306764
+      "name": "OClaw-0.1.9-arm64.dmg.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.9/OClaw-0.1.9-arm64.dmg.blockmap",
+      "size": 303431
     },
     {
-      "name": "OClaw-Setup-0.1.8.exe",
-      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.8/OClaw-Setup-0.1.8.exe",
-      "size": 243432374
+      "name": "OClaw-Setup-0.1.9.exe",
+      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.9/OClaw-Setup-0.1.9.exe",
+      "size": 243432280
     },
     {
-      "name": "OClaw-Setup-0.1.8.exe.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.8/OClaw-Setup-0.1.8.exe.blockmap",
-      "size": 252358
+      "name": "OClaw-Setup-0.1.9.exe.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/OClaw/releases/download/v0.1.9/OClaw-Setup-0.1.9.exe.blockmap",
+      "size": 251847
     }
   ]
 }
