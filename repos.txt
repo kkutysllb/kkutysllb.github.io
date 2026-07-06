@@ -5,3 +5,6 @@
 
 qiongqi     kkutysllb/QiongQi
 kk-oclaw    kkutysllb/kk_OClaw
+oclaw       kkutysllb/OClaw
+kworks      kkutysllb/KWorks
+kcoder      kkutysllb/KCoder

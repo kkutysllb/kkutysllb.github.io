@@ -100,6 +100,18 @@ code {
   max-width: 720px;
   margin: 0;
 }
+.hero-cover {
+  margin-top: 48px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+}
+.hero-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
 
 /* ----- 区块 ----- */
 .section { padding: 64px 0; }

@@ -14,19 +14,19 @@ profile:
   tagline_zh: 穷奇非凶，乃破局之锐
   bio_zh: |
     我是空山，QiongQi（穷奇）的创作者。
-    
+
     QiongQi 是一个领域中立的独立多 Agent 框架，
     以 cache-first、去中心化编排的 HTTP/SSE 引擎为骨架，
     搭配可插拔的技能与工具体系，面向不同行业组装为生产力工具。
-    
+
     核心理念是提高每一 token 的 ROI ——
     避免重复工具 schema、失控工具输出、畸形历史和任何可以命中却错过的稳定前缀。
-    
+
     此页面是我公开的引擎与产品的总入口。
   bio_en: |
     I build QiongQi — a domain-neutral, independent multi-agent framework
     with a cache-first, decentralized orchestration HTTP/SSE engine.
-    
+
     This page is the entry point to my public engines and products.
   avatar: /assets/avatar.svg
   links:
@@ -101,7 +101,7 @@ products:
         label_en: Desktop
         channels:
           - type: github_release
-            releases_file: kk-oclaw.json   # data/releases/kk-oclaw.json
+            releases_file: kk-oclaw.json
             platforms:
               - name: macOS (Apple Silicon)
                 file_glob: "*-arm64-mac*"
@@ -123,5 +123,116 @@ products:
             label: 查看 Web 源码与演示
             url: https://github.com/kkutysllb/kk_OClaw#web
             note: Web 端代码在主仓库中，可查看 README 中的演示预览
+
+  - id: oclaw
+    name: OClaw
+    name_en: OClaw
+    parent: qiongqi
+    tagline: 超级 Agent 平台 · Python + LangGraph
+    tagline_en: Open-Source Super Agent Platform
+    description: |
+      OClaw 是一个开源的超级 Agent 平台，基于 Python + LangGraph 构建。
+      通过子 Agent、记忆与沙箱的有机结合，结合可扩展的技能体系，
+      使 Agent 能够完成几乎任何任务。
+
+      早期 Python 版本，QiongQi 引擎版本已演进为 KWorks。
+    icon: /assets/oclaw.svg
+    color: "#E65100"
+    repo: kkutysllb/OClaw
+    homepage: https://github.com/kkutysllb/OClaw
+    versions:
+      - id: desktop
+        label: 桌面端
+        label_en: Desktop
+        channels:
+          - type: github_release
+            releases_file: oclaw.json
+            platforms:
+              - name: macOS (Apple Silicon)
+                file_glob: "*arm64-mac*"
+                icon: apple
+              - name: Windows
+                file_glob: "OClaw-Setup-*.exe"
+                icon: windows
+              - name: Linux (deb)
+                file_glob: "kkoclaw-desktop_*_amd64.deb"
+                icon: linux
+
+  - id: kworks
+    name: KWorks
+    name_en: KWorks
+    parent: qiongqi
+    tagline: Local-first AI Workspace · QiongQi 桌面旗舰
+    tagline_en: Local-First AI Workspace
+    description: |
+      KWorks 是一个 Local-first、全栈 AI 工作空间——
+      融合 Next.js Web UI、领域中立多 Agent 运行时（QiongQi）
+      和 Electron 桌面壳层于一体的自包含产品。
+
+      核心理念：模型是骨架，技能是血肉。运行时保持领域中立，
+      同一引擎可随时切换为 coding copilot、研究分析师或创意工作室。
+    icon: /assets/kworks.svg
+    color: "#00BCD4"
+    repo: kkutysllb/KWorks
+    homepage: https://github.com/kkutysllb/KWorks
+    versions:
+      - id: desktop
+        label: 桌面端
+        label_en: Desktop
+        channels:
+          - type: github_release
+            releases_file: kworks.json
+            platforms:
+              - name: macOS (Apple Silicon)
+                file_glob: "*mac-arm64.*"
+                icon: apple
+              - name: macOS (Intel)
+                file_glob: "*mac-x64.*"
+                icon: apple
+              - name: Windows
+                file_glob: "*-win-x64.exe"
+                icon: windows
+              - name: Linux
+                file_glob: "*.AppImage"
+                icon: linux
+
+  - id: kcoder
+    name: KCoder
+    name_en: KCoder
+    parent: qiongqi
+    tagline: 面向真实代码库的桌面 AI 编程工作台
+    tagline_en: Desktop AI Coding Workbench
+    description: |
+      KCoder 是一个面向真实代码库的本地桌面 AI 编程工作台。
+      以 QiongQi 为唯一运行时，把终端里的智能体体验整理成
+      更适合长期开发的应用：选择工作目录，发起任务，
+      实时查看推理、工具调用和文件改动，并在需要时审批或回退。
+
+      支持多会话、流式输出、代码审查、计划面板、目标追踪、
+      Skill/MCP 图形化管理等完整开发生命周期特性。
+    icon: /assets/kcoder.svg
+    color: "#7C4DFF"
+    repo: kkutysllb/KCoder
+    homepage: https://github.com/kkutysllb/KCoder
+    versions:
+      - id: desktop
+        label: 桌面端
+        label_en: Desktop
+        channels:
+          - type: github_release
+            releases_file: kcoder.json
+            platforms:
+              - name: macOS (Apple Silicon)
+                file_glob: "*mac-arm64.*"
+                icon: apple
+              - name: macOS (Intel)
+                file_glob: "*mac-x64.*"
+                icon: apple
+              - name: Windows
+                file_glob: "*-win-x64.exe"
+                icon: windows
+              - name: Linux
+                file_glob: "*.AppImage"
+                icon: linux
 
 standalone: []
