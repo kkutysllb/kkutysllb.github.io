@@ -82,60 +82,15 @@ engines:
         desc: Prometheus metrics（token/cache/A2A task/存储诊断）、OpenTelemetry HTTP tracing、health/ready 探针、hybrid SQLite+JSONL 存储
 
 products:
-  - id: kk-oclaw
-    name: kk_OClaw
-    name_en: kk_OClaw
-    parent: qiongqi
-    tagline: 桌面 + Web 双端的 Agent 产品
-    tagline_en: Desktop & web agent product
-    description: |
-      kk_OClaw 是基于 QiongQi 引擎构建的第一款公开产品。
-      同时提供桌面端安装包与 Web 演示版，覆盖 macOS / Windows / Linux。
-    icon: /assets/kk-oclaw.svg
-    color: "#F7A072"
-    repo: kkutysllb/kk_OClaw
-    homepage: https://github.com/kkutysllb/kk_OClaw
-    versions:
-      - id: desktop
-        label: 桌面端
-        label_en: Desktop
-        channels:
-          - type: github_release
-            releases_file: kk-oclaw.json
-            platforms:
-              - name: macOS (Apple Silicon)
-                file_glob: "*-arm64-mac*"
-                icon: apple
-              - name: macOS (Intel)
-                file_glob: "*-mac.zip"
-                icon: apple
-              - name: Windows
-                file_glob: "*.exe"
-                icon: windows
-              - name: Linux
-                file_glob: "*.AppImage"
-                icon: linux
-      - id: web
-        label: Web 端
-        label_en: Web
-        channels:
-          - type: repo_preview
-            label: 查看 Web 源码与演示
-            url: https://github.com/kkutysllb/kk_OClaw#web
-            note: Web 端代码在主仓库中，可查看 README 中的演示预览
-
   - id: oclaw
     name: OClaw
     name_en: OClaw
     parent: qiongqi
-    tagline: 超级 Agent 平台 · Python + LangGraph
-    tagline_en: Open-Source Super Agent Platform
+    tagline: 桌面端 Agent 产品 · 覆盖 macOS / Windows / Linux
+    tagline_en: Desktop Agent Product
     description: |
-      OClaw 是一个开源的超级 Agent 平台，基于 Python + LangGraph 构建。
-      通过子 Agent、记忆与沙箱的有机结合，结合可扩展的技能体系，
-      使 Agent 能够完成几乎任何任务。
-
-      早期 Python 版本，QiongQi 引擎版本已演进为 KWorks。
+      OClaw 是基于 QiongQi 引擎构建的桌面 Agent 产品。
+      同时提供 macOS / Windows / Linux 三平台安装包，覆盖 Apple Silicon、Intel、AMD64 架构。
     icon: /assets/oclaw.svg
     color: "#E65100"
     repo: kkutysllb/OClaw
