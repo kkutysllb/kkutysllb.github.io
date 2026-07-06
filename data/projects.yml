@@ -8,18 +8,16 @@
 
 profile:
   name: kkutysllb
-  name_zh: 空山
+  name_zh: 金融扫地僧
   tagline: 穷奇非凶，乃破局之锐
   tagline_zh: 穷奇非凶，乃破局之锐
   bio_zh: |
-    我是空山，QiongQi（穷奇）的创作者。
+    我是金融扫地僧，QiongQi（穷奇）的创作者。
 
-    QiongQi 是一个领域中立的独立多 Agent 框架，
-    以 cache-first、去中心化编排的 HTTP/SSE 引擎为骨架，
+    QiongQi 是一个领域中立的独立多 Agent 框架，以 cache-first、去中心化编排的 HTTP/SSE 引擎为骨架，
     搭配可插拔的技能与工具体系，面向不同行业组装为生产力工具。
 
-    核心理念是提高每一 token 的 ROI ——
-    避免重复工具 schema、失控工具输出、畸形历史和任何可以命中却错过的稳定前缀。
+    核心理念是提高每一 token 的 ROI ——避免重复工具 schema、失控工具输出、畸形历史和任何可以命中却错过的稳定前缀。
 
     此页面是我公开的引擎与产品的总入口。
   bio_en: |
