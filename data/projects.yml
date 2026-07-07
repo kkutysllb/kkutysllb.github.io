@@ -101,7 +101,7 @@ products:
             releases_file: oclaw.json
             platforms:
               - name: macOS (Apple Silicon)
-                file_glob: "*arm64-mac*"
+                file_glob: "*-arm64.dmg"
                 icon: apple
               - name: Windows
                 file_glob: "OClaw-Setup-*.exe"
