@@ -170,13 +170,13 @@ code {
 .hero .tagline {
   font-size: 20px;
   color: var(--fg-muted);
-  max-width: 720px;
+  max-width: 100%;
   margin: 0 0 24px;
 }
 .hero .bio {
   font-size: 15px;
   color: var(--fg-dim);
-  max-width: 720px;
+  max-width: 100%;
   margin: 0;
 }
 .hero-cover {
