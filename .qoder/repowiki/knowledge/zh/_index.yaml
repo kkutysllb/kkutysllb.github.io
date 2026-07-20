@@ -3,11 +3,11 @@ schema_version: 1
 locale: zh-CN
 branch: main
 nodes_managed: true
-exported_at: "2026-07-20T14:39:22Z"
+exported_at: "2026-07-20T14:55:01Z"
 modules:
     "":
-        dir_name: kkutysllb 开源作品集与下载入口站点
-        title: kkutysllb 开源作品集与下载入口站点
+        dir_name: QiongQi 作品集与 Release 聚合静态站
+        title: QiongQi 作品集与 Release 聚合静态站
         scope:
             - README.md
             - .gitignore
