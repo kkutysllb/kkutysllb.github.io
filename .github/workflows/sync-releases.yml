@@ -19,7 +19,7 @@ jobs:
 
       - name: Sync latest release per repo
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SYNC_TOKEN }}
         run: |
           mkdir -p data/releases
 
