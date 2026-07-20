@@ -1,0 +1,22 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: zh-CN
+branch: main
+nodes_managed: true
+exported_at: "2026-07-20T14:39:22Z"
+modules:
+    "":
+        dir_name: kkutysllb 开源作品集与下载入口站点
+        title: kkutysllb 开源作品集与下载入口站点
+        scope:
+            - README.md
+            - .gitignore
+            - index.html
+            - package.json
+            - repos.txt
+            - vercel.json
+            - .github/workflows/sync-releases.yml
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []

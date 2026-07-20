@@ -190,7 +190,7 @@
     }
 
     /** 渲染下载列表（github_release 渠道） */
-    function renderReleaseChannel(channel, releases) {
+    function renderReleaseChannel(channel, releases, product) {
       const platforms = channel.platforms || [];
       const rows = platforms.map(plat => {
         const asset = matchAsset(releases.assets, plat.file_glob);
@@ -232,7 +232,7 @@
         <div class="dl-list">
           ${version ? `<div class="release-meta">最新版本：${version}</div>` : ''}
           ${rows}
-          ${releases.html_url ? `<a class="repo-link release-link" href="${releases.html_url}" target="_blank" rel="noopener">查看全部历史版本 →</a>` : ''}
+          ${(releases.html_url && product.repo) ? `<a class="repo-link release-link" href="${releases.html_url}" target="_blank" rel="noopener">查看全部历史版本 →</a>` : ''}
         </div>
       `;
     }
@@ -266,7 +266,7 @@
           <div class="head">
             <img src="${product.icon}" alt="${product.name}" />
             <h4>${product.name}</h4>
-            <span class="repo">${product.repo}</span>
+            ${product.repo ? `<span class="repo">${product.repo}</span>` : ''}
           </div>
           <p class="tagline">${product.tagline || ''}</p>
 
@@ -287,7 +287,7 @@
             </div>
           ` : '<div style="font-size:13px;color:var(--fg-dim)">即将推出</div>'}
 
-          <a class="repo-link" href="${product.homepage}" target="_blank" rel="noopener">${product.repo} →</a>
+          ${product.homepage ? `<a class="repo-link" href="${product.homepage}" target="_blank" rel="noopener">${product.repo} →</a>` : ''}
         </div>
       `;
     }
@@ -296,7 +296,7 @@
       return version.channels.map(ch => {
         if (ch.type === 'github_release') {
           const releases = releasesMap[ch.releases_file] || { assets: [] };
-          return renderReleaseChannel(ch, releases);
+          return renderReleaseChannel(ch, releases, product);
         }
         if (ch.type === 'repo_preview') {
           return renderPreviewChannel(ch);
@@ -316,7 +316,7 @@
               <p class="sub">${engine.tagline || ''}</p>
               <p class="desc">${engine.description || ''}</p>
               <div class="engine-actions">
-                <a class="btn primary" href="${engine.homepage}" target="_blank" rel="noopener">查看仓库</a>
+                ${engine.homepage ? `<a class="btn primary" href="${engine.homepage}" target="_blank" rel="noopener">查看仓库</a>` : ''}
               </div>
               ${renderInstallCmds(engine)}
             </div>

@@ -12,13 +12,18 @@ profile:
   tagline: 穷奇非凶，乃破局之锐
   tagline_zh: 穷奇非凶，乃破局之锐
   bio_zh: |
-    我是金融扫地僧，QiongQi（穷奇）的创作者。
+    独立开发者，构建两套 Agent 基础设施：
 
-    QiongQi 是一个领域中立的独立多 Agent 框架，以 cache-first、去中心化编排的 HTTP/SSE 引擎为骨架，搭配可插拔的技能与工具体系，面向不同行业组装为生产力工具。
+    QiongQi（穷奇）—— 领域中立的 Node.js 多 Agent 引擎，
+    以 cache-first 编排和去中心化 HTTP/SSE 协议为骨架，
+    让同一运行时在 coding copilot、研究分析师、创意工作室之间无缝切换。
 
-    核心理念是提高每一 token 的 ROI ——避免重复工具 schema、失控工具输出、畸形历史和任何可以命中却错过的稳定前缀。
+    Harness —— Python 侧的 Super Agent 编排架构，
+    将 Sub-Agents、Sandbox、长期记忆与可插拔技能编织为统一执行体，
+    面向桌面端交付开箱即用的生产力产品。
 
-    此页面是我公开的引擎与产品的总入口。
+    设计信条：每一个 token 都应有 ROI。
+    不重复发送工具 schema，不保留失控输出，不错过任何可命中的稳定前缀。
   bio_en: |
     I build QiongQi — a domain-neutral, independent multi-agent framework
     with a cache-first, decentralized orchestration HTTP/SSE engine.
@@ -77,20 +82,46 @@ engines:
       - title: 生产可观测
         desc: Prometheus metrics（token/cache/A2A task/存储诊断）、OpenTelemetry HTTP tracing、health/ready 探针、hybrid SQLite+JSONL 存储
 
+  - id: harness
+    name: Harness 架构
+    name_en: Harness
+    tagline: Super Agent Harness · 让 Agent 完成几乎任何事
+    tagline_en: Super Agent Harness
+    description: |
+      Harness 是一个 Super Agent 编排架构，
+      将 Sub-Agents、Memory、Sandbox 和可扩展的 Skills 组织在一起，
+      让 Agent 具备真正的任务执行能力。
+
+      核心能力包括动态 Sub-Agent 拆解与并行执行、
+      技能与工作模式显式绑定（按需渐进加载）、
+      隔离 Sandbox 文件系统、Context Engineering（摘要压缩 + 子任务转存）、
+      长期记忆持久化，以及 Token 用量统计与 ROI 分析。
+    icon: /assets/oclaw.svg
+    color: "#FF6D00"
+    features:
+      - title: Sub-Agent 编排
+        desc: lead agent 动态拆解复杂任务，拉起独立 sub-agents 并行执行，结构化汇总结果
+      - title: Skills 与工作模式绑定
+        desc: 技能通过 work_modes 显式声明归属，执行时只加载 core + 当前模式技能，节省 token、提升精度
+      - title: 隔离 Sandbox
+        desc: 每个任务运行在独立 sandbox，完整文件系统（uploads/workspace/outputs），可审计、会隔离
+      - title: Context Engineering
+        desc: 子任务上下文完全隔离，摘要压缩 + 中间结果转存文件系统，避免上下文膨胀
+      - title: 长期记忆
+        desc: 对话结束后记忆持久化，跨 session 保留用户偏好、项目知识与历史经验
+
 products:
   - id: oclaw
     name: OClaw
     name_en: OClaw
-    parent: qiongqi
-    tagline: 桌面端 Agent 产品 · 覆盖 macOS / Windows / Linux
-    tagline_en: Desktop Agent Product
+    parent: harness
+    tagline: 桌面端 Super Agent · 覆盖 macOS / Windows / Linux
+    tagline_en: Desktop Super Agent
     description: |
-      OClaw 是基于 QiongQi 引擎构建的桌面 Agent 产品。
+      OClaw 是基于 Harness 架构构建的桌面 Super Agent 产品。
       同时提供 macOS / Windows / Linux 三平台安装包，覆盖 Apple Silicon、Intel、AMD64 架构。
     icon: /assets/oclaw.svg
     color: "#E65100"
-    repo: kkutysllb/OClaw
-    homepage: https://github.com/kkutysllb/OClaw
     versions:
       - id: desktop
         label: 桌面端
@@ -124,8 +155,6 @@ products:
       同一引擎可随时切换为 coding copilot、研究分析师或创意工作室。
     icon: /assets/kworks.svg
     color: "#00BCD4"
-    repo: kkutysllb/KWorks
-    homepage: https://github.com/kkutysllb/KWorks
     versions:
       - id: desktop
         label: 桌面端
@@ -163,8 +192,6 @@ products:
       Skill/MCP 图形化管理等完整开发生命周期特性。
     icon: /assets/kcoder.svg
     color: "#7C4DFF"
-    repo: kkutysllb/KCoder
-    homepage: https://github.com/kkutysllb/KCoder
     versions:
       - id: desktop
         label: 桌面端
