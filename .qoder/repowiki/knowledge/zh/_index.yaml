@@ -3,11 +3,11 @@ schema_version: 1
 locale: zh-CN
 branch: main
 nodes_managed: true
-exported_at: "2026-07-20T14:55:01Z"
+exported_at: "2026-07-20T15:24:53Z"
 modules:
     "":
-        dir_name: QiongQi 作品集与 Release 聚合静态站
-        title: QiongQi 作品集与 Release 聚合静态站
+        dir_name: QiongQi 引擎与产品发布展示站（KReleaseWeb）
+        title: QiongQi 引擎与产品发布展示站（KReleaseWeb）
         scope:
             - README.md
             - .gitignore

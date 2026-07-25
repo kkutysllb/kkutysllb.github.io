@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="kskillGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFC107"/>
+      <stop offset="1" stop-color="#FF6F00"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="14" width="52" height="42" rx="6" fill="url(#kskillGrad)"/>
+  <rect x="14" y="22" width="36" height="4" rx="2" fill="#1a1a1a" opacity="0.5"/>
+  <rect x="14" y="30" width="28" height="4" rx="2" fill="#1a1a1a" opacity="0.5"/>
+  <rect x="14" y="38" width="32" height="4" rx="2" fill="#1a1a1a" opacity="0.5"/>
+  <rect x="14" y="46" width="20" height="4" rx="2" fill="#1a1a1a" opacity="0.5"/>
+  <path d="M32 4 L46 12 L32 20 L18 12 Z" fill="#FFC107" stroke="#FF6F00" stroke-width="1.5"/>
+  <path d="M18 12 L18 24 C18 28 24 32 32 32 C40 32 46 28 46 24 L46 12" fill="none" stroke="#FF6F00" stroke-width="1.5" stroke-linejoin="round"/>
+  <circle cx="32" cy="44" r="6" fill="#fff" opacity="0.95"/>
+  <path d="M28 44 L31 47 L37 41" stroke="#FF6F00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

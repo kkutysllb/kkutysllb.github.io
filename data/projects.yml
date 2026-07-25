@@ -110,6 +110,35 @@ engines:
       - title: 长期记忆
         desc: 对话结束后记忆持久化，跨 session 保留用户偏好、项目知识与历史经验
 
+  - id: kskills
+    name: KSkills 技能包
+    name_en: KSkills
+    tagline: 跨平台技能仓库 · 95 个开箱即用技能
+    tagline_en: Cross-Platform Skill Pack Collection
+    description: |
+      KSkills 是一套面向 Coding Agent / OClaw 平台的技能包集合，
+      共收录 95 个技能，覆盖软件工程、金融量化、内容创作、深度研究四大领域。
+
+      每个技能以 SKILL.md（YAML frontmatter + Markdown 指南）为唯一入口，
+      支持独立打包为 .skill 压缩包，通过 SKILL-MANIFEST.json 校验分发。
+    icon: /assets/kskills.svg
+    color: "#FFB300"
+    repo: kkutysllb/KSkills
+    homepage: https://github.com/kkutysllb/KSkills
+    features:
+      - title: 软件工程（59 个）
+        desc: 覆盖软件交付全生命周期：需求、设计、编码、测试、审查、发布、运维
+      - title: 金融量化（26 个）
+        desc: A 股/港股/美股/期货/期权，含 kk-common 统一数据客户端、十五维一体个股分析等
+      - title: 内容创作（5 个）
+        desc: 知识漫画、图像、音乐、播客、视频生成技能
+      - title: 深度研究（3 个）
+        desc: 深度网络研究、学术论文审阅、咨询报告生成
+      - title: 跨领域公共（3 个）
+        desc: 结构化分析报告、26 种图表可视化、Markdown 转 HTML
+      - title: 标注化打包分发
+        desc: .skill 压缩包 + SKILL-MANIFEST.json（含 sha256）、安装器校验解压路径，可安装到任意平台
+
 products:
   - id: oclaw
     name: OClaw
