@@ -1,77 +1,77 @@
 {
-  "tag_name": "v1.0.5",
-  "name": "KWorks 1.0.5",
-  "published_at": "2026-08-02T14:22:30Z",
-  "html_url": "https://github.com/kkutysllb/KWorks/releases/tag/v1.0.5",
+  "tag_name": "v1.0.6",
+  "name": "KWorks 1.0.6",
+  "published_at": "2026-08-03T16:33:31Z",
+  "html_url": "https://github.com/kkutysllb/KWorks/releases/tag/v1.0.6",
   "assets": [
     {
-      "name": "KWorks-1.0.5-linux-x86_64.AppImage",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/KWorks-1.0.5-linux-x86_64.AppImage",
-      "size": 354552681
+      "name": "KWorks-1.0.6-linux-x86_64.AppImage",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/KWorks-1.0.6-linux-x86_64.AppImage",
+      "size": 354597480
     },
     {
-      "name": "KWorks-1.0.5-mac-arm64.dmg",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/KWorks-1.0.5-mac-arm64.dmg",
-      "size": 329183029
+      "name": "KWorks-1.0.6-mac-arm64.dmg",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/KWorks-1.0.6-mac-arm64.dmg",
+      "size": 329114723
     },
     {
-      "name": "KWorks-1.0.5-mac-arm64.dmg.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/KWorks-1.0.5-mac-arm64.dmg.blockmap",
-      "size": 345264
+      "name": "KWorks-1.0.6-mac-arm64.dmg.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/KWorks-1.0.6-mac-arm64.dmg.blockmap",
+      "size": 342662
     },
     {
-      "name": "KWorks-1.0.5-mac-arm64.zip",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/KWorks-1.0.5-mac-arm64.zip",
-      "size": 317286519
+      "name": "KWorks-1.0.6-mac-arm64.zip",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/KWorks-1.0.6-mac-arm64.zip",
+      "size": 317344669
     },
     {
-      "name": "KWorks-1.0.5-mac-arm64.zip.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/KWorks-1.0.5-mac-arm64.zip.blockmap",
-      "size": 330689
+      "name": "KWorks-1.0.6-mac-arm64.zip.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/KWorks-1.0.6-mac-arm64.zip.blockmap",
+      "size": 330189
     },
     {
-      "name": "KWorks-1.0.5-mac-x64.dmg",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/KWorks-1.0.5-mac-x64.dmg",
-      "size": 355694065
+      "name": "KWorks-1.0.6-mac-x64.dmg",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/KWorks-1.0.6-mac-x64.dmg",
+      "size": 355788728
     },
     {
-      "name": "KWorks-1.0.5-mac-x64.dmg.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/KWorks-1.0.5-mac-x64.dmg.blockmap",
-      "size": 370714
+      "name": "KWorks-1.0.6-mac-x64.dmg.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/KWorks-1.0.6-mac-x64.dmg.blockmap",
+      "size": 370939
     },
     {
-      "name": "KWorks-1.0.5-mac-x64.zip",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/KWorks-1.0.5-mac-x64.zip",
-      "size": 345465387
+      "name": "KWorks-1.0.6-mac-x64.zip",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/KWorks-1.0.6-mac-x64.zip",
+      "size": 345523532
     },
     {
-      "name": "KWorks-1.0.5-mac-x64.zip.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/KWorks-1.0.5-mac-x64.zip.blockmap",
-      "size": 358990
+      "name": "KWorks-1.0.6-mac-x64.zip.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/KWorks-1.0.6-mac-x64.zip.blockmap",
+      "size": 358568
     },
     {
-      "name": "KWorks-1.0.5-win-x64.exe",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/KWorks-1.0.5-win-x64.exe",
-      "size": 262909875
+      "name": "KWorks-1.0.6-win-x64.exe",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/KWorks-1.0.6-win-x64.exe",
+      "size": 262966268
     },
     {
-      "name": "KWorks-1.0.5-win-x64.exe.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/KWorks-1.0.5-win-x64.exe.blockmap",
-      "size": 270698
+      "name": "KWorks-1.0.6-win-x64.exe.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/KWorks-1.0.6-win-x64.exe.blockmap",
+      "size": 271799
     },
     {
       "name": "latest-linux.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/latest-linux.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/latest-linux.yml",
       "size": 390
     },
     {
       "name": "latest-mac.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/latest-mac.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/latest-mac.yml",
       "size": 814
     },
     {
       "name": "latest.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.5/latest.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KWorks/releases/download/v1.0.6/latest.yml",
       "size": 345
     }
   ]
