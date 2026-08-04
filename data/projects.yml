@@ -205,39 +205,37 @@ products:
                 file_glob: "*.AppImage"
                 icon: linux
 
-  - id: kcoder
-    name: KCoder
-    name_en: KCoder
+  - id: kstock
+    name: KStock
+    name_en: KStock
     parent: qiongqi
-    tagline: 面向真实代码库的桌面 AI 编程工作台
-    tagline_en: Desktop AI Coding Workbench
+    tagline: 跨平台桌面股票量化智能体 · 研究/分析/报告
+    tagline_en: Cross-Platform Stock Quant Agent
     description: |
-      KCoder 是一个面向真实代码库的本地桌面 AI 编程工作台。
-      以 QiongQi 为唯一运行时，把终端里的智能体体验整理成
-      更适合长期开发的应用：选择工作目录，发起任务，
-      实时查看推理、工具调用和文件改动，并在需要时审批或回退。
+      KStock 是一个跨平台桌面端股票量化智能体，
+      核心引擎使用 QiLin，技能体系只保留适合研究、分析、报告的精选技能。
 
-      支持多会话、流式输出、代码审查、计划面板、目标追踪、
-      Skill/MCP 图形化管理等完整开发生命周期特性。
-    icon: /assets/kcoder.svg
-    color: "#7C4DFF"
+      Tauri + React 桌面壳，Python 侧车承载量化引擎，
+      面向 A 股 / 港股 / 美股等市场的量化研究与决策支持。
+    icon: /assets/kstock.svg
+    color: "#E53935"
     versions:
       - id: desktop
         label: 桌面端
         label_en: Desktop
         channels:
           - type: github_release
-            releases_file: kcoder.json
+            releases_file: kstock.json
             platforms:
               - name: macOS (Apple Silicon)
-                file_glob: "*mac-arm64.*"
-                icon: apple
-              - name: macOS (Intel)
-                file_glob: "*mac-x64.*"
+                file_glob: "*_aarch64.dmg"
                 icon: apple
               - name: Windows
-                file_glob: "*-win-x64.exe"
+                file_glob: "*_x64-setup.exe"
                 icon: windows
-              - name: Linux
-                file_glob: "*.AppImage"
+              - name: Linux (deb)
+                file_glob: "*_amd64.deb"
+                icon: linux
+              - name: Linux (rpm)
+                file_glob: "*.x86_64.rpm"
                 icon: linux

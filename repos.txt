@@ -6,4 +6,4 @@
 qiongqi     kkutysllb/QiongQi
 oclaw       kkutysllb/OClaw
 kworks      kkutysllb/KWorks
-kcoder      kkutysllb/KCoder
+kstock      kkutysllb/KStock

@@ -6,10 +6,11 @@ kkutysllb 的开源作品集与产品下载入口。
 
 - **基础引擎**（独立仓库，仅作 SDK/运行时）
   - [QiongQi / 穷奇引擎](https://github.com/kkutysllb/QiongQi)
-- **基于 QiongQi 构建的产品**
-  - [OClaw](https://github.com/kkutysllb/OClaw) — 桌面 Agent 产品，覆盖 macOS / Windows / Linux
+  - [KSkills 技能包](https://github.com/kkutysllb/KSkills) — 跨平台技能包仓库
+- **产品**
+  - [OClaw](https://github.com/kkutysllb/OClaw) — 桌面 Super Agent 产品，覆盖 macOS / Windows / Linux（基于 Harness 架构）
   - [KWorks](https://github.com/kkutysllb/KWorks) — Local-first AI Workspace，QiongQi 桌面旗舰
-  - [KCoder](https://github.com/kkutysllb/KCoder) — 面向真实代码库的桌面 AI 编程工作台
+  - [KStock](https://github.com/kkutysllb/KStock) — 跨平台桌面股票量化智能体
 
 ## 数据驱动
 
@@ -56,7 +57,7 @@ engines:
 qiongqi         kkutysllb/QiongQi
 oclaw           kkutysllb/OClaw
 kworks          kkutysllb/KWorks
-kcoder          kkutysllb/KCoder
+kstock          kkutysllb/KStock
 my-new-app      kkutysllb/my-new-app
 ```
 
@@ -101,13 +102,13 @@ KReleaseWeb/
 │       ├── qiongqi.json
 │       ├── oclaw.json
 │       ├── kworks.json
-│       └── kcoder.json
+│       └── kstock.json
 ├── assets/
 │   ├── style.css                    # 样式
 │   ├── qingqi.svg                   # 引擎 logo
 │   ├── oclaw.svg                    # 产品 logo
 │   ├── kworks.svg                   # 产品 logo
-│   ├── kcoder.svg                   # 产品 logo
+│   ├── kstock.svg                   # 产品 logo
 │   ├── avatar.svg                   # 个人头像
 │   └── platforms/                   # 平台图标
 │       ├── apple.svg
