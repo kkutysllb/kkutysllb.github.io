@@ -5,11 +5,10 @@ kkutysllb 的开源作品集与产品下载入口。
 ## 它展示什么
 
 - **基础引擎**（独立仓库，仅作 SDK/运行时）
-  - [QiongQi / 穷奇引擎](https://github.com/kkutysllb/QiongQi)
+  - [QiLin / 麒麟引擎](https://github.com/kkutysllb/QiLin)
   - [KSkills 技能包](https://github.com/kkutysllb/KSkills) — 跨平台技能包仓库
 - **产品**
-  - [OClaw](https://github.com/kkutysllb/OClaw) — 桌面 Super Agent 产品，覆盖 macOS / Windows / Linux（基于 Harness 架构）
-  - [KWorks](https://github.com/kkutysllb/KWorks) — Local-first AI Workspace，QiongQi 桌面旗舰
+  - [KWorks](https://github.com/kkutysllb/KWorks) — Local-first AI Workspace，QiLin 桌面旗舰
   - [KStock](https://github.com/kkutysllb/KStock) — 跨平台桌面股票量化智能体
 
 ## 数据驱动
@@ -22,7 +21,7 @@ kkutysllb 的开源作品集与产品下载入口。
 products:
   - id: my-new-app
     name: My New App
-    parent: qiongqi              # 挂在哪个引擎下
+    parent: qilin               # 挂在哪个引擎下
     tagline: 一句话简介
     repo: kkutysllb/my-new-app
     homepage: https://github.com/kkutysllb/my-new-app
@@ -54,11 +53,10 @@ engines:
 要在 `repos.txt` 中加新仓库：
 
 ```
-qiongqi         kkutysllb/QiongQi
-oclaw           kkutysllb/OClaw
-kworks          kkutysllb/KWorks
-kstock          kkutysllb/KStock
-my-new-app      kkutysllb/my-new-app
+qilin          kkutysllb/QiLin
+kworks         kkutysllb/KWorks
+kstock         kkutysllb/KStock
+my-new-app     kkutysllb/my-new-app
 ```
 
 ## 本地预览
@@ -99,14 +97,13 @@ KReleaseWeb/
 ├── data/                          # ⚠️ 注意：不能用 _data（GitHub Pages/Jekyll 会隐藏 _ 开头目录）
 │   ├── projects.yml                # 项目数据（唯一需要手工维护的文件）
 │   └── releases/                   # 自动同步产物（不要手工编辑）
-│       ├── qiongqi.json
-│       ├── oclaw.json
+│       ├── qilin.json
 │       ├── kworks.json
 │       └── kstock.json
 ├── assets/
 │   ├── style.css                    # 样式
-│   ├── qingqi.svg                   # 引擎 logo
-│   ├── oclaw.svg                    # 产品 logo
+│   ├── qilin.svg                    # 引擎 logo
+│   ├── kskills.svg                  # 引擎 logo
 │   ├── kworks.svg                   # 产品 logo
 │   ├── kstock.svg                   # 产品 logo
 │   ├── avatar.svg                   # 个人头像
@@ -128,7 +125,7 @@ KReleaseWeb/
 - **博客**：在根目录加 `blog/` 子目录，写 Markdown 文章，首页用列表组件加载。
 - **i18n**：所有页面和 `projects.yml` 都预留 `_zh` / `_en` 双语字段，加一个语言切换器即可。
 - **下载统计**：在 `dl-row` 加一段 `<script>` 调用 Plausible 自定义事件即可。
-- **多产品变体**：同一产品可挂多个 version（如 OClaw v1、v2），只需在 versions 数组追加。
+- **多产品变体**：同一产品可挂多个 version（如 KWorks v1、v2），只需在 versions 数组追加。
 
 ## License
 

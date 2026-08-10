@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="dark light" />
-  <meta name="description" content="kkutysllb 的作品集：QiongQi（穷奇）—— 独立多 Agent 框架，cache-first、去中心化编排的 HTTP/SSE 引擎，以及基于它构建的产品。" />
-  <title>kkutysllb · QiongQi — 独立多 Agent 框架</title>
+  <meta name="description" content="kkutysllb 的作品集：QiLin（麒麟）—— 独立多 Agent 框架，cache-first、去中心化编排的 HTTP/SSE 引擎，以及基于它构建的产品。" />
+  <title>kkutysllb · QiLin — 独立多 Agent 框架</title>
   <link rel="icon" href="./assets/avatar.svg" />
   <script>
     (() => {
@@ -50,11 +50,11 @@
 
     <!-- Hero 区 -->
     <section class="hero">
-      <h1 id="hero-title">穷奇非凶，乃破局之锐</h1>
+      <h1 id="hero-title">麒麟启瑞，破局之锋</h1>
       <p class="tagline" id="hero-tagline">独立多 Agent 框架 · 骨架不变，血肉万变</p>
       <p class="bio" id="hero-bio"></p>
       <div class="hero-cover">
-        <img src="./assets/qiongqi.png" alt="QiongQi — 穷奇" />
+        <img src="./assets/qilin.png" alt="QiLin — 麒麟" />
       </div>
     </section>
 
@@ -99,17 +99,46 @@
       }
     }
 
+    /** 读取 KSkills 动态元数据（失败时返回 null，调用方静默降级） */
+    async function loadKSkills() {
+      try {
+        const res = await fetch('./data/kskills.json');
+        if (!res.ok) return null;
+        return await res.json();
+      } catch (_) {
+        return null;
+      }
+    }
+
+    /** 渲染引擎描述（支持段落分隔 + 加粗 + inline code） */
+    function renderDescription(desc) {
+      if (!desc) return '';
+      const escape = (s) => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+      // 按空行分段
+      const paragraphs = desc.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+      return paragraphs.map(p => {
+        // 段内单换行折叠为空格
+        let html = escape(p).replace(/\n/g, ' ');
+        // 包围加粗：**xxx**  → <strong>xxx</strong>
+        html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        // 行内代码：`xxx`  → <code>xxx</code>
+        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+        return `<p>${html}</p>`;
+      }).join('');
+    }
+
     /** 把 glob 模式转成正则 */
     function globToRegex(glob) {
       const escaped = glob.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
       return new RegExp(`^${escaped}$`);
     }
 
-    /** 在 release assets 中匹配 file_glob */
-    function matchAsset(assets, glob) {
+    /** 在 release assets 中匹配 file_glob（支持字符串或数组） */
+    function matchAsset(assets, fileGlob) {
       if (!assets || !Array.isArray(assets)) return null;
-      const re = globToRegex(glob);
-      return assets.find(a => re.test(a.name)) || null;
+      const globs = Array.isArray(fileGlob) ? fileGlob : [fileGlob];
+      const regs = globs.map(g => globToRegex(g));
+      return assets.find(a => regs.some(re => re.test(a.name))) || null;
     }
 
     /** 格式化字节大小 */
@@ -193,7 +222,8 @@
     function renderReleaseChannel(channel, releases, product) {
       const platforms = channel.platforms || [];
       const rows = platforms.map(plat => {
-        const asset = matchAsset(releases.assets, plat.file_glob);
+        // 兼容 file_glob（字符串）与 file_globs（数组）
+        const asset = matchAsset(releases.assets, plat.file_globs || plat.file_glob);
         const platform = formatPlatformName(plat.name);
         const platIcon = plat.icon
           ? `<span class="plat-icon"><img src="./assets/platforms/${plat.icon}.svg" alt="${plat.icon}" /></span>`
@@ -314,7 +344,7 @@
             <div style="flex:1">
               <h3>${engine.name} <span style="color:var(--fg-dim);font-size:14px;font-weight:400">· ${engine.name_en}</span></h3>
               <p class="sub">${engine.tagline || ''}</p>
-              <p class="desc">${engine.description || ''}</p>
+              <p class="desc">${renderDescription(engine.description)}</p>
               <div class="engine-actions">
                 ${engine.homepage ? `<a class="btn primary" href="${engine.homepage}" target="_blank" rel="noopener">查看仓库</a>` : ''}
               </div>
@@ -388,6 +418,32 @@
         document.getElementById('engines-container').innerHTML =
           `<div style="color:var(--fg-dim);padding:32px">数据加载失败：${err.message}</div>`;
         return;
+      }
+
+      // KSkills 动态元数据：占位符替换 + 分类数量自动注入
+      const kskills = await loadKSkills();
+      if (kskills) {
+        const t = kskills.totals || {};
+        const fillTpl = (s) => (s || '')
+          .replace(/\{N\}/g, t.skill_packs ?? '?')
+          .replace(/\{packs\}/g, t.skill_packs ?? '?')
+          .replace(/\{files\}/g, t.skill_md ?? '?');
+        data.engines.forEach(eng => {
+          if (eng.id !== 'kskills') return;
+          eng.tagline = fillTpl(eng.tagline);
+          eng.tagline_en = fillTpl(eng.tagline_en);
+          eng.description = fillTpl(eng.description);
+          const catMap = Object.fromEntries((kskills.categories || []).map(c => [c.id, c]));
+          eng.features = (eng.features || []).map(f => {
+            if (!f.category_id) return f;
+            const cat = catMap[f.category_id];
+            if (!cat) return f;
+            const suffix = cat.skill_md_count > cat.pack_count
+              ? `${cat.pack_count} 包 / ${cat.skill_md_count} SKILL.md`
+              : `${cat.pack_count} 个`;
+            return { ...f, title: `${f.title}（${suffix}）` };
+          });
+        });
       }
 
       const { profile, engines, products } = data;

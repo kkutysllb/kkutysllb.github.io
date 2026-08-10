@@ -1,0 +1,64 @@
+{
+  "synced_at": "2026-08-11T00:16:08Z",
+  "source": "https://github.com/kkutysllb/KSkills",
+  "ref": "main",
+  "totals": {
+    "skill_md": 152,
+    "skill_packs": 147
+  },
+  "categories": [
+    {
+      "id": "coding",
+      "label": "软件工程",
+      "color": "#FFB300",
+      "icon": "🖥",
+      "pack_count": 97,
+      "skill_md_count": 97
+    },
+    {
+      "id": "stock",
+      "label": "金融量化",
+      "color": "#E53935",
+      "icon": "📈",
+      "pack_count": 29,
+      "skill_md_count": 29
+    },
+    {
+      "id": "media",
+      "label": "内容创作",
+      "color": "#7E57C2",
+      "icon": "🎨",
+      "pack_count": 5,
+      "skill_md_count": 5
+    },
+    {
+      "id": "research",
+      "label": "深度研究",
+      "color": "#26A69A",
+      "icon": "🔬",
+      "pack_count": 3,
+      "skill_md_count": 3
+    },
+    {
+      "id": "common",
+      "label": "跨领域公共",
+      "color": "#5C6BC0",
+      "icon": "🧰",
+      "pack_count": 5,
+      "skill_md_count": 5
+    },
+    {
+      "id": "office",
+      "label": "办公文档",
+      "color": "#42A5F5",
+      "icon": "📄",
+      "pack_count": 8,
+      "skill_md_count": 13
+    }
+  ],
+  "_meta": {
+    "generated_by": "scripts/sync-kskills.mjs",
+    "schema_version": "1.0",
+    "note": "office 类的 skill_md_count 含 microsoft-foundry 嵌套子技能（5 个子技能 + 8 个主包 = 13）。下一次同步由 GitHub Actions 自动完成（每日 03:00 或手动触发）。"
+  }
+}

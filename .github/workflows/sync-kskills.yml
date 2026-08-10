@@ -1,0 +1,44 @@
+name: Sync KSkills
+
+on:
+  # 每天 03:00（与 sync-releases 错开 6 小时）
+  schedule:
+    - cron: '0 3 * * *'
+  # 允许手动触发
+  workflow_dispatch:
+  # KSkills 仓库 push 时自动触发（通过 repository_dispatch 转发）
+  # 在 KSkills 仓库的 workflow 中加:
+  #   repository_dispatch:
+  #     types: [kskills_updated]
+  # 并通过 curl 触发本仓库（需 token）。为简化此处只保留 cron + 手动。
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync KSkills metadata
+        env:
+          GITHUB_TOKEN: ${{ secrets.SYNC_TOKEN }}
+        run: |
+          if [ -z "$GITHUB_TOKEN" ]; then
+            echo "::warning::SYNC_TOKEN 未配置，使用匿名请求（限速 60/h）。建议在 Settings → Secrets 配置 SYNC_TOKEN。"
+          fi
+          node scripts/sync-kskills.mjs
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/kskills.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore(kskills): sync from KSkills repo"
+            git push
+          fi

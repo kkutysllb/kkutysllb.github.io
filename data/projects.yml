@@ -9,24 +9,24 @@
 profile:
   name: kkutysllb
   name_zh: 金融扫地僧
-  tagline: 穷奇非凶，乃破局之锐
-  tagline_zh: 穷奇非凶，乃破局之锐
+  tagline: 麒麟启瑞，破局之锋
+  tagline_zh: 麒麟启瑞，破局之锋
   bio_zh: |
     独立开发者，构建两套 Agent 基础设施：
 
-    QiongQi（穷奇）—— 领域中立的 Node.js 多 Agent 引擎，
-    以 cache-first 编排和去中心化 HTTP/SSE 协议为骨架，
-    让同一运行时在 coding copilot、研究分析师、创意工作室之间无缝切换。
-
-    Harness —— Python 侧的 Super Agent 编排架构，
-    将 Sub-Agents、Sandbox、长期记忆与可插拔技能编织为统一执行体，
-    面向桌面端交付开箱即用的生产力产品。
+    QiLin（麒麟）—— 面向生产环境的 Python 智能体运行时引擎，
+    基于 LangGraph 构建，提供双模运行时（embedded / service）、
+    子智能体一等公民、可插拔沙箱、多后端持久化、RBAC 授权、
+    双追踪观测（Langfuse + Monocle）与 Skill 市场。
+    让同一运行时在桌面端、API 服务、嵌入式调用之间无缝切换，
+    同源孵化 KWorks、KStock 等桌面产品。
 
     设计信条：每一个 token 都应有 ROI。
     不重复发送工具 schema，不保留失控输出，不错过任何可命中的稳定前缀。
   bio_en: |
-    I build QiongQi — a domain-neutral, independent multi-agent framework
-    with a cache-first, decentralized orchestration HTTP/SSE engine.
+    I build QiLin — a production-grade Python agent harness engine
+    built on LangGraph, unifying dual-mode runtime, sub-agent composition,
+    pluggable sandbox, multi-backend persistence and dual tracing.
 
     This page is the entry point to my public engines and products.
   avatar: /assets/avatar.svg
@@ -34,150 +34,94 @@ profile:
     github: https://github.com/kkutysllb
 
 engines:
-  - id: qiongqi
-    name: 穷奇引擎
-    name_en: QiongQi
+  - id: qilin
+    name: 麒麟引擎
+    name_en: QiLin
     tagline: 独立多 Agent 框架 · 骨架不变，血肉万变
     tagline_en: Independent Multi-Agent Framework
     description: |
-      QiongQi（穷奇）是一个领域中立的独立多 Agent 框架，
-      以 cache-first、去中心化编排的 HTTP/SSE 引擎为骨架，
-      搭配可插拔的技能与工具体系，面向不同行业组装为生产力工具。
+      **QiLin（麒麟）是一个面向生产环境的 Python 智能体运行时引擎**（agent harness engine），基于 LangGraph 构建，将模型调用、工具执行、子智能体协作、沙箱隔离、记忆与可观测性整合在同一个可插拔运行时之内，既可作为嵌入式客户端直接调用，也可以作为独立服务通过 HTTP/SDK 对外暴露。
 
-      核心目标：提高每一 token 的 ROI。避免重复工具 schema、失控工具输出、
-      畸形历史、无效重试，以及任何可以命中却错过的稳定前缀。
+      **核心目标**：让同一套代码既能在进程内跑（embedded mode），也能在 LangGraph Server 上跑（service mode），最大化每一 token 的 ROI。
 
-      当前能力包括 classic / evented turn orchestration、
-      声明式 loop engineering（LoopRunner 解释 LoopPlan phases，
-      并通过 Evaluator 做有界 retry）、HTTP/SSE API、A2A task lifecycle、
-      Skill/MCP/Web/Memory/Delegation provider、attachments/artifacts、
-      hybrid SQLite+JSONL storage、Prometheus metrics、
-      structured access logs、OpenTelemetry HTTP tracing，
-      以及工具输出预算、bash command audit、virtual path、
-      terminal-state guard 等运行治理能力。
+      **当前能力**：双模运行时引擎（embedded / service）、子智能体一等公民（独立 checkpoint、token 计量、状态契约，递归调用无需 ad-hoc hack）、可插拔沙箱（`local` / `aio_sandbox` / `boxlite` / `e2b` / `tenki` 五种执行后端）、多后端持久化（SQLite 开发态 + PostgreSQL 生产态，含 Alembic 迁移）、基于 Casbin 的资源级 RBAC、双追踪观测（Langfuse + Monocle 同源推送）、Skill Marketplace（Markdown 技能包 + 双层审阅 + `skillscan` 静态扫描）、配置签名触发的热重载、MCP / ACP 协议接入、Textual TUI 终端界面以及 GitHub / GitLab / Notion / Slack 等外部集成。
 
-      采用 pnpm monorepo 多包结构，共 18 个独立 npm 包（@qiongqi/* 作用域）。
-    icon: /assets/qingqi.svg
+      Python 包名 `qilin`，CLI 命令 `qilin` / `qilin-serve`，要求 Python >= 3.12。
+    icon: /assets/qilin.svg
     color: "#41D1AB"
-    repo: kkutysllb/QiongQi
-    homepage: https://github.com/kkutysllb/QiongQi
+    repo: kkutysllb/QiLin
+    homepage: https://github.com/kkutysllb/QiLin
     install:
+      - type: pip
+        label: 安装核心包
+        command: pip install qilin
+      - type: extras
+        label: 可选扩展
+        command: pip install 'qilin[postgres]' 'qilin[redis]' 'qilin[tui]' 'qilin[boxlite]' 'qilin[monocle]' 'qilin[browser]'
       - type: git
         label: 克隆源码
-        command: git clone https://github.com/kkutysllb/QiongQi.git && cd QiongQi && pnpm install && pnpm -r run build
-      - type: pnpm
-        label: Monorepo 构建
-        command: pnpm install && pnpm -r run build && node scripts/flatten-dist.mjs
+        command: git clone https://github.com/kkutysllb/QiLin.git && cd QiLin && pip install -e .
     features:
-      - title: Cache-first Agent Loop
-        desc: immutable prompt prefix、append-only session log、bounded TTL/LRU cache、DeepSeek 原生缓存命中统计，最大化 token ROI
-      - title: 去中心化编排
-        desc: classic / evented 双模式 orchestrator，支持 A2A task lifecycle 与 SSE 订阅，异步任务提交与轮询
-      - title: 声明式 Loop Engineering
-        desc: LoopRunner 解释 LoopPlan phases，Evaluator 做有界 retry，灵活可配的 turn 级控制流
-      - title: 多 Provider 体系
-        desc: Skill / MCP / Web / Memory / Delegation 五大 provider，mcp_search / mcp_describe / mcp_call 渐进式工具发现与加载
-      - title: 运行治理
-        desc: 工具输出预算控制、bash command audit、virtual path 隔离、terminal-state guard、结构化 access log
-      - title: 生产可观测
-        desc: Prometheus metrics（token/cache/A2A task/存储诊断）、OpenTelemetry HTTP tracing、health/ready 探针、hybrid SQLite+JSONL 存储
-
-  - id: harness
-    name: Harness 架构
-    name_en: Harness
-    tagline: Super Agent Harness · 让 Agent 完成几乎任何事
-    tagline_en: Super Agent Harness
-    description: |
-      Harness 是一个 Super Agent 编排架构，
-      将 Sub-Agents、Memory、Sandbox 和可扩展的 Skills 组织在一起，
-      让 Agent 具备真正的任务执行能力。
-
-      核心能力包括动态 Sub-Agent 拆解与并行执行、
-      技能与工作模式显式绑定（按需渐进加载）、
-      隔离 Sandbox 文件系统、Context Engineering（摘要压缩 + 子任务转存）、
-      长期记忆持久化，以及 Token 用量统计与 ROI 分析。
-    icon: /assets/oclaw.svg
-    color: "#FF6D00"
-    features:
-      - title: Sub-Agent 编排
-        desc: lead agent 动态拆解复杂任务，拉起独立 sub-agents 并行执行，结构化汇总结果
-      - title: Skills 与工作模式绑定
-        desc: 技能通过 work_modes 显式声明归属，执行时只加载 core + 当前模式技能，节省 token、提升精度
-      - title: 隔离 Sandbox
-        desc: 每个任务运行在独立 sandbox，完整文件系统（uploads/workspace/outputs），可审计、会隔离
-      - title: Context Engineering
-        desc: 子任务上下文完全隔离，摘要压缩 + 中间结果转存文件系统，避免上下文膨胀
-      - title: 长期记忆
-        desc: 对话结束后记忆持久化，跨 session 保留用户偏好、项目知识与历史经验
+      - title: 双模运行时引擎
+        desc: 同一套代码同时支持 embedded 模式（进程内 LangGraph 执行器）与 service 模式（LangGraph Server 部署），运行时按场景无缝切换
+      - title: 子智能体一等公民
+        desc: 子智能体拥有独立 checkpoint、token 计量与状态契约，递归调用不需要 ad-hoc hack，结构化协作
+      - title: 可插拔沙箱（5 种）
+        desc: 同一接口下抽象 local / aio_sandbox / boxlite / e2b / tenki 五种执行后端，按隔离级别与场景自由切换
+      - title: 多后端持久化 + RBAC
+        desc: SQLite（开发）与 PostgreSQL（生产）同一仓储接口，内置 Alembic 迁移；基于 Casbin 的资源级 RBAC 授权
+      - title: 双追踪观测
+        desc: 同一 trace 同时往 Langfuse 与 Monocle 推送观测数据，开发态与生产态观测体验一致
+      - title: Skill 市场 + MCP/ACP
+        desc: Markdown 技能包 + 双层审阅 + skillscan 安全静态扫描；MCP 接入外部工具、ACP 跨进程智能体调用
 
   - id: kskills
     name: KSkills 技能包
     name_en: KSkills
-    tagline: 跨平台技能仓库 · 95 个开箱即用技能
-    tagline_en: Cross-Platform Skill Pack Collection
+    tagline: 跨平台技能仓库 · {N} 个开箱即用技能
+    tagline_en: Cross-Platform Skill Pack Collection — {N} skills
     description: |
-      KSkills 是一套面向 Coding Agent / OClaw 平台的技能包集合，
-      共收录 95 个技能，覆盖软件工程、金融量化、内容创作、深度研究四大领域。
+      **KSkills 是一套跨平台的技能包（Skill Pack）集合**，可安装到 Claude Code / OClaw / Qoder 等任意 Agent 平台。
 
-      每个技能以 SKILL.md（YAML frontmatter + Markdown 指南）为唯一入口，
-      支持独立打包为 .skill 压缩包，通过 SKILL-MANIFEST.json 校验分发。
+      共收录 **{packs} 个技能包 / {files} 个 SKILL.md**，覆盖 6 大领域（数据由 GitHub Actions 自动同步自 KSkills 仓库，详见 `data/kskills.json`）。
+
+      每个技能以 `SKILL.md`（YAML frontmatter + Markdown 指南）为唯一入口，支持独立打包为 `.skill` 压缩包，通过 `SKILL-MANIFEST.json` 校验分发。
     icon: /assets/kskills.svg
     color: "#FFB300"
     repo: kkutysllb/KSkills
     homepage: https://github.com/kkutysllb/KSkills
     features:
-      - title: 软件工程（59 个）
+      - title: 软件工程
+        category_id: coding
         desc: 覆盖软件交付全生命周期：需求、设计、编码、测试、审查、发布、运维
-      - title: 金融量化（26 个）
+      - title: 金融量化
+        category_id: stock
         desc: A 股/港股/美股/期货/期权，含 kk-common 统一数据客户端、十五维一体个股分析等
-      - title: 内容创作（5 个）
+      - title: 办公文档
+        category_id: office
+        desc: Word / Excel / PowerPoint / PDF / Slidev / Slack GIF / 文档协作 / Microsoft Foundry 模型部署
+      - title: 内容创作
+        category_id: media
         desc: 知识漫画、图像、音乐、播客、视频生成技能
-      - title: 深度研究（3 个）
-        desc: 深度网络研究、学术论文审阅、咨询报告生成
-      - title: 跨领域公共（3 个）
+      - title: 跨领域公共
+        category_id: common
         desc: 结构化分析报告、26 种图表可视化、Markdown 转 HTML
+      - title: 深度研究
+        category_id: research
+        desc: 深度网络研究、学术论文审阅、咨询报告生成
       - title: 标注化打包分发
         desc: .skill 压缩包 + SKILL-MANIFEST.json（含 sha256）、安装器校验解压路径，可安装到任意平台
 
 products:
-  - id: oclaw
-    name: OClaw
-    name_en: OClaw
-    parent: harness
-    tagline: 桌面端 Super Agent · 覆盖 macOS / Windows / Linux
-    tagline_en: Desktop Super Agent
-    description: |
-      OClaw 是基于 Harness 架构构建的桌面 Super Agent 产品。
-      同时提供 macOS / Windows / Linux 三平台安装包，覆盖 Apple Silicon、Intel、AMD64 架构。
-    icon: /assets/oclaw.svg
-    color: "#E65100"
-    versions:
-      - id: desktop
-        label: 桌面端
-        label_en: Desktop
-        channels:
-          - type: github_release
-            releases_file: oclaw.json
-            platforms:
-              - name: macOS (Apple Silicon)
-                file_glob: "*-arm64.dmg"
-                icon: apple
-              - name: Windows
-                file_glob: "OClaw-Setup-*.exe"
-                icon: windows
-              - name: Linux (deb)
-                file_glob: "kkoclaw-desktop_*_amd64.deb"
-                icon: linux
-
   - id: kworks
     name: KWorks
     name_en: KWorks
-    parent: qiongqi
-    tagline: Local-first AI Workspace · QiongQi 桌面旗舰
+    parent: qilin
+    tagline: Local-first AI Workspace · QiLin 桌面旗舰
     tagline_en: Local-First AI Workspace
     description: |
       KWorks 是一个 Local-first、全栈 AI 工作空间——
-      融合 Next.js Web UI、领域中立多 Agent 运行时（QiongQi）
+      融合 Next.js Web UI、Python Agent 运行时（QiLin）
       和 Electron 桌面壳层于一体的自包含产品。
 
       核心理念：模型是骨架，技能是血肉。运行时保持领域中立，
@@ -208,7 +152,7 @@ products:
   - id: kstock
     name: KStock
     name_en: KStock
-    parent: qiongqi
+    parent: qilin
     tagline: 跨平台桌面股票量化智能体 · 研究/分析/报告
     tagline_en: Cross-Platform Stock Quant Agent
     description: |
@@ -228,10 +172,10 @@ products:
             releases_file: kstock.json
             platforms:
               - name: macOS (Apple Silicon)
-                file_glob: "*_aarch64.dmg"
+                file_globs: ["*_aarch64.dmg", "*-arm64.dmg"]
                 icon: apple
               - name: Windows
-                file_glob: "*_x64-setup.exe"
+                file_globs: ["*_x64-setup.exe", "KStock.Setup.*.exe"]
                 icon: windows
               - name: Linux (deb)
                 file_glob: "*_amd64.deb"
