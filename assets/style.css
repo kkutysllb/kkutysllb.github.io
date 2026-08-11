@@ -174,10 +174,62 @@ code {
   margin: 0 0 24px;
 }
 .hero .bio {
-  font-size: 15px;
-  color: var(--fg-dim);
-  max-width: 100%;
+  font-size: 16px;
+  color: var(--fg-muted);
+  max-width: 760px;
   margin: 0;
+  line-height: 1.8;
+}
+.hero .bio p {
+  margin: 0 0 16px;
+}
+.hero .bio p:last-child {
+  margin-bottom: 0;
+}
+.hero .bio strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+.hero .bio code {
+  font-size: 0.92em;
+  background-color: var(--bg-elev-2);
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--accent);
+  border: 1px solid var(--border);
+}
+
+/* 描述块中的小标题 / 列表（renderDescription 输出） */
+.hero .bio h3.desc-h3,
+.engine-head .desc h3.desc-h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 28px 0 12px;
+  color: var(--fg);
+  letter-spacing: -0.01em;
+  border-left: 3px solid var(--accent);
+  padding-left: 12px;
+  line-height: 1.4;
+}
+.hero .bio h3.desc-h3:first-child,
+.engine-head .desc h3.desc-h3:first-child {
+  margin-top: 8px;
+}
+.hero .bio ul.desc-ul,
+.engine-head .desc ul.desc-ul {
+  margin: 12px 0 16px;
+  padding-left: 22px;
+  list-style: disc;
+  color: var(--fg-muted);
+}
+.hero .bio ul.desc-ul li,
+.engine-head .desc ul.desc-ul li {
+  margin: 6px 0;
+  line-height: 1.75;
+}
+.hero .bio ul.desc-ul li::marker,
+.engine-head .desc ul.desc-ul li::marker {
+  color: var(--fg-dim);
 }
 .hero-cover {
   margin-top: 48px;

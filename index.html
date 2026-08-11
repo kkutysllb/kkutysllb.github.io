@@ -110,20 +110,31 @@
       }
     }
 
-    /** 渲染引擎描述（支持段落分隔 + 加粗 + inline code） */
+    /** 渲染引擎描述（支持段落分隔 + 加粗 + inline code + 标题 + 列表） */
     function renderDescription(desc) {
       if (!desc) return '';
       const escape = (s) => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+      const inline = (s) => {
+        let html = escape(s).replace(/\n/g, ' ');
+        html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+        return html;
+      };
       // 按空行分段
       const paragraphs = desc.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
       return paragraphs.map(p => {
-        // 段内单换行折叠为空格
-        let html = escape(p).replace(/\n/g, ' ');
-        // 包围加粗：**xxx**  → <strong>xxx</strong>
-        html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-        // 行内代码：`xxx`  → <code>xxx</code>
-        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-        return `<p>${html}</p>`;
+        // ## 标题 → <h3>
+        if (/^\s*##\s+/.test(p)) {
+          return `<h3 class="desc-h3">${inline(p.replace(/^\s*##\s+/, ''))}</h3>`;
+        }
+        // - 列表（连续行聚合）→ <ul><li>...</li></ul>
+        if (/^\s*-\s+/.test(p)) {
+          const items = p.split('\n').map(line => line.replace(/^\s*-\s+/, '').trim()).filter(Boolean);
+          const liItems = items.map(item => `<li>${inline(item)}</li>`).join('');
+          return `<ul class="desc-ul">${liItems}</ul>`;
+        }
+        // 普通段落
+        return `<p>${inline(p)}</p>`;
       }).join('');
     }
 
@@ -191,7 +202,7 @@
     function renderHero(profile) {
       document.getElementById('hero-title').textContent = profile.tagline_zh || profile.tagline || '';
       document.getElementById('hero-tagline').textContent = profile.name + ' · 独立多 Agent 框架';
-      document.getElementById('hero-bio').textContent = profile.bio_zh || profile.bio || '';
+      document.getElementById('hero-bio').innerHTML = renderDescription(profile.bio_zh || profile.bio || '');
     }
 
     function renderInstallCmds(engine) {
