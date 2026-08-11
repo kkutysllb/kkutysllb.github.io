@@ -8,7 +8,7 @@ kkutysllb 的开源作品集与产品下载入口。
   - [QiLin / 麒麟引擎](https://github.com/kkutysllb/QiLin)
   - [KSkills 技能包](https://github.com/kkutysllb/KSkills) — 跨平台技能包仓库
 - **产品**
-  - [KWorks](https://github.com/kkutysllb/KWorks) — Local-first AI Workspace，QiLin 桌面旗舰
+  - [KWorsk](https://github.com/kkutysllb/KWorsk) — Local-first AI Workspace，QiLin 桌面旗舰
   - [KStock](https://github.com/kkutysllb/KStock) — 跨平台桌面股票量化智能体
 
 ## 数据驱动
@@ -54,7 +54,7 @@ engines:
 
 ```
 qilin          kkutysllb/QiLin
-kworks         kkutysllb/KWorks
+kworks         kkutysllb/KWorsk
 kstock         kkutysllb/KStock
 my-new-app     kkutysllb/my-new-app
 ```

@@ -137,16 +137,16 @@ products:
             releases_file: kworks.json
             platforms:
               - name: macOS (Apple Silicon)
-                file_glob: "*mac-arm64.*"
-                icon: apple
-              - name: macOS (Intel)
-                file_glob: "*mac-x64.*"
+                file_globs: ["*-mac-arm64.dmg", "*-arm64.dmg"]
                 icon: apple
               - name: Windows
-                file_glob: "*-win-x64.exe"
+                file_globs: ["*-win-x64.exe", "KWorks.Setup.*.exe"]
                 icon: windows
-              - name: Linux
-                file_glob: "*.AppImage"
+              - name: Linux (deb)
+                file_glob: "*amd64.deb"
+                icon: linux
+              - name: Linux (rpm)
+                file_glob: "*.x86_64.rpm"
                 icon: linux
 
   - id: kstock
