@@ -4,5 +4,6 @@
 #   - owner/repo：GitHub 仓库路径
 
 qilin        kkutysllb/QiLin
+dsh-desktop  kkutysllb/DSH-Desktop
 kworks       kkutysllb/KWorsk
 kstock       kkutysllb/KStock

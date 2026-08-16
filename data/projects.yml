@@ -20,17 +20,17 @@ profile:
     同一运行时可同时跑在桌面端、Web API、也能嵌进 IDE 插件。
 
     ## 产品矩阵
-    - **KWorks** · Local-first AI Workspace，QiLin 桌面旗舰
-    - **KStock** · 跨平台桌面股票量化智能体（A 股 / 港股 / 美股 / 期货 / 期权）
-    - **KSkills** · 跨平台技能包仓库，覆盖软件工程 / 金融量化 / 内容创作 / 深度研究 / 跨领域公共 / 办公文档 6 大领域（数据由 GitHub Actions 自动同步）
+    - **🖥️ KWorks** · Local-first AI Workspace，QiLin 桌面旗舰
+    - **📈 KStock** · 跨平台桌面股票量化智能体（A 股 / 港股 / 美股 / 期货 / 期权）
+    - **🧰 KSkills** · 跨平台技能包仓库，覆盖软件工程 / 金融量化 / 内容创作 / 深度研究 / 跨领域公共 / 办公文档 6 大领域（数据由 GitHub Actions 自动同步）
 
     ## 核心能力
-    - **双模运行时** — embedded / service 两种部署形态无缝切换
-    - **多智能体编排** — `AgentHandoff` + `OrchestratorGraph` + `AgentInbox`（v2.0.0 新增）
-    - **可插拔沙箱** — 5 种执行后端（`local` / `aio_sandbox` / `boxlite` / `e2b` / `tenki`）
-    - **多后端持久化** — SQLite / PostgreSQL + `Alembic` 迁移
-    - **观测与治理** — `Casbin` RBAC + `Langfuse` + `Monocle` 双追踪 + `skillscan` 静态扫描
-    - **协议与集成** — MCP / ACP 协议 + GitHub / GitLab / Notion / Slack
+    - **🔄 双模运行时** — embedded / service 两种部署形态无缝切换
+    - **🧠 多智能体编排** — `AgentHandoff` + `OrchestratorGraph` + `AgentInbox`（v2.0.0 新增）
+    - **🛡️ 可插拔沙箱** — 5 种执行后端（`local` / `aio_sandbox` / `boxlite` / `e2b` / `tenki`）
+    - **🗄️ 多后端持久化** — SQLite / PostgreSQL + `Alembic` 迁移
+    - **📊 观测与治理** — `Casbin` RBAC + `Langfuse` + `Monocle` 双追踪 + `skillscan` 静态扫描
+    - **🔌 协议与集成** — MCP / ACP 协议 + GitHub / GitLab / Notion / Slack
 
     ## 设计信条
     每一个 token 都应有 ROI。不重复发送工具 schema，不保留失控输出，不错过任何可命中的稳定前缀。
@@ -95,17 +95,70 @@ engines:
         command: git clone https://github.com/kkutysllb/QiLin.git && cd QiLin && pip install -e .
     features:
       - title: 双模运行时引擎
+        icon: 🔄
         desc: 同一套代码同时支持 embedded 模式（进程内 LangGraph 执行器）与 service 模式（LangGraph Server 部署），运行时按场景无缝切换
       - title: 子智能体一等公民
+        icon: 🧠
         desc: 子智能体拥有独立 checkpoint、token 计量与状态契约，递归调用不需要 ad-hoc hack，结构化协作
       - title: 可插拔沙箱（5 种）
+        icon: 🛡️
         desc: 同一接口下抽象 local / aio_sandbox / boxlite / e2b / tenki 五种执行后端，按隔离级别与场景自由切换
       - title: 多后端持久化 + RBAC
+        icon: 🗄️
         desc: SQLite（开发）与 PostgreSQL（生产）同一仓储接口，内置 Alembic 迁移；基于 Casbin 的资源级 RBAC 授权
       - title: 双追踪观测
+        icon: 📊
         desc: 同一 trace 同时往 Langfuse 与 Monocle 推送观测数据，开发态与生产态观测体验一致
       - title: Skill 市场 + MCP/ACP
+        icon: 🧩
         desc: Markdown 技能包 + 双层审阅 + skillscan 安全静态扫描；MCP 接入外部工具、ACP 跨进程智能体调用
+
+  - id: deepseek-harness
+    name: DeepSeek Harness
+    name_en: DeepSeek Harness
+    tagline: 一切皆插件 · Agent = Model + Harness
+    tagline_en: Everything is a Plugin
+    description: |
+      **DeepSeek Harness 是 DeepSeek 官方的 Agent 开发框架**（开发者预览版），核心理念是**"一切皆插件"**——基于 `Cordis` 插件系统构建，模型、工具、技能、会话、沙箱、存储、循环、调度、UI 等所有 Agent 能力均由插件组合而成，可自由替换、灵活重组，无需改动框架源码。
+
+      ## 核心特性
+      - **一切皆插件** — `Cordis` 内核只负责插件加载 / 卸载 / 依赖，Agent 能力全部由插件提供，通过服务与事件彼此协作
+      - **运行有迹可循** — 仅追加会话日志（系统提示词 / 思维链 / 工具调用 / 子 Agent 调度），Trajectory 视图按来源查看，支持恢复、分叉、检索与回放
+      - **多种运行模式** — 标准（完整编码 Agent）/ PTC（Code Mode SDK 组合多轮工具调用）/ 极简（bash + 编辑器双工具）/ 创造（插件实验与 preset 创作）
+      - **安全沙箱** — 基于 Linux `landlock` 的原生 `landlock-run` 沙箱，安全运行不可信代码
+      - **多形态交付** — Web UI / CLI（`dsh`）/ Python 绑定；运行时动态加载 Cordis 插件（自修改）
+
+      ## 快速开始
+      - 快速体验：`npx @deepseek-ai/dsh web`
+      - 源码：`git clone https://github.com/deepseek-ai/deepseek-harness`
+      - 技术栈：TypeScript（pnpm monorepo，221+ 包）+ Python + Rust；MIT 协议；当前 v0.1.0-rc.5
+    icon: /assets/dsh.svg
+    color: "#4D6BFE"
+    repo: deepseek-ai/deepseek-harness
+    homepage: https://github.com/deepseek-ai/deepseek-harness
+    install:
+      - type: npx
+        label: 快速体验
+        command: npx @deepseek-ai/dsh web
+      - type: git
+        label: 克隆源码
+        command: git clone https://github.com/deepseek-ai/deepseek-harness && cd deepseek-harness && pnpm install
+    features:
+      - title: 一切皆插件
+        icon: 🧩
+        desc: Cordis 内核仅管理插件生命周期；模型 / 工具 / 技能 / 沙箱 / 存储 / UI 等能力全部由插件提供，配置层自由重组
+      - title: 运行有迹可循
+        icon: 📜
+        desc: 仅追加会话日志 + Trajectory 视图，按来源查看系统提示词 / 思维链 / 工具调用，可恢复、分叉、回放
+      - title: 多种运行模式
+        icon: 🎛️
+        desc: 标准 / PTC / 极简 / 创造四模式，从完整编码 Agent 到双工具基准测试自由切换
+      - title: 安全沙箱
+        icon: 🔒
+        desc: Linux landlock-run 原生沙箱隔离不可信代码；本地沙箱开箱即用
+      - title: 多形态交付
+        icon: 📦
+        desc: Web UI / dsh CLI / Python 绑定；运行时动态加载插件（自修改），可创建自定义 preset
 
   - id: kskills
     name: KSkills 技能包
@@ -124,27 +177,72 @@ engines:
     homepage: https://github.com/kkutysllb/KSkills
     features:
       - title: 软件工程
+        icon: 💻
         category_id: coding
         desc: 覆盖软件交付全生命周期：需求、设计、编码、测试、审查、发布、运维
       - title: 金融量化
+        icon: 📈
         category_id: stock
         desc: A 股/港股/美股/期货/期权，含 kk-common 统一数据客户端、十五维一体个股分析等
       - title: 办公文档
+        icon: 📄
         category_id: office
         desc: Word / Excel / PowerPoint / PDF / Slidev / Slack GIF / 文档协作 / Microsoft Foundry 模型部署
       - title: 内容创作
+        icon: 🎨
         category_id: media
         desc: 知识漫画、图像、音乐、播客、视频生成技能
       - title: 跨领域公共
+        icon: 🧰
         category_id: common
         desc: 结构化分析报告、26 种图表可视化、Markdown 转 HTML
       - title: 深度研究
+        icon: 🔬
         category_id: research
         desc: 深度网络研究、学术论文审阅、咨询报告生成
       - title: 标注化打包分发
+        icon: 📦
         desc: .skill 压缩包 + SKILL-MANIFEST.json（含 sha256）、安装器校验解压路径，可安装到任意平台
 
 products:
+  - id: dsh-desktop
+    name: DSH Desktop
+    name_en: DSH Desktop
+    parent: deepseek-harness
+    tagline: DeepSeek Harness 桌面端 · host & sidecar
+    tagline_en: Desktop Host for DeepSeek Harness
+    description: |
+      DSH Desktop 是 DeepSeek Harness 的 **Electron 桌面端**（host & sidecar）——
+      零修改复用上游的 Web UI、API 网关、会话持久化与插件生态，
+      自身只负责进程托管、窗口、托盘、上游同步与插件管理的桌面化呈现。
+
+      关键特性：侧车生命周期管理（spawn / 指数退避重启 / 优雅退出）、
+      上游一键同步（fetch → `--ff-only` pull → build）、
+      GitHub `dsh-plugin` 社区插件管理、VS Code 式内嵌终端（node-pty）、
+      electron-updater 自动更新。
+    icon: /assets/dsh-desktop.svg
+    color: "#4D6BFE"
+    versions:
+      - id: desktop
+        label: 桌面端
+        label_en: Desktop
+        channels:
+          - type: github_release
+            releases_file: dsh-desktop.json
+            platforms:
+              - name: macOS (Apple Silicon)
+                file_glob: "*-arm64.dmg"
+                icon: apple
+              - name: Windows
+                file_glob: "DSH.Desktop.Setup.*.exe"
+                icon: windows
+              - name: Linux (deb)
+                file_glob: "*amd64.deb"
+                icon: linux
+              - name: Linux (AppImage)
+                file_glob: "*.AppImage"
+                icon: linux
+
   - id: kworks
     name: KWorks
     name_en: KWorks

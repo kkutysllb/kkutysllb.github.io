@@ -111,32 +111,55 @@
       }
     }
 
-    /** 渲染引擎描述（支持段落分隔 + 加粗 + inline code + 标题 + 列表） */
+    /** 渲染引擎描述（按行解析：## 标题 / - 列表 / 普通段落） */
     function renderDescription(desc) {
       if (!desc) return '';
       const escape = (s) => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
       const inline = (s) => {
-        let html = escape(s).replace(/\n/g, ' ');
+        let html = escape(s);
         html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
         html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
         return html;
       };
-      // 按空行分段
-      const paragraphs = desc.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
-      return paragraphs.map(p => {
-        // ## 标题 → <h3>
-        if (/^\s*##\s+/.test(p)) {
-          return `<h3 class="desc-h3">${inline(p.replace(/^\s*##\s+/, ''))}</h3>`;
+
+      const lines = desc.split('\n');
+      const out = [];
+      let buf = [];
+      let ulOpen = false;
+
+      const flushBuf = () => {
+        if (buf.length) {
+          out.push(`<p>${inline(buf.join(' '))}</p>`);
+          buf = [];
         }
-        // - 列表（连续行聚合）→ <ul><li>...</li></ul>
-        if (/^\s*-\s+/.test(p)) {
-          const items = p.split('\n').map(line => line.replace(/^\s*-\s+/, '').trim()).filter(Boolean);
-          const liItems = items.map(item => `<li>${inline(item)}</li>`).join('');
-          return `<ul class="desc-ul">${liItems}</ul>`;
+      };
+      const closeUl = () => {
+        if (ulOpen) { out.push('</ul>'); ulOpen = false; }
+      };
+
+      for (const line of lines) {
+        const t = line.trim();
+        if (!t) { flushBuf(); closeUl(); continue; }
+
+        // ## 标题
+        if (/^##\s+/.test(t)) {
+          flushBuf(); closeUl();
+          out.push(`<h3 class="desc-h3">${inline(t.replace(/^##\s+/, ''))}</h3>`);
+          continue;
         }
-        // 普通段落
-        return `<p>${inline(p)}</p>`;
-      }).join('');
+        // - 列表项（连续聚合成一个 <ul>）
+        if (/^-\s+/.test(t)) {
+          flushBuf();
+          if (!ulOpen) { out.push('<ul class="desc-ul">'); ulOpen = true; }
+          out.push(`<li>${inline(t.replace(/^-\s+/, ''))}</li>`);
+          continue;
+        }
+        // 普通行累积到段落
+        closeUl();
+        buf.push(t);
+      }
+      flushBuf(); closeUl();
+      return out.join('');
     }
 
     /** 把 glob 模式转成正则 */
@@ -222,7 +245,7 @@
         <div class="features">
           ${features.map(f => `
             <div class="feature">
-              <div class="t">${f.title}</div>
+              <div class="t">${f.icon ? `<span class="f-icon">${f.icon}</span>` : ''}${f.title}</div>
               <div class="d">${f.desc}</div>
             </div>
           `).join('')}

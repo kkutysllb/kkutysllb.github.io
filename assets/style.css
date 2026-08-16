@@ -232,33 +232,42 @@ code {
   color: var(--fg-dim);
 }
 
-/* hero 内的列表走 grid 多列布局（更充分利用宽度） */
+/* hero 内的列表走卡片网格布局（每项一张小卡） */
 .hero .bio ul.desc-ul {
   list-style: none;
   padding-left: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 8px 32px;
-  margin: 14px 0 18px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin: 14px 0 20px;
 }
 .hero .bio ul.desc-ul li {
   margin: 0;
-  padding-left: 16px;
-  position: relative;
+  padding: 14px 16px;
+  background-color: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  line-height: 1.6;
+  color: var(--fg-muted);
+  font-size: 14px;
+  transition: border-color 0.15s, background-color 0.15s, transform 0.15s;
 }
-.hero .bio ul.desc-ul li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.7em;
-  width: 5px;
-  height: 5px;
-  border-radius: 999px;
-  background-color: var(--accent);
-  opacity: 0.65;
+.hero .bio ul.desc-ul li:hover {
+  border-color: var(--border-strong);
+  background-color: var(--bg-elev-2);
+  transform: translateY(-1px);
 }
+.hero .bio ul.desc-ul li strong {
+  display: block;
+  color: var(--fg);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+  letter-spacing: -0.005em;
+}
+.hero .bio ul.desc-ul li::before,
 .hero .bio ul.desc-ul li::marker {
-  content: "";
+  content: none;
 }
 .hero-cover {
   margin-top: 48px;
@@ -409,6 +418,7 @@ code {
   padding: 14px;
 }
 .feature .t { font-weight: 500; margin-bottom: 4px; font-size: 14px; }
+.feature .t .f-icon { margin-right: 6px; font-size: 15px; }
 .feature .d { color: var(--fg-muted); font-size: 13px; }
 
 /* ----- 产品网格（在引擎下） ----- */
