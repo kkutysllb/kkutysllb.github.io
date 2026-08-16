@@ -19,9 +19,10 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 
-const REPO = process.env.GITHUB_REPOSITORY || 'kkutysllb/KSkills';
-const REF = process.env.GITHUB_REF || process.env.GITHUB_SHA || 'main';
-const TOKEN = process.env.GITHUB_TOKEN || process.env.SYNC_TOKEN || '';
+// KSkills 仓库（硬编码，不跟随 GITHUB_REPOSITORY 环境变量，避免被 Actions 触发仓库名覆盖）
+const REPO = process.env.KSKILLS_REPO || 'kkutysllb/KSkills';
+const REF = process.env.KSKILLS_REF || process.env.GITHUB_SHA || 'main';
+const TOKEN = process.env.KSKILLS_TOKEN || process.env.GITHUB_TOKEN || process.env.SYNC_TOKEN || '';
 
 // 类别元数据（label / color / icon）
 const CATEGORIES = {

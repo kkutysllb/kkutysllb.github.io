@@ -176,7 +176,7 @@ code {
 .hero .bio {
   font-size: 16px;
   color: var(--fg-muted);
-  max-width: 760px;
+  max-width: 100%;
   margin: 0;
   line-height: 1.8;
 }
@@ -231,6 +231,35 @@ code {
 .engine-head .desc ul.desc-ul li::marker {
   color: var(--fg-dim);
 }
+
+/* hero 内的列表走 grid 多列布局（更充分利用宽度） */
+.hero .bio ul.desc-ul {
+  list-style: none;
+  padding-left: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 8px 32px;
+  margin: 14px 0 18px;
+}
+.hero .bio ul.desc-ul li {
+  margin: 0;
+  padding-left: 16px;
+  position: relative;
+}
+.hero .bio ul.desc-ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background-color: var(--accent);
+  opacity: 0.65;
+}
+.hero .bio ul.desc-ul li::marker {
+  content: "";
+}
 .hero-cover {
   margin-top: 48px;
   border-radius: var(--radius);
@@ -274,16 +303,7 @@ code {
   margin-bottom: 48px;
 }
 .engine-head {
-  display: flex; gap: 24px; align-items: flex-start;
   margin-bottom: 32px;
-}
-.engine-head .icon {
-  width: 64px; height: 64px;
-  border-radius: 14px;
-  background-color: var(--bg-elev-2);
-  border: 1px solid var(--border);
-  padding: 8px;
-  flex-shrink: 0;
 }
 .engine-head h3 {
   font-size: 28px;
@@ -438,21 +458,19 @@ code {
 }
 .product .head {
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
-}
-.product .head img {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
 }
 .product .head h4 {
   margin: 0;
   font-size: 18px;
   letter-spacing: -0.01em;
   min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .product .head .repo {
   font-size: 11px;
@@ -462,6 +480,16 @@ code {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* 标题后内联图标（引擎卡片 + 产品卡片共用） */
+.engine-head h3 .icon-inline,
+.product .head .icon-inline {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 .product .tagline {
   min-height: 42px;
@@ -633,8 +661,7 @@ html[data-theme] body {
   background-color: var(--bg);
   color: var(--fg);
 }
-html[data-theme] code,
-html[data-theme] .engine-head .icon {
+html[data-theme] code {
   background-color: var(--bg-elev-2);
 }
 html[data-theme] .theme-toggle,
@@ -705,10 +732,10 @@ html[data-theme] .plat-icon {
   .products-grid { grid-template-columns: 1fr; }
   .product { padding: 18px; }
   .product .head {
-    grid-template-columns: 40px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
   .product .head .repo {
-    grid-column: 2;
+    grid-column: 1;
     max-width: 100%;
   }
   .product .tagline { min-height: 0; }

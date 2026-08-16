@@ -102,7 +102,8 @@
     /** 读取 KSkills 动态元数据（失败时返回 null，调用方静默降级） */
     async function loadKSkills() {
       try {
-        const res = await fetch('./data/kskills.json');
+        // 加时间戳 + no-store，避免浏览器缓存旧的 0 数据
+        const res = await fetch(`./data/kskills.json?ts=${Date.now()}`, { cache: 'no-store' });
         if (!res.ok) return null;
         return await res.json();
       } catch (_) {
@@ -305,8 +306,7 @@
       return `
         <div class="product" style="--accent-bar: ${product.color || '#fff'}">
           <div class="head">
-            <img src="${product.icon}" alt="${product.name}" />
-            <h4>${product.name}</h4>
+            <h4>${product.name}${product.icon ? `<img class="icon-inline" src="${product.icon}" alt="${product.name}" />` : ''}</h4>
             ${product.repo ? `<span class="repo">${product.repo}</span>` : ''}
           </div>
           <p class="tagline">${product.tagline || ''}</p>
@@ -351,9 +351,8 @@
       return `
         <div class="engine">
           <div class="engine-head">
-            <img class="icon" src="${engine.icon}" alt="${engine.name}" />
-            <div style="flex:1">
-              <h3>${engine.name} <span style="color:var(--fg-dim);font-size:14px;font-weight:400">· ${engine.name_en}</span></h3>
+            <div class="engine-body">
+              <h3>${engine.name} <span style="color:var(--fg-dim);font-size:14px;font-weight:400">· ${engine.name_en}</span>${engine.icon ? `<img class="icon-inline" src="${engine.icon}" alt="${engine.name}" />` : ''}</h3>
               <p class="sub">${engine.tagline || ''}</p>
               <p class="desc">${renderDescription(engine.description)}</p>
               <div class="engine-actions">

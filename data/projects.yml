@@ -14,14 +14,26 @@ profile:
   bio_zh: |
     独立开发者，构建 **一套 Agent 基础设施 + N 套衍生产品**。
 
-    **QiLin（麒麟）—— 面向生产环境的 Python 智能体运行时引擎**（agent harness engine），基于 `LangGraph` 构建。一个卷积分身三种形态：嵌入式（进程内 LangGraph 执行器）即用、服务化（`LangGraph Server` 部署）即起、客户端调用（Python SDK）即接。
+    ## QiLin（麒麟）
+    **面向生产环境的 Python 智能体运行时引擎**（agent harness engine），基于 `LangGraph` 构建。一个卷积分身三种形态：嵌入式（进程内 LangGraph 执行器）即用、服务化（`LangGraph Server` 部署）即起、客户端调用（Python SDK）即接。
 
-    同一运行时可同时跑在桌面端、Web API、也能嵌进 IDE 插件。同源孵化 **KWorks**（Local-first AI Workspace，QiLin 桌面旗舰）、**KStock**（跨平台桌面股票量化智能体）等产品；配套 **KSkills** 跨平台技能包仓库（覆盖软件工程 / 金融量化 / 内容创作 / 深度研究 / 跨领域公共 / 办公文档 6 大领域，由 GitHub Actions 自动同步数据）。
+    同一运行时可同时跑在桌面端、Web API、也能嵌进 IDE 插件。
 
-    **核心能力**：双模运行时、子智能体一等公民、5 种可插拔沙箱（`local` / `aio_sandbox` / `boxlite` / `e2b` / `tenki`）、SQLite / PostgreSQL 多后端持久化 + `Alembic` 迁移、基于 `Casbin` 的资源级 RBAC、`Langfuse` + `Monocle` 双追踪观测、Markdown Skill 市场 + `skillscan` 静态扫描、配置签名触发的热重载、MCP / ACP 协议接入。
+    ## 产品矩阵
+    - **KWorks** · Local-first AI Workspace，QiLin 桌面旗舰
+    - **KStock** · 跨平台桌面股票量化智能体（A 股 / 港股 / 美股 / 期货 / 期权）
+    - **KSkills** · 跨平台技能包仓库，覆盖软件工程 / 金融量化 / 内容创作 / 深度研究 / 跨领域公共 / 办公文档 6 大领域（数据由 GitHub Actions 自动同步）
 
-    **设计信条**：每一个 token 都应有 ROI。
-    不重复发送工具 schema，不保留失控输出，不错过任何可命中的稳定前缀。
+    ## 核心能力
+    - **双模运行时** — embedded / service 两种部署形态无缝切换
+    - **多智能体编排** — `AgentHandoff` + `OrchestratorGraph` + `AgentInbox`（v2.0.0 新增）
+    - **可插拔沙箱** — 5 种执行后端（`local` / `aio_sandbox` / `boxlite` / `e2b` / `tenki`）
+    - **多后端持久化** — SQLite / PostgreSQL + `Alembic` 迁移
+    - **观测与治理** — `Casbin` RBAC + `Langfuse` + `Monocle` 双追踪 + `skillscan` 静态扫描
+    - **协议与集成** — MCP / ACP 协议 + GitHub / GitLab / Notion / Slack
+
+    ## 设计信条
+    每一个 token 都应有 ROI。不重复发送工具 schema，不保留失控输出，不错过任何可命中的稳定前缀。
   bio_en: |
     I build QiLin — a production-grade Python agent harness engine
     built on LangGraph, unifying dual-mode runtime, sub-agent composition,
