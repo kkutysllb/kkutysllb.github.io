@@ -1,48 +1,48 @@
 {
   "tag_name": "v0.1.0",
   "name": "v0.1.0",
-  "published_at": "2026-08-17T11:34:26Z",
+  "published_at": "2026-08-17T12:39:40Z",
   "html_url": "https://github.com/kkutysllb/KCoder/releases/tag/v0.1.0",
   "assets": [
     {
       "name": "KCoder-0.1.0-arm64.dmg",
       "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.0/KCoder-0.1.0-arm64.dmg",
-      "size": 162918590
+      "size": 171205208
     },
     {
       "name": "KCoder-0.1.0-arm64.dmg.blockmap",
       "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.0/KCoder-0.1.0-arm64.dmg.blockmap",
-      "size": 168056
+      "size": 179041
     },
     {
       "name": "KCoder-0.1.0-arm64.zip",
       "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.0/KCoder-0.1.0-arm64.zip",
-      "size": 160827746
+      "size": 169088919
     },
     {
       "name": "KCoder-0.1.0-arm64.zip.blockmap",
       "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.0/KCoder-0.1.0-arm64.zip.blockmap",
-      "size": 168691
+      "size": 178423
     },
     {
       "name": "KCoder-0.1.0.AppImage",
       "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.0/KCoder-0.1.0.AppImage",
-      "size": 167434990
+      "size": 175741050
     },
     {
       "name": "KCoder-0.1.0.deb",
       "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.0/KCoder-0.1.0.deb",
-      "size": 140187752
+      "size": 148496336
     },
     {
       "name": "KCoder-Setup-0.1.0.exe",
       "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.0/KCoder-Setup-0.1.0.exe",
-      "size": 149470784
+      "size": 157738672
     },
     {
       "name": "KCoder-Setup-0.1.0.exe.blockmap",
       "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.1.0/KCoder-Setup-0.1.0.exe.blockmap",
-      "size": 158032
+      "size": 166087
     },
     {
       "name": "latest-linux.yml",

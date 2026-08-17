@@ -1,62 +1,62 @@
 {
-  "tag_name": "v0.1.4",
-  "name": "v0.1.4",
-  "published_at": "2026-08-17T06:36:03Z",
-  "html_url": "https://github.com/kkutysllb/DSH-Desktop/releases/tag/v0.1.4",
+  "tag_name": "v0.1.5",
+  "name": "v0.1.5",
+  "published_at": "2026-08-17T07:53:49Z",
+  "html_url": "https://github.com/kkutysllb/DSH-Desktop/releases/tag/v0.1.5",
   "assets": [
     {
-      "name": "DSH-Desktop-0.1.4-arm64.dmg",
-      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.4/DSH-Desktop-0.1.4-arm64.dmg",
-      "size": 166693777
+      "name": "DSH-Desktop-0.1.5-arm64.dmg",
+      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.5/DSH-Desktop-0.1.5-arm64.dmg",
+      "size": 166685845
     },
     {
-      "name": "DSH-Desktop-0.1.4-arm64.dmg.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.4/DSH-Desktop-0.1.4-arm64.dmg.blockmap",
-      "size": 173492
+      "name": "DSH-Desktop-0.1.5-arm64.dmg.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.5/DSH-Desktop-0.1.5-arm64.dmg.blockmap",
+      "size": 174973
     },
     {
-      "name": "DSH-Desktop-0.1.4-arm64.zip",
-      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.4/DSH-Desktop-0.1.4-arm64.zip",
-      "size": 166095046
+      "name": "DSH-Desktop-0.1.5-arm64.zip",
+      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.5/DSH-Desktop-0.1.5-arm64.zip",
+      "size": 166101813
     },
     {
-      "name": "DSH-Desktop-0.1.4-arm64.zip.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.4/DSH-Desktop-0.1.4-arm64.zip.blockmap",
-      "size": 174788
+      "name": "DSH-Desktop-0.1.5-arm64.zip.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.5/DSH-Desktop-0.1.5-arm64.zip.blockmap",
+      "size": 175329
     },
     {
-      "name": "DSH-Desktop-0.1.4.AppImage",
-      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.4/DSH-Desktop-0.1.4.AppImage",
-      "size": 173569803
+      "name": "DSH-Desktop-0.1.5.AppImage",
+      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.5/DSH-Desktop-0.1.5.AppImage",
+      "size": 173572472
     },
     {
-      "name": "DSH-Desktop-0.1.4.deb",
-      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.4/DSH-Desktop-0.1.4.deb",
-      "size": 147213264
+      "name": "DSH-Desktop-0.1.5.deb",
+      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.5/DSH-Desktop-0.1.5.deb",
+      "size": 147217392
     },
     {
-      "name": "DSH-Desktop-Setup-0.1.4.exe",
-      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.4/DSH-Desktop-Setup-0.1.4.exe",
-      "size": 156130056
+      "name": "DSH-Desktop-Setup-0.1.5.exe",
+      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.5/DSH-Desktop-Setup-0.1.5.exe",
+      "size": 156143408
     },
     {
-      "name": "DSH-Desktop-Setup-0.1.4.exe.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.4/DSH-Desktop-Setup-0.1.4.exe.blockmap",
-      "size": 164656
+      "name": "DSH-Desktop-Setup-0.1.5.exe.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.5/DSH-Desktop-Setup-0.1.5.exe.blockmap",
+      "size": 164225
     },
     {
       "name": "latest-linux.yml",
-      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.4/latest-linux.yml",
+      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.5/latest-linux.yml",
       "size": 526
     },
     {
       "name": "latest-mac.yml",
-      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.4/latest-mac.yml",
+      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.5/latest-mac.yml",
       "size": 509
     },
     {
       "name": "latest.yml",
-      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.4/latest.yml",
+      "browser_download_url": "https://github.com/kkutysllb/DSH-Desktop/releases/download/v0.1.5/latest.yml",
       "size": 351
     }
   ]
