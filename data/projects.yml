@@ -243,6 +243,43 @@ products:
                 file_glob: "*.AppImage"
                 icon: linux
 
+  - id: kcoder
+    name: KCoder
+    name_en: KCoder
+    parent: deepseek-harness
+    tagline: AI 编码工作台 · 所思，皆可成码
+    tagline_en: AI Coding Workbench — Think it, code it.
+    description: |
+      KCoder 是一个基于 Electron 的 AI 编码工作台桌面端，
+      以 DSH-Desktop v0.1.4 为基线构建，将 deepseek-harness（dsh）
+      "一切皆插件"引擎封装为桌面应用形态。
+
+      采用宿主与侧车（host & sidecar）架构：零修改复用上游 Web UI、
+      API 网关、会话持久化与插件生态，自身负责进程托管、窗口、托盘、
+      上游同步与插件管理；内置 Shell 窗口 + 面板窗口 + node-pty 内嵌终端。
+    icon: /assets/kcoder.svg
+    color: "#7C4DFF"
+    versions:
+      - id: desktop
+        label: 桌面端
+        label_en: Desktop
+        channels:
+          - type: github_release
+            releases_file: kcoder.json
+            platforms:
+              - name: macOS (Apple Silicon)
+                file_glob: "*-arm64.dmg"
+                icon: apple
+              - name: Windows
+                file_glob: "KCoder-Setup-*.exe"
+                icon: windows
+              - name: Linux (deb)
+                file_glob: "*.deb"
+                icon: linux
+              - name: Linux (AppImage)
+                file_glob: "*.AppImage"
+                icon: linux
+
   - id: kworks
     name: KWorks
     name_en: KWorks
