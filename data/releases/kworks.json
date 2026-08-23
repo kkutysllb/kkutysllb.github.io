@@ -1,62 +1,62 @@
 {
-  "tag_name": "v1.0.8",
-  "name": "v1.0.8",
-  "published_at": "2026-08-23T11:26:38Z",
-  "html_url": "https://github.com/kkutysllb/KWorsk/releases/tag/v1.0.8",
+  "tag_name": "v1.0.9",
+  "name": "v1.0.9",
+  "published_at": "2026-08-23T15:17:29Z",
+  "html_url": "https://github.com/kkutysllb/KWorsk/releases/tag/v1.0.9",
   "assets": [
     {
-      "name": "KWorks-1.0.8-arm64-mac.zip",
-      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.8/KWorks-1.0.8-arm64-mac.zip",
-      "size": 516352518
+      "name": "KWorks-1.0.9-arm64-mac.zip",
+      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.9/KWorks-1.0.9-arm64-mac.zip",
+      "size": 516351401
     },
     {
-      "name": "KWorks-1.0.8-arm64-mac.zip.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.8/KWorks-1.0.8-arm64-mac.zip.blockmap",
-      "size": 537329
+      "name": "KWorks-1.0.9-arm64-mac.zip.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.9/KWorks-1.0.9-arm64-mac.zip.blockmap",
+      "size": 537379
     },
     {
-      "name": "KWorks-1.0.8-arm64.dmg",
-      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.8/KWorks-1.0.8-arm64.dmg",
-      "size": 533112236
+      "name": "KWorks-1.0.9-arm64.dmg",
+      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.9/KWorks-1.0.9-arm64.dmg",
+      "size": 533143013
     },
     {
-      "name": "KWorks-1.0.8-arm64.dmg.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.8/KWorks-1.0.8-arm64.dmg.blockmap",
-      "size": 556840
+      "name": "KWorks-1.0.9-arm64.dmg.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.9/KWorks-1.0.9-arm64.dmg.blockmap",
+      "size": 556076
     },
     {
-      "name": "kworks-desktop-1.0.8.x86_64.rpm",
-      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.8/kworks-desktop-1.0.8.x86_64.rpm",
-      "size": 444267077
+      "name": "kworks-desktop-1.0.9.x86_64.rpm",
+      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.9/kworks-desktop-1.0.9.x86_64.rpm",
+      "size": 444237525
     },
     {
-      "name": "kworks-desktop_1.0.8_amd64.deb",
-      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.8/kworks-desktop_1.0.8_amd64.deb",
-      "size": 441170588
+      "name": "kworks-desktop_1.0.9_amd64.deb",
+      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.9/kworks-desktop_1.0.9_amd64.deb",
+      "size": 441134626
     },
     {
-      "name": "KWorks.Setup.1.0.8.exe",
-      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.8/KWorks.Setup.1.0.8.exe",
-      "size": 452462544
+      "name": "KWorks.Setup.1.0.9.exe",
+      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.9/KWorks.Setup.1.0.9.exe",
+      "size": 452463440
     },
     {
-      "name": "KWorks.Setup.1.0.8.exe.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.8/KWorks.Setup.1.0.8.exe.blockmap",
-      "size": 467213
+      "name": "KWorks.Setup.1.0.9.exe.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.9/KWorks.Setup.1.0.9.exe.blockmap",
+      "size": 467459
     },
     {
       "name": "latest-linux.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.8/latest-linux.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.9/latest-linux.yml",
       "size": 519
     },
     {
       "name": "latest-mac.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.8/latest-mac.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.9/latest-mac.yml",
       "size": 502
     },
     {
       "name": "latest.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.8/latest.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KWorsk/releases/download/v1.0.9/latest.yml",
       "size": 341
     }
   ]
