@@ -1,18 +1,7 @@
 {
-  "tag_name": "v2.0.0",
-  "name": "v2.0.0 · QiLin Multi-Agent Framework Release",
-  "published_at": "2026-08-10T17:04:42Z",
-  "html_url": "https://github.com/kkutysllb/QiLin/releases/tag/v2.0.0",
-  "assets": [
-    {
-      "name": "qilin-2.0.0-py3-none-any.whl",
-      "browser_download_url": "https://github.com/kkutysllb/QiLin/releases/download/v2.0.0/qilin-2.0.0-py3-none-any.whl",
-      "size": 1631891
-    },
-    {
-      "name": "qilin-2.0.0.tar.gz",
-      "browser_download_url": "https://github.com/kkutysllb/QiLin/releases/download/v2.0.0/qilin-2.0.0.tar.gz",
-      "size": 13271474
-    }
-  ]
+  "tag_name": "v2.0.1",
+  "name": "QiLin v2.0.1",
+  "published_at": "2026-08-28T15:39:17Z",
+  "html_url": "https://github.com/kkutysllb/QiLin/releases/tag/v2.0.1",
+  "assets": []
 }
