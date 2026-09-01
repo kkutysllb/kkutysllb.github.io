@@ -1,62 +1,62 @@
 {
-  "tag_name": "v1.0.9",
-  "name": "v1.0.9",
-  "published_at": "2026-08-23T14:14:53Z",
-  "html_url": "https://github.com/kkutysllb/KStock/releases/tag/v1.0.9",
+  "tag_name": "v1.1.0",
+  "name": "v1.1.0",
+  "published_at": "2026-09-01T14:12:55Z",
+  "html_url": "https://github.com/kkutysllb/KStock/releases/tag/v1.1.0",
   "assets": [
     {
-      "name": "KStock-1.0.9-arm64-mac.zip",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.0.9/KStock-1.0.9-arm64-mac.zip",
-      "size": 338138513
+      "name": "KStock-1.1.0-arm64-mac.zip",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.1.0/KStock-1.1.0-arm64-mac.zip",
+      "size": 372601727
     },
     {
-      "name": "KStock-1.0.9-arm64-mac.zip.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.0.9/KStock-1.0.9-arm64-mac.zip.blockmap",
-      "size": 350529
+      "name": "KStock-1.1.0-arm64-mac.zip.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.1.0/KStock-1.1.0-arm64-mac.zip.blockmap",
+      "size": 379240
     },
     {
-      "name": "KStock-1.0.9-arm64.dmg",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.0.9/KStock-1.0.9-arm64.dmg",
-      "size": 351125161
+      "name": "KStock-1.1.0-arm64.dmg",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.1.0/KStock-1.1.0-arm64.dmg",
+      "size": 386807965
     },
     {
-      "name": "KStock-1.0.9-arm64.dmg.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.0.9/KStock-1.0.9-arm64.dmg.blockmap",
-      "size": 366918
+      "name": "KStock-1.1.0-arm64.dmg.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.1.0/KStock-1.1.0-arm64.dmg.blockmap",
+      "size": 404072
     },
     {
-      "name": "kstock-desktop-1.0.9.x86_64.rpm",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.0.9/kstock-desktop-1.0.9.x86_64.rpm",
-      "size": 296219577
+      "name": "kstock-desktop-1.1.0.x86_64.rpm",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.1.0/kstock-desktop-1.1.0.x86_64.rpm",
+      "size": 338844681
     },
     {
-      "name": "kstock-desktop_1.0.9_amd64.deb",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.0.9/kstock-desktop_1.0.9_amd64.deb",
-      "size": 296865644
+      "name": "kstock-desktop_1.1.0_amd64.deb",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.1.0/kstock-desktop_1.1.0_amd64.deb",
+      "size": 339152066
     },
     {
-      "name": "KStock-Setup-1.0.9.exe",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.0.9/KStock-Setup-1.0.9.exe",
-      "size": 276598880
+      "name": "KStock-Setup-1.1.0.exe",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.1.0/KStock-Setup-1.1.0.exe",
+      "size": 328520288
     },
     {
-      "name": "KStock-Setup-1.0.9.exe.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.0.9/KStock-Setup-1.0.9.exe.blockmap",
-      "size": 274860
+      "name": "KStock-Setup-1.1.0.exe.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.1.0/KStock-Setup-1.1.0.exe.blockmap",
+      "size": 327067
     },
     {
       "name": "latest-linux.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.0.9/latest-linux.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.1.0/latest-linux.yml",
       "size": 519
     },
     {
       "name": "latest-mac.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.0.9/latest-mac.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.1.0/latest-mac.yml",
       "size": 502
     },
     {
       "name": "latest.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.0.9/latest.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v1.1.0/latest.yml",
       "size": 341
     }
   ]
