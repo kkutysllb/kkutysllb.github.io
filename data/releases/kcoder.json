@@ -1,62 +1,62 @@
 {
-  "tag_name": "v0.6.13",
-  "name": "v0.6.13",
-  "published_at": "2026-09-15T13:34:57Z",
-  "html_url": "https://github.com/kkutysllb/KCoder/releases/tag/v0.6.13",
+  "tag_name": "v0.6.14",
+  "name": "v0.6.14",
+  "published_at": "2026-09-19T03:52:46Z",
+  "html_url": "https://github.com/kkutysllb/KCoder/releases/tag/v0.6.14",
   "assets": [
     {
-      "name": "KCoder-0.6.13-arm64.dmg",
-      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.13/KCoder-0.6.13-arm64.dmg",
-      "size": 200326804
+      "name": "KCoder-0.6.14-arm64.dmg",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.14/KCoder-0.6.14-arm64.dmg",
+      "size": 316845081
     },
     {
-      "name": "KCoder-0.6.13-arm64.dmg.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.13/KCoder-0.6.13-arm64.dmg.blockmap",
-      "size": 209579
+      "name": "KCoder-0.6.14-arm64.dmg.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.14/KCoder-0.6.14-arm64.dmg.blockmap",
+      "size": 330802
     },
     {
-      "name": "KCoder-0.6.13-arm64.zip",
-      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.13/KCoder-0.6.13-arm64.zip",
-      "size": 198691659
+      "name": "KCoder-0.6.14-arm64.zip",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.14/KCoder-0.6.14-arm64.zip",
+      "size": 314913101
     },
     {
-      "name": "KCoder-0.6.13-arm64.zip.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.13/KCoder-0.6.13-arm64.zip.blockmap",
-      "size": 208842
+      "name": "KCoder-0.6.14-arm64.zip.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.14/KCoder-0.6.14-arm64.zip.blockmap",
+      "size": 327770
     },
     {
-      "name": "KCoder-0.6.13.AppImage",
-      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.13/KCoder-0.6.13.AppImage",
-      "size": 205361899
+      "name": "KCoder-0.6.14.AppImage",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.14/KCoder-0.6.14.AppImage",
+      "size": 272377417
     },
     {
-      "name": "KCoder-0.6.13.deb",
-      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.13/KCoder-0.6.13.deb",
-      "size": 175255276
+      "name": "KCoder-0.6.14.deb",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.14/KCoder-0.6.14.deb",
+      "size": 240922572
     },
     {
-      "name": "KCoder-Setup-0.6.13.exe",
-      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.13/KCoder-Setup-0.6.13.exe",
-      "size": 181073521
+      "name": "KCoder-Setup-0.6.14.exe",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.14/KCoder-Setup-0.6.14.exe",
+      "size": 319972489
     },
     {
-      "name": "KCoder-Setup-0.6.13.exe.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.13/KCoder-Setup-0.6.13.exe.blockmap",
-      "size": 188128
+      "name": "KCoder-Setup-0.6.14.exe.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.14/KCoder-Setup-0.6.14.exe.blockmap",
+      "size": 333843
     },
     {
       "name": "latest-linux.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.13/latest-linux.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.14/latest-linux.yml",
       "size": 515
     },
     {
       "name": "latest-mac.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.13/latest-mac.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.14/latest-mac.yml",
       "size": 498
     },
     {
       "name": "latest.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.13/latest.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KCoder/releases/download/v0.6.14/latest.yml",
       "size": 344
     }
   ]
