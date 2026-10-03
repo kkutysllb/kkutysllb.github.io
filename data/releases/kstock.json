@@ -1,62 +1,62 @@
 {
-  "tag_name": "v2.0.0-rc.2",
-  "name": "v2.0.0-rc.2",
-  "published_at": "2026-10-01T04:20:40Z",
-  "html_url": "https://github.com/kkutysllb/KStock/releases/tag/v2.0.0-rc.2",
+  "tag_name": "v2.0.0-rc.3",
+  "name": "v2.0.0-rc.3",
+  "published_at": "2026-10-03T04:16:04Z",
+  "html_url": "https://github.com/kkutysllb/KStock/releases/tag/v2.0.0-rc.3",
   "assets": [
     {
-      "name": "KStock-2.0.0-rc.2-arm64-mac.zip",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.2/KStock-2.0.0-rc.2-arm64-mac.zip",
-      "size": 343327751
+      "name": "KStock-2.0.0-rc.3-arm64-mac.zip",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.3/KStock-2.0.0-rc.3-arm64-mac.zip",
+      "size": 344566506
     },
     {
-      "name": "KStock-2.0.0-rc.2-arm64-mac.zip.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.2/KStock-2.0.0-rc.2-arm64-mac.zip.blockmap",
-      "size": 359135
+      "name": "KStock-2.0.0-rc.3-arm64-mac.zip.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.3/KStock-2.0.0-rc.3-arm64-mac.zip.blockmap",
+      "size": 360439
     },
     {
-      "name": "KStock-2.0.0-rc.2-arm64.dmg",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.2/KStock-2.0.0-rc.2-arm64.dmg",
-      "size": 343568964
+      "name": "KStock-2.0.0-rc.3-arm64.dmg",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.3/KStock-2.0.0-rc.3-arm64.dmg",
+      "size": 344801146
     },
     {
-      "name": "KStock-2.0.0-rc.2-arm64.dmg.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.2/KStock-2.0.0-rc.2-arm64.dmg.blockmap",
-      "size": 357729
+      "name": "KStock-2.0.0-rc.3-arm64.dmg.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.3/KStock-2.0.0-rc.3-arm64.dmg.blockmap",
+      "size": 358235
     },
     {
-      "name": "kstock-desktop-2.0.0-rc.2.x86_64.rpm",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.2/kstock-desktop-2.0.0-rc.2.x86_64.rpm",
-      "size": 258456077
+      "name": "kstock-desktop-2.0.0-rc.3.x86_64.rpm",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.3/kstock-desktop-2.0.0-rc.3.x86_64.rpm",
+      "size": 259799133
     },
     {
-      "name": "kstock-desktop_2.0.0-rc.2_amd64.deb",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.2/kstock-desktop_2.0.0-rc.2_amd64.deb",
-      "size": 269888880
+      "name": "kstock-desktop_2.0.0-rc.3_amd64.deb",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.3/kstock-desktop_2.0.0-rc.3_amd64.deb",
+      "size": 271110644
     },
     {
-      "name": "KStock-Setup-2.0.0-rc.2.exe",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.2/KStock-Setup-2.0.0-rc.2.exe",
-      "size": 302277516
+      "name": "KStock-Setup-2.0.0-rc.3.exe",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.3/KStock-Setup-2.0.0-rc.3.exe",
+      "size": 303513995
     },
     {
-      "name": "KStock-Setup-2.0.0-rc.2.exe.blockmap",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.2/KStock-Setup-2.0.0-rc.2.exe.blockmap",
-      "size": 313504
+      "name": "KStock-Setup-2.0.0-rc.3.exe.blockmap",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.3/KStock-Setup-2.0.0-rc.3.exe.blockmap",
+      "size": 314046
     },
     {
       "name": "latest-linux.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.2/latest-linux.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.3/latest-linux.yml",
       "size": 539
     },
     {
       "name": "latest-mac.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.2/latest-mac.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.3/latest-mac.yml",
       "size": 522
     },
     {
       "name": "latest.yml",
-      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.2/latest.yml",
+      "browser_download_url": "https://github.com/kkutysllb/KStock/releases/download/v2.0.0-rc.3/latest.yml",
       "size": 356
     }
   ]
